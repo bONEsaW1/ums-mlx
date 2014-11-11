@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- This pom takes care of packaging PMS for the different operating systems. -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>pms-packaging</artifactId>
+
+	<name>PMS Packaging</name>
+	<description>This module creates OS specific distribution packages for PMS.</description>
+	<packaging>jar</packaging>
+	<url>http://www.ps3mediaserver.org/</url>
+	<inceptionYear>2008</inceptionYear>
+
+	<parent>
+		<groupId>github.com.taconaut</groupId>
+		<artifactId>pms</artifactId>
+		<version>1.90.2-mlx-1.1.1-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<!-- NSIS needs a version without "-SNAPSHOT" or "-b1" -->
+		<project.version.short>1.90.2</project.version.short>
+
+		<project.core.name>PS3 Media Server MLX</project.core.name>
+		
+		<!-- Resource properties -->
+		<project.binaries>${project.basedir}/target/bin</project.binaries>
+		<project.external-resources.directory>${project.basedir}/src/main/external-resources</project.external-resources.directory>
+		<external-resources.transcode-tools.directory>${project.external-resources.directory}/transcode-tools</external-resources.transcode-tools.directory>
+		
+		<project.root.basedir>${project.basedir}/..</project.root.basedir>
+		
+		<project.core.basedir>${project.root.basedir}/core</project.core.basedir>
+		<project.core.binaries>${project.core.basedir}/target/bin</project.core.binaries>
+		<project.core.external-resources.directory>${project.core.basedir}/src/main/external-resources</project.core.external-resources.directory>
+
+		<target.transcode-tools.directory>${project.build.directory}/bin</target.transcode-tools.directory>
+
+		<external-resources.private-jre.directory>${project.external-resources.directory}/private-jre</external-resources.private-jre.directory>
+		
+		
+		<!--
+			To get the latest JRE versions:
+       1) Go to http://www.java.com/en/download/manual.jsp
+			 2) Check the download links for win32, win64 and osx and use BundleId+1 for the download URl
+		-->
+		<private-jre.windows.x86.filename>jre-7u67-windows-i586.tar.gz</private-jre.windows.x86.filename>
+		<private-jre.windows.x86.archive-directory-name>jre1.7.0_67</private-jre.windows.x86.archive-directory-name>
+		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=95124</private-jre.windows.x86.download-url>
+		<private-jre.windows.x64.filename>jre-7u67-windows-x64.tar.gz</private-jre.windows.x64.filename>
+		<private-jre.windows.x64.archive-directory-name>jre1.7.0_67</private-jre.windows.x64.archive-directory-name>
+		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=95126</private-jre.windows.x64.download-url>
+		<private-jre.macosx.filename>jre-7u67-macosx-x64.gz</private-jre.macosx.filename>
+		<private-jre.macosx.archive-directory-name>jre1.7.0_67.jre</private-jre.macosx.archive-directory-name>
+		<private-jre.macosx.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=95118</private-jre.macosx.download-url>
+		<target.private-jre.x86.directory>${project.build.directory}/jre</target.private-jre.x86.directory>
+		<target.private-jre.x64.directory>${project.build.directory}/jre64</target.private-jre.x64.directory>
+		<private-jre.macosx.directory>${external-resources.transcode-tools.directory}/osx/jre-macosx</private-jre.macosx.directory>
+
+		<!-- Windows Service wrapper. -->
+		<windows-service-wrapper.x86.filename>wrapper-windows-x86-32-3.5.17.zip</windows-service-wrapper.x86.filename>
+		<windows-service-wrapper.x86.archive-directory-name>wrapper-windows-x86-32-3.5.17</windows-service-wrapper.x86.archive-directory-name>
+		<windows-service-wrapper.x86.download-url>http://wrapper.tanukisoftware.com/download/3.5.17/wrapper-windows-x86-32-3.5.17.zip</windows-service-wrapper.x86.download-url>
+
+		<!--
+			 use the Windows makensis.exe for Windows builds unless
+			 the system makensis is explicitly selected via the
+			 system-makensis profile
+		 -->
+		<makensis-bin>${project.external-resources.directory}/third-party/nsis/makensis.exe</makensis-bin>
+		
+		<izpack.version>5.0.0-rc4</izpack.version>
+		<izpack.staging>${project.build.directory}/staging</izpack.staging>
+		<izpack.installer.app>${project.build.directory}/${project.core.name} Setup.app</izpack.installer.app>
+
+		<nsis-maven-plugin-version>1.0-SNAPSHOT</nsis-maven-plugin-version>
+		<maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
+	</properties>
+	
+	<!-- Dependencies for every jar that needs to be packaged -->
+	<dependencies>
+		<dependency>
+			<groupId>github.com.taconaut</groupId>
+			<artifactId>pms-core</artifactId>
+			<version>1.90.2-mlx-1.1.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.izpack</groupId>
+			<artifactId>izpack-compiler</artifactId>
+			<version>${izpack.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>assembly:single</defaultGoal>
+
+		<resources>
+			<!-- Copy and filter the NSIS header file to replace Maven properties -->
+			<resource>
+				<directory>src/main/external-resources/nsis</directory>
+				<includes>
+					<include>extra.nsh</include>
+				</includes>
+				<filtering>true</filtering>
+				<targetPath>..</targetPath>
+			</resource>
+
+			<!-- Filter IzPack resources so we can use Maven properties in them -->
+			<resource>
+				<directory>src/main/izpack</directory>
+				<targetPath>${izpack.staging}</targetPath>
+				<filtering>true</filtering>
+				<includes>
+					<include>install.xml</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+		
+	        <!-- This plugin will take care of installing the external dependencies -->
+			<plugin>
+				<groupId>com.savage7.maven.plugins</groupId>
+				<artifactId>maven-external-dependency-plugin</artifactId>
+				<version>${maven-external-dependency-plugin-version}</version>
+				<configuration>
+					<stagingDirectory>${project.build.directory}/dependencies/</stagingDirectory>
+					<createChecksum>true</createChecksum>
+					<skipChecksumVerification>false</skipChecksumVerification>
+					<force>false</force>
+
+					<artifactItems>
+						<!-- Add artifact items here -->
+					</artifactItems>
+				</configuration>
+			</plugin>
+			
+			<!-- Assemble a jar with dependencies. -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven-assembly-plugin-version}</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>net.pms.PMS</mainClass>
+							<!--
+								this is required to make the ImageIo image "plugins" provided by jai-imageio-core-standalone work.
+								without it, the following exception is thrown when PMS starts:
+									
+								Configuration error: java.util.ServiceConfigurationError: javax.imageio.spi.ImageInputStreamSpi:
+								Provider com.sun.media.imageioimpl.stream.ChannelImageInputStreamSpi could not be instantiated:
+								java.lang.IllegalArgumentException: vendorName == null!
+
+								See: https://thierrywasyl.wordpress.com/2009/07/24/jai-how-to-solve-vendorname-null-exception/
+							-->
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-jar-with-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Copy the pms-x.x.x-jar-with-dependencies.jar to pms.jar. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>prepare-package-windows</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<!-- Copy the pms-x.x.x-jar-with-dependencies.jar to pms.jar -->
+								<copy file="${project.basedir}/target/${project.artifactId}-${project.version}-jar-with-dependencies.jar" tofile="${project.basedir}/target/pms.jar" overwrite="true" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Copy all application jars to the IzPack staging lib directory -->
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-pms-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${izpack.staging}/lib</outputDirectory>
+							<excludeTransitive>false</excludeTransitive>
+							<stripVersion>true</stripVersion>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+
+							<!-- This is a izpack dependency that collides with jmte's "asm" dependency -->
+							<excludeArtifactIds>asm-all</excludeArtifactIds>
+
+							<!-- Exclude tools.jar etc. -->
+							<!-- excludeScope>system</excludeScope -->
+
+							<!-- Exclude the IzPack dependencies -->
+							<excludeGroupIds>org.codehaus.izpack</excludeGroupIds>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-assembly-plugin
+										</artifactId>
+										<versionRange>
+											[2.2-beta-5,)
+										</versionRange>
+										<goals>
+											<goal>single</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.1,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>system-makensis</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<properties>
+				<!-- if selected, use the system makensis on Linux, Mac OS X &c. -->
+				<makensis-bin>makensis</makensis-bin>
+			</properties>
+		</profile>	
+     		
+		<!--
+			Windows profile: takes care of building the final package for Microsoft Windows
+		-->
+		<profile>
+			<id>windows</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+
+			<pluginRepositories>
+				<!-- nsis-maven-plugin needs this -->
+				<pluginRepository>
+					<id>Codehaus Snapshots</id>
+					<url>http://nexus.codehaus.org/snapshots/</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+				</pluginRepository>
+			</pluginRepositories>
+
+			<build>
+				<resources>
+					<!-- Copy precompiled Windows binaries. -->
+					<resource>
+						<directory>${external-resources.transcode-tools.directory}/win32</directory>
+						<targetPath>${target.transcode-tools.directory}/win32</targetPath>
+						<excludes>
+							<exclude>MediaInfo.dll</exclude>
+							<exclude>MediaInfo64.dll</exclude>
+							<exclude>jnotify.dll</exclude>
+							<exclude>jnotify_64bit.dll</exclude>
+							<exclude>${windows-service-wrapper.x86.filename}</exclude>
+						</excludes>
+						<!-- Avoid inadvertently filtering binaries -->
+						<filtering>false</filtering>
+					</resource>
+
+					<!-- Filter NSIS header file. -->
+					<resource>
+						<directory>src/main/external-resources/nsis</directory>
+						<targetPath>${project.build.directory}</targetPath>
+						<includes>
+							<include>extra.nsh</include>
+						</includes>
+						<!-- Filter to replace Maven properties -->
+						<filtering>true</filtering>
+					</resource>
+				</resources>
+
+				<plugins>
+					<!-- Plugin to move the pms-x.x.x-jar-with-dependencies.jar to pms.jar -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin-version}</version>
+
+						<executions>
+							<execution>
+								<id>download-external-resources-windows</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<!-- Make sure the download folders exist. -->
+										<mkdir dir="${external-resources.transcode-tools.directory}/win32" />
+										<mkdir dir="${external-resources.private-jre.directory}" />
+
+										<!-- Download and unpack binaries. -->
+										<get src="${transcode-tools.download.url}/win32/${transcode-tools.windows.x86.filename}" dest="${external-resources.transcode-tools.directory}/${transcode-tools.windows.x86.filename}" usetimestamp="true" />
+
+										<untar src="${external-resources.transcode-tools.directory}/${transcode-tools.windows.x86.filename}" dest="${external-resources.transcode-tools.directory}/win32" compression="gzip" stripAbsolutePathSpec="true" overwrite="true" failOnEmptyArchive="true">
+										</untar>
+
+										<!-- Download windows service wrapper. -->
+										<get src="${windows-service-wrapper.x86.download-url}" dest="${external-resources.transcode-tools.directory}/win32/${windows-service-wrapper.x86.filename}" skipexisting="true" />
+
+										<!-- Download private JRE archives. -->
+										<get src="${private-jre.windows.x86.download-url}" dest="${external-resources.private-jre.directory}/${private-jre.windows.x86.filename}" skipexisting="true" />
+										<get src="${private-jre.windows.x64.download-url}" dest="${external-resources.private-jre.directory}/${private-jre.windows.x64.filename}" skipexisting="true" />
+									</target>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>unpack-private-jre-and-copy-dlls-windows</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<!-- MediaInfo and jnotify libraries need to be in the standard library path to be found -->
+										<copy file="${external-resources.transcode-tools.directory}/win32/MediaInfo.dll" todir="${project.basedir}" overwrite="true" verbose="true" />
+										<copy file="${external-resources.transcode-tools.directory}/win32/MediaInfo64.dll" todir="${project.basedir}" overwrite="true" verbose="true" />
+										<copy file="${external-resources.transcode-tools.directory}/win32/jnotify.dll" todir="${project.basedir}" overwrite="true" verbose="true" />
+										<copy file="${external-resources.transcode-tools.directory}/win32/jnotify_64bit.dll" todir="${project.basedir}" overwrite="true" verbose="true" />
+
+										<!-- Unpack winodws service wrapper. -->
+										<unzip src="${external-resources.transcode-tools.directory}/win32/${windows-service-wrapper.x86.filename}" dest="${target.transcode-tools.directory}/win32" stripAbsolutePathSpec="true" overwrite="true" failOnEmptyArchive="true">
+											<patternset>
+												<include name="${windows-service-wrapper.x86.archive-directory-name}/bin/wrapper.exe" />
+												<include name="${windows-service-wrapper.x86.archive-directory-name}/doc/wrapper-community-license-1.1.txt" />
+												<include name="${windows-service-wrapper.x86.archive-directory-name}/lib/wrapper.dll" />
+												<include name="${windows-service-wrapper.x86.archive-directory-name}/lib/wrapper.jar" />
+											</patternset>
+											<mapper>
+												<globmapper from="${windows-service-wrapper.x86.archive-directory-name}/bin/*" to="service/*" />
+												<globmapper from="${windows-service-wrapper.x86.archive-directory-name}/doc/*" to="service/*" />
+												<globmapper from="${windows-service-wrapper.x86.archive-directory-name}/lib/*" to="service/*" />
+											</mapper>
+										</unzip>
+
+										<!-- Unpack private JRE archives. -->
+										<mkdir dir="${target.private-jre.x86.directory}" />
+										<untar src="${external-resources.private-jre.directory}/${private-jre.windows.x86.filename}" dest="${target.private-jre.x86.directory}" compression="gzip" stripAbsolutePathSpec="true" overwrite="true" failOnEmptyArchive="true">
+											<patternset>
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/bin/dtplugin/*" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/bin/plugin2/*" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/lib/plugin.jar" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/bin/javaws.exe" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/lib/deploy/*" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/lib/deploy.jar" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/lib/javaws.jar" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/bin/fx*.dll" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/bin/jfx*.dll" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/bin/javafx*.dll" />
+												<exclude name="${private-jre.windows.x86.archive-directory-name}/lib/jfxrt.jar" />
+											</patternset>
+											<mapper>
+												<globmapper from="${private-jre.windows.x86.archive-directory-name}/*" to="*" />
+											</mapper>
+										</untar>
+										<mkdir dir="${target.private-jre.x64.directory}" />
+										<untar src="${external-resources.private-jre.directory}/${private-jre.windows.x64.filename}" dest="${target.private-jre.x64.directory}" compression="gzip" stripAbsolutePathSpec="true" overwrite="true" failOnEmptyArchive="true">
+											<patternset>
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/bin/dtplugin/*" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/bin/plugin2/*" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/lib/plugin.jar" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/bin/javaws.exe" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/lib/deploy/*" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/lib/deploy.jar" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/lib/javaws.jar" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/bin/fx*.dll" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/bin/jfx*.dll" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/bin/javafx*.dll" />
+												<exclude name="${private-jre.windows.x64.archive-directory-name}/lib/jfxrt.jar" />
+											</patternset>
+											<mapper>
+												<globmapper from="${private-jre.windows.x64.archive-directory-name}/*" to="*" />
+											</mapper>
+										</untar>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Plugin to build a Windows installer using the nullsoft scriptable 
+						install system (NSIS) The "generate-project" goal generates a file "target/project.nsh", 
+						which contains the definitions for project variables like "${PROJECT_BASEDIR}" 
+						that can be used in the "pms.nsi" and "setup.nsi" files. 
+					-->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>nsis-maven-plugin</artifactId>
+						<version>${nsis-maven-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>build-pms-windows</id>
+								<configuration>
+									<makensisBin>${makensis-bin}</makensisBin>
+									<outputFile>${project.build.directory}/pms.exe</outputFile>
+									<setupScript>${project.external-resources.directory}/nsis/pms.nsi</setupScript>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>generate-project</goal>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>build-pms-setup-full-x86-exe-windows</id>
+								<configuration>
+									<makensisBin>${makensis-bin}</makensisBin>
+									<outputFile>${project.build.directory}/pms-${project.version}-setup-windows-full-x86.exe</outputFile>
+									<setupScript>${project.external-resources.directory}/nsis/setup-x86.nsi</setupScript>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>generate-project</goal>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>build-pms-setup-full-x64-exe-windows</id>
+								<configuration>
+									<makensisBin>${makensis-bin}</makensisBin>
+									<outputFile>${project.build.directory}/pms-${project.version}-setup-windows-full-x64.exe</outputFile>
+									<setupScript>${project.external-resources.directory}/nsis/setup-x64.nsi</setupScript>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>generate-project</goal>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>build-pms-setup-without-jre-exe-windows</id>
+								<configuration>
+									<makensisBin>${makensis-bin}</makensisBin>
+									<outputFile>${project.build.directory}/pms-${project.version}-setup-windows-without-jre.exe</outputFile>
+									<setupScript>${project.external-resources.directory}/nsis/setup-without-jre.nsi</setupScript>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>generate-project</goal>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+    
+		<!-- Linux profile: takes care of building the final package for Linux -->
+		<profile>
+			<id>linux</id>
+			<!--
+				 this setting does the right thing on Linux
+				 and is needed for the Hudson profile to work
+			 -->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<os>
+					<family>unix</family>
+					<name>Linux</name>
+				</os>
+			</activation>
+
+			<build>
+				<resources>
+					<!-- Copy precompiled Linux binaries. -->
+					<resource>
+						<directory>${external-resources.transcode-tools.directory}/linux</directory>
+						<targetPath>${target.transcode-tools.directory}/linux</targetPath>
+						<!-- Avoid inadvertently filtering binaries -->
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+
+				<plugins>
+					<!-- Assemble the PMS tar.gz archive distribution file. -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>make-pms-tar-gz-archive-linux</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<finalName>pms-${project.version}-generic-linux-unix</finalName>
+									<appendAssemblyId>false</appendAssemblyId>
+									<descriptors>
+										<descriptor>${project.basedir}/src/main/assembly/assembly-linux.xml</descriptor>
+									</descriptors>
+									<archive>
+										<manifest>
+											<mainClass>net.pms.PMS</mainClass>
+											<addDefaultImplementationEntries>true</addDefaultImplementationEntries> <!-- see above for documentation -->
+										</manifest>
+									</archive>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Download external resources. -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>download-external-resources-linux</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<!-- Make sure the download folder exists. -->
+										<mkdir dir="${external-resources.transcode-tools.directory}/linux" />
+
+										<!-- Download and unpack binaries. -->
+ 										<get src="${transcode-tools.download.url}/linux/${transcode-tools.linux.filename}"
+												dest="${external-resources.transcode-tools.directory}/${transcode-tools.linux.filename}"
+												usetimestamp="true" />
+
+										<untar src="${external-resources.transcode-tools.directory}/${transcode-tools.linux.filename}"
+												dest="${external-resources.transcode-tools.directory}/linux"
+												compression="gzip"
+												stripAbsolutePathSpec="true"
+												overwrite="true"
+												failOnEmptyArchive="true">
+										</untar>
+
+										<!-- Make all downloaded binaries executable. -->
+										<chmod dir="${external-resources.transcode-tools.directory}/linux" perm="a+x" includes="*" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+		<!--
+			Mac OS X profile: takes care of building the final package for Mac OS X.
+		-->
+		<profile>
+			<id>osx</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+
+			<build>
+				<resources>
+					<!-- Copy precompiled OS X binaries. -->
+					<resource>
+						<directory>${external-resources.transcode-tools.directory}/osx/bin</directory>
+						<targetPath>${izpack.staging}/osx</targetPath>
+						<!-- Avoid inadvertently filtering binaries -->
+						<filtering>false</filtering>
+					</resource>
+					<resource>
+						<directory>${external-resources.transcode-tools.directory}/osx</directory>
+						<targetPath>${izpack.staging}/osx</targetPath>
+						<includes>
+							<include>libmediainfo.dylib</include>
+						</includes>
+						<!-- Avoid inadvertently filtering binaries -->
+						<filtering>false</filtering>
+					</resource>
+					<resource>
+						<directory>${external-resources.transcode-tools.directory}/osx</directory>
+						<targetPath>${target.transcode-tools.directory}/osx</targetPath>
+						<!-- Avoid inadvertently filtering binaries -->
+						<filtering>false</filtering>
+					</resource>
+					<resource>
+						<directory>${external-resources.transcode-tools.directory}/osx</directory>
+						<targetPath>${project.build.directory}</targetPath>
+						<includes>
+							<include>libmediainfo.dylib</include>
+						</includes>
+						<!-- Avoid inadvertently filtering binaries -->
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+
+				<plugins>
+					<!-- Download external resources. -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>download-external-resources-osx</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+
+								<configuration>
+									<target>
+										<!-- Make sure the download folder exists. -->
+										<mkdir dir="${external-resources.transcode-tools.directory}/osx" />
+										<mkdir dir="${izpack.staging}/osx" />
+										<mkdir dir="${private-jre.macosx.directory}" />
+
+										<!-- Download and unpack binaries -->
+										<get src="${transcode-tools.download.url}/osx/${transcode-tools.macosx.filename}"
+												dest="${external-resources.transcode-tools.directory}/${transcode-tools.macosx.filename}"
+												usetimestamp="true" />
+
+										<untar src="${external-resources.transcode-tools.directory}/${transcode-tools.macosx.filename}"
+												dest="${external-resources.transcode-tools.directory}/osx"
+												compression="gzip"
+												stripAbsolutePathSpec="true"
+												overwrite="true"
+												failOnEmptyArchive="true">
+										</untar>
+
+										<!-- Download JRE -->
+										<get src="${private-jre.macosx.download-url}" dest="${private-jre.macosx.directory}/${private-jre.macosx.filename}" skipexisting="true" />
+		
+										<!-- Make all downloaded binaries executable -->
+										<chmod dir="${external-resources.transcode-tools.directory}/osx" perm="a+x" includes="*" excludes="libmediainfo.dylib" />
+
+										<!-- Copy files to IzPack staging directory -->		
+										<copy file="src/main/izpack/logo.png" todir="${izpack.staging}" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/Info.plist-template-pms" tofile="${izpack.staging}/osx/Info.plist" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/pms.sh" todir="${izpack.staging}/osx" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/copy-installer-jre.sh" todir="${izpack.staging}/osx" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/pms.icns" todir="${izpack.staging}/osx" overwrite="true" />
+									</target>
+								</configuration>
+							</execution>
+
+							<!-- TODO: Investigate if this can be done with the assembly plugin -->
+							<execution>
+								<id>installer-application-with-jre-macosx</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+		
+								<configuration>
+									<tasks>
+										<mkdir dir="${izpack.installer.app}" />
+										<mkdir dir="${izpack.installer.app}/Contents" />
+										<mkdir dir="${izpack.installer.app}/Contents/MacOs" />
+										<mkdir dir="${izpack.installer.app}/Contents/PlugIns" />
+
+										<!-- Unpack the JRE, leave out as many unused features as possible -->
+										<untar src="${private-jre.macosx.directory}/${private-jre.macosx.filename}"
+											   dest="${izpack.installer.app}/Contents/PlugIns/${private-jre.macosx.archive-directory-name}"
+											   compression="gzip"
+											   stripAbsolutePathSpec="true"
+											   overwrite="true"
+											   failOnEmptyArchive="true">
+											<patternset>
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/d*" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/keytool" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/orbd" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/pack200" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/policytool" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/rmid" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/rmiregistry" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/servertool" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/tnameserv" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/bin/unpack200" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/deploy/*" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/deploy.jar" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/fx*.dylib" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/javaws.jar" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/jfxrt.jar" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/libjavafx*.dylib" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/libjfx*.dylib" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/lib/plugin.jar" />
+												<exclude name="${private-jre.macosx.archive-directory-name}/Contents/Home/man/*" />
+											</patternset>
+											<mapper>
+												<globmapper from="${private-jre.macosx.archive-directory-name}/*" to="*"/>
+											</mapper>
+										</untar>
+		
+										<chmod dir="${izpack.installer.app}/Contents/PlugIns/${private-jre.macosx.archive-directory-name}/Contents/Home/bin" perm="a+x" includes="*" />
+		
+										<copy file="${project.external-resources.directory}/osx/package.icns" todir="${izpack.installer.app}/Contents/Resources" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/Info.plist-template-installer" tofile="${izpack.installer.app}/Contents/Info.plist" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/installer.sh" todir="${izpack.installer.app}/Contents/MacOs/" overwrite="true" />
+										<copy file="${project.build.directory}/${project.artifactId}-setup-${project.version}.jar" todir="${izpack.installer.app}/Contents/Resources/Java" overwrite="true" />
+		
+										<chmod dir="${izpack.installer.app}/Contents/MacOs/" perm="a+x" includes="*" />
+		
+										<tar destfile="${project.build.directory}/pms-${project.version}-setup-macosx.tar.gz"
+											compression="gzip"
+											longfile="gnu">
+											<tarfileset dir="${izpack.installer.app}"
+												prefix="${project.core.name} Setup.app"
+												excludes="**/java,**/installer.sh" />
+
+											<!-- "java" and "installer.sh" need to be executable -->
+											<tarfileset dir="${izpack.installer.app}"
+												prefix="${project.core.name} Setup.app"
+												includes="**/java,**/installer.sh"
+												filemode="755" />
+										</tar>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- IzPack for cross platform packaging (http://izpack.org/) -->
+					<!-- http://docs.codehaus.org/display/IZPACK/Compiling+Using+Maven -->
+					<plugin>
+						<groupId>org.codehaus.izpack</groupId>
+						<artifactId>izpack-maven-plugin</artifactId>
+						<version>${izpack.version}</version>
+		
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>izpack</goal>
+								</goals>
+								<configuration>
+									<baseDir>${izpack.staging}</baseDir>
+									<installFile>${izpack.staging}/install.xml</installFile>
+									<finalName>${project.artifactId}-setup-${project.version}</finalName>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<!--
+								The IzPack plugin needs dependencies on its own modules or you will
+								get CannotResolveClassExceptions.
+							-->
+							<dependency>
+								<groupId>org.codehaus.izpack</groupId>
+								<artifactId>izpack-panel</artifactId>
+								<version>${izpack.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
