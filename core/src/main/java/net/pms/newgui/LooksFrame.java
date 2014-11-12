@@ -71,9 +71,16 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 	 * tabs. The value <code>null</code> means "don't care", activating the
 	 * tab will not change the help page.
 	 */
-	protected static final String[] HELP_PAGES = { "index.html", null,
-		"general_configuration.html", "navigation_share.html",
-		"transcoding.html", null, null, null };
+	protected static final String[] HELP_PAGES = { 
+		"index.html", 
+		null,
+		"general_configuration.html", 
+		"navigation_share.html",
+		null,
+		null,
+		"transcoding.html", 
+		null, 
+		null };
 
 	private NavigationShareTab nt;
 	private StatusTab st;
@@ -406,6 +413,7 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 		tabbedPane.addTab(Messages.getString("LooksFrame.22"), nt.build());
 		tabbedPane.addTab(Messages.getString("ML.Tab.Header"), mediaLibraryTab.build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.27"), new PluginsTab());
+		tabbedPane.addTab(Messages.getString("LooksFrame.21"), tr.build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.24"), new HelpTab().build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.25"), new AboutTab().build());
 

@@ -147,7 +147,7 @@
 
 	<properties>
 		<!-- The target JDK to use for build -->
-		<targetJdk>1.6</targetJdk>
+		<targetJdk>1.7</targetJdk>
 		
 		<!-- Version numbers for libraries shared by multiple modules -->
 		<jgoodies-common-version>1.4.0</jgoodies-common-version>
@@ -159,7 +159,7 @@
 		<!-- Version numbers for plugins shared by multiple modules  -->
 		<maven-external-dependency-plugin-version>0.5</maven-external-dependency-plugin-version>
 		<maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
-		<maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
+		<maven-compiler-plugin-version>3.2</maven-compiler-plugin-version>
 		<maven-surefire-plugin-version>2.16</maven-surefire-plugin-version>
 		<maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
 		<maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
