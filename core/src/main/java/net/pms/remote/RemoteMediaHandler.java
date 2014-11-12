@@ -3,19 +3,22 @@ package net.pms.remote;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+
 import net.pms.PMS;
 import net.pms.configuration.FormatConfiguration;
 import net.pms.configuration.RendererConfiguration;
 import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.Range;
-import net.pms.dlna.RootFolder;
 import net.pms.encoders.WebPlayer;
-import net.pms.external.StartStopListenerDelegate;
+import net.pms.medialibrary.dlna.RootFolder;
+import net.pms.plugins.StartStopListenerDelegate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

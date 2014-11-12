@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import net.pms.PMS;
 import net.pms.configuration.RendererConfiguration;
-import net.pms.external.StartStopListenerDelegate;
+import net.pms.plugins.StartStopListenerDelegate;
 import static net.pms.util.StringUtil.convertStringToTime;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

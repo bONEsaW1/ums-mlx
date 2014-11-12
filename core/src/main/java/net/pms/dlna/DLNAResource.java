@@ -19,14 +19,13 @@
 package net.pms.dlna;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import net.pms.Messages;
 import net.pms.PMS;
 import net.pms.configuration.FormatConfiguration;
@@ -35,21 +34,21 @@ import net.pms.configuration.RendererConfiguration;
 import net.pms.dlna.virtual.TranscodeVirtualFolder;
 import net.pms.dlna.virtual.VirtualFolder;
 import net.pms.encoders.*;
-import net.pms.external.AdditionalResourceFolderListener;
-import net.pms.external.ExternalFactory;
-import net.pms.external.ExternalListener;
-import net.pms.external.StartStopListener;
 import net.pms.formats.Format;
 import net.pms.formats.FormatFactory;
 import net.pms.io.OutputParams;
 import net.pms.io.ProcessWrapper;
 import net.pms.io.SizeLimitInputStream;
 import net.pms.network.HTTPResource;
+import net.pms.notifications.NotificationCenter;
+import net.pms.notifications.types.StartStopEvent;
+import net.pms.notifications.types.StartStopEvent.Event;
 import net.pms.util.FileUtil;
 import net.pms.util.ImagesUtil;
 import net.pms.util.Iso639;
 import net.pms.util.MpegUtil;
 import static net.pms.util.StringUtil.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -419,7 +418,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		this.updateId = 1;
 		lastSearch = null;
 		resHash = 0;
-		masterParent = null;
 	}
 
 	public DLNAResource(int specificType) {
@@ -492,7 +490,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		}
 
 		child.parent = this;
-		child.masterParent = masterParent;
 
 		if (parent != null) {
 			defaultRenderer = parent.getDefaultRenderer();
@@ -773,16 +770,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 									vf.addChild(new SubSelFile(newChild));
 								}
 							}
-
-							for (ExternalListener listener : ExternalFactory.getExternalListeners()) {
-								if (listener instanceof AdditionalResourceFolderListener) {
-									try {
-										((AdditionalResourceFolderListener) listener).addAdditionalFolder(this, child);
-									} catch (Throwable t) {
-										LOGGER.error("Failed to add additional folder for listener of type: \"{}\"", listener.getClass(), t);
-									}
-								}
-							}
 						} else if (!child.format.isCompatible(child.media, defaultRenderer) && !child.isFolder()) {
 							LOGGER.trace("Ignoring file \"{}\" because it is not compatible with renderer \"{}\"", child.getName(), defaultRenderer.getRendererName());
 							children.remove(child);
@@ -846,8 +833,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @param create
 	 * @return the transcode virtual folder
 	 */
-	// XXX package-private: used by MapFile; should be protected?
-	TranscodeVirtualFolder getTranscodeFolder(boolean create) {
+	protected TranscodeVirtualFolder getTranscodeFolder(boolean create) {
 		if (!isTranscodeFolderAvailable()) {
 			return null;
 		}
@@ -1452,7 +1438,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	protected DLNAResource clone() {
+	public DLNAResource clone() {
 		DLNAResource o = null;
 		try {
 			o = (DLNAResource) super.clone();
@@ -2055,46 +2041,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			final Integer refCount = temp;
 			requestIdToRefcount.put(requestId, refCount + 1);
 			if (refCount == 0) {
-				final DLNAResource self = this;
-				Runnable r = new Runnable() {
-					@Override
-					public void run() {
-						InetAddress rendererIp;
-						try {
-							rendererIp = InetAddress.getByName(rendererId);
-							RendererConfiguration renderer = RendererConfiguration.getRendererConfigurationBySocketAddress(rendererIp);
-							String rendererName = "unknown renderer";
-							try {
-								rendererName = renderer.getRendererName().replaceAll("\n", "");
-							} catch (NullPointerException e) { }
-							LOGGER.info("Started playing " + getName() + " on your " + rendererName);
-							LOGGER.debug("The full filename of which is: " + getSystemName() + " and the address of the renderer is: " + rendererId);
-						} catch (UnknownHostException ex) {
-							LOGGER.debug("" + ex);
-						}
-
-						startTime = System.currentTimeMillis();
-
-						for (final ExternalListener listener : ExternalFactory.getExternalListeners()) {
-							if (listener instanceof StartStopListener) {
-								// run these asynchronously for slow handlers (e.g. logging, scrobbling)
-								Runnable fireStartStopEvent = new Runnable() {
-									@Override
-									public void run() {
-										try {
-											((StartStopListener) listener).nowPlaying(media, self);
-										} catch (Throwable t) {
-											LOGGER.error("Notification of startPlaying event failed for StartStopListener {}", listener.getClass(), t);
-										}
-									}
-								};
-								new Thread(fireStartStopEvent, "StartPlaying Event for " + listener.name()).start();
-							}
-						}
-					}
-				};
-
-				new Thread(r, "StartPlaying Event").start();
+				NotificationCenter.getInstance(StartStopEvent.class).post(new StartStopEvent(this, Event.Start));
 			}
 		}
 	}
@@ -2127,41 +2074,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 						@Override
 						public void run() {
 							if (refCount == 1) {
-								InetAddress rendererIp;
-								try {
-									rendererIp = InetAddress.getByName(rendererId);
-									RendererConfiguration renderer = RendererConfiguration.getRendererConfigurationBySocketAddress(rendererIp);
-									String rendererName = "unknown renderer";
-									try {
-										rendererName = renderer.getRendererName();
-									} catch (NullPointerException e) { }
-									LOGGER.info("Stopped playing " + getName() + " on your " + rendererName);
-									LOGGER.debug("The full filename of which is: " + getSystemName() + " and the address of the renderer is: " + rendererId);
-								} catch (UnknownHostException ex) {
-									LOGGER.debug("" + ex);
-								}
-
-								PMS.get().getFrame().setStatusLine("");
-
-								internalStop();
-
-								for (final ExternalListener listener : ExternalFactory.getExternalListeners()) {
-									if (listener instanceof StartStopListener) {
-										// run these asynchronously for slow handlers (e.g. logging, scrobbling)
-										Runnable fireStartStopEvent = new Runnable() {
-											@Override
-											public void run() {
-												try {
-													((StartStopListener) listener).donePlaying(media, self);
-												} catch (Throwable t) {
-													LOGGER.error("Notification of donePlaying event failed for StartStopListener {}", listener.getClass(), t);
-												}
-											}
-										};
-
-										new Thread(fireStartStopEvent, "StopPlaying Event for " + listener.name()).start();
-									}
-								}
+								NotificationCenter.getInstance(StartStopEvent.class).post(new StartStopEvent(self, Event.Stop));
 							}
 						}
 					};
@@ -3153,7 +3066,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 
 	private void internalStop() {
 		DLNAResource res = resumeStop();
-		final RootFolder root = ((defaultRenderer != null) ? defaultRenderer.getRootFolder() : null);
+		final net.pms.medialibrary.dlna.RootFolder root = ((defaultRenderer != null) ? defaultRenderer.getRootFolder() : null);
 		if (root != null) {
 			if (res == null) {
 				res = this.clone();
@@ -3259,18 +3172,5 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 */
 	public String write() {
 		return null;
-	}
-
-	private ExternalListener masterParent;
-
-	public void setMasterParent(ExternalListener r) {
-		if (masterParent == null) {
-			// If master is already set ignore this
-			masterParent = r;
-		}
-	}
-
-	public ExternalListener getMasterParent() {
-		return masterParent;
 	}
 }

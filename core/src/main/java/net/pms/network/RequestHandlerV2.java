@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.pms.PMS;
 import net.pms.configuration.RendererConfiguration;
-import net.pms.external.StartStopListenerDelegate;
+import net.pms.plugins.StartStopListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;

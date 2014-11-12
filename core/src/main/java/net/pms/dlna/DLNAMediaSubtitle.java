@@ -235,4 +235,28 @@ public class DLNAMediaSubtitle extends DLNAMediaLang implements Cloneable {
 	public void setSubsStreamable(boolean isStreamable) {
 		this.isStreamable = isStreamable;
 	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof DLNAMediaSubtitle)){
+			return false;	
+		}
+		
+		return hashCode() == obj.hashCode();
+	}
+	
+	@Override
+	public int hashCode(){
+		int hashCode = super.hashCode();
+		hashCode *= 24 + getType().hashCode();
+		hashCode *= 24 + (getFlavor() == null ? 1 : getFlavor().hashCode());
+		hashCode *= 24 + (getExternalFile() == null ? 2 : getExternalFile().hashCode());
+		hashCode *= 24 + (getExternalFileCharacterSet() == null ? 3 : getExternalFileCharacterSet().hashCode());
+		hashCode *= 24 + (isExternalFileUtf8() ? 4 : 5);
+		hashCode *= 24 + (isExternalFileUtf16() ? 6 : 7);
+		hashCode *= 24 + (isExternalFileUtf32() ? 8 : 9);
+		hashCode *= 24 + (isEmbedded() ? 10 : 11);
+		return hashCode;
+	}
 }

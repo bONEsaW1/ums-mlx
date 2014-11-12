@@ -21,6 +21,7 @@ package net.pms.newgui;
 import com.jgoodies.looks.Options;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.sun.jna.Platform;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -38,13 +40,17 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+
 import net.pms.Messages;
 import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.io.WindowsNamedPipe;
+import net.pms.medialibrary.gui.tab.MediaLibraryTab;
+import net.pms.newgui.plugins.PluginsTab;
 import net.pms.newgui.update.AutoUpdateDialog;
 import net.pms.update.AutoUpdater;
 import net.pms.util.PropertiesUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,16 +71,9 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 	 * tabs. The value <code>null</code> means "don't care", activating the
 	 * tab will not change the help page.
 	 */
-	protected static final String[] HELP_PAGES = {
-		"index.html",
-		null,
-		"general_configuration.html",
-		null,
-		"navigation_share.html",
-		"transcoding.html",
-		null,
-		null
-	};
+	protected static final String[] HELP_PAGES = { "index.html", null,
+		"general_configuration.html", "navigation_share.html",
+		"transcoding.html", null, null, null };
 
 	private NavigationShareTab nt;
 	private StatusTab st;
@@ -82,7 +81,7 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 	private TranscodingTab tr;
 	private GeneralTab gt;
 	private HelpTab ht;
-	private PluginTab pt;
+	private MediaLibraryTab mediaLibraryTab;
 	private AbstractButton reload;
 	private JLabel status;
 	private static boolean lookAndFeelInitialized = false;
@@ -101,10 +100,6 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 
 	public GeneralTab getGt() {
 		return gt;
-	}
-
-	public PluginTab getPt() {
-		return pt;
 	}
 
 	public AbstractButton getReload() {
@@ -400,17 +395,17 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 		st = new StatusTab(configuration);
 		tt = new TracesTab(configuration, this);
 		gt = new GeneralTab(configuration, this);
-		pt = new PluginTab(configuration, this);
 		nt = new NavigationShareTab(configuration, this);		
 		tr = new TranscodingTab(configuration, this);
+		mediaLibraryTab = new MediaLibraryTab();
 		ht = new HelpTab();
 
 		tabbedPane.addTab(Messages.getString("LooksFrame.18"), st.build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.19"), tt.build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.20"), gt.build());
-		tabbedPane.addTab(Messages.getString("LooksFrame.27"), pt.build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.22"), nt.build());
-		tabbedPane.addTab(Messages.getString("LooksFrame.21"), tr.build());
+		tabbedPane.addTab(Messages.getString("ML.Tab.Header"), mediaLibraryTab.build());
+		tabbedPane.addTab(Messages.getString("LooksFrame.27"), new PluginsTab());
 		tabbedPane.addTab(Messages.getString("LooksFrame.24"), new HelpTab().build());
 		tabbedPane.addTab(Messages.getString("LooksFrame.25"), new AboutTab().build());
 
@@ -565,11 +560,15 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 	@Override
 	public void serverReady() {
 		gt.addRenderers();
-		pt.addPlugins();
 	}
 
 	@Override
 	public void setScanLibraryEnabled(boolean flag) {
 		getNt().setScanLibraryEnabled(flag);
+	}
+	
+	@Override
+	public void save() {
+		mediaLibraryTab.save();
 	}
 }

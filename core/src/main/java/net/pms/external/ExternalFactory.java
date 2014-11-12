@@ -35,14 +35,17 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
 import javax.swing.JLabel;
+
 import net.pms.Messages;
 import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
-import net.pms.dlna.RootFolder;
 import net.pms.external.URLResolver.URLResult;
+import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.newgui.LooksFrame;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -250,14 +253,13 @@ public class ExternalFactory {
 
 		for (RendererConfiguration r : renderers) {
 			RootFolder rf = r.getRootFolder();
-			rf.reset();
+			// TODO PWA: check if line is required
+			//rf.reset();
 		}
 
 		if (remove != null) {
 			externalListeners.remove(remove);
 			remove.shutdown();
-			LooksFrame frame = (LooksFrame) PMS.get().getFrame();
-			frame.getPt().removePlugin(remove);
 		}
 
 		for (int i = 0; i < 3; i++) {
@@ -486,14 +488,6 @@ public class ExternalFactory {
 				instance = (ExternalListener) clazz.newInstance();
 				doUpdate(update,instance.name() + " " + Messages.getString("NetworkTab.49"));
 				registerListener(instance);
-
-				if (PMS.get().getFrame() instanceof LooksFrame) {
-					LooksFrame frame = (LooksFrame) PMS.get().getFrame();
-
-					if (!frame.getPt().appendPlugin(instance)) {
-						LOGGER.warn("Plugin limit of 30 has been reached");
-					}
-				}
 			} catch (InstantiationException | IllegalAccessException e) {
 				LOGGER.error("Error instantiating plugin", e);
 			}

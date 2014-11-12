@@ -20,7 +20,7 @@ public class Build {
 	/**
 	 * If false, manual and automatic update checks are unconditionally disabled.
 	 */
-	private static final boolean IS_UPDATABLE = true;
+	private static final boolean IS_UPDATABLE = false;
 
 	/**
 	 * the name of the subdirectory under which PMS config files are stored for this build.
@@ -50,7 +50,7 @@ public class Build {
 	 * @return The profile directory name
 	 */
 
-	private static final String PROFILE_DIRECTORY_NAME = "UMS";
+	private static final String PROFILE_DIRECTORY_NAME = "ums-mlx";
 
 	/**
 	 * Determines whether or not this PMS build can be updated to a more

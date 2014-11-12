@@ -47,12 +47,12 @@
 		<commons-configuration-version>1.9</commons-configuration-version>
 		<commons-httpclient-version>3.1</commons-httpclient-version>
 		<commons-io-version>2.4</commons-io-version>
-		<commons-lang3-version>3.1</commons-lang3-version>
+		<commons-lang3-version>3.3.2</commons-lang3-version>
 		<h2-version>1.4.182</h2-version>
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
 		<gson-version>2.2.4</gson-version>
-		<netty-version>3.2.9.Final</netty-version>
+		<netty-version>3.9.4.Final</netty-version>
 		<rome-version>1.0.0</rome-version>
 		<thumbnailator-version>0.4.5</thumbnailator-version>
 		<jai-imageio-core-standalone-version>1.2-pre-dr-b04-2011-07-04</jai-imageio-core-standalone-version>
@@ -62,6 +62,8 @@
 		<fest-assert-version>1.4</fest-assert-version>
 		<jmte-version>3.0</jmte-version>
 		<jnotify-version>0.94</jnotify-version>
+		<!-- Skip 4.65-1.05-RC because it doesn't work, author is working on fixing it -->
+		<sevenzip-version>4.65-1.04-RC</sevenzip-version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -245,7 +247,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.netty</groupId>
+			<groupId>io.netty</groupId>
 			<artifactId>netty</artifactId>
 			<version>${netty-version}</version>
 		</dependency>
@@ -349,6 +351,18 @@
 			<groupId>com.googlecode.juniversalchardet</groupId>
 			<artifactId>juniversalchardet</artifactId>
 			<version>${juniversalchardet-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>sevenzip</groupId>
+			<artifactId>jbinding</artifactId>
+			<version>${sevenzip-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>sevenzip-allplatforms</groupId>
+			<artifactId>jbinding-allplatforms</artifactId>
+			<version>${sevenzip-version}</version>
 		</dependency>
 
 		<dependency>
@@ -533,7 +547,25 @@
 					<force>false</force>
 
 					<artifactItems>
-
+					
+						<artifactItem>
+							<groupId>sevenzip</groupId>
+							<artifactId>jbinding</artifactId>
+							<version>${sevenzip-version}</version>
+							<packaging>jar</packaging>
+							<install>true</install>
+							<downloadUrl>http://www.spirton.com/uploads/7-Zip-JBinding/7-Zip-JBinding-{version}.{packaging}</downloadUrl>
+						</artifactItem>
+						
+						<artifactItem>
+							<groupId>sevenzip-allplatforms</groupId>
+							<artifactId>jbinding-allplatforms</artifactId>
+							<version>${sevenzip-version}</version>
+							<packaging>jar</packaging>
+							<install>true</install>
+							<downloadUrl>http://www.spirton.com/uploads/7-Zip-JBinding/7-Zip-JBinding-AllPlatforms-{version}.{packaging}</downloadUrl>
+						</artifactItem>
+						
 						<artifactItem>
 							<groupId>jwbroek.cuelib</groupId>
 							<artifactId>cuelib</artifactId>

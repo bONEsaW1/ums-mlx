@@ -24,7 +24,7 @@ import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAMediaSubtitle;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.LibMediaInfoParser;
-import net.pms.dlna.RootFolder;
+import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.formats.Format;
 import net.pms.network.HTTPResource;
 import net.pms.network.SpeedStats;
@@ -334,7 +334,7 @@ public class RendererConfiguration {
 
 	public void addFolderLimit(DLNAResource res) {
 		if (rootFolder != null) {
-			rootFolder.setFolderLim(res);
+			rootFolder.setFolder(res);
 		}
 	}
 

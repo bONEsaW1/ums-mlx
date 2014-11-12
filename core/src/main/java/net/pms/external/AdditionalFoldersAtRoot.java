@@ -7,7 +7,10 @@ import net.pms.dlna.DLNAResource;
  * Classes implementing this interface and packaged as pms plugins will show 0-n
  * additional folders at the root level when the DLNA tree is being browsed on
  * the renderer
+ * 
+ * @see net.pms.plugins.DlnaTreeFolderPlugin
  */
+@Deprecated
 public interface AdditionalFoldersAtRoot extends ExternalListener {
 	/**
 	 * Gets the list of DLNAResource that will be added to the root folder. If

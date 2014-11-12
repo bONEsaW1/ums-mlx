@@ -266,11 +266,11 @@ public class MediaLibraryRealFile extends RealFile {
 					InputFile inputFile = new InputFile();
 					inputFile.setFile(getFile());
 					getMedia().setThumbnailSeekPos(prio.getSeekPosition());
-					getMedia().generateThumbnail(inputFile, getFormat(), getType());
+					getMedia().generateThumbnail(inputFile, getFormat(), getType(), 0.0, false);
 					try {
 						File picFolder = new File(picFolderPath);
 						if(!picFolder.isDirectory()){
-							picFolder.mkdirs();							
+							picFolder.mkdirs();
 						}
 						pic.createNewFile();
 						InputStream inputStream = getMedia().getThumbnailInputStream();

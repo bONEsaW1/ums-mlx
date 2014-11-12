@@ -31,7 +31,7 @@ import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
 import net.pms.dlna.*;
-import net.pms.external.StartStopListenerDelegate;
+import net.pms.plugins.StartStopListenerDelegate;
 import net.pms.util.StringUtil;
 import static net.pms.util.StringUtil.convertStringToTime;
 import net.pms.util.UMSUtils;

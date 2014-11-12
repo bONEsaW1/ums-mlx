@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import javax.swing.JComponent;
+
 import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
@@ -32,15 +34,19 @@ import net.pms.dlna.DLNAMediaAudio;
 import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAMediaSubtitle;
 import net.pms.dlna.DLNAResource;
-import net.pms.external.ExternalFactory;
-import net.pms.external.ExternalListener;
-import net.pms.external.FinalizeTranscoderArgsListener;
 import net.pms.formats.Format;
 import net.pms.io.OutputParams;
 import net.pms.io.ProcessWrapper;
+import net.pms.notifications.NotificationCenter;
+import net.pms.notifications.NotificationSubscriber;
+import net.pms.notifications.types.PluginEvent;
+import net.pms.notifications.types.PluginEvent.Event;
+import net.pms.plugins.FinalizeTranscoderArgsListener;
+import net.pms.plugins.PluginsFactory;
 import net.pms.util.FileUtil;
 import net.pms.util.Iso639;
 import net.pms.util.OpenSubtitle;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,13 +76,32 @@ public abstract class Player {
 	public abstract String mimeType();
 	public abstract String executable();
 	protected static PmsConfiguration configuration = PMS.getConfiguration();
-	private static List<FinalizeTranscoderArgsListener> finalizeTranscoderArgsListeners = new ArrayList<>();
-
-	public static void initializeFinalizeTranscoderArgsListeners() {
-		for (ExternalListener listener : ExternalFactory.getExternalListeners()) {
-			if (listener instanceof FinalizeTranscoderArgsListener) {
-				finalizeTranscoderArgsListeners.add((FinalizeTranscoderArgsListener) listener);
+	private static List<FinalizeTranscoderArgsListener> finalizeTranscoderArgsListeners;
+	
+	static {
+		if(finalizeTranscoderArgsListeners == null) {
+			loadFinalizeTranscodeArgsListeners();
+		}
+		
+		NotificationCenter.getInstance(PluginEvent.class).subscribe(new NotificationSubscriber<PluginEvent>() {			
+			@Override
+			public void onMessage(PluginEvent obj) {
+				if(obj.getEvent() == Event.PluginsLoaded) {
+					loadFinalizeTranscodeArgsListeners();
+				}
 			}
+		});
+	}
+	
+	private static synchronized void loadFinalizeTranscodeArgsListeners() {
+		if(finalizeTranscoderArgsListeners == null) {
+			finalizeTranscoderArgsListeners = new ArrayList<FinalizeTranscoderArgsListener>();
+		} else {
+			finalizeTranscoderArgsListeners.clear();			
+		}
+		
+		for (FinalizeTranscoderArgsListener listener : PluginsFactory.getFinalizeTranscoderArgsListeners()) {
+			finalizeTranscoderArgsListeners.add((FinalizeTranscoderArgsListener) listener);
 		}
 	}
 

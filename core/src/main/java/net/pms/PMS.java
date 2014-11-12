@@ -20,6 +20,7 @@
 package net.pms;
 
 import com.sun.jna.Platform;
+
 import java.awt.*;
 import java.io.*;
 import java.net.BindException;
@@ -27,31 +28,38 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.LogManager;
+
 import javax.swing.*;
+
 import net.pms.configuration.Build;
 import net.pms.configuration.NameFilter;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
 import net.pms.dlna.DLNAMediaDatabase;
 import net.pms.dlna.DLNAResource;
-import net.pms.dlna.RootFolder;
 import net.pms.dlna.virtual.MediaLibrary;
 import net.pms.encoders.Player;
 import net.pms.encoders.PlayerFactory;
-import net.pms.external.ExternalFactory;
-import net.pms.external.ExternalListener;
 import net.pms.formats.Format;
 import net.pms.formats.FormatFactory;
 import net.pms.io.*;
 import net.pms.logging.FrameAppender;
 import net.pms.logging.LoggingConfigFileLoader;
+import net.pms.medialibrary.commons.MediaLibraryConfiguration;
+import net.pms.medialibrary.dlna.RootFolder;
+import net.pms.medialibrary.filewatch.DirectoryWatcher;
+import net.pms.medialibrary.scanner.FullDataCollector;
+import net.pms.medialibrary.storage.MediaLibraryStorage;
 import net.pms.network.HTTPServer;
 import net.pms.network.ProxyServer;
 import net.pms.network.UPNPHelper;
 import net.pms.newgui.*;
+import net.pms.plugins.PluginsFactory;
+import net.pms.plugins.notifications.StartStopNotifier;
 import net.pms.remote.RemoteWeb;
 import net.pms.update.AutoUpdater;
 import net.pms.util.*;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.event.ConfigurationEvent;
 import org.apache.commons.configuration.event.ConfigurationListener;
@@ -111,7 +119,7 @@ public class PMS {
 	 * @param renderer {@link net.pms.configuration.RendererConfiguration}
 	 * is the renderer for which to get the RootFolder structure. If <code>null</code>,
 	 * then the default renderer is used.
-	 * @return {@link net.pms.dlna.RootFolder} The root folder structure for a given renderer
+	 * @return {@link RootFolder} The root folder structure for a given renderer
 	 */
 	public RootFolder getRootFolder(RendererConfiguration renderer) {
 		// something to do here for multiple directories views for each renderer
@@ -232,15 +240,7 @@ public class PMS {
 	 * (e.g. if the cache is disabled).
 	 */
 	public synchronized DLNAMediaDatabase getDatabase() {
-		if (configuration.getUseCache()) {
-			if (database == null) {
-				initializeDatabase();
-			}
-
-			return database;
-		}
-
-		return null;
+		return database;
 	}
 
 	/**
@@ -510,6 +510,13 @@ public class PMS {
 		}
 
 		registry = createSystemUtils();
+		
+		RendererConfiguration.loadRendererConfigurations(configuration);
+
+		//initialize plugins early
+		PluginsFactory.lookup();
+		
+		initMediaLibrary();
 
 		if (System.getProperty(CONSOLE) == null) {
 			frame = new LooksFrame(autoUpdater, configuration);
@@ -547,8 +554,6 @@ public class PMS {
 				}
 			}
 		});
-
-		RendererConfiguration.loadRendererConfigurations(configuration);
 
 		OutputParams outputParams = new OutputParams(configuration);
 
@@ -629,43 +634,19 @@ public class PMS {
 
 		server = new HTTPServer(configuration.getServerPort());
 
-		/*
-		 * XXX: keep this here (i.e. after registerExtensions and before registerPlayers) so that plugins
-		 * can register custom players correctly (e.g. in the GUI) and/or add/replace custom formats
-		 *
-		 * XXX: if a plugin requires initialization/notification even earlier than
-		 * this, then a new external listener implementing a new callback should be added
-		 * e.g. StartupListener.registeredExtensions()
-		 */
-		try {
-			ExternalFactory.lookup();
-		} catch (Exception e) {
-			LOGGER.error("Error loading plugins", e);
-		}
-
 		// Initialize a player factory to register all players
 		PlayerFactory.initialize();
 
-		// Instantiate listeners that require registered players.
-		ExternalFactory.instantiateLateListeners();
-
-		// a static block in Player doesn't work (i.e. is called too late).
-		// this must always be called *after* the plugins have loaded.
-		// here's as good a place as any
-		Player.initializeFinalizeTranscoderArgsListeners();
-
 		// Any plugin-defined players are now registered, create the gui view.
 		frame.addEngines();
+		
+		// Initialize the plugins before starting the server
+		PluginsFactory.initializePlugins();
 
-		// To make the cred stuff work cross plugins
-		// read cred file AFTER plugins are started
-		if (System.getProperty(CONSOLE) == null) {
-			// but only if we got a GUI of course
-			((LooksFrame)frame).getPt().init();
-		}
+		// Initialize the directory watcher who is responsible to update the media library when files are being changed
+		DirectoryWatcher.getInstance().startWatch();
 
 		boolean binding = false;
-
 		try {
 			binding = server.start();
 		} catch (BindException b) {
@@ -710,6 +691,8 @@ public class PMS {
 		//     b) *after* mediaLibrary is initialized, if enabled (above)
 		getRootFolder(RendererConfiguration.getDefaultConf());
 
+		StartStopNotifier.initialize();
+		
 		frame.serverReady();
 
 		ready = true;
@@ -719,9 +702,8 @@ public class PMS {
 			@Override
 			public void run() {
 				try {
-					for (ExternalListener l : ExternalFactory.getExternalListeners()) {
-						l.shutdown();
-					}
+					PluginsFactory.shutdownPlugins();
+					DirectoryWatcher.getInstance().stopWatch();
 
 					UPNPHelper.shutDownListener();
 					UPNPHelper.sendByeBye();
@@ -751,6 +733,29 @@ public class PMS {
 
 		return true;
 	}
+	
+	private void initMediaLibrary() {
+		//Initialize media library (only let pms start if the media library is working)
+		MediaLibraryStorage.configure("pms_media_library.db");
+	    if (!MediaLibraryStorage.getInstance().isFunctional()) {
+	    	LOGGER.error("Failed to properly initialize MediaLibraryStorage");
+	        JOptionPane.showMessageDialog(null, Messages.getString("PMS.100"), Messages.getString("PMS.101"), JOptionPane.ERROR_MESSAGE);
+	        System.exit(1);
+	    }
+		
+	    String picFolderPath = MediaLibraryConfiguration.getInstance().getPictureSaveFolderPath();
+		FullDataCollector.configure(picFolderPath);
+		
+		//delete thumbnails for every session
+		File thumbFolder = new File(picFolderPath + "thumbnails");
+		if(!thumbFolder.isDirectory()){
+			thumbFolder.mkdirs();
+		} else {
+			for(File f : thumbFolder.listFiles()){
+				f.delete();
+			}
+		}
+    }
 
 	private MediaLibrary mediaLibrary;
 
@@ -1166,6 +1171,9 @@ public class PMS {
 	public void save() {
 		try {
 			configuration.save();
+			if(frame != null) {
+				frame.save();
+			}
 		} catch (ConfigurationException e) {
 			LOGGER.error("Could not save configuration", e);
 		}

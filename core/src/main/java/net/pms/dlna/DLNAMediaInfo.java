@@ -288,6 +288,8 @@ public class DLNAMediaInfo implements Cloneable {
 
 	private boolean gen_thumb;
 
+	private int thumbnailSeekPos = -1;
+	
 	/**
 	 * Used to determine whether tsMuxeR can mux the file to the renderer
 	 * instead of transcoding.
@@ -421,7 +423,7 @@ public class DLNAMediaInfo implements Cloneable {
 		if (resume) {
 			args[2] = "" + (int) getDurationInSeconds();
 		} else {
-			args[2] = "" + configuration.getThumbnailSeekPos();
+			args[2] = "" + getThumbnailSeekPos();
 		}
 		
 		args[3] = "-i";
@@ -488,7 +490,7 @@ public class DLNAMediaInfo implements Cloneable {
 		if (resume) {
 			args[2] = "" + (int) getDurationInSeconds();
 		} else {
-			args[2] = "" + configuration.getThumbnailSeekPos();
+			args[2] = "" + getThumbnailSeekPos();
 		}
 
 		args[3] = "-quiet";
@@ -1574,6 +1576,14 @@ public class DLNAMediaInfo implements Cloneable {
 		}
 
 		return returnData;
+	}        
+	
+	int getThumbnailSeekPos() {
+	    return thumbnailSeekPos >= 0 ? thumbnailSeekPos : PMS.getConfiguration().getThumbnailSeekPos();	    
+	}
+	
+	public void setThumbnailSeekPos(int thumbnailSeekPos) {
+		this.thumbnailSeekPos = thumbnailSeekPos;
 	}
 
 	@Override

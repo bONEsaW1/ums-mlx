@@ -10,7 +10,10 @@ import net.pms.io.OutputParams;
  * Classes implementing this interface and packaged as pms plugins will have the
  * possibility to modify transcoding arguments when a resource is being
  * transcoded
+ * 
+ * @see net.pms.plugins.FinalizeTranscoderArgsListener
  */
+@Deprecated
 public interface FinalizeTranscoderArgsListener extends ExternalListener {
 	/**
 	 * Called before the transcoding of a resource starts to determine the list

@@ -18,6 +18,8 @@
  */
 package net.pms.medialibrary.dlna;
 
+import java.util.ArrayList;
+
 import net.pms.dlna.DLNAResource;
 import net.pms.external.AdditionalFolderAtRoot;
 import net.pms.external.AdditionalFoldersAtRoot;
@@ -28,9 +30,9 @@ import net.pms.plugins.PluginsFactory;
 /**
  * The dlna root folder is the entry point to create the dlna tree shown on the renderer
  */
-@SuppressWarnings("deprecation")
 public class RootFolder extends MediaLibraryFolder{
 	private MediaLibraryFolder rootFolder;
+	private ArrayList<String> tags;
 	
 	/**
 	 * Instantiates a new root folder.
@@ -40,6 +42,11 @@ public class RootFolder extends MediaLibraryFolder{
 		setId("0");
 	}
 	
+	public RootFolder(ArrayList<String> tags) {
+		this();
+		this.tags = tags;
+	}
+
 	/**
 	 * Gets the root folder.
 	 *
@@ -75,6 +82,18 @@ public class RootFolder extends MediaLibraryFolder{
 		addAdditionalFoldersAtRoot();
 		
 		return true;
+	}
+
+	public void setFolder(DLNAResource res) {
+		// TODO Auto-generated method stub		
+	}
+
+	public void stopPlaying(DLNAResource res) {
+		// TODO Auto-generated method stub		
+	}
+
+	public ArrayList<String> getTags() {
+		return tags;
 	}
 	
 	/**

@@ -38,7 +38,7 @@ import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAMediaSubtitle;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.Range;
-import net.pms.external.StartStopListenerDelegate;
+import net.pms.plugins.StartStopListenerDelegate;
 import net.pms.util.StringUtil;
 import net.pms.util.UMSUtils;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

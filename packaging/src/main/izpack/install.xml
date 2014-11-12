@@ -15,7 +15,7 @@
 		<appversion>${project.version}</appversion>
 		<url>${project.url}</url>
 		<uninstaller name="remove.task" path="${INSTALL_PATH}/${project.core.name}.app/Uninstall" write="no" />
-		<javaversion>1.6</javaversion>
+		<javaversion>1.7</javaversion>
 		<requiresjdk>no</requiresjdk>
 	</info>
 

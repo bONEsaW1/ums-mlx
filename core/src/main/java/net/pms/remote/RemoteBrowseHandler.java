@@ -3,14 +3,17 @@ package net.pms.remote;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+
 import net.pms.Messages;
 import net.pms.dlna.DLNAResource;
-import net.pms.dlna.RootFolder;
+import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.util.UMSUtils;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

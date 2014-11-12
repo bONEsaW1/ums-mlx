@@ -5,7 +5,10 @@ import net.pms.dlna.DLNAResource;
 /**
  * Classes implementing this interface and packaged as pms plugins will add a
  * single folder to every existing folder
+ * 
+ * @see net.pms.plugins.DlnaTreeFolderPlugin
  */
+@Deprecated
 public interface AdditionalResourceFolderListener extends ExternalListener {
 	/**
 	 * Allows to add a virtual folder resource, similar to the #transcoded
