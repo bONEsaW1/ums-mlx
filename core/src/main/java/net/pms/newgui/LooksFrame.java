@@ -572,7 +572,7 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 
 	@Override
 	public void setScanLibraryEnabled(boolean flag) {
-		getNt().setScanLibraryEnabled(flag);
+		// Do nothing (obsolete function)
 	}
 	
 	@Override
