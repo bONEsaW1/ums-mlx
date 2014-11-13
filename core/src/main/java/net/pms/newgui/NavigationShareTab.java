@@ -300,6 +300,7 @@ public class NavigationShareTab {
 		// Hide Server Settings folder
 		hidevideosettings = new JCheckBox(Messages.getString("FoldTab.38"), configuration.getHideVideoSettings());
 		hidevideosettings.setContentAreaFilled(false);
+		hidevideosettings.setEnabled(false);
 		hidevideosettings.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -406,9 +407,7 @@ public class NavigationShareTab {
 		itunes = new JCheckBox(Messages.getString("FoldTab.30"), configuration.isShowItunesLibrary());
 		itunes.setToolTipText(Messages.getString("FoldTab.47"));
 		itunes.setContentAreaFilled(false);
-		if (!(Platform.isMac() || Platform.isWindows())) {
-			itunes.setEnabled(false);
-		}
+		itunes.setEnabled(false);
 		itunes.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -419,9 +418,7 @@ public class NavigationShareTab {
 		// Show iPhoto library
 		iphoto = new JCheckBox(Messages.getString("FoldTab.29"), configuration.isShowIphotoLibrary());
 		iphoto.setContentAreaFilled(false);
-		if (!Platform.isMac()) {
-			iphoto.setEnabled(false);
-		}
+		iphoto.setEnabled(false);
 		iphoto.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -529,6 +526,7 @@ public class NavigationShareTab {
 		});
 
 		newmediafolder = new JCheckBox(Messages.getString("FoldTab.54"), configuration.isHideNewMediaFolder());
+		newmediafolder.setEnabled(false);
 		newmediafolder.setToolTipText(Messages.getString("FoldTab.60"));
 		newmediafolder.setContentAreaFilled(false);
 		newmediafolder.addItemListener(new ItemListener() {
@@ -540,6 +538,7 @@ public class NavigationShareTab {
 
 		recentlyplayedfolder = new JCheckBox(Messages.getString("FoldTab.55"), configuration.isHideRecentlyPlayedFolder());
 		recentlyplayedfolder.setContentAreaFilled(false);
+		recentlyplayedfolder.setEnabled(false);
 		recentlyplayedfolder.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
