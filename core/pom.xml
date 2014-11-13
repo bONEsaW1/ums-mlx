@@ -29,12 +29,7 @@
 	<properties>
 		
 		<!-- Used library versions -->
-		<!-- JNA 3.4.0 solves issue #1152, but causes a bug in Windows. The version 
-			is therefore overruled in the Windows profile. This property should be removed 
-			when Windows can use the same version. -->
-		<jna-version-posix>3.4.0</jna-version-posix>
-		<jna-version-windows>3.2.5</jna-version-windows>
-
+		<jna-version>4.1.0</jna-version>
 		<cuelib-version>1.2.1-2008-06-13</cuelib-version>
 		<junrar-version>0.7</junrar-version>
 		<mediautil-version>1.0</mediautil-version>
@@ -52,7 +47,7 @@
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
 		<gson-version>2.2.4</gson-version>
-		<netty-version>3.9.4.Final</netty-version>
+		<netty-version>3.9.5.Final</netty-version>
 		<rome-version>1.0.0</rome-version>
 		<thumbnailator-version>0.4.5</thumbnailator-version>
 		<jai-imageio-core-standalone-version>1.2-pre-dr-b04-2011-07-04</jai-imageio-core-standalone-version>
@@ -363,6 +358,12 @@
 			<groupId>sevenzip-allplatforms</groupId>
 			<artifactId>jbinding-allplatforms</artifactId>
 			<version>${sevenzip-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>${jna-version}</version>
 		</dependency>
 
 		<dependency>
@@ -850,14 +851,6 @@
 				</pluginRepository>
 			</pluginRepositories>
 
-			<dependencies>
-				<dependency>
-					<groupId>net.java.dev.jna</groupId>
-					<artifactId>jna</artifactId>
-					<version>${jna-version-windows}</version>
-				</dependency>
-			</dependencies>
-
 			<build>
 				<plugins>
 
@@ -924,14 +917,6 @@
 				</os>
 			</activation>
 
-			<dependencies>
-				<dependency>
-					<groupId>net.java.dev.jna</groupId>
-					<artifactId>jna</artifactId>
-					<version>${jna-version-posix}</version>
-				</dependency>
-			</dependencies>
-
 			<build>
 				<plugins>
 					<!-- Download external resources. -->
@@ -982,14 +967,6 @@
 					<family>mac</family>
 				</os>
 			</activation>
-
-			<dependencies>
-				<dependency>
-					<groupId>net.java.dev.jna</groupId>
-					<artifactId>jna</artifactId>
-					<version>${jna-version-posix}</version>
-				</dependency>
-			</dependencies>
 
 			<build>
 				<plugins>
@@ -1049,14 +1026,6 @@
 					<name>env.HUDSON_URL</name>
 				</property>
 			</activation>
-
-			<dependencies>
-				<dependency>
-					<groupId>net.java.dev.jna</groupId>
-					<artifactId>jna</artifactId>
-					<version>${jna-version-windows}</version>
-				</dependency>
-			</dependencies>
 		</profile>
 
 		<!-- This profile allows running PMS from inside Eclipse -->
