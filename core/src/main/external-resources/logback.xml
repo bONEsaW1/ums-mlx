@@ -75,6 +75,9 @@
 	<logger name="net.pms.network.RequestHandlerV2" level="ALL" />
 	<logger name="net.pms.util" level="ALL" />
 	-->
+	<logger name="com.omertron">
+		<level value="off" />
+	</logger>
 
 	<!-- silence noise from external libraries -->
 	<logger name="org.apache" level="WARN" />

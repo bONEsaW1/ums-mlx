@@ -20,22 +20,22 @@
 		<dependency>
 			<groupId>com.omertron</groupId>
 			<artifactId>themoviedbapi</artifactId>
-			<version>3.8</version>
+			<version>3.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.2.3</version>
+			<version>2.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.2.3</version>
+			<version>2.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.2.3</version>
+			<version>2.3.0</version>
 		</dependency>
 	</dependencies>
 
@@ -58,22 +58,22 @@
 								<artifactItem>
 									<groupId>com.omertron</groupId>
 									<artifactId>themoviedbapi</artifactId>
-									<version>3.7</version>
+									<version>3.9</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.fasterxml.jackson.core</groupId>
 									<artifactId>jackson-core</artifactId>
-									<version>2.2.3</version>
+									<version>2.3.0</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.fasterxml.jackson.core</groupId>
 									<artifactId>jackson-annotations</artifactId>
-									<version>2.2.3</version>
+									<version>2.3.0</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.fasterxml.jackson.core</groupId>
 									<artifactId>jackson-databind</artifactId>
-									<version>2.2.3</version>
+									<version>2.3.0</version>
 								</artifactItem>
 							</artifactItems>
 							<includeArtifactIds>themoviedbapi,jackson-core,jackson-annotations,jackson-databind</includeArtifactIds>
