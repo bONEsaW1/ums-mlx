@@ -230,7 +230,12 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 			}
 			break;
 		case VIDEO_COVERURL:
-			res = ((String) getValue("Poster")).replaceAll("SX320", "SX" + globalConfig.getCoverWidth());
+			String coverUrl = (String) getValue("Poster");
+			if(coverUrl == null || coverUrl.equals("")) {
+				res = null;
+			} else {
+				res = coverUrl.replaceAll("SX300", "SX" + globalConfig.getCoverWidth());
+			}
 			break;
 		case VIDEO_DIRECTOR:
 			res = getValue("Director");
@@ -267,7 +272,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 					if(!globalConfig.isUseRottenTomatoes()) {
 						res = (int)(10 * r);
 					}else{
-						res = r;
+						res = (int)r;
 					}
 				} catch (NumberFormatException ex) {
 					logger.error(String.format("Failed to parse rating='%s' as a double", ratingObj.toString()), ex);

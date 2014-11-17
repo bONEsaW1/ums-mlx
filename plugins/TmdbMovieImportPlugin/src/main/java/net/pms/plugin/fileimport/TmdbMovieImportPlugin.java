@@ -110,8 +110,9 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 				String moviesStr = String.format("Movie matched for '%s' on TMDb has id=%s, name='%s'", title, movies.getResults().get(0).getId(), movies.getResults().get(0).getTitle());
 				if(size > 1){
 					moviesStr += ". other (not considered) matches are ";
-					for(int i = 0; i < size; i++) {
-						moviesStr += String.format("id=%s, name='%s';", movies.getResults().get(i).getId(), movies.getResults().get(i).getTitle());
+					for(int i = 0; i < movies.getResults().size(); i++) {
+						MovieDb movie = movies.getResults().get(i);
+						moviesStr += String.format("id=%s, name='%s';", movie.getId(), movie.getTitle());
 					}
 					moviesStr = moviesStr.substring(0, moviesStr.length() - 2);
 				}
