@@ -3,16 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>pms-iphoto-dlna-folder-plugin</artifactId>
+	<artifactId>ums-iphoto-dlna-folder-plugin</artifactId>
 	<version>3.1.2-SNAPSHOT</version>
 
-	<name>PMS iPhoto DLNA Folder Plugin</name>
+	<name>UMS iPhoto DLNA Folder Plugin</name>
 	<description>This plugin will add a folder containing the iPhoto library</description>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>github.com.taconaut</groupId>
-		<artifactId>pms-plugins</artifactId>
+		<artifactId>ums-plugins</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 	

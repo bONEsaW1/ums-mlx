@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!--
-        PMS consists of two major parts: PMS itself and the third party software 
+        UMS consists of two major parts: UMS itself and the third party software 
         needed to run it. While PMS itself is 100% pure Java, some of the third party 
         software is not. This means building a platform specific distribution boils 
         down to first building the pms.jar and then assembling all application resources. 
@@ -27,11 +27,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>github.com.taconaut</groupId>
-	<artifactId>pms</artifactId>
-	<version>1.90.2-mlx-1.1.1-SNAPSHOT</version>
+	<artifactId>ums</artifactId>
+	<version>4.2.2-mlx-1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>PMS</name>
-	<url>http://www.ps3mediaserver.org/</url>
+	<name>UMS</name>
+	<url>http://www.universalmediaserver.org/</url>
 	<inceptionYear>2008</inceptionYear>
 
 	<!-- this is not required, but is recommended for plugin version checks -->
@@ -40,8 +40,8 @@
 	</prerequisites>
 
 	<organization>
-		<name>PS3 Media Server MLX</name>
-		<url>http://www.ps3mediaserver.org/</url>
+		<name>Universal Media Server MLX</name>
+		<url>http://www.universalmediaserver.org/</url>
 	</organization>
 
 	<licenses>
@@ -53,33 +53,33 @@
 	</licenses>
 
 	<description>
-		PS3 Media Server is a cross-platform DLNA-compliant UPnP Media Server.
+		Universal Media Server is a cross-platform DLNA-compliant UPnP Media Server.
 		Originally written to support the PlayStation 3, PS3 Media Server has been
 		expanded to support a range of other media renderers, including smartphones,
 		televisions, music players and more.
 	</description>
 
 	<scm>
-		<connection>scm:git:git@github.com:taconaut/pms-mlx.git</connection>
-		<developerConnection>scm:git:git@github.com:taconaut/pms-mlx.git</developerConnection>
+		<connection>scm:git:git@github.com:taconaut/ums-mlx.git</connection>
+		<developerConnection>scm:git:git@github.com:taconaut/ums-mlx.git</developerConnection>
 		<tag>master</tag>
-		<url>git@github.com:taconaut/pms-mlx.git</url>
+		<url>git@github.com:taconaut/ums-mlx.git</url>
 	</scm>
 
 	<issueManagement>
 		<system>Github</system>
-		<url>https://github.com/taconaut/pms-mlx/issues</url>
+		<url>https://github.com/taconaut/ums-mlx/issues</url>
 	</issueManagement>
 
 	<ciManagement>
 		<system>Jenkins</system>
-		<url>http://ps3mediaserver-ci.hopto.org:9999/job/pms-mlx%20trunk</url>
+		<url>http://ps3mediaserver-ci.hopto.org:9999/job/ums-mlx%20trunk</url>
 	</ciManagement>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<version>9</version>
 	</parent>
 
 	<modules>

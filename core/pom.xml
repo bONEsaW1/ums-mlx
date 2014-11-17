@@ -15,15 +15,15 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>pms-core</artifactId>
-	<name>PMS Core</name>
+	<artifactId>ums-core</artifactId>
+	<name>UMS Core</name>
 	<packaging>jar</packaging>
-	<description>The core of pms-mlx includes the business code as well as the GUI</description>
+	<description>The core of ums-mlx includes the business code as well as the GUI</description>
 
 	<parent>
 		<groupId>github.com.taconaut</groupId>
-		<artifactId>pms</artifactId>
-		<version>1.90.2-mlx-1.1.1-SNAPSHOT</version>
+		<artifactId>ums</artifactId>
+		<version>4.2.2-mlx-1.2-SNAPSHOT</version>
 	</parent>
 
 	<properties>

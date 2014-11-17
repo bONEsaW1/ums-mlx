@@ -5,18 +5,18 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>pms-packaging</artifactId>
+	<artifactId>ums-packaging</artifactId>
 
-	<name>PMS Packaging</name>
-	<description>This module creates OS specific distribution packages for PMS.</description>
+	<name>UMS Packaging</name>
+	<description>This module creates OS specific distribution packages for UMS.</description>
 	<packaging>jar</packaging>
 	<url>http://www.ps3mediaserver.org/</url>
 	<inceptionYear>2008</inceptionYear>
 
 	<parent>
 		<groupId>github.com.taconaut</groupId>
-		<artifactId>pms</artifactId>
-		<version>1.90.2-mlx-1.1.1-SNAPSHOT</version>
+		<artifactId>ums</artifactId>
+		<version>4.2.2-mlx-1.2-SNAPSHOT</version>
 	</parent>
 
 	<properties>

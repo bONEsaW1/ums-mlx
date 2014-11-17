@@ -3,16 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>pms-web-dlna-folder-plugin</artifactId>
+	<artifactId>ums-web-dlna-folder-plugin</artifactId>
 	<version>2.1.2-SNAPSHOT</version>
 
-	<name>PMS Web DLNA Folder Plugin</name>
+	<name>UMS Web DLNA Folder Plugin</name>
 	<description>Adds a web folder</description>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>github.com.taconaut</groupId>
-		<artifactId>pms-plugins</artifactId>
+		<artifactId>ums-plugins</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 
