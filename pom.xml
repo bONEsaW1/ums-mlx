@@ -184,7 +184,7 @@
 		<transcode-tools.download.url>http://downloads.sourceforge.net/project/ums-mlx/ums-tools</transcode-tools.download.url>
 		<transcode-tools.linux.filename>transcode-tools-linux-20131127.tar.gz</transcode-tools.linux.filename>
 		<transcode-tools.macosx.filename>transcode-tools-osx-20131126.tar.gz</transcode-tools.macosx.filename>
-		<transcode-tools.windows.x86.filename>transcode-tools-win32-20131126.tar.gz</transcode-tools.windows.x86.filename>
+		<transcode-tools.windows.x86.filename>transcode-tools-win32-20141113.tar.gz</transcode-tools.windows.x86.filename>
 	</properties>
 
 	<build>
