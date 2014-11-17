@@ -35,7 +35,7 @@ import net.pms.dlna.DLNAResource;
 public class FileScannerDlnaResource extends DLNAResource {
 
 	public FileScannerDlnaResource() {
-		setDefaultRenderer(RendererConfiguration.getRendererConfigurationByName("FileParsingRenderer"));
+		setDefaultRenderer(RendererConfiguration.getRendererConfigurationByName("File parsing (used by mlx)"));
 	}
 
 	@Override
