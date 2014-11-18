@@ -51,8 +51,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>github.com.taconaut</groupId>
-			<artifactId>pms-core</artifactId>
-			<version>1.90.2-mlx-1.1.1-SNAPSHOT</version>
+			<artifactId>ums-core</artifactId>
+			<version>4.2.2-mlx-1.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
