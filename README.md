@@ -1,5 +1,7 @@
 # Universal Media Server 
 
+[![Build Status](http://ps3mediaserver-ci.hopto.org:9999/job/ums-mlx%20trunk/badge/icon)](http://ps3mediaserver-ci.hopto.org:9999/job/ums-mlx%20trunk)
+
 [<img align="right" src="https://github.com/UniversalMediaServer/UniversalMediaServer/blob/master/src/main/resources/images/logo.png?raw=true" alt="Universal Media Server" width="256" height="auto"/>][1] Universal Media Server is a DLNA-compliant UPnP Media Server.
 It was originally based on PS3 Media Server by shagrath.
 UMS was started by SubJunk, an official developer of PMS, in order to ensure greater stability and file-compatibility.
