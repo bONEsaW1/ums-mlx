@@ -31,3 +31,4 @@ packaging/src/main/external-resources/transcode-tools/transcode-tools-*
 packaging/src/main/external-resources/transcode-tools/linux/*
 packaging/src/main/external-resources/transcode-tools/osx/*
 packaging/src/main/external-resources/transcode-tools/win32/*
+/core/web
