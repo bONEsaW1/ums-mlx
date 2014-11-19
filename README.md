@@ -82,3 +82,5 @@ It is powered by MEncoder, FFmpeg, tsMuxeR, AviSynth, MediaInfo, VLC and more, w
   [12]: https://github.com/UniversalMediaServer/UniversalMediaServer/issues?state=open
   [13]: http://www.universalmediaserver.com/faq/
   [14]: https://github.com/UniversalMediaServer/UniversalMediaServer/wiki
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/taconaut/ums-mlx/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
