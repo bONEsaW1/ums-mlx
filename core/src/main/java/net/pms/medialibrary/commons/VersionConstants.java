@@ -24,10 +24,10 @@ package net.pms.medialibrary.commons;
 public class VersionConstants {
 	
 	/** Specifies the database version. */
-	public static final String DB_VERSION = "1.3";
+	public static final String DB_VERSION = "1.4";
 	
 	/** Specifies the version of imported data for video files. */
-	public static final int VIDEO_FILE_VERSION = 1;
+	public static final int VIDEO_FILE_VERSION = 2;
 	
 	/** Specifies the version of imported data for audio files. */
 	public static final int AUDIO_FILE_VERSION = 0;

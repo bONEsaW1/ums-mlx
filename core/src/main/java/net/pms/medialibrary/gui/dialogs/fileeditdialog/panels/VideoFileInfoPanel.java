@@ -243,6 +243,9 @@ public class VideoFileInfoPanel extends JPanel implements IFilePropertiesEditor 
 		builder.add(new JHeader(ConditionType.VIDEO_REFERENCEFRAMECOUNT), cc.xy(2, 22));
 		builder.addLabel(String.valueOf(fileInfo.getReferenceFrameCount()), cc.xy(4, 22));
 
+		builder.add(new JHeader(ConditionType.VIDEO_STEREOSCOPY), cc.xy(6, 22));
+		builder.addLabel(String.valueOf(fileInfo.getStereoscopy()), cc.xy(8, 22));
+
 		// Line 6
 		builder.add(new JHeader(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO), cc.xy(2, 24));
 		builder.addLabel(fileInfo.getDisplayString("%audio_languages"),  cc.xyw(4, 24, 5));

@@ -143,7 +143,7 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 					res = video.getAgeRating().getReason();
 					break;
 				case VIDEO_ASPECTRATIO:
-					res = video.getAspectRatio();
+					res = video.getAspectRatioDvdIso();
 					break;
 				case VIDEO_BITRATE:
 					res = video.getBitrate();
@@ -287,6 +287,9 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 					break;
 				case VIDEO_REFERENCEFRAMECOUNT:
 					res = video.getReferenceFrameCount();
+					break;
+				case VIDEO_STEREOSCOPY:
+					res = video.getStereoscopy();
 					break;
 				default:
 					break;

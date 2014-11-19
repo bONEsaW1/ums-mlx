@@ -48,7 +48,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 	private List<String> genres = new ArrayList<String>();
 	private String director = "";
 	
-	private String aspectRatio = "";
+	private String aspectRatioDvdIso = "";
 	private int bitrate = 0;
 	private int bitsPerPixel = 0;
 	private String codecV = "";
@@ -70,6 +70,9 @@ public class DOVideoFileInfo extends DOFileInfo {
 	private String aspectRatioVideoTrack;
 	private byte referenceFrameCount;
 	private String avcLevel;
+	private String stereoscopy;
+	private String matrixCoefficients;
+	private boolean embeddedFontExists;
 	
 	public DOVideoFileInfo() {
 		setType(FileType.VIDEO);
@@ -366,16 +369,16 @@ public class DOVideoFileInfo extends DOFileInfo {
 	    return homepageUrl;
     }
 
-	public void setAspectRatio(String aspectRatio) {
-		if(!getAspectRatio().equals(aspectRatio)) {
-		    this.aspectRatio = aspectRatio;
+	public void setAspectRatioDvdIso(String aspectRatio) {
+		if(!getAspectRatioDvdIso().equals(aspectRatio)) {
+		    this.aspectRatioDvdIso = aspectRatio;
 		    firepropertyChangedEvent(ConditionType.VIDEO_ASPECTRATIO);
 	    }
     }
 
-	public String getAspectRatio() {
-		if(aspectRatio == null) aspectRatio ="";
-	    return aspectRatio;
+	public String getAspectRatioDvdIso() {
+		if(aspectRatioDvdIso == null) aspectRatioDvdIso ="";
+	    return aspectRatioDvdIso;
     }
 
 	public void setBitrate(int bitrate) {
@@ -614,6 +617,32 @@ public class DOVideoFileInfo extends DOFileInfo {
 		this.avcLevel = avcLevel;
 	}
 
+	public String getStereoscopy() {
+		if(stereoscopy == null) stereoscopy = "";
+		return stereoscopy;
+	}
+
+	public void setStereoscopy(String stereoscopy) {
+		this.stereoscopy = stereoscopy;
+	}
+
+	public String getMatrixCoefficients() {
+		if(matrixCoefficients == null) matrixCoefficients = "";
+		return matrixCoefficients;
+	}
+
+	public void setMatrixCoefficients(String matrixCoefficients) {
+		this.matrixCoefficients = matrixCoefficients;
+	}
+
+	public boolean isEmbeddedFontExists() {
+		return embeddedFontExists;
+	}
+
+	public void setEmbeddedFontExists(boolean embeddedFontExists) {
+		this.embeddedFontExists = embeddedFontExists;
+	}
+
 	/* (non-Javadoc)
 	 * @see net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetConfigurablePropertiesFrom(net.pms.medialibrary.commons.dataobjects.DOFileInfo)
 	 */
@@ -699,8 +728,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 		}
 		
 		DOVideoFileInfo videoFileInfo = (DOVideoFileInfo) fileInfo;
-		if(!videoFileInfo.getAspectRatio().equals("")) {
-			setAspectRatio(videoFileInfo.getAspectRatio());
+		if(!videoFileInfo.getAspectRatioDvdIso().equals("")) {
+			setAspectRatioDvdIso(videoFileInfo.getAspectRatioDvdIso());
 		}
 		if(videoFileInfo.getBitrate() > 0) {
 			setBitrate(videoFileInfo.getBitrate());
@@ -756,6 +785,12 @@ public class DOVideoFileInfo extends DOFileInfo {
 		if(videoFileInfo.getReferenceFrameCount() > 0) {
 			setReferenceFrameCount(videoFileInfo.getReferenceFrameCount());
 		}
+		if(!videoFileInfo.getStereoscopy().equals("")) {
+			setStereoscopy(videoFileInfo.getStereoscopy());
+		}
+		if(!videoFileInfo.getMatrixCoefficients().equals("")) {
+			setMatrixCoefficients(videoFileInfo.getMatrixCoefficients());
+		}
 		
 		List<DLNAMediaAudio> audioCodes = getAudioCodes();
 		for(DLNAMediaAudio audioCode : videoFileInfo.getAudioCodes()) {
@@ -772,6 +807,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 		}
 
 		setMuxable(videoFileInfo.isMuxable());
+		setEmbeddedFontExists(videoFileInfo.isEmbeddedFontExists());
 	}
 
 	@Override
@@ -799,7 +835,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 		hashCode *= 24 + getGenres().hashCode();
 		hashCode *= 24 + getDirector().hashCode();
 
-		hashCode *= 24 + getAspectRatio().hashCode();
+		hashCode *= 24 + getAspectRatioDvdIso().hashCode();
 		hashCode *= 24 + getBitrate();
 		hashCode *= 24 + getBitsPerPixel();
 		hashCode *= 24 + getCodecV().hashCode();
@@ -820,6 +856,10 @@ public class DOVideoFileInfo extends DOFileInfo {
 		hashCode *= 24 + getReferenceFrameCount();
 		hashCode *= 24 + getAspectRatioContainer().hashCode();
 		hashCode *= 24 + getAspectRatioVideoTrack().hashCode();
+		hashCode *= 24 + getStereoscopy().hashCode();
+		hashCode *= 24 + getMatrixCoefficients().hashCode();
+		hashCode *= 24 + (isEmbeddedFontExists() ? 3 : 4);
+		
 		return hashCode;
 	}
 	
@@ -852,7 +892,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 				&& getTrailerUrl().equals(compObj.getTrailerUrl())
 				&& getGenres().equals(compObj.getGenres())
 				&& getDirector().equals(compObj.getDirector())				
-				&& getAspectRatio().equals(compObj.getAspectRatio())
+				&& getAspectRatioDvdIso().equals(compObj.getAspectRatioDvdIso())
 				&& getBitrate() == compObj.getBitrate()
 				&& getBitsPerPixel() == compObj.getBitsPerPixel()
 				&& getCodecV().equals(compObj.getCodecV())
@@ -871,7 +911,10 @@ public class DOVideoFileInfo extends DOFileInfo {
 				&& getAvcLevel().equals(compObj.getAvcLevel())
 				&& getReferenceFrameCount() == compObj.getReferenceFrameCount()
 				&& getAspectRatioContainer().equals(compObj.getAspectRatioContainer())
-				&& getAspectRatioVideoTrack().equals(compObj.getAspectRatioVideoTrack())){
+				&& getAspectRatioVideoTrack().equals(compObj.getAspectRatioVideoTrack())
+				&& getStereoscopy().equals(compObj.getStereoscopy())
+				&& getMatrixCoefficients().equals(compObj.getMatrixCoefficients())
+				&& isEmbeddedFontExists() == compObj.isEmbeddedFontExists()){
 			
 				if(!getAudioCodes().equals(compObj.getAudioCodes())){
 					return false;

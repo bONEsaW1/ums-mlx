@@ -269,6 +269,9 @@ class DBInitializer extends DBBase {
 			sb.append(", ASPECTRATIOVIDEOTRACK VARCHAR2(6)");
 			sb.append(", REFRAMES          TINYINT");
 			sb.append(", AVCLEVEL          VARCHAR2(3)");
+			sb.append(", STEREOSCOPY       VARCHAR2(255)");
+			sb.append(", MATRIXCOEFFICIENTS VARCHAR2(16)");
+			sb.append(", EMBEDDEDFONTEXISTS BIT NOT NULL");
 			sb.append(", CONSTRAINT PK_VIDEO PRIMARY KEY (ID))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEO_RATINGPERCENT ON VIDEO (RATINGPERCENT asc);");
@@ -690,6 +693,10 @@ class DBInitializer extends DBBase {
 			updateDb12_13();
 			realStorageVersion = "1.3";
 		}
+		if(realStorageVersion.equals("1.3")){
+			updateDb13_14();
+			realStorageVersion = "1.4";
+		}
 	}
 
 	private void updateDb01_02() {
@@ -1089,6 +1096,31 @@ class DBInitializer extends DBBase {
 			if(log.isInfoEnabled()) log.info("Updated DB from version 1.2 to 1.3");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.2 to 1.3", se);
+		} finally {
+			close(conn, stmt);
+    	}
+	}
+
+	private void updateDb13_14() {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = cp.getConnection();
+			
+			//do updates
+			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD STEREOSCOPY VARCHAR2(255)");
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD MATRIXCOEFFICIENTS VARCHAR2(16)");
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD EMBEDDEDFONTEXISTS BIT NOT NULL DEFAULT 0");
+			stmt.executeUpdate();
+			
+			//update db version
+			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.4");
+			if(log.isInfoEnabled()) log.info("Updated DB from version 1.3 to 1.4");
+		} catch (SQLException se) {
+			log.error("Failed to update DB from version 1.3 to 1.4", se);
 		} finally {
 			close(conn, stmt);
     	}

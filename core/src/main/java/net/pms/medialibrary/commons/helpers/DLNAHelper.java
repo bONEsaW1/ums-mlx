@@ -27,6 +27,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.pms.configuration.FormatConfiguration;
 import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.FileTranscodeVirtualFolder;
@@ -45,7 +46,7 @@ public class DLNAHelper {
 		dbMedia.setSize(video.getSize());
 		dbMedia.setCodecV(video.getCodecV());
 		dbMedia.setFrameRate(video.getFrameRate());
-		dbMedia.setAspect(video.getAspectRatio() == null || video.getAspectRatio().equals("") ? null : video.getAspectRatio());
+		dbMedia.setAspectRatioDvdIso(video.getAspectRatioDvdIso() == null || video.getAspectRatioDvdIso().equals("") ? null : video.getAspectRatioDvdIso());
 		dbMedia.setAspectRatioContainer(video.getAspectRatioContainer());
 		dbMedia.setAspectRatioVideoTrack(video.getAspectRatioVideoTrack());
 		dbMedia.setReferenceFrameCount(video.getReferenceFrameCount());
@@ -54,7 +55,9 @@ public class DLNAHelper {
 		dbMedia.setThumb(getThumb(video.getThumbnailPath()));
 		dbMedia.setContainer(video.getContainer());
 		dbMedia.setModel(video.getModel());
-		dbMedia.setMediaparsed(true);
+		if (dbMedia.getModel() != null && !FormatConfiguration.JPG.equals(dbMedia.getContainer())) {
+			dbMedia.setExtrasAsString(dbMedia.getModel());
+		}
 
 		dbMedia.setAudioTracksList(video.getAudioCodes());
 		dbMedia.setSubtitleTracksList(video.getSubtitlesCodes());
@@ -67,6 +70,12 @@ public class DLNAHelper {
 		dbMedia.setMuxingMode(video.getMuxingMode());
 		dbMedia.setFrameRateMode(video.getFrameRateMode());
 
+		dbMedia.setStereoscopy(video.getStereoscopy());
+		dbMedia.setMatrixCoefficients(video.getMatrixCoefficients());
+		dbMedia.setEmbeddedFontExists(video.isEmbeddedFontExists());
+
+		dbMedia.setMediaparsed(true);
+		
 		return dbMedia;
 	}	
 	

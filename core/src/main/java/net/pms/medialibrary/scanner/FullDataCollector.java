@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.RealFile;
-import net.pms.medialibrary.commons.MediaLibraryConfiguration;
 import net.pms.medialibrary.commons.VersionConstants;
 import net.pms.medialibrary.commons.dataobjects.DOFileInfo;
 import net.pms.medialibrary.commons.dataobjects.DOAudioFileInfo;
@@ -159,7 +158,7 @@ public class FullDataCollector {
 			DLNAMediaInfo mi = rf.getMedia();
 			
 			try{
-				fi.setAspectRatio(mi.getAspect());
+				fi.setAspectRatioDvdIso(mi.getAspectRatioDvdIso());
 				fi.setBitrate(mi.getBitrate());
 				fi.setBitsPerPixel(mi.getBitsPerPixel());
 				if(mi.getCodecV() != null) fi.setCodecV(mi.getCodecV());
@@ -179,6 +178,9 @@ public class FullDataCollector {
 				fi.setAspectRatioVideoTrack(mi.getAspectRatioVideoTrack());
 				fi.setReferenceFrameCount(mi.getReferenceFrameCount());
 				fi.setAvcLevel(mi.getAvcLevel());
+				fi.setStereoscopy(mi.getStereoscopy());
+				fi.setMatrixCoefficients(mi.getMatrixCoefficients());
+				fi.setEmbeddedFontExists(mi.isEmbeddedFontExists());
 				if(mi.getSubtitleTracksList() != null) fi.setSubtitlesCodes(mi.getSubtitleTracksList());
 				if(mi.getAudioTracksList() != null) fi.setAudioCodes(mi.getAudioTracksList());
 			}catch(Exception ex){
