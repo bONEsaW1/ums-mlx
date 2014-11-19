@@ -156,7 +156,6 @@ public class FileDisplayer extends JPanel {
 		}
 		
 		// Show a wait cursor as this can be a lengthy operation
-		Cursor previousCursor = getCursor();
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		
 		List<DOFileInfo> files = new ArrayList<DOFileInfo>();
@@ -177,7 +176,7 @@ public class FileDisplayer extends JPanel {
 
 		isFilterApplied = true;
 		
-		setCursor(previousCursor);
+		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 	private void repositionExpandFilterLabel(){
