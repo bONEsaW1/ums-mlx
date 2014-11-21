@@ -18,9 +18,9 @@ VIAddVersionKey "FileDescription" "${APPLICATION_NAME}"
 VIAddVersionKey "FileVersion" "${PROJECT_VERSION}"
 VIProductVersion "${PROJECT_VERSION_SHORT}.0"
  
-!define JARPATH "${PROJECT_BASEDIR}\target\pms.jar"
+!define JARPATH "${PROJECT_BASEDIR}\target\ums.jar"
 !define CLASS "net.pms.PMS"
-!define PRODUCT_NAME "PMS-MLX"
+!define PRODUCT_NAME "UMS-MLX"
  
 ; Definitions for Java
 !define JRE6_VERSION "6.0"
@@ -50,9 +50,9 @@ Section ""
   ; change for your purpose (-jar etc.)
   ${GetParameters} $1
   ${If} $SERVER_JRE_FOUND == 'yes'
-    StrCpy $0 '"$R0" -classpath update.jar;pms.jar -server -Xmx1024M -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
+    StrCpy $0 '"$R0" -classpath update.jar;ums.jar -server -Xmx1024M -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
   ${Else}
-    StrCpy $0 '"$R0" -classpath update.jar;pms.jar -Xmx1024M -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
+    StrCpy $0 '"$R0" -classpath update.jar;ums.jar -Xmx1024M -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
   ${EndIf}
 
   SetOutPath $EXEDIR

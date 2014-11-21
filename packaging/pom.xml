@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- This pom takes care of packaging PMS for the different operating systems. -->
+	<!-- This pom takes care of packaging UMS for the different operating systems. -->
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -10,8 +10,8 @@
 	<name>UMS Packaging</name>
 	<description>This module creates OS specific distribution packages for UMS.</description>
 	<packaging>jar</packaging>
-	<url>http://www.ps3mediaserver.org/</url>
-	<inceptionYear>2008</inceptionYear>
+	<url>http://www.universalmediaserver.com/</url>
+	<inceptionYear>2012</inceptionYear>
 
 	<parent>
 		<groupId>github.com.taconaut</groupId>
@@ -21,9 +21,9 @@
 
 	<properties>
 		<!-- NSIS needs a version without "-SNAPSHOT" or "-b1" -->
-		<project.version.short>1.90.2</project.version.short>
+		<project.version.short>4.2.2</project.version.short>
 
-		<project.core.name>PS3 Media Server MLX</project.core.name>
+		<project.core.name>Universal Media Server MLX</project.core.name>
 		
 		<!-- Resource properties -->
 		<project.binaries>${project.basedir}/target/bin</project.binaries>
@@ -149,7 +149,7 @@
 							<mainClass>net.pms.PMS</mainClass>
 							<!--
 								this is required to make the ImageIo image "plugins" provided by jai-imageio-core-standalone work.
-								without it, the following exception is thrown when PMS starts:
+								without it, the following exception is thrown when UMS starts:
 									
 								Configuration error: java.util.ServiceConfigurationError: javax.imageio.spi.ImageInputStreamSpi:
 								Provider com.sun.media.imageioimpl.stream.ChannelImageInputStreamSpi could not be instantiated:
@@ -175,7 +175,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Copy the pms-x.x.x-jar-with-dependencies.jar to pms.jar. -->
+			<!-- Copy the ums-x.x.x-jar-with-dependencies.jar to ums.jar. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -189,8 +189,8 @@
 						</goals>
 						<configuration>
 							<target>
-								<!-- Copy the pms-x.x.x-jar-with-dependencies.jar to pms.jar -->
-								<copy file="${project.basedir}/target/${project.artifactId}-${project.version}-jar-with-dependencies.jar" tofile="${project.basedir}/target/pms.jar" overwrite="true" />
+								<!-- Copy the ums-x.x.x-jar-with-dependencies.jar to ums.jar -->
+								<copy file="${project.basedir}/target/${project.artifactId}-${project.version}-jar-with-dependencies.jar" tofile="${project.basedir}/target/ums.jar" overwrite="true" />
 							</target>
 						</configuration>
 					</execution>
@@ -202,7 +202,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-pms-dependencies</id>
+						<id>copy-ums-dependencies</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
@@ -368,7 +368,6 @@
 				</resources>
 
 				<plugins>
-					<!-- Plugin to move the pms-x.x.x-jar-with-dependencies.jar to pms.jar -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -488,10 +487,10 @@
 						<version>${nsis-maven-plugin-version}</version>
 						<executions>
 							<execution>
-								<id>build-pms-windows</id>
+								<id>build-ums-windows</id>
 								<configuration>
 									<makensisBin>${makensis-bin}</makensisBin>
-									<outputFile>${project.build.directory}/pms.exe</outputFile>
+									<outputFile>${project.build.directory}/ums.exe</outputFile>
 									<setupScript>${project.external-resources.directory}/nsis/pms.nsi</setupScript>
 								</configuration>
 								<phase>package</phase>
@@ -502,10 +501,10 @@
 							</execution>
 
 							<execution>
-								<id>build-pms-setup-full-x86-exe-windows</id>
+								<id>build-ums-setup-full-x86-exe-windows</id>
 								<configuration>
 									<makensisBin>${makensis-bin}</makensisBin>
-									<outputFile>${project.build.directory}/pms-${project.version}-setup-windows-full-x86.exe</outputFile>
+									<outputFile>${project.build.directory}/ums-${project.version}-setup-windows-full-x86.exe</outputFile>
 									<setupScript>${project.external-resources.directory}/nsis/setup-x86.nsi</setupScript>
 								</configuration>
 								<phase>package</phase>
@@ -516,10 +515,10 @@
 							</execution>
 
 							<execution>
-								<id>build-pms-setup-full-x64-exe-windows</id>
+								<id>build-ums-setup-full-x64-exe-windows</id>
 								<configuration>
 									<makensisBin>${makensis-bin}</makensisBin>
-									<outputFile>${project.build.directory}/pms-${project.version}-setup-windows-full-x64.exe</outputFile>
+									<outputFile>${project.build.directory}/ums-${project.version}-setup-windows-full-x64.exe</outputFile>
 									<setupScript>${project.external-resources.directory}/nsis/setup-x64.nsi</setupScript>
 								</configuration>
 								<phase>package</phase>
@@ -530,10 +529,10 @@
 							</execution>
 
 							<execution>
-								<id>build-pms-setup-without-jre-exe-windows</id>
+								<id>build-ums-setup-without-jre-exe-windows</id>
 								<configuration>
 									<makensisBin>${makensis-bin}</makensisBin>
-									<outputFile>${project.build.directory}/pms-${project.version}-setup-windows-without-jre.exe</outputFile>
+									<outputFile>${project.build.directory}/ums-${project.version}-setup-windows-without-jre.exe</outputFile>
 									<setupScript>${project.external-resources.directory}/nsis/setup-without-jre.nsi</setupScript>
 								</configuration>
 								<phase>package</phase>
@@ -575,18 +574,18 @@
 				</resources>
 
 				<plugins>
-					<!-- Assemble the PMS tar.gz archive distribution file. -->
+					<!-- Assemble the UMS tar.gz archive distribution file. -->
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>make-pms-tar-gz-archive-linux</id>
+								<id>make-ums-tar-gz-archive-linux</id>
 								<phase>package</phase>
 								<goals>
 									<goal>single</goal>
 								</goals>
 								<configuration>
-									<finalName>pms-${project.version}-generic-linux-unix</finalName>
+									<finalName>ums-${project.version}-generic-linux-unix</finalName>
 									<appendAssemblyId>false</appendAssemblyId>
 									<descriptors>
 										<descriptor>${project.basedir}/src/main/assembly/assembly-linux.xml</descriptor>
@@ -731,10 +730,10 @@
 
 										<!-- Copy files to IzPack staging directory -->		
 										<copy file="src/main/izpack/logo.png" todir="${izpack.staging}" overwrite="true" />
-										<copy file="${project.external-resources.directory}/osx/Info.plist-template-pms" tofile="${izpack.staging}/osx/Info.plist" overwrite="true" />
-										<copy file="${project.external-resources.directory}/osx/pms.sh" todir="${izpack.staging}/osx" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/Info.plist-template-ums" tofile="${izpack.staging}/osx/Info.plist" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/ums.sh" todir="${izpack.staging}/osx" overwrite="true" />
 										<copy file="${project.external-resources.directory}/osx/copy-installer-jre.sh" todir="${izpack.staging}/osx" overwrite="true" />
-										<copy file="${project.external-resources.directory}/osx/pms.icns" todir="${izpack.staging}/osx" overwrite="true" />
+										<copy file="${project.external-resources.directory}/osx/ums.icns" todir="${izpack.staging}/osx" overwrite="true" />
 									</target>
 								</configuration>
 							</execution>
@@ -796,7 +795,7 @@
 		
 										<chmod dir="${izpack.installer.app}/Contents/MacOs/" perm="a+x" includes="*" />
 		
-										<tar destfile="${project.build.directory}/pms-${project.version}-setup-macosx.tar.gz"
+										<tar destfile="${project.build.directory}/ums-${project.version}-setup-macosx.tar.gz"
 											compression="gzip"
 											longfile="gnu">
 											<tarfileset dir="${izpack.installer.app}"

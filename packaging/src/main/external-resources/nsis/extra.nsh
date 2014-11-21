@@ -7,5 +7,5 @@
 !define PROJECT_VERSION_SHORT "${project.version.short}"     
 !define PROJECT_CORE_BASEDIR "${project.core.basedir}"
 !define PROJECT_ROOT_BASEDIR "${project.root.basedir}"
-!define APPLICATION_NAME "Ps3 Media Server MLX"
-!define APPLICATION_NAME_LONG "Ps3 Media Server {project.version}"
+!define APPLICATION_NAME "Universal Media Server MLX"
+!define APPLICATION_NAME_LONG "Universal Media Server {project.version}"

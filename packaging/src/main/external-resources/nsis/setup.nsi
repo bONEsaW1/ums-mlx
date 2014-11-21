@@ -112,11 +112,11 @@ FunctionEnd
 ;Run program through explorer.exe to de-evaluate user from admin to regular one.
 ;http://mdb-blog.blogspot.ru/2013/01/nsis-lunch-program-as-user-from-uac.html
 Function RunPS3MS
-  Exec '"$WINDIR\explorer.exe" "$INSTDIR\PMS.exe"'
+  Exec '"$WINDIR\explorer.exe" "$INSTDIR\UMS.exe"'
 FunctionEnd
 
 Function CreateDesktopShortcut
-  CreateShortCut "$DESKTOP\${APPLICATION_NAME}.lnk" "$INSTDIR\PMS.exe"
+  CreateShortCut "$DESKTOP\${APPLICATION_NAME}.lnk" "$INSTDIR\UMS.exe"
 FunctionEnd
 
 Section "Program Files"
@@ -127,11 +127,12 @@ Section "Program Files"
   File /r "${PROJECT_BASEDIR}\src\main\resources"
   File /r "${PROJECT_CORE_BASEDIR}\src\main\external-resources\documentation"
   File /r "${PROJECT_CORE_BASEDIR}\src\main\external-resources\renderers"
+  File /r "${PROJECT_CORE_BASEDIR}\src\main\external-resources\web"
   File /r "${PROJECT_BUILD_DIR}\bin\win32"
   ;Install private JRE folder if needed.
   !insertmacro installPrivateJRE
-  File "${PROJECT_BUILD_DIR}\PMS.exe"
-  File "${PROJECT_BASEDIR}\target\pms.jar"
+  File "${PROJECT_BUILD_DIR}\UMS.exe"
+  File "${PROJECT_BASEDIR}\target\ums.jar"
   File "${PROJECT_BASEDIR}\src\main\external-resources\transcode-tools\win32\MediaInfo.dll"
   File "${PROJECT_BASEDIR}\src\main\external-resources\transcode-tools\win32\MediaInfo64.dll"
   File "${PROJECT_BASEDIR}\src\main\external-resources\transcode-tools\win32\jnotify.dll"
@@ -167,15 +168,15 @@ Section "Program Files"
   WriteUnInstaller "uninst.exe"
 
   ReadENVStr $R0 ALLUSERSPROFILE
-  SetOutPath "$R0\PMS"
-  AccessControl::GrantOnFile "$R0\PMS" "(S-1-5-32-545)" "FullAccess"
+  SetOutPath "$R0\UMS"
+  AccessControl::GrantOnFile "$R0\UMS" "(S-1-5-32-545)" "FullAccess"
 SectionEnd
 
 Section "Start Menu Shortcuts"
   SetShellVarContext all
   CreateDirectory "$SMPROGRAMS\${APPLICATION_NAME}"
-  CreateShortCut "$SMPROGRAMS\${APPLICATION_NAME}\${APPLICATION_NAME}.lnk" "$INSTDIR\PMS.exe" "" "$INSTDIR\PMS.exe" 0
-  CreateShortCut "$SMPROGRAMS\${APPLICATION_NAME}\${APPLICATION_NAME} (Select Profile).lnk" "$INSTDIR\PMS.exe" "profiles" "$INSTDIR\PMS.exe" 0
+  CreateShortCut "$SMPROGRAMS\${APPLICATION_NAME}\${APPLICATION_NAME}.lnk" "$INSTDIR\UMS.exe" "" "$INSTDIR\UMS.exe" 0
+  CreateShortCut "$SMPROGRAMS\${APPLICATION_NAME}\${APPLICATION_NAME} (Select Profile).lnk" "$INSTDIR\UMS.exe" "profiles" "$INSTDIR\UMS.exe" 0
   CreateShortCut "$SMPROGRAMS\${APPLICATION_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe" "" "$INSTDIR\uninst.exe" 0
 SectionEnd
 
@@ -190,11 +191,12 @@ Section "Uninstall"
   RMDir /R /REBOOTOK "$INSTDIR\renderers"
   RMDir /R /REBOOTOK "$INSTDIR\documentation"
   RMDir /R /REBOOTOK "$INSTDIR\win32"
+  RMDir /R /REBOOTOK "$INSTDIR\web"
   RMDir /R /REBOOTOK "$INSTDIR\resources"
   ;Uninstall private JRE folder if needed.
   !insertmacro uninstallPrivateJRE
-  Delete /REBOOTOK "$INSTDIR\PMS.exe"
-  Delete /REBOOTOK "$INSTDIR\pms.jar"
+  Delete /REBOOTOK "$INSTDIR\UMS.exe"
+  Delete /REBOOTOK "$INSTDIR\ums.jar"
   Delete /REBOOTOK "$INSTDIR\MediaInfo.dll"
   Delete /REBOOTOK "$INSTDIR\MediaInfo64.dll"
   Delete /REBOOTOK "$INSTDIR\jnotify.dll"
