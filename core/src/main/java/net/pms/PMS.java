@@ -46,6 +46,7 @@ import net.pms.io.*;
 import net.pms.logging.FrameAppender;
 import net.pms.logging.LoggingConfigFileLoader;
 import net.pms.medialibrary.commons.MediaLibraryConfiguration;
+import net.pms.medialibrary.commons.helpers.GUIHelper;
 import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.medialibrary.filewatch.DirectoryWatcher;
 import net.pms.medialibrary.scanner.FullDataCollector;
@@ -1102,6 +1103,7 @@ public class PMS {
 				}
 			} else {
 				headless = false;
+				GuiUtil.initializeLookAndFeel();
 			}
 		} catch (Throwable t) {
 			LOGGER.error("Toolkit error: " + t.getClass().getName() + ": " + t.getMessage());
