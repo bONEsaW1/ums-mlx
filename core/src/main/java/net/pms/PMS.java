@@ -737,7 +737,7 @@ public class PMS {
 	
 	private void initMediaLibrary() {
 		//Initialize media library (only let pms start if the media library is working)
-		MediaLibraryStorage.configure("pms_media_library.db");
+		MediaLibraryStorage.configure("ums-mlx.db");
 	    if (!MediaLibraryStorage.getInstance().isFunctional()) {
 	    	LOGGER.error("Failed to properly initialize MediaLibraryStorage");
 	        JOptionPane.showMessageDialog(null, Messages.getString("PMS.100"), Messages.getString("PMS.101"), JOptionPane.ERROR_MESSAGE);

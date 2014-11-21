@@ -688,7 +688,7 @@ public class PmsConfiguration {
 	 * @return The name of the server.
 	 */
 	public String getServerName() {
-		return getString(KEY_SERVER_NAME, "Universal Media Server");
+		return getString(KEY_SERVER_NAME, "Universal Media Server MLX");
 	}
 
 	/**
