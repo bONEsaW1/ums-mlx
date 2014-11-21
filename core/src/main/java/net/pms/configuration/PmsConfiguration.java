@@ -1662,7 +1662,7 @@ public class PmsConfiguration {
 	 * @return True if PMS should cache media.
 	 */
 	public boolean getUseCache() {
-		return getBoolean(KEY_USE_CACHE, true);
+		return getBoolean(KEY_USE_CACHE, false);
 	}
 
 	/**

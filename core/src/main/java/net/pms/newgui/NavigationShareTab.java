@@ -321,12 +321,7 @@ public class NavigationShareTab {
 		// Hide cache folder
 		hidemedialibraryfolder = new JCheckBox(Messages.getString("FoldTab.32"), configuration.isHideMediaLibraryFolder());
 		hidemedialibraryfolder.setContentAreaFilled(false);
-		hidemedialibraryfolder.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideMediaLibraryFolder((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
+		hidemedialibraryfolder.setEnabled(false);
 
 		// Browse compressed archives
 		archive = new JCheckBox(Messages.getString("NetworkTab.1"), configuration.isArchiveBrowsing());
@@ -342,13 +337,7 @@ public class NavigationShareTab {
 		cacheenable = new JCheckBox(Messages.getString("NetworkTab.17"), configuration.getUseCache());
 		cacheenable.setToolTipText(Messages.getString("FoldTab.48"));
 		cacheenable.setContentAreaFilled(false);
-		cacheenable.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setUseCache((e.getStateChange() == ItemEvent.SELECTED));
-				cachereset.setEnabled(configuration.getUseCache());
-			}
-		});
+		cacheenable.setEnabled(false);
 
 		// Reset cache
 		cachereset = new CustomJButton(Messages.getString("NetworkTab.18"));
