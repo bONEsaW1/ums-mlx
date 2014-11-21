@@ -3269,7 +3269,8 @@ public class PmsConfiguration {
 			languages.put("cz", "Czech");
 			languages.put("da", "Danish");
 			languages.put("nl", "Dutch");
-			languages.put("en", "English");
+			languages.put("en", "English (US)");
+			languages.put("en_uk", "English (UK)");
 			languages.put("fi", "Finnish");
 			languages.put("fr", "French");
 			languages.put("de", "German");
