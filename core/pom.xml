@@ -1056,9 +1056,9 @@
 			</activation>
 		</profile>
 
-		<!-- This profile allows running PMS from inside Eclipse -->
+		<!-- This profile allows running UMS from inside qn IDE (Eclipse, IntelliJ etc.) -->
 		<profile>
-			<id>run-from-eclipse</id>
+			<id>run-from-ide</id>
 			<build>
 				<plugins>
 					<plugin>
