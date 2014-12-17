@@ -262,6 +262,9 @@ public class MediaLibraryFolder extends VirtualFolder {
 					addChild(fileToAdd);
 				}
 			}			
+		} else {
+			log.warn(String.format("Don't add file '%s' to folder '%s' because %s", 
+					f.getAbsolutePath(), getName(), f.isHidden() ? "it is hidden" : "it does not exist"));
 		}
 	}
 
