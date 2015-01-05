@@ -1691,7 +1691,9 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 									(
 										MEncoderVideo.ID.equals(player.id()) ||
 										FFMpegVideo.ID.equals(player.id()) ||
-										VLCVideo.ID.equals(player.id())
+										VLCVideo.ID.equals(player.id()) ||
+										AviSynthFFmpeg.ID.equals(player.id()) ||
+										AviSynthMEncoder.ID.equals(player.id())
 									)
 								) {
 									isFileMPEGTS = true;
@@ -1935,8 +1937,10 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			}
 		}
 
-		appendThumbnail(mediaRenderer, sb, "JPEG_TN");
-		appendThumbnail(mediaRenderer, sb, "JPEG_SM");
+		if (!(isFolder() && !mediaRenderer.isSendFolderThumbnails())) {
+			appendThumbnail(mediaRenderer, sb, "JPEG_TN");
+			appendThumbnail(mediaRenderer, sb, "JPEG_SM");
+		}
 
 		if (getLastModified() > 0 && mediaRenderer.isSendDateMetadata()) {
 			addXMLTagAndAttribute(sb, "dc:date", SDF_DATE.format(new Date(getLastModified())));

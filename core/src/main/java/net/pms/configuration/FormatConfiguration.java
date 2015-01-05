@@ -27,6 +27,7 @@ public class FormatConfiguration {
 	public static final String ATRAC = "atrac";
 	public static final String AVI = "avi";
 	public static final String BMP = "bmp";
+	public static final String CINEPACK = "cvid";
 	public static final String DIVX = "divx";
 	public static final String DTS = "dts";
 	public static final String DTSHD = "dtshd";
@@ -60,6 +61,7 @@ public class FormatConfiguration {
 	public static final String RA = "ra";
 	public static final String RM = "rm";
 	public static final String SHORTEN = "shn";
+	public static final String SORENSON = "sor";
 	public static final String TIFF = "tiff";
 	public static final String THEORA = "theora";
 	public static final String TRUEHD = "truehd";
