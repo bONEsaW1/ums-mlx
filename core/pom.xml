@@ -47,7 +47,7 @@
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
 		<gson-version>2.2.4</gson-version>
-		<netty-version>3.9.5.Final</netty-version>
+		<netty-version>4.0.25.Final</netty-version>
 		<rome-version>1.0.0</rome-version>
 		<thumbnailator-version>0.4.5</thumbnailator-version>
 		<jai-imageio-core-standalone-version>1.2-pre-dr-b04-2011-07-04</jai-imageio-core-standalone-version>
@@ -59,6 +59,10 @@
 		<jnotify-version>0.94</jnotify-version>
 		<!-- Skip 4.65-1.05-RC because it doesn't work, author is working on fixing it -->
 		<sevenzip-version>4.65-1.04-RC</sevenzip-version>
+		<cling-version>2.0.1</cling-version>
+		<jmdns-version>3.4.1</jmdns-version>
+		<chromcast-api-v2-version>0.0.3</chromcast-api-v2-version>
+		<jmustache-version>1.9</jmustache-version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -134,6 +138,15 @@
 			<name>myGrid Repository</name>
 			<url>http://www.mygrid.org.uk/maven/repository</url>
 		</repository>
+
+		<!-- Cling -->
+		<repository>
+			<id>4thline-repo</id>
+			<url>http://4thline.org/m2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -192,7 +205,37 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang3-version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.fourthline.cling</groupId>
+			<artifactId>cling-core</artifactId>
+			<version>${cling-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.fourthline.cling</groupId>
+			<artifactId>cling-support</artifactId>
+			<version>${cling-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.jmdns</groupId>
+			<artifactId>jmdns</artifactId>
+			<version>${jmdns-version}</version>
+		</dependency>
 
+        <dependency>
+            <groupId>su.litvak.chromecast</groupId>
+            <artifactId>api-v2</artifactId>
+            <version>${chromcast-api-v2-version}</version>
+        </dependency>
+        
+		<dependency>
+			<groupId>com.samskivert</groupId>
+			<artifactId>jmustache</artifactId>
+			<version>${jmustache-version}</version>
+		</dependency>
+        
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -243,8 +286,9 @@
 
 		<dependency>
 			<groupId>io.netty</groupId>
-			<artifactId>netty</artifactId>
+			<artifactId>netty-codec-http</artifactId>
 			<version>${netty-version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

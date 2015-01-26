@@ -249,13 +249,7 @@ public class ExternalFactory {
 			}
 		}
 
-		ArrayList<RendererConfiguration> renderers = RendererConfiguration.getEnabledRenderersConfigurations();
-
-		for (RendererConfiguration r : renderers) {
-			RootFolder rf = r.getRootFolder();
-			// TODO PWA: check if line is required
-			//rf.reset();
-		}
+		RendererConfiguration.resetAllRenderers();
 
 		if (remove != null) {
 			externalListeners.remove(remove);

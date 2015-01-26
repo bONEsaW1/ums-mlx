@@ -27,6 +27,14 @@ import java.net.Socket;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.stream.ChunkedStream;
 import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
@@ -36,19 +44,11 @@ import net.pms.util.StringUtil;
 import static net.pms.util.StringUtil.convertStringToTime;
 import net.pms.util.UMSUtils;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpResponse;
-import org.jboss.netty.handler.stream.ChunkedStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class handles all forms of incoming HTTP requests by constructing a proper HTTP response. 
+ * This class handles all forms of incoming HTTP requests by constructing a proper HTTP response.
  */
 public class RequestV2 extends HTTPResource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestV2.class);
@@ -56,7 +56,7 @@ public class RequestV2 extends HTTPResource {
 	private final SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
 	private static int BUFFER_SIZE = 8 * 1024;
 	private final String method;
-	private static final PmsConfiguration configuration = PMS.getConfiguration();
+	private PmsConfiguration configuration = PMS.getConfiguration();
 
 	/**
 	 * A {@link String} that contains the argument with which this {@link RequestV2} was
@@ -94,6 +94,7 @@ public class RequestV2 extends HTTPResource {
 
 	public void setMediaRenderer(RendererConfiguration mediaRenderer) {
 		this.mediaRenderer = mediaRenderer;
+		configuration = PMS.getConfiguration(mediaRenderer);
 	}
 
 	public InputStream getInputStream() {
@@ -229,7 +230,7 @@ public class RequestV2 extends HTTPResource {
 	 * See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">RFC-2616</a>
 	 * for HTTP header field definitions.
 	 * @param output The {@link HttpResponse} object that will be used to construct the response.
-	 * @param e The {@link MessageEvent} object used to communicate with the client that sent
+	 * @param e The {@link io.netty.handler.codec.http.FullHttpRequest} object used to communicate with the client that sent
 	 * 			the request.
 	 * @param close Set to true to close the channel after sending the response. By default the
 	 * 			channel is not closed after sending.
@@ -239,8 +240,9 @@ public class RequestV2 extends HTTPResource {
 	 * @throws IOException
 	 */
 	public ChannelFuture answer(
+		final ChannelHandlerContext ctx,
 		HttpResponse output,
-		MessageEvent e,
+		FullHttpRequest e,
 		final boolean close,
 		final StartStopListenerDelegate startStopListenerDelegate
 	) throws IOException {
@@ -264,32 +266,37 @@ public class RequestV2 extends HTTPResource {
 			// Request to retrieve a file
 
 			/**
-			 * Skip the leading "get/" and extract the resource ID from the first path element
-			 * e.g. "get/0$1$5$3$4/Foo.mp4" -> "0$1$5$3$4"
+			 * Skip the leading "get/"
+			 * e.g. "get/0$1$5$3$4/Foo.mp4" -> "0$1$5$3$4/Foo.mp4"
 			 *
 			 * ExSport: I spotted on Android it is asking for "/get/0$2$4$2$1$3" which generates exception with response:
 			 * "Http: Response, HTTP/1.1, Status: Internal server error, URL: /get/0$2$4$2$1$3"
 			 * This should fix it
 			 */
-			String id = argument.substring(4);
-			if (argument.substring(4).contains("/")) {
-				id = argument.substring(4, argument.lastIndexOf('/'));
-			}
+
+			// Note: we intentionally include the trailing filename here because it may
+			// be used to reconstruct lost Temp items.
+			String id = argument.substring(argument.indexOf("get/") + 4);
 
 			// Some clients escape the separators in their request: unescape them.
 			id = id.replace("%24", "$");
 
 			// Retrieve the DLNAresource itself.
-			List<DLNAResource> files = PMS.get().getRootFolder(mediaRenderer).getDLNAResources(id, false, 0, 0, mediaRenderer);
+			dlna = PMS.get().getRootFolder(mediaRenderer).getDLNAResource(id, mediaRenderer);
+			String fileName = id.substring(id.indexOf('/') + 1);
 
 			if (transferMode != null) {
 				output.headers().set("TransferMode.DLNA.ORG", transferMode);
 			}
 
-			if (files.size() == 1) {
+			if (dlna != null && dlna.isFolder() && !fileName.startsWith("thumbnail0000")) {
+				// if we found a folder we MUST be asked for thumbnails
+				// otherwise this is not allowed
+				dlna = null;
+			}
+
+			if (dlna != null) {
 				// DLNAresource was found.
-				dlna = files.get(0);
-				String fileName = argument.substring(argument.lastIndexOf('/') + 1);
 
 				if (fileName.startsWith("thumbnail0000")) {
 					// This is a request for a thumbnail file.
@@ -298,12 +305,16 @@ public class RequestV2 extends HTTPResource {
 					output.headers().set(HttpHeaders.Names.EXPIRES, getFUTUREDATE() + " GMT");
 					output.headers().set(HttpHeaders.Names.CONNECTION, "keep-alive");
 
-					if (mediaRenderer.isMediaParserV2()) {
-						dlna.checkThumbnail();
+					if (!configuration.isShowCodeThumbs() && !dlna.isCodeValid(dlna)) {
+						inputStream = dlna.getGenericThumbnailInputStream(null);
+					} else {
+						if (mediaRenderer.isMediaParserV2()) {
+							dlna.checkThumbnail();
+						}
+						inputStream = dlna.getThumbnailInputStream();
 					}
-
-					inputStream = dlna.getThumbnailInputStream();
-				} else if (dlna.getMedia() != null && fileName.contains("subtitle0000")) {
+					inputStream = UMSUtils.scaleThumb(inputStream, mediaRenderer);
+				} else if (dlna.getMedia() != null && fileName.contains("subtitle0000") && dlna.isCodeValid(dlna)) {
 					// This is a request for a subtitle file
 					output.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain");
 					output.headers().set(HttpHeaders.Names.EXPIRES, getFUTUREDATE() + " GMT");
@@ -324,9 +335,13 @@ public class RequestV2 extends HTTPResource {
 					} else {
 						LOGGER.trace("Not loading external subtitles because dlna.getMediaSubtitle returned null");
 					}
-				} else {
+				} else if (dlna.isCodeValid(dlna)) {
 					// This is a request for a regular file.
-
+					DLNAResource.Rendering origRendering = null;
+					if (!mediaRenderer.equals(dlna.getDefaultRenderer())) {
+						// Adjust rendering details for this renderer
+						origRendering = dlna.updateRendering(mediaRenderer);
+					}
 					// If range has not been initialized yet and the DLNAResource has its
 					// own start and end defined, initialize range with those values before
 					// requesting the input stream.
@@ -358,7 +373,7 @@ public class RequestV2 extends HTTPResource {
 							// Update range to possibly adjusted resume time
 							range.setStart(dlna.getResume().getTimeOffset() / (double) 1000);
 						}
-					} 
+					}
 
 					if (dlna.getMedia() != null && !configuration.isDisableSubtitles()) {
 						// Some renderers (like Samsung devices) allow a custom header for a subtitle URL
@@ -408,17 +423,13 @@ public class RequestV2 extends HTTPResource {
 							output.headers().set(HttpHeaders.Names.CONTENT_TYPE, rendererMimeType);
 						}
 
-						PMS.get().getFrame().setStatusLine("Serving " + name);
-
 						// Response generation:
 						// We use -1 for arithmetic convenience but don't send it as a value.
 						// If Content-Length < 0 we omit it, for Content-Range we use '*' to signify unspecified.
-
 						boolean chunked = mediaRenderer.isChunkedTransfer();
 
 						// Determine the total size. Note: when transcoding the length is
 						// not known in advance, so DLNAMediaInfo.TRANS_SIZE will be returned instead.
-
 						if (chunked && totalsize == DLNAMediaInfo.TRANS_SIZE) {
 							// In chunked mode we try to avoid arbitrary values.
 							totalsize = -1;
@@ -439,6 +450,12 @@ public class RequestV2 extends HTTPResource {
 							highRange = lowRange + bytes - (bytes > 0 ? 1 : 0);
 
 							LOGGER.trace((chunked ? "Using chunked response. " : "") + "Sending " + bytes + " bytes.");
+
+							LOGGER.trace("totalsize: " + totalsize);
+							LOGGER.trace("remaining: " + remaining);
+							LOGGER.trace("requested: " + requested);
+							LOGGER.trace("lowRange: " + lowRange);
+							LOGGER.trace("highRange: " + highRange);
 
 							output.headers().set(HttpHeaders.Names.CONTENT_RANGE, "bytes " + lowRange + "-" + (highRange > -1 ? highRange : "*") + "/" + (totalsize > -1 ? totalsize : "*"));
 
@@ -463,6 +480,10 @@ public class RequestV2 extends HTTPResource {
 
 						output.headers().set(HttpHeaders.Names.ACCEPT_RANGES, "bytes");
 						output.headers().set(HttpHeaders.Names.CONNECTION, "keep-alive");
+					}
+					if (origRendering != null) {
+						// Restore original rendering details
+						dlna.updateRendering(origRendering);
 					}
 				}
 			}
@@ -600,7 +621,7 @@ public class RequestV2 extends HTTPResource {
 				String containerID = null;
 				if ((objectID == null || objectID.length() == 0)) {
 					containerID = getEnclosingValue(content, "<ContainerID", "</ContainerID>");
-					if (containerID == null || !containerID.contains("$")) {
+					if (containerID == null) {
 						objectID = "0";
 					} else {
 						objectID = containerID;
@@ -672,6 +693,18 @@ public class RequestV2 extends HTTPResource {
 					mediaRenderer,
 					searchCriteria
 				);
+
+				if(xbox360 && files.size() == 0) {
+					// do it again...
+					files = PMS.get().getRootFolder(mediaRenderer).getDLNAResources(
+							"0",
+							browseDirectChildren,
+							startingIndex,
+							requestCount,
+							mediaRenderer,
+							searchCriteria
+					);
+				}
 
 				if (searchCriteria != null && files != null) {
 					UMSUtils.postSearch(files, searchCriteria);
@@ -768,7 +801,7 @@ public class RequestV2 extends HTTPResource {
 					URL soapActionUrl = new URL(cb);
 					String addr = soapActionUrl.getHost();
 					int port = soapActionUrl.getPort();
-					Socket sock = new Socket(addr,port);
+					Socket sock = new Socket(addr, port);
 					try (OutputStream out = sock.getOutputStream()) {
 						out.write(("NOTIFY /" + argument + " HTTP/1.1").getBytes());
 						out.write(CRLF.getBytes());
@@ -834,12 +867,14 @@ public class RequestV2 extends HTTPResource {
 			// HEAD requests only require headers to be set, no need to set contents.
 			if (!method.equals("HEAD")) {
 				// Not a HEAD request, so set the contents of the response.
-				ChannelBuffer buf = ChannelBuffers.copiedBuffer(responseData);
-				output.setContent(buf);
+				ByteBuf buf = Unpooled.copiedBuffer(responseData);
+				HttpResponse oldOutput = output;
+				output = new DefaultFullHttpResponse(output.getProtocolVersion(), output.getStatus(), buf);
+				output.headers().add(oldOutput.headers());
 			}
 
 			// Send the response to the client.
-			future = e.getChannel().write(output);
+			future = ctx.writeAndFlush(output);
 
 			if (close) {
 				// Close the channel after the response is sent.
@@ -872,31 +907,31 @@ public class RequestV2 extends HTTPResource {
 			}
 
 			// Send the response headers to the client.
-			future = e.getChannel().write(output);
+			future = ctx.write(output);
 
 			if (lowRange != DLNAMediaInfo.ENDFILE_POS && !method.equals("HEAD")) {
 				// Send the response body to the client in chunks.
-				ChannelFuture chunkWriteFuture = e.getChannel().write(new ChunkedStream(inputStream, BUFFER_SIZE));
+				ChannelFuture chunkWriteFuture = ctx.writeAndFlush(new ChunkedStream(inputStream, BUFFER_SIZE));
 
 				// Add a listener to clean up after sending the entire response body.
 				chunkWriteFuture.addListener(new ChannelFutureListener() {
 					@Override
 					public void operationComplete(ChannelFuture future) {
-						try {
-							PMS.get().getRegistry().reenableGoToSleep();
-							inputStream.close();
-						} catch (IOException e) {
-							LOGGER.debug("Caught exception", e);
-						}
+						LOGGER.trace("The channel future completed:");
+						LOGGER.trace("  isSuccess: " + future.isSuccess());
+						LOGGER.trace("  isCancelled: " + future.isCancelled());
+						LOGGER.trace("  getCause: ", future.cause());
+						PMS.get().getRegistry().reenableGoToSleep();
 
 						// Always close the channel after the response is sent because of
 						// a freeze at the end of video when the channel is not closed.
-						future.getChannel().close();
+						future.channel().close();
 						startStopListenerDelegate.stop();
 					}
 				});
 			} else {
 				// HEAD method is being used, so simply clean up after the response was sent.
+				ctx.flush();
 				try {
 					PMS.get().getRegistry().reenableGoToSleep();
 					inputStream.close();
@@ -921,7 +956,7 @@ public class RequestV2 extends HTTPResource {
 			}
 
 			// Send the response headers to the client.
-			future = e.getChannel().write(output);
+			future = ctx.writeAndFlush(output);
 
 			if (close) {
 				// Close the channel after the response is sent.
