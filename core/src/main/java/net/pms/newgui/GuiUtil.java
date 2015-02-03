@@ -1,6 +1,8 @@
 package net.pms.newgui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import org.apache.commons.lang3.StringUtils;
@@ -143,7 +145,8 @@ public final class GuiUtil {
 	// wider than a specified maximum.
 	public static class MarqueeLabel extends JLabel {
 		private static final long serialVersionUID = 8600355251271220610L;
-		public int speed, spacer, dir, max_w, interval = 30;
+		public int speed, spacer, dir, max_w, interval = 33;
+		Timer timer = null;
 
 		public MarqueeLabel(String text) {
 			this(text, 9999, 30, -1, 10);
@@ -180,8 +183,46 @@ public final class GuiUtil {
 				super.paintComponent(g);
 				g.translate(-dir * w, 0);
 				super.paintComponent(g);
-				repaint(interval);
+				if (timer == null) {
+					timer = new Timer(interval, new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							repaint();
+						}
+					});
+					timer.start();
+				}
 			}
+		}
+	}
+
+	// A lightweight version of a label that automatically scrolls its text if
+	// wider than a specified maximum.
+	public static class ScrollLabel extends JLabel {
+		private static final long serialVersionUID = 1834361616111946511L;
+		String text;
+
+		public ScrollLabel(String text) {
+			super(text);
+			this.text = text;
+			setSize(getPreferredSize());
+			scrollTheText();
+		}
+
+		@Override
+		public void setText(String text) {
+			super.setText(text);
+			this.text = text;
+		}
+
+		private void scrollTheText() {
+			new Timer(200, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					text = new StringBuffer(text.substring(1)).append(text.substring(0,1)).toString();
+					setText(text);
+				}
+			}).start();
 		}
 	}
 
@@ -263,7 +304,7 @@ public final class GuiUtil {
 				return;
 			}
 			int max = progressBar.getMaximum();
-			int filled = getAmountFull(b, w, h);
+			getAmountFull(b, w, h);
 			float unit = (float) w / max;
 			int total = total();
 			int x = b.left;
@@ -275,7 +316,6 @@ public final class GuiUtil {
 				paintTicks(g, b.left, (int)(unit * tickmarks), b.left + w);
 			}
 			g2.setStroke(new BasicStroke((float) h, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-			int i=0;
 			// Draw the segments
 			for (Segment s : segments) {
 				if (s.val > 0) {
