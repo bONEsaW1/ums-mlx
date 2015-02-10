@@ -47,7 +47,7 @@
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
 		<gson-version>2.2.4</gson-version>
-		<netty-version>4.0.25.Final</netty-version>
+		<netty-version>3.9.6.Final</netty-version>
 		<rome-version>1.0.0</rome-version>
 		<thumbnailator-version>0.4.5</thumbnailator-version>
 		<jai-imageio-core-standalone-version>1.2-pre-dr-b04-2011-07-04</jai-imageio-core-standalone-version>
@@ -63,6 +63,7 @@
 		<jmdns-version>3.4.1</jmdns-version>
 		<chromcast-api-v2-version>0.0.3</chromcast-api-v2-version>
 		<jmustache-version>1.9</jmustache-version>
+		<javassist-version>3.19.0-GA</javassist-version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -286,7 +287,7 @@
 
 		<dependency>
 			<groupId>io.netty</groupId>
-			<artifactId>netty-codec-http</artifactId>
+			<artifactId>netty</artifactId>
 			<version>${netty-version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -434,6 +435,12 @@
 			<groupId>jnotify</groupId>
 			<artifactId>jnotify</artifactId>
 			<version>${jnotify-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist-version}</version>
 		</dependency>
 	</dependencies>
 
