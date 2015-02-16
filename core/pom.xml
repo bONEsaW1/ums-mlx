@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>4.3.2-mlx-1.2-SNAPSHOT</version>
+		<version>5.0.2-mlx-1.2-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -34,22 +34,22 @@
 		<junrar-version>0.7</junrar-version>
 		<mediautil-version>1.0</mediautil-version>
 		<jcalendar-version>1.1.1</jcalendar-version>
-		<slf4j-version>1.7.5</slf4j-version>
-		<logback-version>1.0.13</logback-version>
+		<slf4j-version>1.7.7</slf4j-version>
+		<logback-version>1.1.2</logback-version>
 		<bsh-core-version>2.0b4</bsh-core-version>
-		<commons-codec-version>1.8</commons-codec-version>
+		<commons-codec-version>1.9</commons-codec-version>
 		<commons-collections-version>3.2.1</commons-collections-version>
-		<commons-configuration-version>1.9</commons-configuration-version>
+		<commons-configuration-version>1.10</commons-configuration-version>
 		<commons-httpclient-version>3.1</commons-httpclient-version>
 		<commons-io-version>2.4</commons-io-version>
 		<commons-lang3-version>3.3.2</commons-lang3-version>
-		<h2-version>1.4.182</h2-version>
+		<h2-version>1.4.185</h2-version>
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
 		<gson-version>2.2.4</gson-version>
 		<netty-version>3.9.6.Final</netty-version>
 		<rome-version>1.0.0</rome-version>
-		<thumbnailator-version>0.4.5</thumbnailator-version>
+		<thumbnailator-version>[0.4, 0.5)</thumbnailator-version>
 		<jai-imageio-core-standalone-version>1.2-pre-dr-b04-2011-07-04</jai-imageio-core-standalone-version>
 		<jaudiotagger-version>2.0.3</jaudiotagger-version>
 		<juniversalchardet-version>1.0.3</juniversalchardet-version>

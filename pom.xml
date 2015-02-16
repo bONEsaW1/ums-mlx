@@ -28,7 +28,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>github.com.taconaut</groupId>
 	<artifactId>ums</artifactId>
-	<version>4.3.2-mlx-1.2-SNAPSHOT</version>
+	<version>5.0.2-mlx-1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>UMS</name>
 	<url>http://www.universalmediaserver.org/</url>
@@ -152,7 +152,7 @@
 		<!-- Version numbers for libraries shared by multiple modules -->
 		<jgoodies-common-version>1.4.0</jgoodies-common-version>
 		<jgoodies-forms-version>1.6.0</jgoodies-forms-version>
-		<jgoodies-looks-version>2.5.2</jgoodies-looks-version>
+		<jgoodies-looks-version>2.5.3</jgoodies-looks-version>
 		<jgoodies-binding-version>2.0.6</jgoodies-binding-version>
 		<xmlwise-version>1.2.11</xmlwise-version>
 		
