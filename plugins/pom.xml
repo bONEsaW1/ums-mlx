@@ -29,6 +29,7 @@
 		<module>WebDlnaFolderPlugin</module>
 		<module>WebservicePlugin</module>
 		<module>TheTVDBEpisodeImportPlugin</module>
+		<module>OpenSubtitlesFileDetailPlugin</module>
 	</modules>
 
 	<properties>
