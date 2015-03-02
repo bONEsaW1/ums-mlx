@@ -131,14 +131,19 @@ public class OpenSubtitlesHelper {
 		
 		// Compute file hash
 		File file = new File(filePath);
+		
+		long fileSizeBytes = 0;
 		String fileHash = null;
-		try {
-			fileHash = computeFileHash(file);
-		} catch (IOException e) {
-			LOGGER.error(String.format("Failed to compute file hash for file='%s'", file.getAbsolutePath()), e);
+		if(file.exists() && file.canRead()) {
+			fileSizeBytes = file.length();
+			try {
+				fileHash = computeFileHash(file);
+			} catch (IOException e) {
+				LOGGER.error(String.format("Failed to compute file hash for file='%s'", file.getAbsolutePath()), e);
+			}
 		}
 
-		res = findSubtitles(fileHash, file.length(), imdbId, subtitleLanguages, maxSubtitles);
+		res = findSubtitles(fileHash, fileSizeBytes, imdbId, subtitleLanguages, maxSubtitles);
 		
 		return res;
 	}
