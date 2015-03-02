@@ -24,7 +24,7 @@ import java.util.List;
 import net.pms.medialibrary.commons.dataobjects.DOManagedFile;
 import net.pms.medialibrary.commons.dataobjects.DOScanReport;
 import net.pms.medialibrary.commons.enumarations.FileType;
-import net.pms.medialibrary.commons.exceptions.InitialisationException;
+import net.pms.medialibrary.commons.exceptions.InitializationException;
 import net.pms.medialibrary.commons.exceptions.ScanStateException;
 import net.pms.medialibrary.commons.interfaces.IFileScannerEventListener;
 import net.pms.medialibrary.commons.interfaces.ILibraryManager;
@@ -44,18 +44,18 @@ public class LibraryManager implements ILibraryManager {
 	private FileScanner fileScanner;
 	private List<ILibraryManagerEventListener> libraryManagerEventListeners;
 	
-	private LibraryManager() throws InitialisationException{
+	private LibraryManager() throws InitializationException{
 		this.mediaLibraryStorage = MediaLibraryStorage.getInstance();
 		this.fileScanner = FileScanner.getInstance();
 		this.libraryManagerEventListeners = new ArrayList<ILibraryManagerEventListener>();
 	}
 	
-	public static LibraryManager getInstance() throws InitialisationException{
+	public static LibraryManager getInstance() throws InitializationException{
 		if(instance == null){
 			try{
 				instance = new LibraryManager();
-			}catch (InitialisationException ex){
-				throw new InitialisationException("Both components MediaLibraryStorage and FileScanner have to be configured before this method can be called", ex);
+			}catch (InitializationException ex){
+				throw new InitializationException("Both components MediaLibraryStorage and FileScanner have to be configured before this method can be called", ex);
 			}
 		}
 		return instance;

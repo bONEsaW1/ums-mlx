@@ -56,7 +56,7 @@ import net.pms.medialibrary.commons.dataobjects.OmitPrefixesConfiguration;
 import net.pms.medialibrary.commons.enumarations.FileType;
 import net.pms.medialibrary.commons.enumarations.MetaDataKeys;
 import net.pms.medialibrary.commons.enumarations.ScanState;
-import net.pms.medialibrary.commons.exceptions.InitialisationException;
+import net.pms.medialibrary.commons.exceptions.InitializationException;
 import net.pms.medialibrary.commons.exceptions.ScanStateException;
 import net.pms.medialibrary.commons.helpers.GUIHelper;
 import net.pms.medialibrary.commons.interfaces.IFileScannerEventListener;
@@ -106,7 +106,7 @@ public class GeneralOptionsView extends JPanel {
 
 		try {
 			this.libraryManager = LibraryManager.getInstance();
-		} catch (InitialisationException ex) {
+		} catch (InitializationException ex) {
 			log.error("Failed to get LibraryManager", ex);
 			return;
 		}

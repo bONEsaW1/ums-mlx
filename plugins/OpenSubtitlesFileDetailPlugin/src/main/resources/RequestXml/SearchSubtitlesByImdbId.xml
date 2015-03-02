@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>SearchSubtitles</methodName>
+	<params>
+		<param>
+			<value>
+				<string>${token}</string>
+			</value>
+		</param>
+		<param>
+			<value>
+				<array>
+					<data>
+						<value>
+							<struct>
+								<member>
+									<name>sublanguageid</name>
+									<value>
+										<string>${sublanguageid}</string>
+									</value>
+								</member>
+								<member>
+									<name>imdbid</name>
+									<value>
+										<string>${imdbid}</string>
+									</value>
+								</member>
+							</struct>
+						</value>
+					</data>
+				</array>
+			</value>
+		</param>
+	</params>
+</methodCall>

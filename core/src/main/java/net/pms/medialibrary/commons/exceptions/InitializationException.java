@@ -18,18 +18,18 @@
  */
 package net.pms.medialibrary.commons.exceptions;
 
-public class InitialisationException extends Exception {
+public class InitializationException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public InitialisationException(){
+	public InitializationException(){
 		super();
 	}
 	
-	public InitialisationException(String message){
+	public InitializationException(String message){
 		super(message);
 	}
 	
-	public InitialisationException(String message, Throwable cause){
+	public InitializationException(String message, Throwable cause){
 		super(message, cause);
 	}
 }

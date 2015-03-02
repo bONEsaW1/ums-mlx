@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import net.pms.medialibrary.commons.dataobjects.DOFileImportTemplate;
 import net.pms.medialibrary.commons.dataobjects.DOManagedFile;
-import net.pms.medialibrary.commons.exceptions.InitialisationException;
+import net.pms.medialibrary.commons.exceptions.InitializationException;
 import net.pms.medialibrary.commons.interfaces.ILibraryManager;
 import net.pms.medialibrary.storage.MediaLibraryStorage;
 import net.pms.plugin.webservice.ServiceBase;
@@ -28,7 +28,7 @@ public class LibraryWebService extends ServiceBase implements Library {
 			@WebParam(name = "scanPictures") boolean scanPictures,
 			@WebParam(name = "useFileImportTemplate") boolean useFileImportTemplate,
 			@WebParam(name = "fileImportTemplateId") int fileImportTemplateId)
-			throws InitialisationException {
+			throws InitializationException {
 		if (!isInitialized) {
 			log.warn("Trying to access scanFolder when it's not initialized. Abort");
 			return;
@@ -66,7 +66,7 @@ public class LibraryWebService extends ServiceBase implements Library {
 		ILibraryManager res = null;
 		try {
 			res = net.pms.medialibrary.library.LibraryManager.getInstance();
-		} catch (InitialisationException e) {
+		} catch (InitializationException e) {
 			log.error("Failed to get LibraryManager", e);
 		}
 		return res;

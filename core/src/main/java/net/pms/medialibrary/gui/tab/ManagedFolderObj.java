@@ -35,14 +35,19 @@ import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.pms.Messages;
 import net.pms.medialibrary.commons.dataobjects.DOFileImportTemplate;
 import net.pms.medialibrary.commons.dataobjects.DOManagedFile;
-import net.pms.medialibrary.commons.exceptions.InitialisationException;
+import net.pms.medialibrary.commons.exceptions.InitializationException;
 import net.pms.medialibrary.gui.shared.EButton;
 import net.pms.medialibrary.library.LibraryManager;
 
 public class ManagedFolderObj {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ManagedFolderObj.class);
+	
 	private List<ActionListener> removeListeners = new ArrayList<ActionListener>();
 	private JCheckBox            cbWatch;
 	private JTextField           tfFolderPath;
@@ -190,9 +195,8 @@ public class ManagedFolderObj {
 		if (f.isDirectory()) {
 			try {
 				LibraryManager.getInstance().scanFolder(getManagedFolder());
-			} catch (InitialisationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (InitializationException e) {
+				LOGGER.error("Failed to get library manager instance");
 			}
 		} else {
 			JOptionPane.showMessageDialog(tfFolderPath.getTopLevelAncestor(), String.format(Messages.getString("ML.Messages.FolderDoesNotExist"), tfFolderPath.getText()));

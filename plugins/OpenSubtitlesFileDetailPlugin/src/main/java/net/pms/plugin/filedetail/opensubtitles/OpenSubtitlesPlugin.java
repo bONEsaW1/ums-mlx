@@ -40,18 +40,18 @@ import net.pms.util.PmsProperties;
 public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory.getLogger(OpenSubtitlesPlugin.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpenSubtitlesPlugin.class);
 	
 	/** Resource used for localization. */
 	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.filedetail.opensubtitles.lang.messages");
 	
-	/** Holds only the project version. It's used to always use the maven build number in code */
+	/** Holds only the project version. It's used to always use the Maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
 	static {
 		try {
 			properties.loadFromResourceFile("/opensubtitlesfiledetail.properties", OpenSubtitlesPlugin.class);
 		} catch (IOException e) {
-			logger.error("Could not load opensubtitlesfiledetail.properties", e);
+			LOGGER.error("Could not load opensubtitlesfiledetail.properties", e);
 		}
 	}
 	
