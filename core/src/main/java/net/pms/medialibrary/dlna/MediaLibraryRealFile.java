@@ -172,6 +172,14 @@ public class MediaLibraryRealFile extends RealFile {
 	public boolean analyzeChildren(int count) {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.pms.dlna.MapFile#discoverChildren(String searchStr)
+	 */
+	@Override
+	public void discoverChildren(String searchStr) {
+		discoverChildren();
+	}
 
 	/* (non-Javadoc)
 	 * @see net.pms.dlna.MapFile#discoverChildren()
