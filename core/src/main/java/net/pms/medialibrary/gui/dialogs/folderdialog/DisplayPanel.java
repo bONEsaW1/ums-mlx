@@ -635,7 +635,7 @@ class DisplayPanel extends JPanel {
 			}
 		});
 		
-		refreshAddMenu(false);
+		refreshAddMenu(true);
 
 		miRename = new JMenuItem(Messages.getString("ML.DisplayPanel.Menu.Rename"));
 		miRename.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "rename-16.png")));
