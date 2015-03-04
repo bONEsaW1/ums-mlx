@@ -34,26 +34,26 @@
 		<junrar-version>0.7</junrar-version>
 		<mediautil-version>1.0</mediautil-version>
 		<jcalendar-version>1.1.1</jcalendar-version>
-		<slf4j-version>1.7.7</slf4j-version>
+		<slf4j-version>1.7.10</slf4j-version>
 		<logback-version>1.1.2</logback-version>
 		<bsh-core-version>2.0b4</bsh-core-version>
-		<commons-codec-version>1.9</commons-codec-version>
+		<commons-codec-version>1.10</commons-codec-version>
 		<commons-collections-version>3.2.1</commons-collections-version>
 		<commons-configuration-version>1.10</commons-configuration-version>
 		<commons-httpclient-version>3.1</commons-httpclient-version>
 		<commons-io-version>2.4</commons-io-version>
 		<commons-lang3-version>3.3.2</commons-lang3-version>
-		<h2-version>1.4.185</h2-version>
+		<h2-version>1.4.186</h2-version>
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
-		<gson-version>2.2.4</gson-version>
+		<gson-version>2.3.1</gson-version>
 		<netty-version>3.9.6.Final</netty-version>
 		<rome-version>1.0.0</rome-version>
 		<thumbnailator-version>[0.4, 0.5)</thumbnailator-version>
 		<jai-imageio-core-standalone-version>1.2-pre-dr-b04-2011-07-04</jai-imageio-core-standalone-version>
 		<jaudiotagger-version>2.0.3</jaudiotagger-version>
 		<juniversalchardet-version>1.0.3</juniversalchardet-version>
-		<junit-version>4.11</junit-version>
+		<junit-version>4.12</junit-version>
 		<fest-assert-version>1.4</fest-assert-version>
 		<jmte-version>3.0</jmte-version>
 		<jnotify-version>0.94</jnotify-version>
@@ -61,7 +61,7 @@
 		<sevenzip-version>4.65-1.04-RC</sevenzip-version>
 		<cling-version>2.0.1</cling-version>
 		<jmdns-version>3.4.1</jmdns-version>
-		<chromcast-api-v2-version>0.0.3</chromcast-api-v2-version>
+		<chromcast-api-v2-version>0.0.6</chromcast-api-v2-version>
 		<jmustache-version>1.9</jmustache-version>
 		<javassist-version>3.19.0-GA</javassist-version>
 
