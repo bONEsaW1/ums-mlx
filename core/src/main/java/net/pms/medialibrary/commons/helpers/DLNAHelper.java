@@ -32,10 +32,11 @@ import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.FileTranscodeVirtualFolder;
 import net.pms.dlna.RealFile;
+import net.pms.dlna.virtual.TranscodeVirtualFolder;
 import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
 
 public class DLNAHelper {
-	private static final Logger log = LoggerFactory.getLogger(DLNAHelper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DLNAHelper.class);
 
 	public static DLNAMediaInfo getMediaForVideo(DOVideoFileInfo video) {		
 		DLNAMediaInfo dbMedia = new DLNAMediaInfo();
@@ -133,7 +134,7 @@ public class DLNAHelper {
 				}
 				is.close();
 			} catch (Exception e) {
-				log.error("Failed to read image with path '" + thumbnailPath + "'", e);
+				LOGGER.error("Failed to read image with path '" + thumbnailPath + "'", e);
 			}
 		}
 
@@ -154,12 +155,34 @@ public class DLNAHelper {
 		rootFolder.setParent(parent);
 		rootFolder.addChild(originalFile.clone());
 		rootFolder.resolve();
-		//get the transcode folder which is hidden a bit deeper. this could break at some point but is an easy solution..
-		DLNAResource originalTranscodeFolder = rootFolder.getChildren().get(1).getChildren().get(0);
-		originalTranscodeFolder.resolve();
 		
-		for(DLNAResource r : originalTranscodeFolder.getChildren()) {
-			parent.addChild(r);
+		// Get the transcode folder which is hidden a bit deeper. This could break at some point but is an easy solution..
+		TranscodeVirtualFolder transcodeVirtualFolder = null;
+		for(DLNAResource dlnaResource : rootFolder.getChildren()) {
+			if(dlnaResource.getClass() == TranscodeVirtualFolder.class) {
+				transcodeVirtualFolder = (TranscodeVirtualFolder)dlnaResource;
+				break;
+			}
 		}
+		FileTranscodeVirtualFolder fileTranscodeVirtualFolder = null;
+		if(transcodeVirtualFolder != null) {
+			for(DLNAResource dlnaResource : transcodeVirtualFolder.getChildren()) {
+				if(dlnaResource.getClass() == FileTranscodeVirtualFolder.class) {
+					fileTranscodeVirtualFolder = (FileTranscodeVirtualFolder)dlnaResource;
+					break;
+				}
+			}			
+		}
+		
+		if(fileTranscodeVirtualFolder == null) {
+			LOGGER.warn("The transcode folder could not be determined. This should never happen!");
+		} else {
+			fileTranscodeVirtualFolder.resolve();
+
+			for(DLNAResource r : fileTranscodeVirtualFolder.getChildren()) {
+				parent.addChild(r);
+			}			
+		}
+		
 	}
 }
