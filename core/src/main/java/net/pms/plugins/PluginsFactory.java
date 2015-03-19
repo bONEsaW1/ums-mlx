@@ -168,10 +168,19 @@ public class PluginsFactory {
 	 * Gets the file detail plugin by name.
 	 *
 	 * @param className the class name
+	 * @param pluginConfigFilePath 
 	 * @return the file detail plugin resolved by name. Null if it couldn't be resolved
 	 */
-	public static FileDetailPlugin getFileDetailPluginByName(String className) {
-		FileDetailPlugin plugin =  getPluginByName(FileDetailPlugin.class, className);
+	public static FileDetailPlugin getFileDetailPluginByName(String className, String pluginConfigFilePath) {
+		FileDetailPlugin plugin = getPluginByName(FileDetailPlugin.class, className);
+		File configFile = new File(pluginConfigFilePath);
+		if(configFile.isFile()){
+			try {
+				plugin.loadConfiguration(pluginConfigFilePath);
+			} catch (IOException e) {
+				LOGGER.error(String.format("Failed to load configuration for plugin of type '%s'. Config file path='%s'", className, pluginConfigFilePath), e);
+			}
+		}
 		return plugin;
 	}
 

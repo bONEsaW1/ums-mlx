@@ -31,6 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import net.pms.dlna.DLNAResource;
 import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
+import net.pms.plugin.filedetail.opensubtitles.common.DisplayMode;
+import net.pms.plugin.filedetail.opensubtitles.configuration.InstanceConfiguration;
+import net.pms.plugin.filedetail.opensubtitles.dlna.OpenSubtitlesDlnaResource;
+import net.pms.plugin.filedetail.opensubtitles.gui.InstanceConfigurationPanel;
 import net.pms.plugins.FileDetailPlugin;
 import net.pms.util.PmsProperties;
 
@@ -55,179 +59,116 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getName()
-	 */
+	private InstanceConfigurationPanel instanceConfigurationPanel;
+	private InstanceConfiguration instanceConfiguration;
+	
+	private OpenSubtitlesDlnaResource dlnaResource;
+	
 	@Override
 	public String getName() {
 		return messages.getString("OpenSubtitlesPlugin.Name");
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getVersion()
-	 */
 	@Override
 	public String getVersion() {
 		return properties.get("project.version");
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getPluginIcon()
-	 */
 	@Override
 	public Icon getPluginIcon() {
 		return new ImageIcon(getClass().getResource("/OpenSubtitles_FileDetailPlugin_Icon-32.png"));
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getShortDescription()
-	 */
 	@Override
 	public String getShortDescription() {
 		return messages.getString("OpenSubtitlesPlugin.ShortDescription");
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getLongDescription()
-	 */
 	@Override
 	public String getLongDescription() {
 		return messages.getString("OpenSubtitlesPlugin.LongDescription");
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getUpdateUrl()
-	 */
 	@Override
 	public String getUpdateUrl() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getWebSiteUrl()
-	 */
 	@Override
 	public String getWebSiteUrl() {
 		return "http://www.ps3mediaserver.org/";
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#initialize()
-	 */
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
+		instanceConfiguration = new InstanceConfiguration();
+		instanceConfigurationPanel = new InstanceConfigurationPanel();
+		instanceConfigurationPanel.setConfiguration(instanceConfiguration);
 		
+		dlnaResource = new OpenSubtitlesDlnaResource();
+		dlnaResource.setConfiguration(instanceConfiguration);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#shutdown()
-	 */
 	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void shutdown() { }
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#getGlobalConfigurationPanel()
-	 */
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#saveConfiguration()
-	 */
 	@Override
-	public void saveConfiguration() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void saveConfiguration() { }
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.PluginBase#isPluginAvailable()
-	 */
 	@Override
 	public boolean isPluginAvailable() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#isFolder()
-	 */
 	@Override
 	public boolean isFolder() {
-		return true;
+		return instanceConfiguration.getDisplayMode() == DisplayMode.Folder;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#getTreeIcon()
-	 */
 	@Override
 	public Icon getTreeIcon() {
 		return new ImageIcon(getClass().getResource("/OpenSubtitles_FileDetailPlugin_Icon-16.png"));
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#getConfigurationPanel()
-	 */
 	@Override
 	public JPanel getConfigurationPanel() {
-		// TODO Auto-generated method stub
-		return null;
+		return instanceConfigurationPanel;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#saveConfiguration(java.lang.String)
-	 */
 	@Override
-	public void saveConfiguration(String saveFilePath) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void saveConfiguration(String saveFilePath) throws IOException {		
+		instanceConfiguration = instanceConfigurationPanel.getConfiguration();
+		instanceConfiguration.save(saveFilePath);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#loadConfiguration(java.lang.String)
-	 */
 	@Override
 	public void loadConfiguration(String saveFilePath) throws IOException {
-		// TODO Auto-generated method stub
+		instanceConfiguration.load(saveFilePath);
 		
+		instanceConfigurationPanel.setConfiguration(instanceConfiguration);
+		dlnaResource.setConfiguration(instanceConfiguration);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#setDisplayName(java.lang.String)
-	 */
 	@Override
 	public void setDisplayName(String name) {
-		// TODO Auto-generated method stub
-		
+		dlnaResource.setDisplayName(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#setVideo(net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo)
-	 */
 	@Override
 	public void setVideo(DOVideoFileInfo videoFileInfo) {
-		// TODO Auto-generated method stub
-		
+		dlnaResource.setVideo(videoFileInfo);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#getResource()
-	 */
 	@Override
 	public DLNAResource getResource() {
-		// TODO Auto-generated method stub
-		return null;
+		return dlnaResource;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.plugins.FileDetailPlugin#isInstanceAvailable()
-	 */
 	@Override
 	public boolean isInstanceAvailable() {
 		return true;

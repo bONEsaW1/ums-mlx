@@ -131,7 +131,7 @@ class DBFileFolder extends DBBase {
 						break;
 					case PLUGIN:
 		    			try {
-		    				FileDetailPlugin plugin = PluginsFactory.getFileDetailPluginByName(pluginName);
+		    				FileDetailPlugin plugin = PluginsFactory.getFileDetailPluginByName(pluginName, pluginConfigFilePath);
 							DOFileEntryPlugin fep = new DOFileEntryPlugin(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength, plugin, pluginConfigFilePath);
 							baseFolder.getChildren().add(fep);
 		    			} catch(Exception ex) {
