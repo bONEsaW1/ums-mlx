@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import net.pms.PMS;
@@ -47,7 +48,7 @@ public class BaseConfiguration {
 	 * @return the path to the directory containing the plugin configurations
 	 */
 	public String getGlobalConfigurationDirectory() {
-		return PMS.getConfiguration().getProfileDirectory() + File.separator + "plugins" + File.separator + "global" + File.separator;
+		return Paths.get(PMS.getConfiguration().getProfileDirectory(), "plugins", "global").toString();
 	}
 	
 	/**

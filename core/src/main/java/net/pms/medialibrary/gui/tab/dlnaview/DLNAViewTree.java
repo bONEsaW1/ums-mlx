@@ -823,7 +823,8 @@ public class DLNAViewTree extends JTree {
 			} catch (IOException e) {
 				log.error(String.format("Failed to load configuration '%s' for plugin '%s'", fileEntryPlugin.getPluginConfigFilePath(), fileEntryPlugin.getPlugin().getName()));
 			}
-			fileEntryPlugin.getPlugin().setVideo(videoFileInfo);
+			// TODO: Fix if possible
+			// fileEntryPlugin.getPlugin().setOriginalResource(videoFileInfo);
 	}
 
 	private int getCutOffPosition(String convertedMask, int maxLineLength) {

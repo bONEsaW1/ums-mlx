@@ -52,10 +52,12 @@ public class HyperLinkToolTip extends JToolTip {
 		add(editorPane);
 	}
 
+	@Override
 	public void setTipText(String tipText) {
 		editorPane.setText(tipText);
 	}
 
+	@Override
 	public void updateUI() {
 		setUI(new ToolTipUI() { });
 	}

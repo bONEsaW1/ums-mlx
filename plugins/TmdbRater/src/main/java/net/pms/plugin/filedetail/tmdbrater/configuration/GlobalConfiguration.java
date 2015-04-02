@@ -19,6 +19,8 @@
 package net.pms.plugin.filedetail.tmdbrater.configuration;
 
 import java.io.IOException;
+import java.nio.file.Paths;
+
 import net.pms.configuration.BaseConfiguration;
 
 // TODO: Auto-generated Javadoc
@@ -40,7 +42,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * Instantiates a new global configuration.
 	 */
 	public GlobalConfiguration() {
-		propertiesFilePath = getGlobalConfigurationDirectory() + "TmdbRatingPlugin.conf";
+		propertiesFilePath = Paths.get(getGlobalConfigurationDirectory(), "TmdbRatingPlugin.conf").toString();
 	}
 
 	/**

@@ -5,6 +5,7 @@
 package net.pms.plugin.fileimport.thetvdb.configuration;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * Instantiates a new global configuration.
 	 */
 	public GlobalConfiguration() {
-		propertiesFilePath = getGlobalConfigurationDirectory() + "TheTVDBImportPlugin.conf";
+		propertiesFilePath = Paths.get(getGlobalConfigurationDirectory(), "TheTVDBImportPlugin.conf").toString();
 	}
 
 	/**

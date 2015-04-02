@@ -217,7 +217,7 @@ public class MediaLibraryRealFile extends RealFile {
 					//add a FileDetailPlugin
 					FileDetailPlugin pl = ((DOFileEntryPlugin) entry).getPlugin();
 					if(pl.isInstanceAvailable()){
-						pl.setVideo((DOVideoFileInfo) fileInfo);
+						pl.setOriginalResource(this);
 						pl.setDisplayName(fileInfo.getDisplayString(entry.getDisplayNameMask()));
 						addChild(pl.getResource());
 					}

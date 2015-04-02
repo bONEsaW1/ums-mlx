@@ -19,6 +19,8 @@
 package net.pms.plugin.startstoplistener.pcw.configuration;
 
 import java.io.IOException;
+import java.nio.file.Paths;
+
 import net.pms.configuration.BaseConfiguration;
 
 /**
@@ -36,7 +38,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * Instantiates a new global configuration.
 	 */
 	public GlobalConfiguration() {
-		propertiesFilePath = getGlobalConfigurationDirectory() + "PlayCountWatcher.conf";
+		propertiesFilePath = Paths.get(getGlobalConfigurationDirectory(), "PlayCountWatcher.conf").toString();
 	}
 
 	/**

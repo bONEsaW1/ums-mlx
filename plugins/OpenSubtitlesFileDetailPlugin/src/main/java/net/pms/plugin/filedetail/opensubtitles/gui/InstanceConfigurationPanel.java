@@ -6,9 +6,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
@@ -21,9 +19,9 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import net.pms.medialibrary.commons.HyperLinkToolTip;
+import net.pms.newgui.components.ComboBoxItem;
 import net.pms.plugin.filedetail.opensubtitles.OpenSubtitlesPlugin;
 import net.pms.plugin.filedetail.opensubtitles.common.DisplayMode;
-import net.pms.plugin.filedetail.opensubtitles.common.DisplayModeCBItem;
 import net.pms.plugin.filedetail.opensubtitles.configuration.InstanceConfiguration;
 
 public class InstanceConfigurationPanel extends JPanel {
@@ -31,11 +29,9 @@ public class InstanceConfigurationPanel extends JPanel {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstanceConfigurationPanel.class);
 	
-	private JComboBox<DisplayModeCBItem> cbDisplayMode;
+	private JComboBox<ComboBoxItem<DisplayMode>> cbDisplayMode;
 	private JTextField tfSubtitleLanguages;
 	private JTextField tfMaxNumberOfSubtitles;
-	
-	private ImageIcon helpIcon = new ImageIcon(getClass().getResource("/help-16.png"));
 	
 	public InstanceConfigurationPanel() {
 		setLayout(new GridLayout());
@@ -44,10 +40,15 @@ public class InstanceConfigurationPanel extends JPanel {
 		build();
 	}
 
+	public InstanceConfigurationPanel(InstanceConfiguration instanceConfiguration) {
+		this();		
+		setConfiguration(instanceConfiguration);
+	}
+
 	public void setConfiguration(InstanceConfiguration instanceConfiguration) {
 		for(int i = 0; i < cbDisplayMode.getItemCount(); i++) {
-			DisplayModeCBItem cbItem = cbDisplayMode.getItemAt(i);
-			if(cbItem.getDisplayMode() == instanceConfiguration.getDisplayMode()) {
+			ComboBoxItem<DisplayMode> cbItem = cbDisplayMode.getItemAt(i);
+			if(cbItem.getValue() == instanceConfiguration.getDisplayMode()) {
 				cbDisplayMode.setSelectedItem(cbItem);
 				break;
 			}
@@ -57,9 +58,10 @@ public class InstanceConfigurationPanel extends JPanel {
 		tfMaxNumberOfSubtitles.setText(String.valueOf(instanceConfiguration.getMaxNumberOfSubtitles()));
 	}
 
+	@SuppressWarnings("unchecked")
 	public InstanceConfiguration getConfiguration() {
 		InstanceConfiguration instanceConfiguration = new InstanceConfiguration();
-		instanceConfiguration.setDisplayMode(((DisplayModeCBItem)cbDisplayMode.getSelectedItem()).getDisplayMode());
+		instanceConfiguration.setDisplayMode(((ComboBoxItem<DisplayMode>)cbDisplayMode.getSelectedItem()).getValue());
 		instanceConfiguration.setSubtitleLanguages(tfSubtitleLanguages.getText());
 
 		if(instanceConfiguration.getDisplayMode() == DisplayMode.Folder) {
@@ -69,7 +71,7 @@ public class InstanceConfigurationPanel extends JPanel {
 				instanceConfiguration.setMaxNumberOfSubtitles(maxNumberOfSubtitles);
 			} catch(NumberFormatException ex) {
 				LOGGER.error(String.format("Invalid value specified for maxNumberOfSubtitles (using default value). Value='%s'", tfMaxNumberOfSubtitles.getText()));
-			}			
+			}
 		}
 		
 		return instanceConfiguration;
@@ -77,13 +79,15 @@ public class InstanceConfigurationPanel extends JPanel {
 
 	private void init() {
 		cbDisplayMode = new JComboBox<>();
+		cbDisplayMode.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.DisplayMode"));
 		for(DisplayMode displayMode : DisplayMode.values()) {
-			cbDisplayMode.addItem(new DisplayModeCBItem(displayMode, OpenSubtitlesPlugin.messages.getString("DisplayMode." + displayMode)));
+			cbDisplayMode.addItem(new ComboBoxItem<DisplayMode>(OpenSubtitlesPlugin.messages.getString("DisplayMode." + displayMode), displayMode));
 		}
-		cbDisplayMode.addItemListener(new ItemListener() {			
+		cbDisplayMode.addItemListener(new ItemListener() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				switch(((DisplayModeCBItem)cbDisplayMode.getSelectedItem()).getDisplayMode()) {
+				switch(((ComboBoxItem<DisplayMode>)cbDisplayMode.getSelectedItem()).getValue()) {
 				case File:
 					tfMaxNumberOfSubtitles.setText("");
 					tfMaxNumberOfSubtitles.setEnabled(false);
@@ -95,28 +99,7 @@ public class InstanceConfigurationPanel extends JPanel {
 			}
 		});
 		
-		tfSubtitleLanguages = new JTextField();
-		tfMaxNumberOfSubtitles = new JTextField();
-	}
-
-	private void build() {
-		// Set basic layout
-		FormLayout layout = new FormLayout("5px, p, 5px, f:100:g, 5px, p, 5px", //columns
-				"5px, p, 5px, p, 5px, p, f:5px:g"); //rows
-		PanelBuilder builder = new PanelBuilder(layout);
-		builder.opaque(true);
-
-		CellConstraints cc = new CellConstraints();
-		
-		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.DisplayMode"), cc.xy(2, 2));
-		builder.add(cbDisplayMode, cc.xy(4, 2));
-		JLabel modeHelp = new JLabel(helpIcon);
-		modeHelp.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.DisplayMode"));
-		builder.add(modeHelp, cc.xy(6, 2));
-
-		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.Languages"), cc.xy(2, 4));
-		builder.add(tfSubtitleLanguages, cc.xy(4, 4));
-		JLabel subtitleLanguagesHelp = new JLabel(helpIcon) {
+		tfSubtitleLanguages = new JTextField() {
 			private static final long serialVersionUID = -2927951764552780686L;
 
 			public JToolTip createToolTip() {
@@ -130,17 +113,31 @@ public class InstanceConfigurationPanel extends JPanel {
 				return new Point(getWidth() / 2, getHeight() / 2);
 			}
 		};
-		subtitleLanguagesHelp.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.Languages"));
-		builder.add(subtitleLanguagesHelp, cc.xy(6, 4));
+		tfSubtitleLanguages.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.Languages"));
+		
+		tfMaxNumberOfSubtitles = new JTextField();
+		tfMaxNumberOfSubtitles.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.MaxNumberOfSubtitles"));
+	}
+
+	private void build() {
+		// Set basic layout
+		FormLayout layout = new FormLayout("5px, p, 5px, f:100:g, 5px", //columns
+				"5px, p, 5px, p, 5px, p, f:5px:g"); //rows
+		PanelBuilder builder = new PanelBuilder(layout);
+		builder.opaque(true);
+
+		CellConstraints cc = new CellConstraints();
+		
+		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.DisplayMode"), cc.xy(2, 2));
+		builder.add(cbDisplayMode, cc.xy(4, 2));
+
+		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.Languages"), cc.xy(2, 4));
+		builder.add(tfSubtitleLanguages, cc.xy(4, 4));
 
 		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.MaxNumberOfSubtitles"), cc.xy(2, 6));
 		builder.add(tfMaxNumberOfSubtitles, cc.xy(4, 6));
-		JLabel maxNumberOfSubtitlesHelp = new JLabel(helpIcon);
-		maxNumberOfSubtitlesHelp.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.MaxNumberOfSubtitles"));
-		builder.add(maxNumberOfSubtitlesHelp, cc.xy(6, 6));
 
 		removeAll();
 		add(builder.getPanel());
 	}
-
 }

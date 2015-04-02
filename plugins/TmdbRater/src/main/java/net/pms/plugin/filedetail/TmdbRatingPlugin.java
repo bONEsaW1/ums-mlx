@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.virtual.VirtualFolder;
 import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
+import net.pms.medialibrary.dlna.MediaLibraryRealFile;
 import net.pms.plugin.filedetail.tmdbrater.configuration.GlobalConfiguration;
 import net.pms.plugin.filedetail.tmdbrater.dlna.RatingResource;
 import net.pms.plugin.filedetail.tmdbrater.gui.GlobalConfigurationPanel;
@@ -105,7 +106,6 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 	    return vf;
     }
 
-	@Override
     public void setVideo(DOVideoFileInfo video) {
 	    this.video = video;
     }
@@ -186,5 +186,12 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 	@Override
 	public boolean isPluginAvailable() {
 		return true;
+	}
+
+	@Override
+	public void setOriginalResource(MediaLibraryRealFile originalResource) {
+		if(originalResource.getFileInfo() instanceof DOVideoFileInfo) {
+			setVideo((DOVideoFileInfo) originalResource.getFileInfo());
+		}
 	}
 }

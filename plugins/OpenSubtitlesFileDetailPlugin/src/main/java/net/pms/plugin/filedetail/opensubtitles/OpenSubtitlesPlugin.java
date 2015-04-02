@@ -30,10 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.pms.dlna.DLNAResource;
-import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
+import net.pms.medialibrary.dlna.MediaLibraryRealFile;
 import net.pms.plugin.filedetail.opensubtitles.common.DisplayMode;
+import net.pms.plugin.filedetail.opensubtitles.configuration.GlobalConfiguration;
 import net.pms.plugin.filedetail.opensubtitles.configuration.InstanceConfiguration;
 import net.pms.plugin.filedetail.opensubtitles.dlna.OpenSubtitlesDlnaResource;
+import net.pms.plugin.filedetail.opensubtitles.gui.GlobalConfigurationPanel;
 import net.pms.plugin.filedetail.opensubtitles.gui.InstanceConfigurationPanel;
 import net.pms.plugins.FileDetailPlugin;
 import net.pms.util.PmsProperties;
@@ -47,7 +49,7 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenSubtitlesPlugin.class);
 	
 	/** Resource used for localization. */
-	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.filedetail.opensubtitles.lang.messages");
+	public static final ResourceBundle messages = ResourceBundle.getBundle("i18n.messages");
 	
 	/** Holds only the project version. It's used to always use the Maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
@@ -61,6 +63,17 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	
 	private InstanceConfigurationPanel instanceConfigurationPanel;
 	private InstanceConfiguration instanceConfiguration;
+
+	private GlobalConfigurationPanel globalConfigurationPanel;
+	private static final GlobalConfiguration globalConfiguration;
+	static {
+		globalConfiguration = new GlobalConfiguration();
+		try {
+			globalConfiguration.load();
+		} catch (IOException e) {
+			LOGGER.error("Failed to load global configuration", e);
+		}
+	}
 	
 	private OpenSubtitlesDlnaResource dlnaResource;
 	
@@ -102,11 +115,9 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	@Override
 	public void initialize() {
 		instanceConfiguration = new InstanceConfiguration();
-		instanceConfigurationPanel = new InstanceConfigurationPanel();
-		instanceConfigurationPanel.setConfiguration(instanceConfiguration);
-		
-		dlnaResource = new OpenSubtitlesDlnaResource();
-		dlnaResource.setConfiguration(instanceConfiguration);
+		instanceConfigurationPanel = new InstanceConfigurationPanel(instanceConfiguration);
+		globalConfigurationPanel = new GlobalConfigurationPanel(globalConfiguration);		
+		dlnaResource = new OpenSubtitlesDlnaResource(globalConfiguration, instanceConfiguration);
 	}
 
 	@Override
@@ -114,11 +125,18 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		return null;
+		return globalConfigurationPanel;
 	}
 
 	@Override
-	public void saveConfiguration() { }
+	public void saveConfiguration() {
+		globalConfigurationPanel.updateConfiguration(globalConfiguration);
+		try {
+			globalConfiguration.save();
+		} catch (IOException e) {
+			LOGGER.error("Failed to save global configuration", e);
+		}
+	}
 
 	@Override
 	public boolean isPluginAvailable() {
@@ -151,17 +169,12 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 		instanceConfiguration.load(saveFilePath);
 		
 		instanceConfigurationPanel.setConfiguration(instanceConfiguration);
-		dlnaResource.setConfiguration(instanceConfiguration);
+		dlnaResource.setInstanceConfiguration(instanceConfiguration);
 	}
 
 	@Override
 	public void setDisplayName(String name) {
 		dlnaResource.setDisplayName(name);
-	}
-
-	@Override
-	public void setVideo(DOVideoFileInfo videoFileInfo) {
-		dlnaResource.setVideo(videoFileInfo);
 	}
 
 	@Override
@@ -174,4 +187,8 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 		return true;
 	}
 
+	@Override
+	public void setOriginalResource(MediaLibraryRealFile originalResource) {
+		dlnaResource.setOriginalResource(originalResource);
+	}
 }

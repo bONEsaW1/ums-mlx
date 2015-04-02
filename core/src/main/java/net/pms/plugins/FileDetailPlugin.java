@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import net.pms.dlna.DLNAResource;
 import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
+import net.pms.medialibrary.dlna.MediaLibraryRealFile;
 
 /**
  * Classes implementing this interface and packaged as plugins can be used to
@@ -76,15 +77,13 @@ public interface FileDetailPlugin extends PluginBase {
 	 */
 	void setDisplayName(String name);
 
-	/***
-	 * Sets the video file information for the video currently being browsed.<br>
-	 * This method will be called right before calling getResource
-	 * 
-	 * @param videoFileInfo
-	 *            object containing all information about the video being
-	 *            browsed
+
+	/**
+	 * Sets the original resource.
+	 *
+	 * @param originalResource the original resource
 	 */
-	void setVideo(DOVideoFileInfo videoFileInfo);
+	void setOriginalResource(MediaLibraryRealFile originalResource);
 
 	/***
 	 * Gets the DLNAResource that will show up on the renderer

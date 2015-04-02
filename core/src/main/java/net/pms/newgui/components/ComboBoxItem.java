@@ -1,12 +1,12 @@
 package net.pms.newgui.components;
 
 /**
- * This calss can be used to add a combo box item with a name to display and a
+ * This class can be used to add a combo box item with a name to display and a
  * generic value
  * 
  * @param <T> the generic type
  */
-public class ComboBoxItem<T> {
+public class ComboBoxItem<T> implements Comparable<ComboBoxItem<T>> {
 	private String displayName;
 	private T value;
 
@@ -73,4 +73,12 @@ public class ComboBoxItem<T> {
 	public String toString() {
 		return getDisplayName();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+    public int compareTo(ComboBoxItem<T> o) {
+	    return getDisplayName().compareTo(o.getDisplayName());
+    }
 }
