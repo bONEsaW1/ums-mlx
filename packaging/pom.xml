@@ -43,18 +43,18 @@
 		
 		<!--
 			To get the latest JRE versions:
-       1) Go to http://www.java.com/en/download/manual.jsp
-			 2) Check the download links for win32, win64 and osx and use BundleId+1 for the download URl
+				1) Go to http://www.java.com/en/download/manual.jsp
+				2) Check the download links for win32, win64 and osx and use BundleId+1 for the download URl
 		-->
-		<private-jre.windows.x86.filename>jre-7u67-windows-i586.tar.gz</private-jre.windows.x86.filename>
-		<private-jre.windows.x86.archive-directory-name>jre1.7.0_67</private-jre.windows.x86.archive-directory-name>
-		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=95124</private-jre.windows.x86.download-url>
-		<private-jre.windows.x64.filename>jre-7u67-windows-x64.tar.gz</private-jre.windows.x64.filename>
-		<private-jre.windows.x64.archive-directory-name>jre1.7.0_67</private-jre.windows.x64.archive-directory-name>
-		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=95126</private-jre.windows.x64.download-url>
+		<private-jre.windows.x86.filename>jre-8u40-windows-i586.tar.gz</private-jre.windows.x86.filename>
+		<private-jre.windows.x86.archive-directory-name>jre1.8.0_40</private-jre.windows.x86.archive-directory-name>
+		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=104767</private-jre.windows.x86.download-url>
+		<private-jre.windows.x64.filename>jre-8u40-windows-x64.tar.gz</private-jre.windows.x64.filename>
+		<private-jre.windows.x64.archive-directory-name>jre1.8.0_40</private-jre.windows.x64.archive-directory-name>
+		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=104769</private-jre.windows.x64.download-url>
 		<private-jre.macosx.filename>jre-7u67-macosx-x64.gz</private-jre.macosx.filename>
-		<private-jre.macosx.archive-directory-name>jre1.7.0_67.jre</private-jre.macosx.archive-directory-name>
-		<private-jre.macosx.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=95118</private-jre.macosx.download-url>
+		<private-jre.macosx.archive-directory-name>jre1.8.0_40</private-jre.macosx.archive-directory-name>
+		<private-jre.macosx.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=105220</private-jre.macosx.download-url>
 		<target.private-jre.x86.directory>${project.build.directory}/jre</target.private-jre.x86.directory>
 		<target.private-jre.x64.directory>${project.build.directory}/jre64</target.private-jre.x64.directory>
 		<private-jre.macosx.directory>${external-resources.transcode-tools.directory}/osx/jre-macosx</private-jre.macosx.directory>
