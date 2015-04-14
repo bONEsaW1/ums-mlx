@@ -32,7 +32,7 @@ import javax.swing.*;
 import net.pms.Messages;
 import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
-import net.pms.newgui.GuiUtil.CustomJButton;
+import net.pms.newgui.components.CustomJButton;
 import net.pms.util.FormLayoutUtil;
 import net.pms.util.KeyedComboBoxModel;
 import net.pms.util.UMSUtils;

@@ -44,7 +44,7 @@ import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
 import net.pms.io.WindowsNamedPipe;
-import net.pms.newgui.GuiUtil.CustomJButton;
+import net.pms.newgui.components.CustomJButton;
 import net.pms.medialibrary.commons.enumarations.FileType;
 import net.pms.medialibrary.gui.tab.MediaLibraryTab;
 import net.pms.medialibrary.scanner.FileScanner;
@@ -231,6 +231,11 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 			title = title + " - " + Messages.getString("LooksFrame.26");
 		}
 
+		if (PMS.getTraceMode() == 2) {
+			// Forced trace mode
+			title = title + "  [" + Messages.getString("TracesTab.10").toUpperCase() + "]";
+		}
+
 		this.setTitle(title);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		Dimension screenSize = getToolkit().getScreenSize();
@@ -248,10 +253,10 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 		}
 
 		// Customize the colors used in tooltips
-		UIManager.put("ToolTip.background", new ColorUIResource(125, 184, 47));
-		Border border = BorderFactory.createLineBorder(new Color(125, 184, 47));
+		UIManager.put("ToolTip.background", new ColorUIResource(PMS.getConfiguration().getToolTipBackgroundColor()));
+		Border border = BorderFactory.createLineBorder(PMS.getConfiguration().getToolTipBackgroundColor());
 		UIManager.put("ToolTip.border", border);
-		UIManager.put("ToolTip.foreground", new ColorUIResource(255, 255, 255));
+		UIManager.put("ToolTip.foreground", new ColorUIResource(PMS.getConfiguration().getToolTipForegroundColor()));
 
 		// Display tooltips immediately and for a long time
 		ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -281,15 +286,6 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 		toolBar.setRollover(true);
 
 		toolBar.add(new JPanel());
-		AbstractButton save = createToolBarButton(Messages.getString("LooksFrame.9"), "button-save.png");
-		save.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				PMS.get().save();
-			}
-		});
-		toolBar.add(save);
-		toolBar.addSeparator();
 		reload = createToolBarButton(Messages.getString("LooksFrame.12"), "button-restart.png");
 		reload.addActionListener(new ActionListener() {
 			@Override
@@ -299,7 +295,7 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 		});
 		reload.setToolTipText(Messages.getString("LooksFrame.28"));
 		toolBar.add(reload);
-		toolBar.addSeparator();
+		toolBar.addSeparator(new Dimension(20, 1));
 		AbstractButton quit = createToolBarButton(Messages.getString("LooksFrame.5"), "button-quit.png");
 		quit.addActionListener(new ActionListener() {
 			@Override

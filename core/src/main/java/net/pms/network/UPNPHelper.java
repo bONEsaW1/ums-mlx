@@ -95,7 +95,9 @@ public class UPNPHelper extends UPNPControl {
 
 	@Override
 	public void init() {
-		super.init();
+		if (configuration.isUpnpEnabled()) {
+			super.init();
+		}
 		getHttpControlHandler();
 	}
 
@@ -579,6 +581,24 @@ public class UPNPHelper extends UPNPControl {
 		}
 	}
 
+	public static boolean activate(String uuid) {
+		if (! rendererMap.containsKey(uuid)) {
+			LOGGER.debug("Activating upnp service for {}", uuid);
+			return getInstance().addRenderer(uuid);
+		}
+		return true;
+	}
+
+	@Override
+	protected boolean isBlocked(String uuid) {
+		int mode = DeviceConfiguration.getDeviceUpnpMode(uuid, true);
+		if (mode != RendererConfiguration.ALLOW) {
+			LOGGER.debug("Upnp service is {} for {}", RendererConfiguration.getUpnpModeString(mode), uuid);
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	protected Renderer rendererFound(Device d, String uuid) {
 		// Create or retrieve an instance
@@ -588,9 +608,20 @@ public class UPNPHelper extends UPNPControl {
 			RendererConfiguration ref = configuration.isRendererForceDefault() ?
 				null : RendererConfiguration.getRendererConfigurationByUPNPDetails(getDeviceDetailsString(d));
 
+			if (r != null && ! r.isUpnpAllowed()) {
+				LOGGER.debug("Upnp service is {} for \"{}\"", r.getUpnpModeString(), r);
+				return null;
+			} else if (r == null && ref != null && ! ref.isUpnpAllowed()) {
+				LOGGER.debug("Upnp service is {} for {} devices", ref.getUpnpModeString(), ref);
+				return null;
+			}
+
 			// FIXME: when UpnpDetailsSearch is missing from the conf a upnp-advertising
 			// renderer could register twice if the http server sees it first
-			if (r != null && r.matchUPNPDetails(getDeviceDetailsString(d))) {
+
+			boolean distinct = r != null && StringUtils.isNotBlank(r.getUUID()) && ! uuid.equals(r.getUUID());
+
+			if (! distinct && r != null && (r.matchUPNPDetails(getDeviceDetailsString(d)) || ! r.loaded)) {
 				// Already seen by the http server
 				if (
 					ref != null &&
@@ -602,6 +633,10 @@ public class UPNPHelper extends UPNPControl {
 					LOGGER.debug("Switching to preferred renderer: " + ref.getRendererName());
 					r.inherit(ref);
 				}
+
+				// Update if we have a custom configuration for this uuid
+				r.setUUID(uuid);
+
 				// Make sure it's mapped
 				rendererMap.put(uuid, "0", r);
 				r.details = getDeviceDetails(d);
@@ -619,6 +654,7 @@ public class UPNPHelper extends UPNPControl {
 					// This is to allow initiation of upnp playback before http recognition has occurred.
 					r.inherit(r.getDefaultConf());
 					r.loaded = false;
+					LOGGER.debug("Marking upnp renderer \"{}\" at {} as unrecognized", r, socket);
 				}
 				if (r.associateIP(socket)) {
 					r.details = getDeviceDetails(d);
@@ -629,6 +665,7 @@ public class UPNPHelper extends UPNPControl {
 			return r;
 		} catch (Exception e) {
 			LOGGER.debug("Error initializing device " + getFriendlyName(d) + ": " + e);
+			e.printStackTrace();
 		}
 		return null;
 	}
