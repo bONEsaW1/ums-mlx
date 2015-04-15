@@ -1,16 +1,10 @@
 package net.pms.plugin.filedetail.opensubtitles.gui;
 
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToolTip;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +12,8 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import net.pms.medialibrary.commons.HyperLinkToolTip;
 import net.pms.newgui.components.ComboBoxItem;
+import net.pms.newgui.components.CustomJTextField;
 import net.pms.plugin.filedetail.opensubtitles.OpenSubtitlesPlugin;
 import net.pms.plugin.filedetail.opensubtitles.common.DisplayMode;
 import net.pms.plugin.filedetail.opensubtitles.configuration.InstanceConfiguration;
@@ -30,8 +24,8 @@ public class InstanceConfigurationPanel extends JPanel {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InstanceConfigurationPanel.class);
 	
 	private JComboBox<ComboBoxItem<DisplayMode>> cbDisplayMode;
-	private JTextField tfSubtitleLanguages;
-	private JTextField tfMaxNumberOfSubtitles;
+	private CustomJTextField tfSubtitleLanguages;
+	private CustomJTextField tfMaxNumberOfSubtitles;
 	
 	public InstanceConfigurationPanel() {
 		setLayout(new GridLayout());
@@ -99,23 +93,10 @@ public class InstanceConfigurationPanel extends JPanel {
 			}
 		});
 		
-		tfSubtitleLanguages = new JTextField() {
-			private static final long serialVersionUID = -2927951764552780686L;
-
-			public JToolTip createToolTip() {
-				JToolTip tip = new HyperLinkToolTip();
-				tip.setComponent(this);
-				return tip;
-			}
-
-			// Set tooltip location
-			public Point getToolTipLocation(MouseEvent event) {
-				return new Point(getWidth() / 2, getHeight() / 2);
-			}
-		};
+		tfSubtitleLanguages = new CustomJTextField("");
 		tfSubtitleLanguages.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.Languages"));
 		
-		tfMaxNumberOfSubtitles = new JTextField();
+		tfMaxNumberOfSubtitles = new CustomJTextField("");
 		tfMaxNumberOfSubtitles.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.MaxNumberOfSubtitles"));
 	}
 

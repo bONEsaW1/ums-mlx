@@ -15,13 +15,14 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import net.pms.newgui.components.CustomJTextField;
 import net.pms.plugin.filedetail.opensubtitles.OpenSubtitlesPlugin;
 import net.pms.plugin.filedetail.opensubtitles.configuration.GlobalConfiguration;
 
 public class GlobalConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = -2458232316940897901L;
 
-	private JTextField tfSubtitlesPath;
+	private CustomJTextField tfSubtitlesPath;
 	
 	public GlobalConfigurationPanel() {
 		setLayout(new GridLayout());
@@ -36,7 +37,7 @@ public class GlobalConfigurationPanel extends JPanel {
 	}
 
 	private void init() {
-		tfSubtitlesPath = new JTextField();
+		tfSubtitlesPath = new CustomJTextField("");
 		tfSubtitlesPath.setToolTipText(OpenSubtitlesPlugin.messages.getString("GlobalConfigurationPanel.SelectSubtitlePathTextField.ToolTip"));
 	}
 
