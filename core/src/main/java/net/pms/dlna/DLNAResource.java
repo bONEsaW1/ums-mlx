@@ -19,8 +19,10 @@
 package net.pms.dlna;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -162,10 +164,16 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	private ProcessWrapper externalProcess;
 
 	/**
-	 * @deprecated Use standard getter and setter to access this field.
+	 * @deprecated Use #hasExternalSubtitles()
 	 */
 	@Deprecated
 	protected boolean srtFile;
+
+	/**
+	 * @deprecated Use standard getter and setter to access this field.
+	 */
+	@Deprecated
+	protected boolean hasExternalSubtitles;
 
 	/**
 	 * @deprecated Use standard getter and setter to access this field.
@@ -216,8 +224,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	@Deprecated
 	protected RendererConfiguration defaultRenderer;
 
-	private String dlnaspec;
-
 	/**
 	 * @deprecated Use standard getter and setter to access this field.
 	 */
@@ -231,7 +237,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	protected boolean skipTranscode = false;
 
 	private boolean allChildrenAreFolders = true;
-	private String dlnaOrgOpFlags;
 
 	/**
 	 * @deprecated Use standard getter and setter to access this field.
@@ -396,8 +401,11 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 
 	public abstract boolean isFolder();
 
-	public String getDlnaContentFeatures() {
-		return (dlnaspec != null ? (dlnaspec + ";") : "") + getDlnaOrgOpFlags() + ";DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+	public String getDlnaContentFeatures(RendererConfiguration mediaRenderer) {
+		// TODO: Determine renderer's correct localization value
+		int localizationValue = 1;
+		String dlnaOrgPnFlags = getDlnaOrgPnFlags(mediaRenderer, localizationValue);
+		return (dlnaOrgPnFlags != null ? (dlnaOrgPnFlags + ";") : "") + getDlnaOrgOpFlags(mediaRenderer) + ";DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000";
 	}
 
 	public DLNAResource getPrimaryResource() {
@@ -558,42 +566,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 					addResumeFile = true;
 				}
 
-				boolean parserV2 = child.media != null && defaultRenderer != null && defaultRenderer.isMediaParserV2();
-				if (parserV2) {
-					// See which mime type the renderer prefers in case it supports the media
-					String mimeType = defaultRenderer.getFormatConfiguration().match(child.media);
-					if (mimeType != null) {
-						// Media is streamable
-						if (!configuration.isDisableSubtitles() && child.isSubsFile() && defaultRenderer.isSubtitlesStreamingSupported()) {
-							OutputParams params = new OutputParams(configuration);
-							Player.setAudioAndSubs(child.getSystemName(), child.media, params); // set proper subtitles in accordance with user setting
-							if (params.sid.isExternal() && defaultRenderer.isExternalSubtitlesFormatSupported(params.sid)) {
-								child.media_subtitle = params.sid;
-								child.media_subtitle.setSubsStreamable(true);
-								LOGGER.trace("Set media_subtitle");
-							} else {
-								LOGGER.trace("Did not set media_subtitle because the subtitle format is not supported by this renderer");
-							}
-						} else {
-							LOGGER.trace("Did not set media_subtitle because configuration.isDisableSubtitles is true, this is not a subtitle, or the renderer does not support streaming subtitles");
-						}
-
-						if (!FormatConfiguration.MIMETYPE_AUTO.equals(mimeType)) {
-							// Override with the preferred mime type of the renderer
-							LOGGER.trace("Overriding detected mime type \"{}\" for file \"{}\" with renderer preferred mime type \"{}\"",
-									child.media.getMimeType(), child.getName(), mimeType);
-							child.media.setMimeType(mimeType);
-						}
-
-						LOGGER.trace("File \"{}\" can be streamed with mime type \"{}\"", child.getName(), child.media.getMimeType());
-					} else {
-						// Media is transcodable
-						LOGGER.trace("File \"{}\" can be transcoded", child.getName());
-					}
-				} else if (child.media != null && defaultRenderer != null) {
-					LOGGER.trace("Did not check for media_subtitle for \"{}\" because {} does not use MediaInfo, we will check for it soon", child.getName(), defaultRenderer);
-				}
-
 				if (child.format != null) {
 					String configurationSkipExtensions = configuration.getDisableTranscodeForExtensions();
 					String rendererSkipExtensions = null;
@@ -648,8 +620,24 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 
 						// If no preferred player could be determined from the name, try to
 						// match a player based on media information and format.
-						if (player == null) {
+						if (player == null || (hasExternalSubtitles() && defaultRenderer.isSubtitlesStreamingSupported())) {
 							player = child.resolvePlayer(defaultRenderer);
+						}
+
+						boolean parserV2 = child.media != null && defaultRenderer != null && defaultRenderer.isMediaParserV2();
+						if (parserV2) {
+							// See which MIME type the renderer prefers in case it supports the media
+							String mimeType = defaultRenderer.getFormatConfiguration().match(child.media);
+							if (mimeType != null) {
+								/**
+								 * Use the renderer's preferred MIME type for this file.
+								 */
+								if (!FormatConfiguration.MIMETYPE_AUTO.equals(mimeType)) {
+									child.media.setMimeType(mimeType);
+								}
+
+								LOGGER.trace("File \"{}\" will be sent with MIME type \"{}\"", child.getName(), child.media.getMimeType());
+							}
 						}
 
 						child.setPlayer(player);
@@ -799,61 +787,45 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 
 			boolean hasSubsToTranscode = false;
 
+			boolean hasEmbeddedSubs = false;
+			for (DLNAMediaSubtitle s : media.getSubtitleTracksList()) {
+				hasEmbeddedSubs = (hasEmbeddedSubs || s.isEmbedded());
+			}
+
 			/**
-			 * Figure out how to handle subtitles for this file if it's a video, subtitles
-			 * are enabled, and subtitles exist.
+			 * At this stage, we know the media is compatible with the renderer based on its
+			 * "Supported" lines, and can therefore be streamed to the renderer without a
+			 * player. However, other details about the media can change this, such as
+			 * whether it has subtitles that match this user's language settings, so here we
+			 * perform those checks.
 			 */
-			if (
-				format.isVideo() &&
-				!configuration.isDisableSubtitles() &&
-				(
-					media.getSubtitleTracksList().size() > 0 ||
-					isSubsFile()
-				)
-			) {
-				boolean hasEmbeddedSubs = false;
-
-				for (DLNAMediaSubtitle s : media.getSubtitleTracksList()) {
-					hasEmbeddedSubs = (hasEmbeddedSubs || s.isEmbedded());
-				}
-
-				if (!parserV2) {
-					if (isSubsFile() && renderer != null && renderer.isSubtitlesStreamingSupported()) {
-						OutputParams params = new OutputParams(configuration);
-						Player.setAudioAndSubs(getSystemName(), media, params); // set proper subtitles in accordance with user setting
-						if (params.sid.isExternal() && renderer.isExternalSubtitlesFormatSupported(params.sid)) {
-							media_subtitle = params.sid;
-							media_subtitle.setSubsStreamable(true);
-							LOGGER.trace("Set media_subtitle");
-						} else {
-							LOGGER.trace("Did not set media_subtitle because the subtitle format is not supported by this renderer");
+			if (format.isVideo() && !configuration.isDisableSubtitles()) {
+				if (hasEmbeddedSubs || hasExternalSubtitles()) {
+					OutputParams params = new OutputParams(configuration);
+					Player.setAudioAndSubs(getSystemName(), media, params); // set proper subtitles in accordance with user setting
+					if (params.sid != null) {
+						if (params.sid.isExternal()) {
+							if (renderer.isExternalSubtitlesFormatSupported(params.sid)) {
+								media_subtitle = params.sid;
+								media_subtitle.setSubsStreamable(true);
+								LOGGER.trace("This video has external subtitles that should be streamed");
+							} else {
+								forceTranscode = true;
+								hasSubsToTranscode = true;
+								LOGGER.trace("This video has external subtitles that should be transcoded");
+							}
+						} else if (params.sid.isEmbedded()) {
+							if (renderer.isEmbeddedSubtitlesFormatSupported(params.sid)) {
+								LOGGER.trace("This video has embedded subtitles that should be streamed");
+							} else {
+								forceTranscode = true;
+								hasSubsToTranscode = true;
+								LOGGER.trace("This video has embedded subtitles that should be transcoded");
+							}
 						}
-					} else {
-						LOGGER.trace("Did not set media_subtitle because this file does not have external subtitles, or the renderer does not support streaming subtitles");
 					}
-				}
-
-				if (isSubsFile()) {
-					if (media_subtitle == null) {
-						// Subtitles are not set for streaming
-						forceTranscode = true;
-						hasSubsToTranscode = true;
-						LOGGER.trace("Subtitles for \"{}\" need to be transcoded because media_subtitle is null", getName());
-					} else {
-						LOGGER.trace("Subtitles for \"{}\" will not be transcoded because media_subtitle is not null", getName());
-					}
-				} else if (hasEmbeddedSubs) {
-					if (
-						renderer != null &&
-						(media_subtitle != null && !renderer.isEmbeddedSubtitlesFormatSupported(media_subtitle)) ||
-						!renderer.isEmbeddedSubtitlesSupported()
-					) {
-						forceTranscode = true;
-						hasSubsToTranscode = true;
-						LOGGER.trace("Subtitles for \"{}\" need to be transcoded because the renderer does not support internal subtitles", getName());
-					} else {
-						LOGGER.trace("Subtitles for \"{}\" will not be transcoded because the renderer supports internal subtitles", getName());
-					}
+				} else {
+					LOGGER.trace("This video does not have subtitles");
 				}
 			}
 
@@ -873,7 +845,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			) {
 				isIncompatible = true;
 				LOGGER.trace(prependTraceReason + "the audio will use the encoded audio passthrough feature", getName());
-			} else if (renderer != null && format.isVideo()) {
+			} else if (format.isVideo() && parserV2) {
 				if (
 					renderer.isKeepAspectRatio() &&
 					!"16:9".equals(media.getAspectRatioContainer())
@@ -882,7 +854,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 					LOGGER.trace(prependTraceReason + "the renderer needs us to add borders to change the aspect ratio from {} to 16/9.", getName(), media.getAspectRatioContainer());
 				} else if (!renderer.isResolutionCompatibleWithRenderer(media.getWidth(), media.getHeight())) {
 					isIncompatible = true;
-					LOGGER.trace(prependTraceReason + "the resolution is too high for the renderer.", getName());
+					LOGGER.trace(prependTraceReason + "the resolution is incompatible with the renderer.", getName());
 				} else if (media.getBitrate() > (renderer.getMaxBandwidth() / 2)) {
 					isIncompatible = true;
 					LOGGER.trace(prependTraceReason + "the bitrate is too high.", getName());
@@ -1176,7 +1148,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		// Discover children if it hasn't been done already
 		if (!isDiscovered()) {
 			if (configuration.getFolderLimit() && depthLimit()) {
-				if (renderer.getRendererName().equalsIgnoreCase("Playstation 3") || renderer.isXbox360()) {
+				if (renderer.getConfName().equalsIgnoreCase("Playstation 3") || renderer.isXbox360()) {
 					LOGGER.info("Depth limit potentionally hit for " + getDisplayName());
 				}
 
@@ -1512,7 +1484,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		}
 
 		if (
-			isSubsFile() &&
+			hasExternalSubtitles() &&
 			!isNamedNoEncoding &&
 			media_audio == null &&
 			media_subtitle == null &&
@@ -1678,15 +1650,496 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		return o;
 	}
 
-	// this shouldn't be public
-	@Deprecated
-	public String getFlags() {
-		return getDlnaOrgOpFlags();
+	/**
+	 * DLNA.ORG_OP flags
+	 *
+	 * Two booleans (binary digits) which determine what transport operations the renderer is allowed to
+	 * perform (in the form of HTTP request headers): the first digit allows the renderer to send
+	 * TimeSeekRange.DLNA.ORG (seek by time) headers; the second allows it to send RANGE (seek by byte)
+	 * headers.
+	 *
+	 *    00 - no seeking (or even pausing) allowed
+	 *    01 - seek by byte
+	 *    10 - seek by time
+	 *    11 - seek by both
+	 *
+	 * See here for an example of how these options can be mapped to keys on the renderer's controller:
+	 * http://www.ps3mediaserver.org/forum/viewtopic.php?f=2&t=2908&p=12550#p12550
+	 *
+	 * Note that seek-by-byte is the preferred option for streamed files [1] and seek-by-time is the
+	 * preferred option for transcoded files.
+	 *
+	 * [1] see http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=15841&p=76201#p76201
+	 *
+	 * seek-by-time requires a) support by the renderer (via the SeekByTime renderer conf option)
+	 * and b) support by the transcode engine.
+	 *
+	 * The seek-by-byte fallback doesn't work well with transcoded files [2], but it's better than
+	 * disabling seeking (and pausing) altogether.
+	 *
+	 * [2] http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=3507&p=16567#p16567 (bottom post)
+	 *
+	 * @param mediaRenderer
+	 * 			Media Renderer for which to represent this information.
+	 * @return String representation of the DLNA.ORG_OP flags
+	 */
+	private String getDlnaOrgOpFlags(RendererConfiguration mediaRenderer) {
+		String dlnaOrgOpFlags = "01"; // seek by byte (exclusive)
+
+		if (mediaRenderer.isSeekByTime() && player != null && player.isTimeSeekable()) {
+			/**
+			 * Some renderers - e.g. the PS3 and Panasonic TVs - behave erratically when
+			 * transcoding if we keep the default seek-by-byte permission on when permitting
+			 * seek-by-time: http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=15841
+			 *
+			 * It's not clear if this is a bug in the DLNA libraries of these renderers or a bug
+			 * in UMS, but setting an option in the renderer conf that disables seek-by-byte when
+			 * we permit seek-by-time - e.g.:
+			 *
+			 *    SeekByTime = exclusive
+			 *
+			 * works around it.
+			 */
+
+			/**
+			 * TODO (e.g. in a beta release): set seek-by-time (exclusive) here for *all* renderers:
+			 * seek-by-byte isn't needed here (both the renderer and the engine support seek-by-time)
+			 * and may be buggy on other renderers than the ones we currently handle.
+			 *
+			 * In the unlikely event that a renderer *requires* seek-by-both here, it can
+			 * opt in with (e.g.):
+			 *
+			 *    SeekByTime = both
+			 */
+			if (mediaRenderer.isSeekByTimeExclusive()) {
+				dlnaOrgOpFlags = "10"; // seek by time (exclusive)
+			} else {
+				dlnaOrgOpFlags = "11"; // seek by both
+			}
+		}
+		return "DLNA.ORG_OP=" + dlnaOrgOpFlags;
 	}
 
-	// permit the renderer to seek by time, bytes or both
-	private String getDlnaOrgOpFlags() {
-		return "DLNA.ORG_OP=" + dlnaOrgOpFlags;
+	/**
+	 * Creates the DLNA.ORG_PN to send.
+	 * DLNA.ORG_PN is a string that tells the renderer what type of file to expect, like its
+	 * container, framerate, codecs and resolution.
+	 * Some renderers will not play a file if it has the wrong DLNA.ORG_PN string, while others
+	 * are fine with any string or even nothing.
+	 *
+	 * @param mediaRenderer
+	 * 			Media Renderer for which to represent this information.
+	 * @param localizationValue
+	 * @return String representation of the DLNA.ORG_PN flags
+	 */
+	private String getDlnaOrgPnFlags(RendererConfiguration mediaRenderer, int localizationValue) {
+		String mime = getRendererMimeType(mediaRenderer);
+
+		String dlnaOrgPnFlags = null;
+
+		if (mediaRenderer.isDLNAOrgPNUsed() || mediaRenderer.isAccurateDLNAOrgPN()) {
+			if (mediaRenderer.isPS3()) {
+				if (mime.equals(DIVX_TYPEMIME)) {
+					dlnaOrgPnFlags = "DLNA.ORG_PN=AVI";
+				} else if (mime.equals(WMV_TYPEMIME) && media != null && media.getHeight() > 700) {
+					dlnaOrgPnFlags = "DLNA.ORG_PN=WMVHIGH_PRO";
+				}
+			} else {
+				if (mime.equals(MPEG_TYPEMIME)) {
+					dlnaOrgPnFlags = "DLNA.ORG_PN=" + getMPEG_PS_PALLocalizedValue(localizationValue);
+
+					if (player != null) {
+						// VLC Web Video (Legacy) and tsMuxeR always output MPEG-TS
+						boolean isFileMPEGTS = TsMuxeRVideo.ID.equals(player.id()) || VideoLanVideoStreaming.ID.equals(player.id());
+
+						// Check if the renderer settings make the current engine always output MPEG-TS
+						if (
+							!isFileMPEGTS &&
+							mediaRenderer.isTranscodeToMPEGTS() &&
+							(
+								MEncoderVideo.ID.equals(player.id()) ||
+								FFMpegVideo.ID.equals(player.id()) ||
+								VLCVideo.ID.equals(player.id()) ||
+								AviSynthFFmpeg.ID.equals(player.id()) ||
+								AviSynthMEncoder.ID.equals(player.id())
+							)
+						) {
+							isFileMPEGTS = true;
+						}
+
+						boolean isMuxableResult = getMedia() != null && getMedia().isMuxable(mediaRenderer);
+
+						// If the engine is capable of automatically muxing to MPEG-TS and the setting is enabled, it might be MPEG-TS
+						if (
+							!isFileMPEGTS &&
+							(
+								(
+									configuration.isMencoderMuxWhenCompatible() &&
+									MEncoderVideo.ID.equals(player.id())
+								) ||
+								(
+									configuration.isFFmpegMuxWithTsMuxerWhenCompatible() &&
+									FFMpegVideo.ID.equals(player.id())
+								)
+							)
+						) {
+							/**
+							 * Media renderer needs ORG_PN to be accurate.
+							 * If the value does not match the media, it won't play the media.
+							 * Often we can lazily predict the correct value to send, but due to
+							 * MEncoder needing to mux via tsMuxeR, we need to work it all out
+							 * before even sending the file list to these devices.
+							 * This is very time-consuming so we should a) avoid using this
+							 * chunk of code whenever possible, and b) design a better system.
+							 * Ideally we would just mux to MPEG-PS instead of MPEG-TS so we could
+							 * know it will always be PS, but most renderers will not accept H.264
+							 * inside MPEG-PS. Another option may be to always produce MPEG-TS
+							 * instead and we should check if that will be OK for all renderers.
+							 *
+							 * This code block comes from Player.setAudioAndSubs()
+							 */
+							if (mediaRenderer.isAccurateDLNAOrgPN()) {
+								boolean finishedMatchingPreferences = false;
+								OutputParams params = new OutputParams(configuration);
+								if (params.aid == null && media != null && media.getFirstAudioTrack() != null) {
+									// check for preferred audio
+									DLNAMediaAudio dtsTrack = null;
+									StringTokenizer st = new StringTokenizer(configuration.getAudioLanguages(), ",");
+									while (st.hasMoreTokens()) {
+										String lang = st.nextToken().trim();
+										LOGGER.trace("Looking for an audio track with lang: " + lang);
+										for (DLNAMediaAudio audio : media.getAudioTracksList()) {
+											if (audio.matchCode(lang)) {
+												params.aid = audio;
+												LOGGER.trace("Matched audio track: " + audio);
+												break;
+											}
+
+											if (dtsTrack == null && audio.isDTS()) {
+												dtsTrack = audio;
+											}
+										}
+									}
+
+									// preferred audio not found, take a default audio track, dts first if available
+									if (dtsTrack != null) {
+										params.aid = dtsTrack;
+										LOGGER.trace("Found priority audio track with DTS: " + dtsTrack);
+									} else {
+										params.aid = media.getAudioTracksList().get(0);
+										LOGGER.trace("Chose a default audio track: " + params.aid);
+									}
+								}
+
+								String currentLang = null;
+								DLNAMediaSubtitle matchedSub = null;
+
+								if (params.aid != null) {
+									currentLang = params.aid.getLang();
+								}
+
+								if (params.sid != null && params.sid.getId() == -1) {
+									LOGGER.trace("Don't want subtitles!");
+									params.sid = null;
+									media_subtitle = params.sid;
+									finishedMatchingPreferences = true;
+								}
+
+								/**
+								 * Check for live subtitles
+								 */
+								if (!finishedMatchingPreferences && params.sid != null && !StringUtils.isEmpty(params.sid.getLiveSubURL())) {
+									LOGGER.debug("Live subtitles " + params.sid.getLiveSubURL());
+									try {
+										matchedSub = params.sid;
+										String file = OpenSubtitle.fetchSubs(matchedSub.getLiveSubURL(), matchedSub.getLiveSubFile());
+										if (!StringUtils.isEmpty(file)) {
+											matchedSub.setExternalFile(new File(file));
+											params.sid = matchedSub;
+											media_subtitle = params.sid;
+											finishedMatchingPreferences = true;
+										}
+									} catch (IOException e) {
+									}
+								}
+
+								if (!finishedMatchingPreferences) {
+									StringTokenizer st = new StringTokenizer(configuration.getAudioSubLanguages(), ";");
+
+									/**
+									 * Check for external and internal subtitles matching the user's language
+									 * preferences
+									 */
+									boolean matchedInternalSubtitles = false;
+									boolean matchedExternalSubtitles = false;
+									while (st.hasMoreTokens()) {
+										String pair = st.nextToken();
+										if (pair.contains(",")) {
+											String audio = pair.substring(0, pair.indexOf(','));
+											String sub = pair.substring(pair.indexOf(',') + 1);
+											audio = audio.trim();
+											sub = sub.trim();
+											LOGGER.trace("Searching for a match for: " + currentLang + " with " + audio + " and " + sub);
+
+											if (Iso639.isCodesMatching(audio, currentLang) || (currentLang != null && audio.equals("*"))) {
+												if (sub.equals("off")) {
+													/**
+													 * Ignore the "off" language for external subtitles if the user setting is enabled
+													 * TODO: Prioritize multiple external subtitles properly instead of just taking the first one we load
+													 */
+													if (configuration.isForceExternalSubtitles()) {
+														for (DLNAMediaSubtitle present_sub : media.getSubtitleTracksList()) {
+															if (present_sub.getExternalFile() != null) {
+																matchedSub = present_sub;
+																matchedExternalSubtitles = true;
+																LOGGER.trace("Ignoring the \"off\" language because there are external subtitles");
+																break;
+															}
+														}
+													}
+													if (!matchedExternalSubtitles) {
+														matchedSub = new DLNAMediaSubtitle();
+														matchedSub.setLang("off");
+													}
+												} else if (getMedia() != null) {
+													for (DLNAMediaSubtitle present_sub : media.getSubtitleTracksList()) {
+														if (present_sub.matchCode(sub) || sub.equals("*")) {
+															if (present_sub.getExternalFile() != null) {
+																if (configuration.isAutoloadExternalSubtitles()) {
+																	// Subtitle is external and we want external subtitles, look no further
+																	matchedSub = present_sub;
+																	LOGGER.trace("Matched external subtitles track: " + matchedSub);
+																	break;
+																} else {
+																	// Subtitle is external but we do not want external subtitles, keep searching
+																	LOGGER.trace("External subtitles ignored because of user setting: " + present_sub);
+																}
+															} else if (!matchedInternalSubtitles) {
+																matchedSub = present_sub;
+																LOGGER.trace("Matched internal subtitles track: " + matchedSub);
+																if (configuration.isAutoloadExternalSubtitles()) {
+																	// Subtitle is internal and we will wait to see if an external one is available instead
+																	matchedInternalSubtitles = true;
+																} else {
+																	// Subtitle is internal and we will use it
+																	break;
+																}
+															}
+														}
+													}
+												}
+
+												if (matchedSub != null && !matchedInternalSubtitles) {
+													break;
+												}
+											}
+										}
+									}
+
+									/**
+									 * Check for external subtitles that were skipped in the above code block
+									 * because they didn't match language preferences, if there wasn't already
+									 * a match and the user settings specify it.
+									 */
+									if (matchedSub == null && configuration.isForceExternalSubtitles()) {
+										for (DLNAMediaSubtitle present_sub : media.getSubtitleTracksList()) {
+											if (present_sub.getExternalFile() != null) {
+												matchedSub = present_sub;
+												LOGGER.trace("Matched external subtitles track that did not match language preferences: " + matchedSub);
+												break;
+											}
+										}
+									}
+
+									/**
+									 * Disable chosen subtitles if the user has disabled all subtitles or
+									 * if the language preferences have specified the "off" language.
+									 *
+									 * TODO: Can't we save a bunch of looping by checking for isDisableSubtitles
+									 * just after the Live Subtitles check above?
+									 */
+									if (matchedSub != null && params.sid == null) {
+										if (configuration.isDisableSubtitles() || (matchedSub.getLang() != null && matchedSub.getLang().equals("off"))) {
+											LOGGER.trace("Disabled the subtitles: " + matchedSub);
+										} else {
+											params.sid = matchedSub;
+											media_subtitle = params.sid;
+										}
+									}
+
+									/**
+									 * Check for forced subtitles.
+									 */
+									if (!configuration.isDisableSubtitles() && params.sid == null && media != null) {
+										// Check for subtitles again
+										File video = new File(getSystemName());
+										FileUtil.isSubtitlesExists(video, media, false);
+
+										if (configuration.isAutoloadExternalSubtitles()) {
+											boolean forcedSubsFound = false;
+											// Priority to external subtitles
+											for (DLNAMediaSubtitle sub : media.getSubtitleTracksList()) {
+												if (matchedSub != null && matchedSub.getLang() != null && matchedSub.getLang().equals("off")) {
+													st = new StringTokenizer(configuration.getForcedSubtitleTags(), ",");
+
+													while (sub.getFlavor() != null && st.hasMoreTokens()) {
+														String forcedTags = st.nextToken();
+														forcedTags = forcedTags.trim();
+
+														if (
+															sub.getFlavor().toLowerCase().contains(forcedTags) &&
+															Iso639.isCodesMatching(sub.getLang(), configuration.getForcedSubtitleLanguage())
+														) {
+															LOGGER.trace("Forcing preferred subtitles: " + sub.getLang() + "/" + sub.getFlavor());
+															LOGGER.trace("Forced subtitles track: " + sub);
+
+															if (sub.getExternalFile() != null) {
+																LOGGER.trace("Found external forced file: " + sub.getExternalFile().getAbsolutePath());
+															}
+															params.sid = sub;
+															media_subtitle = params.sid;
+															forcedSubsFound = true;
+															break;
+														}
+													}
+													if (forcedSubsFound == true) {
+														break;
+													}
+												} else {
+													LOGGER.trace("Found subtitles track: " + sub);
+
+													if (sub.getExternalFile() != null) {
+														LOGGER.trace("Found external file: " + sub.getExternalFile().getAbsolutePath());
+														params.sid = sub;
+														media_subtitle = params.sid;
+														break;
+													}
+												}
+											}
+										}
+										if (
+											matchedSub != null &&
+											matchedSub.getLang() != null &&
+											matchedSub.getLang().equals("off")
+										) {
+											finishedMatchingPreferences = true;
+										}
+
+										if (!finishedMatchingPreferences && params.sid == null) {
+											st = new StringTokenizer(UMSUtils.getLangList(params.mediaRenderer), ",");
+											while (st.hasMoreTokens()) {
+												String lang = st.nextToken();
+												lang = lang.trim();
+												LOGGER.trace("Looking for a subtitle track with lang: " + lang);
+												for (DLNAMediaSubtitle sub : media.getSubtitleTracksList()) {
+													if (
+														sub.matchCode(lang) &&
+														!(
+															!configuration.isAutoloadExternalSubtitles() &&
+															sub.getExternalFile() != null
+														)
+													) {
+														params.sid = sub;
+														LOGGER.trace("Matched subtitles track: " + params.sid);
+														break;
+													}
+												}
+											}
+										}
+									}
+								}
+
+								if (media_subtitle == null) {
+									LOGGER.trace("We do not want a subtitle for " + getName());
+								} else {
+									LOGGER.trace("We do want a subtitle for " + getName());
+								}
+							}
+
+							/**
+							 * If:
+							 * - There are no subtitles
+							 * - This is not a DVD track
+							 * - The media is muxable
+							 * - The renderer accepts media muxed to MPEG-TS
+							 * then the file is MPEG-TS
+							 */
+							if (
+								media_subtitle == null &&
+								!hasExternalSubtitles() &&
+								media != null &&
+								media.getDvdtrack() == 0 &&
+								isMuxableResult &&
+								mediaRenderer.isMuxH264MpegTS()
+							) {
+								isFileMPEGTS = true;
+							}
+						}
+
+						if (isFileMPEGTS) {
+							dlnaOrgPnFlags = "DLNA.ORG_PN=" + getMPEG_TS_SD_EU_ISOLocalizedValue(localizationValue);
+							if (
+								media.isH264() &&
+								!VideoLanVideoStreaming.ID.equals(player.id()) &&
+								isMuxableResult
+							) {
+								dlnaOrgPnFlags = "DLNA.ORG_PN=AVC_TS_HD_24_AC3_ISO";
+								if (mediaRenderer.isTranscodeToMPEGTSH264AAC()) {
+									dlnaOrgPnFlags = "DLNA.ORG_PN=AVC_TS_HP_HD_AAC";
+								}
+							}
+						}
+					} else if (media != null) {
+						if (media.isMpegTS()) {
+							dlnaOrgPnFlags = "DLNA.ORG_PN=" + getMPEG_TS_SD_EULocalizedValue(localizationValue);
+							if (media.isH264()) {
+								dlnaOrgPnFlags = "DLNA.ORG_PN=AVC_TS_HD_50_AC3";
+								if (mediaRenderer.isTranscodeToMPEGTSH264AAC()) {
+									dlnaOrgPnFlags = "DLNA.ORG_PN=AVC_TS_HP_HD_AAC";
+								}
+							}
+						}
+					}
+				} else if (mime.equals("video/vnd.dlna.mpeg-tts")) {
+					// patters - on Sony BDP m2ts clips aren't listed without this
+					dlnaOrgPnFlags = "DLNA.ORG_PN=" + getMPEG_TS_SD_EULocalizedValue(localizationValue);
+				} else if (mime.equals(JPEG_TYPEMIME)) {
+					dlnaOrgPnFlags = "DLNA.ORG_PN=JPEG_LRG";
+				} else if (mime.equals(AUDIO_MP3_TYPEMIME)) {
+					dlnaOrgPnFlags = "DLNA.ORG_PN=MP3";
+				} else if (mime.substring(0, 9).equals(AUDIO_LPCM_TYPEMIME) || mime.equals(AUDIO_WAV_TYPEMIME)) {
+					dlnaOrgPnFlags = "DLNA.ORG_PN=LPCM";
+				}
+			}
+
+			if (dlnaOrgPnFlags != null) {
+				dlnaOrgPnFlags = "DLNA.ORG_PN=" + mediaRenderer.getDLNAPN(dlnaOrgPnFlags.substring(12));
+			}
+		}
+
+		return dlnaOrgPnFlags;
+	}
+
+	/**
+	 * Gets the media renderer's mime type if available, returns a default mime type otherwise.
+	 *
+	 * @param mediaRenderer
+	 * 			Media Renderer for which to represent this information.
+	 * @return String representation of the mime type
+	 */
+	private String getRendererMimeType(RendererConfiguration mediaRenderer) {
+		// FIXME: There is a flaw here. In addChild(DLNAResource) the mime type
+		// is determined for the default renderer. This renderer may rewrite the
+		// mime type based on its configuration. Looking up that mime type is
+		// not guaranteed to return a match for another renderer.
+		String mime = mediaRenderer.getMimeType(mimeType());
+
+		// Use our best guess if we have no valid mime type
+		if (mime == null || mime.contains("/transcode")) {
+			mime = HTTPResource.getDefaultMimeType(getType());
+		}
+
+		return mime;
 	}
 
 	/**
@@ -1716,18 +2169,20 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		StringBuilder sb = new StringBuilder();
 		boolean subsAreValidForStreaming = false;
 		if (!isFolder()) {
-			if (
-				!configuration.isDisableSubtitles() &&
-				player == null &&
-				media_subtitle != null &&
-				media_subtitle.isStreamable()
-			) {
-				subsAreValidForStreaming = true;
-				LOGGER.trace("Setting subsAreValidForStreaming to true for " + media_subtitle.getExternalFile().getName());
-			} else if (subsAreValidForStreaming) {
-				LOGGER.trace("Not setting subsAreValidForStreaming and it is true for " + getName());
-			} else {
-				LOGGER.trace("Not setting subsAreValidForStreaming and it is false for " + getName());
+			if (format != null && format.isVideo()) {
+				if (
+					!configuration.isDisableSubtitles() &&
+					player == null &&
+					media_subtitle != null &&
+					media_subtitle.isStreamable()
+				) {
+					subsAreValidForStreaming = true;
+					LOGGER.trace("Setting subsAreValidForStreaming to true for " + media_subtitle.getExternalFile().getName());
+				} else if (subsAreValidForStreaming) {
+					LOGGER.trace("Not setting subsAreValidForStreaming and it is true for " + getName());
+				} else {
+					LOGGER.trace("Not setting subsAreValidForStreaming and it is false for " + getName());
+				}
 			}
 
 			openTag(sb, "item");
@@ -1754,8 +2209,17 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		endTag(sb);
 		StringBuilder wireshark = new StringBuilder();
 		final DLNAMediaAudio firstAudioTrack = media != null ? media.getFirstAudioTrack() : null;
+
+		/**
+		 * Use the track title for audio files, otherwise use the filename.
+		 */
 		String title;
-		if (firstAudioTrack != null && StringUtils.isNotBlank(firstAudioTrack.getSongname())) {
+		if (
+			firstAudioTrack != null &&
+			StringUtils.isNotBlank(firstAudioTrack.getSongname()) &&
+			getFormat() != null &&
+			getFormat().isAudio()
+		) {
 			title = firstAudioTrack.getSongname() + (player != null && !configuration.isHideEngineNames() ? (" [" + player.name() + "]") : "");
 		} else { // Ditlew - org
 			title = (isFolder() || subsAreValidForStreaming) ? getDisplayName(null, false) : mediaRenderer.getUseSameExtension(getDisplayName(mediaRenderer, false));
@@ -1766,7 +2230,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			"dc:title",
 			encodeXML(mediaRenderer.getDcTitle(title, nameSuffix, this))
 		);
-		wireshark.append("\"" + title + "\"");
+		wireshark.append("\"").append(title).append("\"");
 		if (firstAudioTrack != null) {
 			if (StringUtils.isNotBlank(firstAudioTrack.getAlbum())) {
 				addXMLTagAndAttribute(sb, "upnp:album", encodeXML(firstAudioTrack.getAlbum()));
@@ -1796,224 +2260,10 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			for (int c = 0; c < indexCount; c++) {
 				openTag(sb, "res");
 
-				/**
-				 * DLNA.ORG_OP flags
-				 *
-				 * Two booleans (binary digits) which determine what transport operations the renderer is allowed to
-				 * perform (in the form of HTTP request headers): the first digit allows the renderer to send
-				 * TimeSeekRange.DLNA.ORG (seek by time) headers; the second allows it to send RANGE (seek by byte)
-				 * headers.
-				 *
-				 *    00 - no seeking (or even pausing) allowed
-				 *    01 - seek by byte
-				 *    10 - seek by time
-				 *    11 - seek by both
-				 *
-				 * See here for an example of how these options can be mapped to keys on the renderer's controller:
-				 * http://www.ps3mediaserver.org/forum/viewtopic.php?f=2&t=2908&p=12550#p12550
-				 *
-				 * Note that seek-by-byte is the preferred option for streamed files [1] and seek-by-time is the
-				 * preferred option for transcoded files.
-				 *
-				 * [1] see http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=15841&p=76201#p76201
-				 *
-				 * seek-by-time requires a) support by the renderer (via the SeekByTime renderer conf option)
-				 * and b) support by the transcode engine.
-				 *
-				 * The seek-by-byte fallback doesn't work well with transcoded files [2], but it's better than
-				 * disabling seeking (and pausing) altogether.
-				 *
-				 * [2] http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=3507&p=16567#p16567 (bottom post)
-				 */
-				dlnaOrgOpFlags = "01"; // seek by byte (exclusive)
-
-				if (mediaRenderer.isSeekByTime() && player != null && player.isTimeSeekable()) {
-					/**
-					 * Some renderers - e.g. the PS3 and Panasonic TVs - behave erratically when
-					 * transcoding if we keep the default seek-by-byte permission on when permitting
-					 * seek-by-time: http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=15841
-					 *
-					 * It's not clear if this is a bug in the DLNA libraries of these renderers or a bug
-					 * in UMS, but setting an option in the renderer conf that disables seek-by-byte when
-					 * we permit seek-by-time - e.g.:
-					 *
-					 *    SeekByTime = exclusive
-					 *
-					 * works around it.
-					 */
-
-					/**
-					 * TODO (e.g. in a beta release): set seek-by-time (exclusive) here for *all* renderers:
-					 * seek-by-byte isn't needed here (both the renderer and the engine support seek-by-time)
-					 * and may be buggy on other renderers than the ones we currently handle.
-					 *
-					 * In the unlikely event that a renderer *requires* seek-by-both here, it can
-					 * opt in with (e.g.):
-					 *
-					 *    SeekByTime = both
-					 */
-					if (mediaRenderer.isSeekByTimeExclusive()) {
-						dlnaOrgOpFlags = "10"; // seek by time (exclusive)
-					} else {
-						dlnaOrgOpFlags = "11"; // seek by both
-					}
-				}
-
 				addAttribute(sb, "xmlns:dlna", "urn:schemas-dlna-org:metadata-1-0/");
 
-				// FIXME: There is a flaw here. In addChild(DLNAResource) the mime type
-				// is determined for the default renderer. This renderer may rewrite the
-				// mime type based on its configuration. Looking up that mime type is
-				// not guaranteed to return a match for another renderer.
-				String mime = mediaRenderer.getMimeType(mimeType());
-
-				// Use our best guess if we have no valid mime type
-				if (mime == null || mime.contains("/transcode")) {
-					mime = HTTPResource.getDefaultMimeType(getType());
-				}
-
-				dlnaspec = null;
-
-				/**
-				 * In this code block, we determine the DLNA.ORG_PN to send.
-				 * DLNA.ORG_PN is a string that tells the renderer what type of file to expect, like its
-				 * container, framerate, codecs and resolution.
-				 * Some renderers will not play a file if it has the wrong DLNA.ORG_PN string, while others
-				 * are fine with any string or even nothing.
-				 */
-				if (mediaRenderer.isDLNAOrgPNUsed()) {
-					if (mediaRenderer.isPS3()) {
-						if (mime.equals(DIVX_TYPEMIME)) {
-							dlnaspec = "DLNA.ORG_PN=AVI";
-						} else if (mime.equals(WMV_TYPEMIME) && media != null && media.getHeight() > 700) {
-							dlnaspec = "DLNA.ORG_PN=WMVHIGH_PRO";
-						}
-					} else {
-						if (mime.equals(MPEG_TYPEMIME)) {
-							dlnaspec = "DLNA.ORG_PN=" + getMPEG_PS_PALLocalizedValue(c);
-
-							if (player != null) {
-								// VLC Web Video (Legacy) and tsMuxeR always output MPEG-TS
-								boolean isFileMPEGTS = TsMuxeRVideo.ID.equals(player.id()) || VideoLanVideoStreaming.ID.equals(player.id());
-
-								// Check if the renderer settings make the current engine always output MPEG-TS
-								if (
-									!isFileMPEGTS &&
-									mediaRenderer.isTranscodeToMPEGTS() &&
-									(
-										MEncoderVideo.ID.equals(player.id()) ||
-										FFMpegVideo.ID.equals(player.id()) ||
-										VLCVideo.ID.equals(player.id()) ||
-										AviSynthFFmpeg.ID.equals(player.id()) ||
-										AviSynthMEncoder.ID.equals(player.id())
-									)
-								) {
-									isFileMPEGTS = true;
-								}
-
-								boolean isMuxableResult = getMedia() != null && getMedia().isMuxable(mediaRenderer);
-
-								// If the engine is capable of automatically muxing to MPEG-TS and the setting is enabled, it might be MPEG-TS
-								if (
-									!isFileMPEGTS &&
-									(
-										(
-											configuration.isMencoderMuxWhenCompatible() &&
-											MEncoderVideo.ID.equals(player.id())
-										) ||
-										(
-											configuration.isFFmpegMuxWithTsMuxerWhenCompatible() &&
-											FFMpegVideo.ID.equals(player.id())
-										)
-									)
-								) {
-									/**
-									 * Media renderer needs ORG_PN to be accurate.
-									 * If the value does not match the media, it won't play the media.
-									 * Often we can lazily predict the correct value to send, but due to
-									 * MEncoder needing to mux via tsMuxeR, we need to work it all out
-									 * before even sending the file list to these devices.
-									 * This is very time-consuming so we should a) avoid using this
-									 * chunk of code whenever possible, and b) design a better system.
-									 * Ideally we would just mux to MPEG-PS instead of MPEG-TS so we could
-									 * know it will always be PS, but most renderers will not accept H.264
-									 * inside MPEG-PS. Another option may be to always produce MPEG-TS
-									 * instead and we should check if that will be OK for all renderers.
-									 */
-									if (mediaRenderer.isAccurateDLNAOrgPN()) {
-										OutputParams params = new OutputParams(configuration);
-										Player.setAudioAndSubs(getSystemName(), media, params);
-										media_audio = params.aid;
-										media_subtitle = params.sid;
-										if (media_subtitle == null) {
-											LOGGER.trace("We do not want a subtitle for " + getName());
-										} else {
-											LOGGER.trace("We do want a subtitle for " + getName());
-										}
-									}
-
-									/**
-									 * If:
-									 * - There are no subtitles
-									 * - This is not a DVD track
-									 * - The media is muxable
-									 * - The renderer accepts media muxed to MPEG-TS
-									 * then the file is MPEG-TS
-									 */
-									if (
-										media_subtitle == null &&
-										!isSubsFile() &&
-										media != null &&
-										media.getDvdtrack() == 0 &&
-										isMuxableResult &&
-										mediaRenderer.isMuxH264MpegTS()
-									) {
-										isFileMPEGTS = true;
-									}
-								}
-
-								if (isFileMPEGTS) {
-									dlnaspec = "DLNA.ORG_PN=" + getMPEG_TS_SD_EU_ISOLocalizedValue(c);
-									if (
-										media.isH264() &&
-										!VideoLanVideoStreaming.ID.equals(player.id()) &&
-										isMuxableResult
-									) {
-										dlnaspec = "DLNA.ORG_PN=AVC_TS_HD_24_AC3_ISO";
-										if (mediaRenderer.isTranscodeToMPEGTSH264AAC()) {
-											dlnaspec = "DLNA.ORG_PN=AVC_TS_HP_HD_AAC";
-										}
-									}
-								}
-							} else if (media != null) {
-								if (media.isMpegTS()) {
-									dlnaspec = "DLNA.ORG_PN=" + getMPEG_TS_SD_EULocalizedValue(c);
-									if (media.isH264()) {
-										dlnaspec = "DLNA.ORG_PN=AVC_TS_HD_50_AC3";
-										if (mediaRenderer.isTranscodeToMPEGTSH264AAC()) {
-											dlnaspec = "DLNA.ORG_PN=AVC_TS_HP_HD_AAC";
-										}
-									}
-								}
-							}
-						} else if (mime.equals("video/vnd.dlna.mpeg-tts")) {
-							// patters - on Sony BDP m2ts clips aren't listed without this
-							dlnaspec = "DLNA.ORG_PN=" + getMPEG_TS_SD_EULocalizedValue(c);
-						} else if (mime.equals(JPEG_TYPEMIME)) {
-							dlnaspec = "DLNA.ORG_PN=JPEG_LRG";
-						} else if (mime.equals(AUDIO_MP3_TYPEMIME)) {
-							dlnaspec = "DLNA.ORG_PN=MP3";
-						} else if (mime.substring(0, 9).equals(AUDIO_LPCM_TYPEMIME) || mime.equals(AUDIO_WAV_TYPEMIME)) {
-							dlnaspec = "DLNA.ORG_PN=LPCM";
-						}
-					}
-
-					if (dlnaspec != null) {
-						dlnaspec = "DLNA.ORG_PN=" + mediaRenderer.getDLNAPN(dlnaspec.substring(12));
-					}
-				}
-
-				String tempString = "http-get:*:" + mime + ":" + (dlnaspec != null ? (dlnaspec + ";") : "") + getDlnaOrgOpFlags();
+				String dlnaOrgPnFlags = getDlnaOrgPnFlags(mediaRenderer, c);
+				String tempString = "http-get:*:" + getRendererMimeType(mediaRenderer) + ":" + (dlnaOrgPnFlags != null ? (dlnaOrgPnFlags + ";") : "") + getDlnaOrgOpFlags(mediaRenderer);
 
 				wireshark.append(" ").append(tempString);
 				addAttribute(sb, "protocolInfo", tempString);
@@ -2281,20 +2531,48 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 					LOGGER.error("stopPlaying sleep interrupted", e);
 				}
 
-				if (start != startTime) {
-					return;
-				}
-
 				synchronized (requestIdToRefcount) {
 					final Integer refCount = requestIdToRefcount.get(requestId);
 					assert refCount != null;
 					assert refCount > 0;
 					requestIdToRefcount.put(requestId, refCount - 1);
 
+					if (start != startTime) {
+						return;
+					}
+
 					Runnable r = new Runnable() {
 						@Override
 						public void run() {
 							if (refCount == 1) {
+								requestIdToRefcount.put(requestId, 0);
+								InetAddress rendererIp;
+								try {
+									rendererIp = InetAddress.getByName(rendererId);
+									RendererConfiguration renderer;
+									if (render == null) {
+										renderer = RendererConfiguration.getRendererConfigurationBySocketAddress(rendererIp);
+									} else {
+										renderer = render;
+									}
+									String rendererName = "unknown renderer";
+									try {
+										// Reset only if another item hasn't already begun playing
+										if (renderer.getPlayingRes() == self) {
+											renderer.setPlayingRes(null);
+										}
+										rendererName = renderer.getRendererName();
+									} catch (NullPointerException e) { }
+									if (!quietPlay()) {
+										LOGGER.info("Stopped playing " + getName() + " on your " + rendererName);
+										LOGGER.debug("The full filename of which is: " + getSystemName() + " and the address of the renderer is: " + rendererId);
+									}
+								} catch (UnknownHostException ex) {
+									LOGGER.debug("" + ex);
+								}
+
+								internalStop();
+
 								NotificationCenter.getInstance(StartStopEvent.class).post(new StartStopEvent(self, Event.Stop));
 							}
 						}
@@ -2934,39 +3212,53 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	}
 
 	/**
-	 * @Deprecated use {@link #isSubsFile()} instead
+	 * @Deprecated use {@link #hasExternalSubtitles()} instead
 	 */
 	@Deprecated
 	protected boolean isSrtFile() {
-		return isSubsFile();
+		return hasExternalSubtitles();
 	}
 
 	/**
-	 * Returns true if this resource has subtitles in a file.
-	 *
-	 * @return the srtFile
-	 * @since 1.50
+	 * @Deprecated use {@link #hasExternalSubtitles()} instead
 	 */
+	@Deprecated
 	protected boolean isSubsFile() {
-		return srtFile;
+		return hasExternalSubtitles();
 	}
 
 	/**
-	 * @Deprecated use {@link #setSubsFile()} instead
+	 * Whether this resource has external subtitles.
+	 *
+	 * @return whether this resource has external subtitles
+	 */
+	protected boolean hasExternalSubtitles() {
+		return hasExternalSubtitles;
+	}
+
+	/**
+	 * @Deprecated use {@link #setHasExternalSubtitles(boolean)} instead
 	 */
 	@Deprecated
 	protected void setSrtFile(boolean srtFile) {
-		setSubsFile(srtFile);
+		setHasExternalSubtitles(srtFile);
 	}
 
 	/**
-	 * Set to true if this resource has subtitles in a file.
-	 *
-	 * @param srtFile the srtFile to set
-	 * @since 1.50
+	 * @Deprecated use {@link #setHasExternalSubtitles(boolean)} instead
 	 */
+	@Deprecated
 	protected void setSubsFile(boolean srtFile) {
-		this.srtFile = srtFile;
+		setHasExternalSubtitles(srtFile);
+	}
+
+	/**
+	 * Sets whether this resource has external subtitles.
+	 *
+	 * @param value whether this resource has external subtitles
+	 */
+	protected void setHasExternalSubtitles(boolean value) {
+		this.hasExternalSubtitles = value;
 	}
 
 	/**
