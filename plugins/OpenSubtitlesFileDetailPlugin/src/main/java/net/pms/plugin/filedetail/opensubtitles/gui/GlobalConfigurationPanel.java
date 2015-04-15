@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -38,7 +37,7 @@ public class GlobalConfigurationPanel extends JPanel {
 
 	private void init() {
 		tfSubtitlesPath = new CustomJTextField("");
-		tfSubtitlesPath.setToolTipText(OpenSubtitlesPlugin.messages.getString("GlobalConfigurationPanel.SelectSubtitlePathTextField.ToolTip"));
+		tfSubtitlesPath.setToolTipText(OpenSubtitlesPlugin.MESSAGES.getString("GlobalConfigurationPanel.SelectSubtitlePathTextField.ToolTip"));
 	}
 
 	private void build() {
@@ -50,8 +49,8 @@ public class GlobalConfigurationPanel extends JPanel {
 
 		CellConstraints cc = new CellConstraints();
 		
-		JLabel lSelectSubtitlePath = new JLabel(OpenSubtitlesPlugin.messages.getString("GlobalConfigurationPanel.SelectSubtitlePathLabel.Text"));
-		JButton bSelectSubtitlePath = new JButton(OpenSubtitlesPlugin.messages.getString("GlobalConfigurationPanel.SelectSubtitlePathButton.Text"));
+		JLabel lSelectSubtitlePath = new JLabel(OpenSubtitlesPlugin.MESSAGES.getString("GlobalConfigurationPanel.SelectSubtitlePathLabel.Text"));
+		JButton bSelectSubtitlePath = new JButton(OpenSubtitlesPlugin.MESSAGES.getString("GlobalConfigurationPanel.SelectSubtitlePathButton.Text"));
 		bSelectSubtitlePath.addActionListener(new ActionListener() {
 			
 			@Override

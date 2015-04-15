@@ -49,13 +49,13 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenSubtitlesPlugin.class);
 	
 	/** Resource used for localization. */
-	public static final ResourceBundle messages = ResourceBundle.getBundle("i18n.messages");
+	public static final ResourceBundle MESSAGES = ResourceBundle.getBundle("i18n.messages");
 	
 	/** Holds only the project version. It's used to always use the Maven build number in code */
-	private static final PmsProperties properties = new PmsProperties();
+	private static final PmsProperties PROPERTIES = new PmsProperties();
 	static {
 		try {
-			properties.loadFromResourceFile("/opensubtitlesfiledetail.properties", OpenSubtitlesPlugin.class);
+			PROPERTIES.loadFromResourceFile("/opensubtitlesfiledetail.properties", OpenSubtitlesPlugin.class);
 		} catch (IOException e) {
 			LOGGER.error("Could not load opensubtitlesfiledetail.properties", e);
 		}
@@ -65,11 +65,11 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	private InstanceConfiguration instanceConfiguration;
 
 	private GlobalConfigurationPanel globalConfigurationPanel;
-	private static final GlobalConfiguration globalConfiguration;
+	private static final GlobalConfiguration GLOBAL_CONFIGURATION;
 	static {
-		globalConfiguration = new GlobalConfiguration();
+		GLOBAL_CONFIGURATION = new GlobalConfiguration();
 		try {
-			globalConfiguration.load();
+			GLOBAL_CONFIGURATION.load();
 		} catch (IOException e) {
 			LOGGER.error("Failed to load global configuration", e);
 		}
@@ -79,12 +79,12 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	
 	@Override
 	public String getName() {
-		return messages.getString("OpenSubtitlesPlugin.Name");
+		return MESSAGES.getString("OpenSubtitlesPlugin.Name");
 	}
 
 	@Override
 	public String getVersion() {
-		return properties.get("project.version");
+		return PROPERTIES.get("project.version");
 	}
 
 	@Override
@@ -94,12 +94,12 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 
 	@Override
 	public String getShortDescription() {
-		return messages.getString("OpenSubtitlesPlugin.ShortDescription");
+		return MESSAGES.getString("OpenSubtitlesPlugin.ShortDescription");
 	}
 
 	@Override
 	public String getLongDescription() {
-		return messages.getString("OpenSubtitlesPlugin.LongDescription");
+		return MESSAGES.getString("OpenSubtitlesPlugin.LongDescription");
 	}
 
 	@Override
@@ -116,8 +116,8 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 	public void initialize() {
 		instanceConfiguration = new InstanceConfiguration();
 		instanceConfigurationPanel = new InstanceConfigurationPanel(instanceConfiguration);
-		globalConfigurationPanel = new GlobalConfigurationPanel(globalConfiguration);		
-		dlnaResource = new OpenSubtitlesDlnaResource(globalConfiguration, instanceConfiguration);
+		globalConfigurationPanel = new GlobalConfigurationPanel(GLOBAL_CONFIGURATION);		
+		dlnaResource = new OpenSubtitlesDlnaResource(GLOBAL_CONFIGURATION, instanceConfiguration);
 	}
 
 	@Override
@@ -130,9 +130,9 @@ public class OpenSubtitlesPlugin implements FileDetailPlugin {
 
 	@Override
 	public void saveConfiguration() {
-		globalConfigurationPanel.updateConfiguration(globalConfiguration);
+		globalConfigurationPanel.updateConfiguration(GLOBAL_CONFIGURATION);
 		try {
-			globalConfiguration.save();
+			GLOBAL_CONFIGURATION.save();
 		} catch (IOException e) {
 			LOGGER.error("Failed to save global configuration", e);
 		}

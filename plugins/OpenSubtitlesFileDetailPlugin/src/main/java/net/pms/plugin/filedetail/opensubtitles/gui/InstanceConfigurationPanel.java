@@ -73,31 +73,33 @@ public class InstanceConfigurationPanel extends JPanel {
 
 	private void init() {
 		cbDisplayMode = new JComboBox<>();
-		cbDisplayMode.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.DisplayMode"));
+		cbDisplayMode.setToolTipText(OpenSubtitlesPlugin.MESSAGES.getString("Help.DisplayMode"));
 		for(DisplayMode displayMode : DisplayMode.values()) {
-			cbDisplayMode.addItem(new ComboBoxItem<DisplayMode>(OpenSubtitlesPlugin.messages.getString("DisplayMode." + displayMode), displayMode));
+			cbDisplayMode.addItem(new ComboBoxItem<DisplayMode>(OpenSubtitlesPlugin.MESSAGES.getString("DisplayMode." + displayMode), displayMode));
 		}
 		cbDisplayMode.addItemListener(new ItemListener() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				switch(((ComboBoxItem<DisplayMode>)cbDisplayMode.getSelectedItem()).getValue()) {
-				case File:
-					tfMaxNumberOfSubtitles.setText("");
-					tfMaxNumberOfSubtitles.setEnabled(false);
-					break;
-				case Folder:
-					tfMaxNumberOfSubtitles.setEnabled(true);
-					break;
+				if(cbDisplayMode.getSelectedIndex() > -1) {
+					DisplayMode displayMode = cbDisplayMode.getItemAt(cbDisplayMode.getSelectedIndex()).getValue();
+					switch(displayMode) {
+					case File:
+						tfMaxNumberOfSubtitles.setText("");
+						tfMaxNumberOfSubtitles.setEnabled(false);
+						break;
+					case Folder:
+						tfMaxNumberOfSubtitles.setEnabled(true);
+						break;
+					}
 				}
 			}
 		});
 		
 		tfSubtitleLanguages = new CustomJTextField("");
-		tfSubtitleLanguages.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.Languages"));
+		tfSubtitleLanguages.setToolTipText(OpenSubtitlesPlugin.MESSAGES.getString("Help.Languages"));
 		
 		tfMaxNumberOfSubtitles = new CustomJTextField("");
-		tfMaxNumberOfSubtitles.setToolTipText(OpenSubtitlesPlugin.messages.getString("Help.MaxNumberOfSubtitles"));
+		tfMaxNumberOfSubtitles.setToolTipText(OpenSubtitlesPlugin.MESSAGES.getString("Help.MaxNumberOfSubtitles"));
 	}
 
 	private void build() {
@@ -109,13 +111,13 @@ public class InstanceConfigurationPanel extends JPanel {
 
 		CellConstraints cc = new CellConstraints();
 		
-		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.DisplayMode"), cc.xy(2, 2));
+		builder.addLabel(OpenSubtitlesPlugin.MESSAGES.getString("Header.DisplayMode"), cc.xy(2, 2));
 		builder.add(cbDisplayMode, cc.xy(4, 2));
 
-		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.Languages"), cc.xy(2, 4));
+		builder.addLabel(OpenSubtitlesPlugin.MESSAGES.getString("Header.Languages"), cc.xy(2, 4));
 		builder.add(tfSubtitleLanguages, cc.xy(4, 4));
 
-		builder.addLabel(OpenSubtitlesPlugin.messages.getString("Header.MaxNumberOfSubtitles"), cc.xy(2, 6));
+		builder.addLabel(OpenSubtitlesPlugin.MESSAGES.getString("Header.MaxNumberOfSubtitles"), cc.xy(2, 6));
 		builder.add(tfMaxNumberOfSubtitles, cc.xy(4, 6));
 
 		removeAll();
