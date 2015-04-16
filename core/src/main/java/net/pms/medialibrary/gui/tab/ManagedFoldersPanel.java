@@ -59,8 +59,12 @@ public class ManagedFoldersPanel extends JPanel {
 
 	private final int              MAX_FOLDERS      = 40;
 	private JButton                bAddFolder;
+	private JButton                bSaveAndApply;
 	private List<ManagedFolderObj> managedFolders   = new ArrayList<ManagedFolderObj>();
 	private IMediaLibraryStorage   storage;
+	
+	private static final ImageIcon GREEN_BULLET_ICON = new ImageIcon(ManagedFoldersPanel.class.getResource("/resources/images/bullet-green-16.png"));
+	private static final ImageIcon RED_BULLET_ICON = new ImageIcon(ManagedFoldersPanel.class.getResource("/resources/images/bullet-red-16.png"));
 
 	public ManagedFoldersPanel() {
 		setLayout(new GridLayout());
@@ -124,33 +128,33 @@ public class ManagedFoldersPanel extends JPanel {
 					}
 					
 					//show the dialog
-					FileImportTemplateDialog vid = new FileImportTemplateDialog(SwingUtilities.getWindowAncestor(b), templateId);
-					vid.setLocation(GUIHelper.getCenterDialogOnParentLocation(vid.getPreferredSize(), b));
-					vid.setResizable(false);
-					vid.setModal(true);
+					FileImportTemplateDialog fid = new FileImportTemplateDialog(SwingUtilities.getWindowAncestor(b), templateId);
+					fid.setLocation(GUIHelper.getCenterDialogOnParentLocation(fid.getPreferredSize(), b));
+					fid.setResizable(false);
+					fid.setModal(true);
 					
-					vid.addFileImportDialogListener(new FileImportDialogListener() {
+					fid.addFileImportDialogListener(new FileImportDialogListener() {
 						
 						@Override
 						public void templateSaved(DOFileImportTemplate fileImportTemplate) {
 							b.setUserObject(fileImportTemplate);
-							storage.setManagedFolders(getManagedFolders());
 						}
 					});
 					
-					vid.pack();
-					vid.setVisible(true);
+					fid.pack();
+					fid.setVisible(true);
 					
-					if(vid.isSave()) {
-						templateId = vid.getTemplateId();
+					if(fid.isSave()) {
+						templateId = fid.getTemplateId();
+						updateSaveAndApplyButtonState(true);
 					}
 					
 					b.setUserObject(storage.getFileImportTemplate(templateId));
 						
 					//Store the media library folders in the db when a template changes
 					//to be able to check if a template is being used when deleting one
-					cleanManagedFolders();
-					storage.setManagedFolders(getManagedFolders());						
+					//cleanManagedFolders();
+					//storage.setManagedFolders(getManagedFolders());
 				}
 			});
 
@@ -163,6 +167,7 @@ public class ManagedFoldersPanel extends JPanel {
 				public void actionPerformed(ActionEvent e) {
 					managedFolders.remove(((ManagedFolderObj) e.getSource()).getIndex());
 					applyLayout();
+					updateSaveAndApplyButtonState(true);
 				}
 			});
 		} else {
@@ -173,8 +178,8 @@ public class ManagedFoldersPanel extends JPanel {
 	public List<DOManagedFile> getManagedFolders() {
 		List<DOManagedFile> mf = new ArrayList<DOManagedFile>();
 		for (ManagedFolderObj obj : managedFolders) {
-			DOManagedFile f = new DOManagedFile(obj.getCbWatch().isSelected(), obj.getTfFolderPath().getText(), obj.getCbVideo().isSelected(), obj.getCbAudio()
-			        .isSelected(), obj.getCbPictures().isSelected(), obj.getCbSubFolders().isSelected(), obj.getCbEnablePlugins().isSelected(), obj.getFileImportTemplate());
+			DOManagedFile f = new DOManagedFile(obj.getCbWatch().isSelected(), obj.getTextFieldFolderPath().getText(), obj.getCheckBoxVideo().isSelected(), obj.getCheckBoxAudio()
+			        .isSelected(), obj.getCheckBoxPictures().isSelected(), obj.getCheckBoxSubFolders().isSelected(), obj.getCheckBoxEnablePlugins().isSelected(), obj.getFileImportTemplate());
 			if(!mf.contains(f)) {
 				mf.add(f);
 			}
@@ -206,19 +211,33 @@ public class ManagedFoldersPanel extends JPanel {
 				
 				addManagedFolder(mf);
 				applyLayout();
+				
+				updateSaveAndApplyButtonState(true);
 			}
 		});
+		
+		bSaveAndApply = new JButton(Messages.getString("ML.ManagedFoldersPanel.bSaveAndApply"));
+		bSaveAndApply.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				storage.setManagedFolders(getManagedFolders());
+				updateSaveAndApplyButtonState(false);
+			}
+		});
+		updateSaveAndApplyButtonState(false);
 	}
 
 	private void applyLayout() {
 		FormLayout layout = new FormLayout("fill:p:grow", // columns
-		        "fill:10:grow, p");
+		        "fill:10:grow, 5, p");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
 
-		builder.add(bAddFolder, cc.xy(1, 2, CellConstraints.CENTER, CellConstraints.BOTTOM));
+		builder.add(bAddFolder, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.BOTTOM));
+		builder.add(bSaveAndApply, cc.xy(1, 3, CellConstraints.RIGHT, CellConstraints.BOTTOM));
 
 		FormLayout layout2 = new FormLayout(
 		        "center:p, 5px, center:p, 2px, 20:grow, 2px, p, 2px, p, 10px, center:p, 2px, center:p, 2px, center:p, 10px, p, 2px, p, 10px, p", // columns
@@ -255,24 +274,31 @@ public class ManagedFoldersPanel extends JPanel {
 
 			int rowIndex = 2;
 			for (ManagedFolderObj f : managedFolders) {
+				f.addPropertyChangedListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSaveAndApplyButtonState(true);
+					}					
+				});
 				f.setIndex(rowIndex - 2);
 				builder2.add(f.getCbWatch(), cc.xy(1, rowIndex));
-				builder2.add(f.getCbSubFolders(), cc.xy(3, rowIndex));
-				builder2.add(f.getTfFolderPath(), cc.xy(5, rowIndex));
-				builder2.add(f.getbBrowse(), cc.xy(7, rowIndex));
-				builder2.add(f.getbDelete(), cc.xy(9, rowIndex));
-				builder2.add(f.getCbVideo(), cc.xy(11, rowIndex));
+				builder2.add(f.getCheckBoxSubFolders(), cc.xy(3, rowIndex));
+				builder2.add(f.getTextFieldFolderPath(), cc.xy(5, rowIndex));
+				builder2.add(f.getButtonBrowse(), cc.xy(7, rowIndex));
+				builder2.add(f.getButtonDelete(), cc.xy(9, rowIndex));
+				builder2.add(f.getCheckBoxVideo(), cc.xy(11, rowIndex));
 				// builder2.add(f.getCbAudio(), cc.xy(13, rowIndex));
 				// builder2.add(f.getCbPictures(), cc.xy(15, rowIndex));
-				builder2.add(f.getCbEnablePlugins(), cc.xy(17, rowIndex));
-				builder2.add(f.getbConfigureFileImportTemplate(), cc.xy(19, rowIndex));
-				builder2.add(f.getbScan(), cc.xy(21, rowIndex));
+				builder2.add(f.getCheckBoxEnablePlugins(), cc.xy(17, rowIndex));
+				builder2.add(f.getButtonConfigureFileImportTemplate(), cc.xy(19, rowIndex));
+				builder2.add(f.getbButtonScan(), cc.xy(21, rowIndex));
 				rowIndex++;
 			}
 			pManagedFolders = builder2.getPanel();
 		} else {
 			pManagedFolders = new JPanel(new GridLayout());
-			pManagedFolders.add(new JLabel(Messages.getString("ML.ManagedFoldersPanel.pNoFoldersConfigures"), JLabel.CENTER));
+			pManagedFolders.add(new JLabel(Messages.getString("ML.ManagedFoldersPanel.pNoFoldersConfigured"), JLabel.CENTER));
 		}
 
 		JScrollPane sp = new JScrollPane(pManagedFolders);
@@ -282,5 +308,15 @@ public class ManagedFoldersPanel extends JPanel {
 		removeAll();
 		add(builder.getPanel());
 		validate();
+	}
+	
+	private void updateSaveAndApplyButtonState(boolean hasChange) {
+		if(hasChange) {
+			bSaveAndApply.setIcon(RED_BULLET_ICON);
+			bSaveAndApply.setToolTipText(Messages.getString("ML.ManagedFoldersPanel.bSaveAndApply.ToolTipText.HasChange"));			
+		} else {
+			bSaveAndApply.setIcon(GREEN_BULLET_ICON);
+			bSaveAndApply.setToolTipText(Messages.getString("ML.ManagedFoldersPanel.bSaveAndApply.ToolTipText.HasNoChange"));			
+		}
 	}
 }
