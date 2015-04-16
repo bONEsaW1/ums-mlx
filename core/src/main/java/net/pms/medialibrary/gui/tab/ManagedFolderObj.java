@@ -34,6 +34,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,8 @@ public class ManagedFolderObj {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ManagedFolderObj.class);
 	
 	private List<ActionListener> removeListeners = new ArrayList<ActionListener>();
+	private List<ActionListener> propertyChangedListeners = new ArrayList<ActionListener>();
+	
 	private JCheckBox            cbWatch;
 	private JTextField           tfFolderPath;
 	private JCheckBox            cbVideo;
@@ -65,17 +69,17 @@ public class ManagedFolderObj {
 	public ManagedFolderObj(JCheckBox cbWatch, JTextField tfFolderPath, JCheckBox cbVideo, EButton bConfigureFileImportTemplate, JCheckBox cbAudio, JCheckBox cbPictures, JButton bBrowse, JButton bScan,
 	        JButton bDelete, JCheckBox cbSubFolders, JCheckBox cbEnablePlugins, int index) {
 		setCbWatch(cbWatch);
-		setTfFolderPath(tfFolderPath);
-		setCbVideo(cbVideo);
-		setbConfigureVideo(bConfigureFileImportTemplate);
-		setCbAudio(cbAudio);
-		setCbPictures(cbPictures);
-		setbBrowse(bBrowse);
-		setbScan(bScan);
-		setbDelete(bDelete);
-		setCbSubFolders(cbSubFolders);
+		setTextFieldFolderPath(tfFolderPath);
+		setCheckBoxVideo(cbVideo);
+		setButtonConfigureFileImportTemplate(bConfigureFileImportTemplate);
+		setCheckBoxAudio(cbAudio);
+		setCheckBoxPictures(cbPictures);
+		setButtonBrowse(bBrowse);
+		setButtonScan(bScan);
+		setButtonDelete(bDelete);
+		setCheckBoxSubFolders(cbSubFolders);
 		setIndex(index);
-		setCbEnablePlugins(cbEnablePlugins);
+		setCheckBoxEnablePlugins(cbEnablePlugins);
 	}
 
 	@Override
@@ -84,32 +88,55 @@ public class ManagedFolderObj {
 		        .isSelected(), cbVideo.isSelected(), cbAudio.isSelected(), cbPictures.isSelected());
 	}
 
-	public void addRemoveListener(ActionListener l) {
-		removeListeners.add(l);
-	}
-
 	public void setCbWatch(JCheckBox cbWatch) {
 		this.cbWatch = cbWatch;
+		
+		cbWatch.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				firePropertyChanged();
+			}
+		});
 	}
 
 	public JCheckBox getCbWatch() {
 		return cbWatch;
 	}
 
-	public void setTfFolderPath(JTextField folderPath) {
+	public void setTextFieldFolderPath(JTextField folderPath) {
 		this.tfFolderPath = folderPath;
+		
+		tfFolderPath.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				firePropertyChanged();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				firePropertyChanged();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				firePropertyChanged();
+			}
+		});
+		
 		if (folderPath != null) {
 			folderPath.addCaretListener(new CaretListener() {
 
 				@Override
 				public void caretUpdate(CaretEvent e) {
-					updateTfFolderPathToolTip();
+					updateTextFieldFolderPathToolTip();
 				}
 			});
 
 			folderPath.addComponentListener(new ComponentAdapter() {
 				public void componentResized(ComponentEvent e) {
-					updateTfFolderPathToolTip();
+					updateTextFieldFolderPathToolTip();
 				}
 			});
 		}
@@ -120,35 +147,59 @@ public class ManagedFolderObj {
 		        cbSubFolders.isSelected(), cbEnablePlugins.isSelected(), (DOFileImportTemplate) bConfigureFileImportTemplate.getUserObject());
 	}
 
-	public JTextField getTfFolderPath() {
+	public JTextField getTextFieldFolderPath() {
 		return tfFolderPath;
 	}
 
-	public void setCbVideo(JCheckBox ccbVideo) {
-		this.cbVideo = ccbVideo;
+	public void setCheckBoxVideo(JCheckBox cbVideo) {
+		this.cbVideo = cbVideo;
+
+		cbVideo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				firePropertyChanged();
+			}
+		});
 	}
 
-	public JCheckBox getCbVideo() {
+	public JCheckBox getCheckBoxVideo() {
 		return cbVideo;
 	}
 
-	public void setCbAudio(JCheckBox cbAudio) {
+	public void setCheckBoxAudio(JCheckBox cbAudio) {
 		this.cbAudio = cbAudio;
+
+		cbAudio.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				firePropertyChanged();
+			}
+		});
 	}
 
-	public JCheckBox getCbAudio() {
+	public JCheckBox getCheckBoxAudio() {
 		return cbAudio;
 	}
 
-	public void setCbPictures(JCheckBox cbPictures) {
+	public void setCheckBoxPictures(JCheckBox cbPictures) {
 		this.cbPictures = cbPictures;
+
+		cbPictures.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				firePropertyChanged();
+			}
+		});
 	}
 
-	public JCheckBox getCbPictures() {
+	public JCheckBox getCheckBoxPictures() {
 		return cbPictures;
 	}
 
-	public void setbBrowse(JButton bBrowse) {
+	public void setButtonBrowse(JButton bBrowse) {
 		this.bBrowse = bBrowse;
 
 		if (bBrowse != null) bBrowse.addActionListener(new ActionListener() {
@@ -173,11 +224,11 @@ public class ManagedFolderObj {
 		});
 	}
 
-	public JButton getbBrowse() {
+	public JButton getButtonBrowse() {
 		return bBrowse;
 	}
 
-	public void setbScan(JButton bScan) {
+	public void setButtonScan(JButton bScan) {
 		this.bScan = bScan;
 		if (bScan != null) {
 			bScan.addActionListener(new ActionListener() {
@@ -203,11 +254,11 @@ public class ManagedFolderObj {
 		}
 	}
 
-	public JButton getbScan() {
+	public JButton getbButtonScan() {
 		return bScan;
 	}
 
-	public void setbDelete(JButton bDelete) {
+	public void setButtonDelete(JButton bDelete) {
 		this.bDelete = bDelete;
 		if (bDelete != null) {
 			bDelete.addActionListener(new ActionListener() {
@@ -220,15 +271,23 @@ public class ManagedFolderObj {
 		}
 	}
 
-	public JButton getbDelete() {
+	public JButton getButtonDelete() {
 		return bDelete;
 	}
 
-	public void setCbSubFolders(JCheckBox cbSubFolders) {
+	public void setCheckBoxSubFolders(JCheckBox cbSubFolders) {
 		this.cbSubFolders = cbSubFolders;
+
+		cbSubFolders.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				firePropertyChanged();
+			}
+		});
 	}
 
-	public JCheckBox getCbSubFolders() {
+	public JCheckBox getCheckBoxSubFolders() {
 		return cbSubFolders;
 	}
 
@@ -240,11 +299,11 @@ public class ManagedFolderObj {
 		return index;
 	}
 
-	public void setbConfigureVideo(EButton bConfigureVideo) {
-		this.bConfigureFileImportTemplate = bConfigureVideo;
+	public void setButtonConfigureFileImportTemplate(EButton bConfigureFileImportTemplate) {
+		this.bConfigureFileImportTemplate = bConfigureFileImportTemplate;
 	}
 
-	public EButton getbConfigureFileImportTemplate() {
+	public EButton getButtonConfigureFileImportTemplate() {
 		return bConfigureFileImportTemplate;
 	}
 
@@ -252,11 +311,11 @@ public class ManagedFolderObj {
 		return bConfigureFileImportTemplate.getUserObject() instanceof DOFileImportTemplate ? (DOFileImportTemplate)bConfigureFileImportTemplate.getUserObject() : null;
 	}
 
-	public JCheckBox getCbEnablePlugins() {
+	public JCheckBox getCheckBoxEnablePlugins() {
 		return cbEnablePlugins;
 	}
 
-	public void setCbEnablePlugins(JCheckBox cbEnablePlugins) {
+	public void setCheckBoxEnablePlugins(JCheckBox cbEnablePlugins) {
 		this.cbEnablePlugins = cbEnablePlugins;
 		cbEnablePlugins.addActionListener(new ActionListener() {
 			
@@ -267,11 +326,13 @@ public class ManagedFolderObj {
 				} else {
 					bConfigureFileImportTemplate.setEnabled(false);
 				}
+
+				firePropertyChanged();
 			}
 		});
 	}
 
-	private void updateTfFolderPathToolTip() {
+	private void updateTextFieldFolderPathToolTip() {
 		if (!tfFolderPath.getText().equals("") && tfFolderPath.getPreferredSize().width > tfFolderPath.getSize().width) {
 			tfFolderPath.setToolTipText(tfFolderPath.getText());
 		} else {
@@ -279,9 +340,27 @@ public class ManagedFolderObj {
 		}
 	}
 
+	public void addRemoveListener(ActionListener removeListener) {
+		if(!removeListeners.contains(removeListener)) {
+			removeListeners.add(removeListener);
+		}
+	}
+
 	private void fireRemove() {
 		for (ActionListener l : removeListeners) {
 			l.actionPerformed(new ActionEvent(this, 753, "Delete"));
+		}
+	}
+
+	public void addPropertyChangedListener(ActionListener propertyChangedListener) {
+		if(!propertyChangedListeners.contains(propertyChangedListener)) {
+			propertyChangedListeners.add(propertyChangedListener);
+		}
+	}
+
+	private void firePropertyChanged() {
+		for (ActionListener l : propertyChangedListeners) {
+			l.actionPerformed(new ActionEvent(this, 754, "PropertyChanged"));
 		}
 	}
 }
