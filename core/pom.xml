@@ -42,7 +42,7 @@
 		<commons-configuration-version>1.10</commons-configuration-version>
 		<commons-httpclient-version>3.1</commons-httpclient-version>
 		<commons-io-version>2.4</commons-io-version>
-		<commons-lang3-version>3.3.2</commons-lang3-version>
+		<commons-lang3-version>3.4</commons-lang3-version>
 		<h2-version>1.4.187</h2-version>
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<sanselan-version>0.97-incubator</sanselan-version>
