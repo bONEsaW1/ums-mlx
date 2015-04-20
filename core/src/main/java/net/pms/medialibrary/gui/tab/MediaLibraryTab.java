@@ -116,8 +116,4 @@ public class MediaLibraryTab {
 		}
 		
 	}
-
-	public void save() {
-		MediaLibraryStorage.getInstance().setManagedFolders(generalOptionsPanel.getManagedFolders());
-	}
 }

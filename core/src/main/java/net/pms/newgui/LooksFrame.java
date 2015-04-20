@@ -52,7 +52,6 @@ import net.pms.medialibrary.storage.MediaLibraryStorage;
 import net.pms.newgui.plugins.PluginsTab;
 import net.pms.newgui.update.AutoUpdateDialog;
 import net.pms.update.AutoUpdater;
-import net.pms.util.GuiUtil;
 import net.pms.util.PropertiesUtil;
 
 import org.slf4j.Logger;
@@ -500,7 +499,7 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 
 	@Override
 	public void updateRenderer(RendererConfiguration renderer) {
-		st.updateRenderer(renderer);
+		StatusTab.updateRenderer(renderer);
 	}
 
 	@Override
@@ -529,10 +528,5 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 
 	public String getLog() {
 		return getTt().getList().getText();
-	}
-
-	@Override
-	public void save() {
-		mediaLibraryTab.save();
 	}
 }

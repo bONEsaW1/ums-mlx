@@ -1216,9 +1216,6 @@ public class PMS {
 	public void save() {
 		try {
 			configuration.save();
-			if(frame != null) {
-				frame.save();
-			}
 		} catch (ConfigurationException e) {
 			LOGGER.error("Could not save configuration", e);
 		}
