@@ -19,6 +19,7 @@
 package net.pms.plugin.fileimport.tmdb.configuration;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import net.pms.PMS;
 import net.pms.configuration.BaseConfiguration;
@@ -36,7 +37,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * Instantiates a new global configuration.
 	 */
 	public GlobalConfiguration() {
-		propertiesFilePath = getGlobalConfigurationDirectory() + "TmdbMovieImportPlugin.conf";
+		propertiesFilePath = Paths.get(getGlobalConfigurationDirectory(), "TmdbMovieImportPlugin.conf").toString();
 	}
 
 	/**

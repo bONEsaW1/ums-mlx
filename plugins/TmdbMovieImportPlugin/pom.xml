@@ -17,8 +17,9 @@
 	</parent>
 
 	<properties>
-		<version.themoviedbapi>3.10</version.themoviedbapi>
-		<version.jackson>2.4.3</version.jackson>
+		<version.themoviedbapi>4.0</version.themoviedbapi>
+		<version.jackson>2.5.1</version.jackson>
+		<version.yamj-api-common>1.4</version.yamj-api-common>
 	</properties>
 
 	<dependencies>
@@ -41,6 +42,11 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${version.jackson}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.yamj</groupId>
+			<artifactId>api-common</artifactId>
+			<version>${version.yamj-api-common}</version>
 		</dependency>
 	</dependencies>
 
@@ -79,6 +85,11 @@
 									<groupId>com.fasterxml.jackson.core</groupId>
 									<artifactId>jackson-databind</artifactId>
 									<version>${version.jackson}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.yamj</groupId>
+									<artifactId>api-common</artifactId>
+									<version>${version.yamj-api-common}</version>
 								</artifactItem>
 							</artifactItems>
 							<includeArtifactIds>themoviedbapi,jackson-core,jackson-annotations,jackson-databind</includeArtifactIds>

@@ -14,8 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.omertron.themoviedbapi.TheMovieDbApi;
+import com.omertron.themoviedbapi.enumeration.SearchType;
+import com.omertron.themoviedbapi.model.movie.MovieInfo;
 import com.omertron.themoviedbapi.results.*;
-import com.omertron.themoviedbapi.model.MovieDb;
 import com.omertron.themoviedbapi.MovieDbException;
 
 import net.pms.medialibrary.commons.enumarations.FileProperty;
@@ -58,7 +59,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 	private TheMovieDbApi api;
 
 	//the tmdb movie having been imported
-	private MovieDb movie;
+	private MovieInfo movie;
 	
 	//constants used to manage the min polling interval
 	private final int MIN_POLLING_INTERVAL_MS = 1000;
@@ -97,7 +98,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 		
 	    try {
 	    	//search for the title
-	        TmdbResultsList<MovieDb> movies = api.searchMovie(title, 0 , globalConfig.getImportLanguage(), true, 0);
+	        ResultList<MovieInfo> movies = api.searchMovie(title, 0 , globalConfig.getImportLanguage(), true, 0, 0, SearchType.PHRASE);
 	        int size = movies.getTotalResults();
 	        
 			if (movies != null && size > 0) {
@@ -111,7 +112,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 				if(size > 1){
 					moviesStr += ". other (not considered) matches are ";
 					for(int i = 0; i < movies.getResults().size(); i++) {
-						MovieDb movie = movies.getResults().get(i);
+						MovieInfo movie = movies.getResults().get(i);
 						moviesStr += String.format("id=%s, name='%s';", movie.getId(), movie.getTitle());
 					}
 					moviesStr = moviesStr.substring(0, moviesStr.length() - 2);
@@ -370,7 +371,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 		List<Object> res = null;
 	    try {
 	    	//search for the name
-	        TmdbResultsList<MovieDb> movies = api.searchMovie(name, 0, globalConfig.getImportLanguage(), true, 0);
+	        ResultList<MovieInfo> movies = api.searchMovie(name, 0, globalConfig.getImportLanguage(), true, 0, 0, SearchType.PHRASE);
 	        
 	        //create the return list if any movies were found
 			if (movies != null && movies.getTotalResults() > 0) {

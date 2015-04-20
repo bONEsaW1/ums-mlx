@@ -1,15 +1,15 @@
 package net.pms.plugin.fileimport;
 
-import com.omertron.themoviedbapi.model.MovieDb;
+import com.omertron.themoviedbapi.model.movie.MovieInfo;
 
 public class TmdbMovieInfoPluginMovie {
-	private MovieDb movie;
+	private MovieInfo movie;
 	
-	public TmdbMovieInfoPluginMovie(MovieDb movie) {
+	public TmdbMovieInfoPluginMovie(MovieInfo movie) {
 		this.movie = movie;
 	}
 
-	public MovieDb getMovie() {
+	public MovieInfo getMovie() {
 		return movie;
 	}
 	
