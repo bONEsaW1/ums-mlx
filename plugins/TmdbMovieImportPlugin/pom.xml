@@ -20,6 +20,7 @@
 		<version.themoviedbapi>4.0</version.themoviedbapi>
 		<version.jackson>2.5.1</version.jackson>
 		<version.yamj-api-common>1.4</version.yamj-api-common>
+		<version.httpcomponents>4.4.1</version.httpcomponents>
 	</properties>
 
 	<dependencies>
@@ -47,6 +48,16 @@
 			<groupId>org.yamj</groupId>
 			<artifactId>api-common</artifactId>
 			<version>${version.yamj-api-common}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${version.httpcomponents}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>${version.httpcomponents}</version>
 		</dependency>
 	</dependencies>
 
@@ -91,8 +102,18 @@
 									<artifactId>api-common</artifactId>
 									<version>${version.yamj-api-common}</version>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.httpcomponents</groupId>
+									<artifactId>httpclient</artifactId>
+									<version>${version.httpcomponents}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.httpcomponents</groupId>
+									<artifactId>httpcore</artifactId>
+									<version>${version.httpcomponents}</version>
+								</artifactItem>
 							</artifactItems>
-							<includeArtifactIds>themoviedbapi,jackson-core,jackson-annotations,jackson-databind</includeArtifactIds>
+							<includeArtifactIds>themoviedbapi,jackson-core,jackson-annotations,jackson-databind,api-common,httpclient,httpcore</includeArtifactIds>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
