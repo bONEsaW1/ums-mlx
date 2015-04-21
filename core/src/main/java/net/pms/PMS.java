@@ -570,7 +570,6 @@ public class PMS {
 		codes = new CodeDb();
 		masterCode = null;
 
-		RendererConfiguration.loadRendererConfigurations(configuration);
 		// Now that renderer confs are all loaded, we can start searching for renderers
 		UPNPHelper.getInstance().init();
 
@@ -1217,9 +1216,6 @@ public class PMS {
 	public void save() {
 		try {
 			configuration.save();
-			if(frame != null) {
-				frame.save();
-			}
 		} catch (ConfigurationException e) {
 			LOGGER.error("Could not save configuration", e);
 		}

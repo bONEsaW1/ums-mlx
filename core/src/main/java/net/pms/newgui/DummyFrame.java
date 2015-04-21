@@ -79,8 +79,4 @@ public class DummyFrame implements IFrame {
 	public String getLog() {
 		return StringUtils.join(log, "\n");
 	}
-
-	@Override
-	public void save() {		
-	}
 }
