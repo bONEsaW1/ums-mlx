@@ -12,7 +12,6 @@
 !include "..\..\..\..\target\extra.nsh"
 
 !define REG_KEY_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_NAME}"
-!define REG_KEY_SOFTWARE "SOFTWARE\${APPLICATION_NAME}"
 
 RequestExecutionLevel admin
 
