@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ums-plugins</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 
 	<name>UMS Plugins</name>
 	<description>Contains all officially supported plugins</description>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>5.1.3-mlx-1.2-SNAPSHOT</version>
+		<version>5.1.3-mlx-1.2</version>
 	</parent>
 
 	<modules>
@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>github.com.taconaut</groupId>
 			<artifactId>ums-core</artifactId>
-			<version>5.1.3-mlx-1.2-SNAPSHOT</version>
+			<version>5.1.3-mlx-1.2</version>
 		</dependency>
 	</dependencies>
 

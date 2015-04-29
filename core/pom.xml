@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>5.1.3-mlx-1.2-SNAPSHOT</version>
+		<version>5.1.3-mlx-1.2</version>
 	</parent>
 
 	<properties>
