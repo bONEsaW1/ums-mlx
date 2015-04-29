@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ums-shutdown-plugin</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 
 	<name>UMS Shutdown Plugin</name>
 	<description>This plugin adds menu options to shut down the computer where PMS runs.</description>
@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums-plugins</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 
 	<build>
