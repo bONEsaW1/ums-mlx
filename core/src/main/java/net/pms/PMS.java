@@ -1411,6 +1411,10 @@ public class PMS {
 			pid = in.readLine();
 		}
 
+		if (pid == null) {
+			return;
+		}
+
 		if (Platform.isWindows()) {
 			if (verifyPidName(pid)) {
 				pb = new ProcessBuilder("taskkill", "/F", "/PID", pid, "/T");

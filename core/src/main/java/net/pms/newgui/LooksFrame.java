@@ -221,12 +221,12 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 				break;
 		}
 
-		String projectName = PropertiesUtil.getProjectProperties().get("project.name");
+		String projectName = "UMS";
 		String projectVersion = PropertiesUtil.getProjectProperties().get("project.version");
 		String title = projectName + " " + projectVersion;
 
 		// If the version contains a "-" (e.g. "1.50.1-SNAPSHOT" or "1.50.1-beta1"), add a warning message
-		if (projectVersion.indexOf('-') > -1) {
+		if (projectVersion.indexOf("SNAPSHOT") > -1) {
 			title = title + " - " + Messages.getString("LooksFrame.26");
 		}
 

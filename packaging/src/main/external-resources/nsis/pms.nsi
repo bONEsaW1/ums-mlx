@@ -25,6 +25,7 @@ VIProductVersion "${PROJECT_VERSION_SHORT}.0"
 ; Definitions for Java
 !define JRE6_VERSION "6.0"
 !define JRE7_VERSION "7.0"
+!define JRE8_VERSION "8.0"
 
 ; use javaw.exe to avoid dosbox.
 ; use java.exe to keep stdout/stderr
@@ -46,13 +47,22 @@ Section ""
   Var /GLOBAL SERVER_JRE_FOUND
   Call GetJRE
   Pop $R0
+
+	ReadRegStr $R3 HKCU "${REG_KEY_SOFTWARE}" "HeapMem"
+
+	${If} $R3 == ""  ; no value found
+		StrCpy $R3 "1024"
+	${EndIf}
+
+	StrCpy $R4 "M"
+	StrCpy $R5 "-Xmx$R3$R4"
  
   ; change for your purpose (-jar etc.)
   ${GetParameters} $1
   ${If} $SERVER_JRE_FOUND == 'yes'
-    StrCpy $0 '"$R0" -classpath update.jar;ums.jar -server -Xmx1024M -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
+    StrCpy $0 '"$R0" -classpath update.jar;ums.jar -server $R5 -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
   ${Else}
-    StrCpy $0 '"$R0" -classpath update.jar;ums.jar -Xmx1024M -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
+    StrCpy $0 '"$R0" -classpath update.jar;ums.jar $R5 -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Dsun.java2d.d3d=false ${CLASS} $1'
   ${EndIf}
 
   SetOutPath $EXEDIR
@@ -173,6 +183,10 @@ Function CheckJREVersion
     
     ; Check if JRE7 is installed
     ${VersionCompare} ${JRE7_VERSION} $R1 $R2
+    StrCmp $R2 "1" 0 CheckDone  
+    
+    ; Check if JRE8 is installed
+    ${VersionCompare} ${JRE8_VERSION} $R1 $R2
     StrCmp $R2 "1" 0 CheckDone
     
     SetErrors
