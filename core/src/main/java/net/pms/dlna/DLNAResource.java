@@ -2518,7 +2518,33 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			}
 			final Integer refCount = temp;
 			requestIdToRefcount.put(requestId, refCount + 1);
+
 			if (refCount == 0) {
+				final DLNAResource self = this;
+				InetAddress rendererIp;
+				try {
+					rendererIp = InetAddress.getByName(rendererId);
+					RendererConfiguration renderer;
+					if (render == null) {
+						renderer = RendererConfiguration.getRendererConfigurationBySocketAddress(rendererIp);
+					} else {
+						renderer = render;
+					}
+					String rendererName = "unknown renderer";
+					try {
+						renderer.setPlayingRes(self);
+						rendererName = renderer.getRendererName().replaceAll("\n", "");
+					} catch (NullPointerException e) { }
+					if (!quietPlay()) {
+						LOGGER.info("Started playing " + getName() + " on your " + rendererName);
+						LOGGER.debug("The full filename of which is: " + getSystemName() + " and the address of the renderer is: " + rendererId);
+					}
+				} catch (UnknownHostException ex) {
+					LOGGER.debug("" + ex);
+				}
+
+				startTime = System.currentTimeMillis();
+
 				NotificationCenter.getInstance(StartStopEvent.class).post(new StartStopEvent(this, Event.Start));
 			}
 		}
@@ -2552,45 +2578,37 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 					if (start != startTime) {
 						return;
 					}
-
-					Runnable r = new Runnable() {
-						@Override
-						public void run() {
-							if (refCount == 1) {
-								requestIdToRefcount.put(requestId, 0);
-								InetAddress rendererIp;
-								try {
-									rendererIp = InetAddress.getByName(rendererId);
-									RendererConfiguration renderer;
-									if (render == null) {
-										renderer = RendererConfiguration.getRendererConfigurationBySocketAddress(rendererIp);
-									} else {
-										renderer = render;
-									}
-									String rendererName = "unknown renderer";
-									try {
-										// Reset only if another item hasn't already begun playing
-										if (renderer.getPlayingRes() == self) {
-											renderer.setPlayingRes(null);
-										}
-										rendererName = renderer.getRendererName();
-									} catch (NullPointerException e) { }
-									if (!quietPlay()) {
-										LOGGER.info("Stopped playing " + getName() + " on your " + rendererName);
-										LOGGER.debug("The full filename of which is: " + getSystemName() + " and the address of the renderer is: " + rendererId);
-									}
-								} catch (UnknownHostException ex) {
-									LOGGER.debug("" + ex);
-								}
-
-								internalStop();
-
-								NotificationCenter.getInstance(StartStopEvent.class).post(new StartStopEvent(self, Event.Stop));
+					if (refCount == 1) {
+						requestIdToRefcount.put(requestId, 0);
+						InetAddress rendererIp;
+						try {
+							rendererIp = InetAddress.getByName(rendererId);
+							RendererConfiguration renderer;
+							if (render == null) {
+								renderer = RendererConfiguration.getRendererConfigurationBySocketAddress(rendererIp);
+							} else {
+								renderer = render;
 							}
+							String rendererName = "unknown renderer";
+							try {
+								// Reset only if another item hasn't already begun playing
+								if (renderer.getPlayingRes() == self) {
+									renderer.setPlayingRes(null);
+								}
+								rendererName = renderer.getRendererName();
+							} catch (NullPointerException e) { }
+							if (!quietPlay()) {
+								LOGGER.info("Stopped playing " + getName() + " on your " + rendererName);
+								LOGGER.debug("The full filename of which is: " + getSystemName() + " and the address of the renderer is: " + rendererId);
+							}
+						} catch (UnknownHostException ex) {
+							LOGGER.debug("" + ex);
 						}
-					};
 
-					new Thread(r, "StopPlaying Event").start();
+						internalStop();
+
+						NotificationCenter.getInstance(StartStopEvent.class).post(new StartStopEvent(self, Event.Stop));
+					}
 				}
 			}
 		};
