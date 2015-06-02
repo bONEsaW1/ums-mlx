@@ -76,7 +76,7 @@
 		<izpack.installer.app>${project.build.directory}/${project.core.name} Setup.app</izpack.installer.app>
 
 		<nsis-maven-plugin-version>1.0-SNAPSHOT</nsis-maven-plugin-version>
-		<maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
+		<maven-assembly-plugin-version>2.5.4</maven-assembly-plugin-version>
 	</properties>
 	
 	<!-- Dependencies for every jar that needs to be packaged -->

@@ -32,3 +32,5 @@ packaging/src/main/external-resources/transcode-tools/osx/*
 packaging/src/main/external-resources/transcode-tools/win32/*
 /core/web
 *.iml
+/core/bin
+/packaging/bin
