@@ -43,6 +43,6 @@ public class CustomJButton extends JButton {
 	}
 
 	public Point getToolTipLocation(MouseEvent event) {
-	    return new Point(getWidth() / 2, getHeight() / 2);
+	    return new Point(event.getX() + 5, getHeight() / 2);
 	}
 }
