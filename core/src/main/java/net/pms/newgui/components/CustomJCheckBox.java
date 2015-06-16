@@ -1,8 +1,5 @@
 package net.pms.newgui.components;
 
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -43,9 +40,5 @@ public class CustomJCheckBox extends JCheckBox  {
 	    JToolTip tip = new HyperLinkToolTip();
 	    tip.setComponent(this);
 	    return tip;
-	}
-
-	public Point getToolTipLocation(MouseEvent event) {
-	    return new Point(getWidth() / 2, getHeight() / 2);
 	}
 }

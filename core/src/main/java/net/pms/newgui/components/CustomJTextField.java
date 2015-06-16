@@ -1,8 +1,5 @@
 package net.pms.newgui.components;
 
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.text.Document;
@@ -34,10 +31,6 @@ public class CustomJTextField extends JTextField {
 	    JToolTip tip = new HyperLinkToolTip();
 	    tip.setComponent(this);
 	    return tip;
-	}
-
-	public Point getToolTipLocation(MouseEvent event) {
-	    return new Point(getWidth() / 2, getHeight() / 2);
 	}
 }
 
