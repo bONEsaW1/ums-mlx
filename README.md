@@ -1,4 +1,5 @@
-# Universal Media Server 
+# Universal Media Server
+[![Build Status](http://universalmediaserver-ci.hopto.org:9999/job/ums%20trunk/badge/icon)](http://universalmediaserver-ci.hopto.org:9999/job/ums%20trunk/)
 
 [![Build Status](http://ps3mediaserver-ci.hopto.org:9999/job/ums-mlx%20trunk/badge/icon)](http://ps3mediaserver-ci.hopto.org:9999/job/ums-mlx%20trunk)
 
