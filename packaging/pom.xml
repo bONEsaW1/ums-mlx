@@ -16,12 +16,12 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>5.1.4-mlx-1.3-SNAPSHOT</version>
+		<version>5.1.5-mlx-1.3-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<!-- NSIS needs a version without "-SNAPSHOT" or "-b1" -->
-		<project.version.short>5.1.4</project.version.short>
+		<project.version.short>5.1.5</project.version.short>
 
 		<project.core.name>Universal Media Server MLX</project.core.name>
 		
@@ -46,12 +46,12 @@
 				1) Go to http://www.java.com/en/download/manual.jsp
 				2) Check the download links for win32, win64 and osx and use BundleId+1 for the download URl
 		-->
-		<private-jre.windows.x86.filename>jre-8u40-windows-i586.tar.gz</private-jre.windows.x86.filename>
-		<private-jre.windows.x86.archive-directory-name>jre1.8.0_40</private-jre.windows.x86.archive-directory-name>
-		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=104767</private-jre.windows.x86.download-url>
-		<private-jre.windows.x64.filename>jre-8u40-windows-x64.tar.gz</private-jre.windows.x64.filename>
-		<private-jre.windows.x64.archive-directory-name>jre1.8.0_40</private-jre.windows.x64.archive-directory-name>
-		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=104769</private-jre.windows.x64.download-url>
+		<private-jre.windows.x86.filename>jre-8u45-windows-i586.tar.gz</private-jre.windows.x86.filename>
+		<private-jre.windows.x86.archive-directory-name>jre1.8.0_45</private-jre.windows.x86.archive-directory-name>
+		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=107099</private-jre.windows.x86.download-url>
+		<private-jre.windows.x64.filename>jre-8u45-windows-x64.tar.gz</private-jre.windows.x64.filename>
+		<private-jre.windows.x64.archive-directory-name>jre1.8.0_45</private-jre.windows.x64.archive-directory-name>
+		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=107101</private-jre.windows.x64.download-url>
 		<private-jre.macosx.filename>jre-7u67-macosx-x64.gz</private-jre.macosx.filename>
 		<private-jre.macosx.archive-directory-name>jre1.8.0_40</private-jre.macosx.archive-directory-name>
 		<private-jre.macosx.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=105220</private-jre.macosx.download-url>
@@ -76,7 +76,7 @@
 		<izpack.installer.app>${project.build.directory}/${project.core.name} Setup.app</izpack.installer.app>
 
 		<nsis-maven-plugin-version>1.0-SNAPSHOT</nsis-maven-plugin-version>
-		<maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
+		<maven-assembly-plugin-version>2.5.4</maven-assembly-plugin-version>
 	</properties>
 	
 	<!-- Dependencies for every jar that needs to be packaged -->
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>github.com.taconaut</groupId>
 			<artifactId>ums-core</artifactId>
-			<version>5.1.4-mlx-1.3-SNAPSHOT</version>
+			<version>5.1.5-mlx-1.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

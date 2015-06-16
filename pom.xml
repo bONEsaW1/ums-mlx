@@ -28,7 +28,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>github.com.taconaut</groupId>
 	<artifactId>ums</artifactId>
-	<version>5.1.4-mlx-1.3-SNAPSHOT</version>
+	<version>5.1.5-mlx-1.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>UMS</name>
 	<url>http://www.universalmediaserver.org/</url>
@@ -159,19 +159,19 @@
 		<!-- Version numbers for plugins shared by multiple modules  -->
 		<maven-external-dependency-plugin-version>0.5</maven-external-dependency-plugin-version>
 		<maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
-		<maven-compiler-plugin-version>3.2</maven-compiler-plugin-version>
-		<maven-surefire-plugin-version>2.16</maven-surefire-plugin-version>
+		<maven-compiler-plugin-version>3.3</maven-compiler-plugin-version>
+		<maven-surefire-plugin-version>2.18.1</maven-surefire-plugin-version>
 		<maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
 		<maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
 		<maven-site-plugin-version>3.3</maven-site-plugin-version>
 		<maven-project-info-reports-plugin-version>2.7</maven-project-info-reports-plugin-version>
-		<maven-javadoc-plugin-version>2.10.2</maven-javadoc-plugin-version>
+		<maven-javadoc-plugin-version>2.10.3</maven-javadoc-plugin-version>
 		<maven-pmd-plugin-version>3.4</maven-pmd-plugin-version>
 		<maven-dependency-plugin-version>2.8</maven-dependency-plugin-version>
-		<maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
+		<maven-assembly-plugin-version>2.5.4</maven-assembly-plugin-version>
 
 		<doxia-module-docbook-simple-version>1.4</doxia-module-docbook-simple-version>
-		<git-commit-id-plugin-version>2.1.13</git-commit-id-plugin-version>
+		<git-commit-id-plugin-version>2.1.15</git-commit-id-plugin-version>
 		<apiviz-version>1.3.2.GA</apiviz-version>
 		<exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
@@ -184,7 +184,7 @@
 		<transcode-tools.download.url>http://downloads.sourceforge.net/project/ums-mlx/ums-tools</transcode-tools.download.url>
 		<transcode-tools.linux.filename>transcode-tools-linux-20131127.tar.gz</transcode-tools.linux.filename>
 		<transcode-tools.macosx.filename>transcode-tools-osx-20131126.tar.gz</transcode-tools.macosx.filename>
-		<transcode-tools.windows.x86.filename>transcode-tools-win32-20150424.tar.gz</transcode-tools.windows.x86.filename>
+		<transcode-tools.windows.x86.filename>transcode-tools-win32-20150616.tar.gz</transcode-tools.windows.x86.filename>
 	</properties>
 
 	<build>
