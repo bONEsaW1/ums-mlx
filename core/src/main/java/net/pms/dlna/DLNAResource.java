@@ -2307,7 +2307,12 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 						}
 					}
 					if (media.getResolution() != null) {
-						addAttribute(sb, "resolution", media.getResolution());
+						if (player != null && mediaRenderer.isKeepAspectRatio()) {
+							addAttribute(sb, "resolution", getResolutionForKeepAR(media.getWidth(), media.getHeight()));
+						} else {
+							addAttribute(sb, "resolution", media.getResolution());
+						}
+						
 					}
 					addAttribute(sb, "bitrate", media.getRealVideoBitrate());
 					if (firstAudioTrack != null) {
@@ -3968,5 +3973,19 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			vva.setParent(this);
 			dynamicPls.addChildInternal(vva);
 		}
+	}
+
+	public String getResolutionForKeepAR(int scaleWidth, int scaleHeight) {
+		double videoAspectRatio = (double) scaleWidth / (double) scaleHeight;
+		double rendererAspectRatio = 1.777777777777778;
+		if (videoAspectRatio > rendererAspectRatio) {
+			scaleHeight = (int) Math.round(scaleWidth / rendererAspectRatio);
+		} else {
+			scaleWidth  = (int) Math.round(scaleHeight * rendererAspectRatio);
+		}
+
+		scaleWidth  = Player.convertToModX(scaleWidth, 4);
+		scaleHeight = Player.convertToModX(scaleHeight, 4);
+		return scaleWidth + "x" + scaleHeight;
 	}
 }
