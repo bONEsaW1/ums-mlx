@@ -34,3 +34,4 @@ packaging/src/main/external-resources/transcode-tools/win32/*
 *.iml
 /core/bin
 /packaging/bin
+/core/win32/service
