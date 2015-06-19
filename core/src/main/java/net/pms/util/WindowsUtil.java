@@ -19,7 +19,7 @@ public class WindowsUtil {
 	 * @return true, if a service named Universal Media Server is installed
 	 */
 	public static boolean isUmsServiceInstalled() {
-		String[] commands = new String[]{ "sc", "query", "\"Universal Media Server\"" };
+		String[] commands = new String[]{ "sc", "query", "\"Universal Media Server MLX\"" };
 		String response = ProcessUtil.run(commands);
 		return response.contains("TYPE");
 	}
