@@ -955,30 +955,9 @@
 										<copy
 											file="${external-resources.transcode-tools.directory}/win32/jnotify_64bit.dll"
 											todir="${project.basedir}" overwrite="true" verbose="true" />
-									</target>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				
-					<!-- Plugin to move the service wrapper into the working directory (for debugging in IDE) -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>${maven-antrun-plugin-version}</version>
-						<executions>
-							<execution>
-								<id>process-resources-web</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target>
-										<!-- Make sure the destination folders exist. -->
+											
+										<!-- Make sure the destination folder for the service wrapper exists and copy the files. -->
 										<mkdir dir="${project.basedir}/win32/service" />
-				
-										<!-- Copy all the resources into the working directory -->
 										<copy todir="${project.basedir}/win32/service" overwrite="true">
 											<fileset dir="${external-resources.transcode-tools.directory}/win32/service" />
 										</copy>
