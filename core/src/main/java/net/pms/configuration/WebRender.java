@@ -111,6 +111,10 @@ public class WebRender extends DeviceConfiguration implements RendererConfigurat
 		configuration.addProperty(SUPPORTED, "f:mp4 m:video/mp4");
 		configuration.addProperty(SUPPORTED, "f:mp3 n:2 m:audio/mpeg");
 //		configuration.addProperty(SUPPORTED, "f:wav n:2 m:audio/wav");
+		configuration.addProperty(SUPPORTED, "f:jpg m:image/jpeg");
+		configuration.addProperty(SUPPORTED, "f:png m:image/png");
+		configuration.addProperty(SUPPORTED, "f:gif m:image/gif");
+		configuration.addProperty(SUPPORTED, "f:tiff m:image/tiff");
 		configuration.addProperty(TRANSCODE_AUDIO, MP3);
 		return true;
 	}
@@ -446,7 +450,7 @@ public class WebRender extends DeviceConfiguration implements RendererConfigurat
 
 	public static boolean supportedFormat(Format f) {
 		for (Format f1 : supportedFormats) {
-			if (f.getIdentifier() == f1.getIdentifier()) {
+			if (f.getIdentifier() == f1.getIdentifier() || f1.mimeType().equals(f.mimeType())) {
 				return true;
 			}
 		}
@@ -459,7 +463,7 @@ public class WebRender extends DeviceConfiguration implements RendererConfigurat
 		}
 		DLNAMediaInfo m = dlna.getMedia();
 		return (m != null && RemoteUtil.directmime(m.getMimeType())) ||
-				(supportedFormat(dlna.getFormat())) ||
+			(supportedFormat(dlna.getFormat())) ||
 			(dlna.getPlayer() instanceof FFMpegVideo);
 	}
 
