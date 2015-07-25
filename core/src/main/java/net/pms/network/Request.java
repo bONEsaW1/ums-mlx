@@ -97,6 +97,7 @@ public class Request extends HTTPResource {
 
 	public void setMediaRenderer(RendererConfiguration mediaRenderer) {
 		this.mediaRenderer = mediaRenderer;
+		// Use device-specific pms conf
 		configuration = PMS.getConfiguration(mediaRenderer);
 	}
 
@@ -722,7 +723,7 @@ public class Request extends HTTPResource {
 				response.append(CRLF);
 				response.append(HTTPXMLHelper.SOAP_ENCODING_FOOTER);
 				response.append(CRLF);
-				//LOGGER.trace(response.toString());
+				LOGGER.trace(response.toString());
 			}
 		} else if (method.equals("SUBSCRIBE")) {
 			if (soapaction == null) {

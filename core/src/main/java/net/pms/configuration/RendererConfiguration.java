@@ -850,6 +850,10 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 		return getConfName().toUpperCase().contains("PLAYSTATION 3") || getConfName().toUpperCase().contains("PS3");
 	}
 
+	public boolean isPS4() {
+		return getConfName().toUpperCase().contains("PLAYSTATION 4");
+	}
+
 	public boolean isBRAVIA() {
 		return getConfName().toUpperCase().contains("BRAVIA");
 	}
@@ -1238,7 +1242,9 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 		if (isMediaParserV2()) {
 			// Use the supported information in the configuration to determine the transcoding mime type.
 			if (HTTPResource.VIDEO_TRANSCODE.equals(mimeType)) {
-				if (isTranscodeToMPEGTSH264AC3()) {
+				if (isTranscodeToMPEGPSMPEG2AC3()) { // Default video transcoding mime type. Check it first
+					matchedMimeType = getFormatConfiguration().match(FormatConfiguration.MPEGPS, FormatConfiguration.MPEG2, FormatConfiguration.AC3);
+				} else if (isTranscodeToMPEGTSH264AC3()) {
 					matchedMimeType = getFormatConfiguration().match(FormatConfiguration.MPEGTS, FormatConfiguration.H264, FormatConfiguration.AC3);
 				} else if (isTranscodeToMPEGTSH264AAC()) {
 					matchedMimeType = getFormatConfiguration().match(FormatConfiguration.MPEGTS, FormatConfiguration.H264, FormatConfiguration.AAC);
@@ -1250,9 +1256,6 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 					matchedMimeType = getFormatConfiguration().match(FormatConfiguration.MPEGTS, FormatConfiguration.MPEG2, FormatConfiguration.AC3);
 				} else if (isTranscodeToWMV()) {
 					matchedMimeType = getFormatConfiguration().match(FormatConfiguration.WMV, FormatConfiguration.WMV, FormatConfiguration.WMA);
-				} else {
-					// Default video transcoding mime type
-					matchedMimeType = getFormatConfiguration().match(FormatConfiguration.MPEGPS, FormatConfiguration.MPEG2, FormatConfiguration.AC3);
 				}
 			} else if (HTTPResource.AUDIO_TRANSCODE.equals(mimeType)) {
 				if (isTranscodeToWAV()) {
@@ -2547,10 +2550,10 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 		}
 	}
 
-	public static final String INFO = "info";
-	public static final String OK = "okay";
-	public static final String WARN = "warn";
-	public static final String ERR = "err";
+	public final String INFO = "info";
+	public final String OK = "okay";
+	public final String WARN = "warn";
+	public final String ERR = "err";
 
 	public void notify(String type, String msg) {
 		// Implemented by subclasses

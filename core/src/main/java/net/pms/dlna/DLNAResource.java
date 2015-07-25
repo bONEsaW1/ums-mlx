@@ -262,6 +262,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	@Deprecated
 	protected long lastRefreshTime;
 
+	@SuppressWarnings("unused")
 	private String lastSearch;
 
 	private VirtualFolder dynamicPls;
@@ -751,6 +752,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @return A player if transcoding or null if streaming
 	 */
 	public Player resolvePlayer(RendererConfiguration renderer) {
+		// Use device-specific pms conf, if any
 		PmsConfiguration configuration = PMS.getConfiguration(renderer);
 		boolean parserV2 = media != null && renderer != null && renderer.isMediaParserV2();
 		Player player = null;
@@ -941,7 +943,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			if (child != found) {
 				// Replace
 				child.parent = this;
-				child.setIndexId(GlobalIdRepo.parseIndex((found.getInternalId())));
+				child.setIndexId(GlobalIdRepo.parseIndex(found.getInternalId()));
 				children.set(children.indexOf(found), child);
 			}
 			// Renew
@@ -1157,6 +1159,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	}
 
 	final protected void discoverWithRenderer(RendererConfiguration renderer, int count, boolean forced, String searchStr) {
+		// Use device-specific pms conf, if any
 		PmsConfiguration configuration = PMS.getConfiguration(renderer);
 		// Discover children if it hasn't been done already
 		if (!isDiscovered()) {
@@ -1192,6 +1195,9 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 				notifyRefresh();
 			} */
 			if (forced) {
+				// This seems to follow the same code path as the else below in the case of MapFile, because
+				// refreshChildren calls shouldRefresh -> isRefreshNeeded -> doRefreshChildren, which is what happens below
+				// (refreshChildren is not overridden in MapFile) 
 				if (refreshChildren(searchStr)) {
 					notifyRefresh();
 				}
@@ -1448,6 +1454,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @return String representing the item.
 	 */
 	private String getDisplayName(RendererConfiguration mediaRenderer, boolean withSuffix) {
+		// Use device-specific pms conf, if any
 		PmsConfiguration configuration = PMS.getConfiguration(mediaRenderer);
 		// displayName shouldn't be cached, since device configurations may differ
 //		if (displayName != null) { // cached
@@ -1521,8 +1528,18 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 				audioLanguage = "";
 			}
 
+			String audioTrackTitle = "";
+			if (
+				getMediaAudio().getAudioTrackTitleFromMetadata() != null &&
+				!"".equals(getMediaAudio().getAudioTrackTitleFromMetadata()) &&
+				mediaRenderer != null &&
+				mediaRenderer.isShowAudioMetadata()
+			) {
+				audioTrackTitle = " (" + getMediaAudio().getAudioTrackTitleFromMetadata() + ")";
+			}
+
 			displayName = player != null ? ("[" + player.name() + "]") : "";
-			nameSuffix = " {Audio: " + getMediaAudio().getAudioCodec() + audioLanguage + ((getMediaAudio().getAudioTrackTitleFromMetadata() != null && mediaRenderer != null && mediaRenderer.isShowAudioMetadata()) ? (" (" + getMediaAudio().getAudioTrackTitleFromMetadata() + ")") : "") + "}";
+			nameSuffix = " {Audio: " + getMediaAudio().getAudioCodec() + audioLanguage + audioTrackTitle + "}";
 		}
 
 		if (
@@ -1542,7 +1559,17 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 				subtitleLanguage = "";
 			}
 
-			String subsDescription = Messages.getString("DLNAResource.2") + subtitleFormat + subtitleLanguage + ((media_subtitle.getSubtitlesTrackTitleFromMetadata() != null && mediaRenderer != null && mediaRenderer.isShowSubMetadata()) ? (" (" + media_subtitle.getSubtitlesTrackTitleFromMetadata() + ")") : "");
+			String subtitlesTrackTitle = "";
+			if (
+				media_subtitle.getSubtitlesTrackTitleFromMetadata() != null &&
+				!"".equals(media_subtitle.getSubtitlesTrackTitleFromMetadata()) &&
+				mediaRenderer != null &&
+				mediaRenderer.isShowSubMetadata()
+			) {
+				subtitlesTrackTitle = " (" + media_subtitle.getSubtitlesTrackTitleFromMetadata() + ")";
+			}
+
+			String subsDescription = Messages.getString("DLNAResource.2") + subtitleFormat + subtitleLanguage + subtitlesTrackTitle;
 			if (subsAreValidForStreaming) {
 				nameSuffix += " {" + Messages.getString("DLNAResource.3") + subsDescription + "}";
 			} else {
@@ -1754,6 +1781,8 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @return String representation of the DLNA.ORG_PN flags
 	 */
 	private String getDlnaOrgPnFlags(RendererConfiguration mediaRenderer, int localizationValue) {
+		// Use device-specific pms conf, if any
+		PmsConfiguration configuration = PMS.getConfiguration(mediaRenderer);
 		String mime = getRendererMimeType(mediaRenderer);
 
 		String dlnaOrgPnFlags = null;
@@ -2186,6 +2215,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 *         {@code <container id="0$1" childCount="1" parentID="0" restricted="true">}
 	 */
 	public final String getDidlString(RendererConfiguration mediaRenderer) {
+		// Use device-specific pms conf, if any
 		PmsConfiguration configuration = PMS.getConfiguration(mediaRenderer);
 		StringBuilder sb = new StringBuilder();
 		boolean subsAreValidForStreaming = false;
@@ -2412,10 +2442,22 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 				}
 
 				endTag(sb);
-				wireshark.append(" ").append(getFileURL());
+				// Add transcoded format extension to the output stream URL.
+				String transcodedExtension = "";
+				if (player != null) {
+					if (mediaRenderer.isTranscodeToMPEGPSMPEG2AC3()) {
+						transcodedExtension = "_transcoded_to.mpg";
+					} else if (mediaRenderer.isTranscodeToMPEGTS()) {
+						transcodedExtension = "_transcoded_to.ts";
+					} else if (mediaRenderer.isTranscodeToWMV() && !xbox360) {
+						transcodedExtension = "_transcoded_to.wmv";
+					}
+				}
+
+				wireshark.append(" ").append(getFileURL()).append(transcodedExtension);
+				sb.append(getFileURL()).append(transcodedExtension);
 				LOGGER.trace("Network debugger: " + wireshark.toString());
 				wireshark.setLength(0);
-				sb.append(getFileURL());
 				closeTag(sb, "res");
 			}
 		}
@@ -2685,6 +2727,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	private long lastStart;
 
 	public synchronized InputStream getInputStream(Range range, RendererConfiguration mediarenderer) throws IOException {
+		// Use device-specific pms conf, if any
 		PmsConfiguration configuration = PMS.getConfiguration(mediarenderer);
 		LOGGER.trace("Asked stream chunk : " + range + " of " + getName() + " and player " + player);
 
@@ -2943,6 +2986,8 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @param renderer The renderer profile
 	 */
 	protected void checkThumbnail(InputFile inputFile, RendererConfiguration renderer) {
+		// Use device-specific pms conf, if any
+		PmsConfiguration configuration = PMS.getConfiguration(renderer);
 		if (media != null && !media.isThumbready() && configuration.isThumbnailGenerationEnabled()) {
 			Double seekPosition = (double) configuration.getThumbnailSeekPos();
 			if (isResume()) {

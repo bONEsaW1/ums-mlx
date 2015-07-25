@@ -413,7 +413,7 @@ public class PMS {
 				// The user has chosen to run the wizard
 
 				// Total number of questions
-				int numberOfQuestions = 4;
+				int numberOfQuestions = 3;
 
 				// The current question number
 				int currentQuestionNumber = 1;
@@ -1059,7 +1059,6 @@ public class PMS {
 
 	public static void main(String args[]) {
 		boolean displayProfileChooser = false;
-		boolean headless = true;
 
 		if (args.length > 0) {
 			for (String arg : args) {
@@ -1107,7 +1106,7 @@ public class PMS {
 			}
 		}
 
-		if (!headless && displayProfileChooser) {
+		if (!isHeadless() && displayProfileChooser) {
 			ProfileChooser.display();
 		}
 
@@ -1161,7 +1160,7 @@ public class PMS {
 
 			LOGGER.error(errorMessage);
 
-			if (!headless && instance != null) {
+			if (!isHeadless() && instance != null) {
 				JOptionPane.showMessageDialog(
 					(SwingUtilities.getWindowAncestor((Component) instance.getFrame())),
 					errorMessage,
@@ -1438,18 +1437,23 @@ public class PMS {
 		PlayerFactory.registerPlayer(player);
 	}
 
-	/*
+	private static Boolean headless = null;
+	
+	/**
 	 * Check if UMS is running in headless (console) mode, since some Linux
 	 * distros seem to not use java.awt.GraphicsEnvironment.isHeadless() properly
 	 */
 	public static boolean isHeadless() {
-		try {
-			JDialog d = new JDialog();
-			d.dispose();
-			return false;
-		} catch (NoClassDefFoundError | HeadlessException | InternalError e) {
-			return true;
-		}
+		if (headless == null) {
+			try {
+				JDialog d = new JDialog();
+				d.dispose();
+				headless = new Boolean(false);
+			} catch (NoClassDefFoundError | HeadlessException | InternalError e) {
+				headless = new Boolean(true);				
+			}
+		}		
+		return headless.booleanValue();
 	}
 
 	private RemoteWeb web;
