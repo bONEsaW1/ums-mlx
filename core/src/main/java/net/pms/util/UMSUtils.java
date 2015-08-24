@@ -393,7 +393,7 @@ public class UMSUtils {
 				sb.append("\n");
 				for (DLNAResource r : playlist) {
 					String data = r.write();
-					if (!org.apache.commons.lang.StringUtils.isEmpty(data)) {
+					if (!org.apache.commons.lang.StringUtils.isEmpty(data) && sb.indexOf(data) == -1) {
 						String id = "internal:" + r.getClass().getName();
 
 						sb.append("master:").append(id).append(";");
