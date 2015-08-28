@@ -953,7 +953,7 @@ public class FileImportHelper {
 		URLConnection uc = u.openConnection();
 		String contentType = uc.getContentType();
 		int contentLength = uc.getContentLength();
-		if (contentType.startsWith("text/") || contentLength == -1) {
+		if (contentType == null || contentType.startsWith("text/") || contentLength == -1) {
 			throw new IOException("This is not a binary file.");
 		}
 		InputStream raw = uc.getInputStream();
