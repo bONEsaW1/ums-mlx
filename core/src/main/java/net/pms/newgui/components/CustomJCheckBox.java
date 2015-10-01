@@ -8,20 +8,24 @@ import javax.swing.JToolTip;
 public class CustomJCheckBox extends JCheckBox  {
 	private static final long serialVersionUID = -8027836064057652678L;
 
+	public CustomJCheckBox() {
+		super();
+	}
+
 	public CustomJCheckBox(Action a) {
-	    super(a);
+		super(a);
 	}
 
 	public CustomJCheckBox(Icon icon) {
-	    super(icon);
-	}
-
-	public CustomJCheckBox(Icon icon, boolean selected) {
-	    super(icon, selected);
+		super(icon);
 	}
 
 	public CustomJCheckBox(String text) {
 	    super(text);
+	}
+
+	public CustomJCheckBox(Icon icon, boolean selected) {
+		super(icon, selected);
 	}
 
 	public CustomJCheckBox(String text, boolean selected) {
@@ -29,11 +33,11 @@ public class CustomJCheckBox extends JCheckBox  {
 	}
 
 	public CustomJCheckBox(String text, Icon icon) {
-	    super(text, icon);
+		super(text, icon);
 	}
 
 	public CustomJCheckBox(String text, Icon icon, boolean selected) {
-	    super(text, icon, selected);
+		super(text, icon, selected);
 	}
 
 	public JToolTip createToolTip() {

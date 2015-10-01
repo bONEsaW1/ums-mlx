@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import net.pms.Messages;
@@ -66,7 +65,7 @@ public class StatusTab {
 		public GuiUtil.FixedPanel playing;
 		public JLabel time;
 		public JFrame frame;
-		public GuiUtil.SmoothProgressBar jpb;
+		public GuiUtil.SmoothProgressBar rendererProgressBar;
 		public RendererPanel panel;
 		public String name = " ";
 		private JPanel _panel = null;
@@ -83,12 +82,11 @@ public class StatusTab {
 			playing.add(playingLabel);
 			time = new JLabel(" ");
 			time.setForeground(Color.gray);
-			jpb = new GuiUtil.SmoothProgressBar(0, 100);
-			jpb.setUI(new GuiUtil.SimpleProgressUI(Color.gray, Color.gray));
-			jpb.setStringPainted(true);
-			jpb.setBorderPainted(false);
-			jpb.setString(r.getAddress().getHostAddress());
-			jpb.setForeground(bufColor);
+			rendererProgressBar = new GuiUtil.SmoothProgressBar(0, 100, new GuiUtil.SimpleProgressUI(Color.gray, Color.gray));
+			rendererProgressBar.setStringPainted(true);
+			rendererProgressBar.setBorderPainted(false);
+			rendererProgressBar.setString(r.getAddress().getHostAddress());
+			rendererProgressBar.setForeground(bufColor);
 		}
 
 		@Override
@@ -96,7 +94,7 @@ public class StatusTab {
 			BasicPlayer.State state = ((BasicPlayer) e.getSource()).getState();
 			time.setText((state.playback == BasicPlayer.STOPPED || StringUtil.isZeroTime(state.position)) ? " " :
 				UMSUtils.playedDurationStr(state.position, state.duration));
-			jpb.setValue((int) (100 * state.buffer / bufferSize));
+			rendererProgressBar.setValue((int) (100 * state.buffer / bufferSize));
 			String n = (state.playback == BasicPlayer.STOPPED || StringUtils.isBlank(state.name)) ? " " : state.name;
 			if (!name.equals(n)) {
 				name = n;
@@ -138,7 +136,7 @@ public class StatusTab {
 				CellConstraints cc = new CellConstraints();
 				b.add(icon, cc.xy(1, 1));
 				b.add(label, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
-				b.add(jpb, cc.xy(1, 5));
+				b.add(rendererProgressBar, cc.xy(1, 5));
 				b.add(playing, cc.xy(1, 7, CellConstraints.CENTER, CellConstraints.DEFAULT));
 				b.add(time, cc.xy(1, 9));
 				_panel = b.getPanel();
@@ -148,10 +146,9 @@ public class StatusTab {
 	}
 
 	private ImagePanel imagePanel;
-	private PmsConfiguration configuration;
 	private JPanel renderers;
 	private JLabel jl;
-	private JProgressBar jpb;
+	private JProgressBar memoryProgressBar;
 	private GuiUtil.SegmentedProgressBarUI memBarUI;
 	private JLabel bitrateLabel;
 	private JLabel currentBitrate;
@@ -164,12 +161,7 @@ public class StatusTab {
 	private static int bufferSize;
 
 	StatusTab(PmsConfiguration configuration) {
-		this.configuration = configuration;
 		bufferSize = configuration.getMaxMemoryBufferSize();
-	}
-
-	public JProgressBar getJpb() {
-		return jpb;
 	}
 
 	public void updateCurrentBitrate() {
@@ -195,8 +187,7 @@ public class StatusTab {
 
 	public JComponent build() {
 		// Apply the orientation for the locale
-		Locale locale = new Locale(configuration.getLanguage());
-		ComponentOrientation orientation = ComponentOrientation.getOrientation(locale);
+		ComponentOrientation orientation = ComponentOrientation.getOrientation(PMS.getLocale());
 
 		String colSpec = FormLayoutUtil.getColSpec("pref, 30dlu, fill:pref:grow, 30dlu, pref", orientation);
 		//                                             1     2          3           4     5
@@ -251,21 +242,20 @@ public class StatusTab {
 		builder.add(imagePanel, FormLayoutUtil.flip(cc.xy(1, 9), colSpec, orientation));
 
 		// Memory
-		jpb = new JProgressBar(0, 100);
-		jpb.setStringPainted(true);
-		jpb.setForeground(new Color(75, 140, 181));
-		jpb.setString(Messages.getString("StatusTab.5"));
 		memBarUI = new GuiUtil.SegmentedProgressBarUI(Color.white, Color.gray);
 		memBarUI.setActiveLabel("{}", Color.white, 0);
 		memBarUI.setActiveLabel("{}", Color.red, 90);
 		memBarUI.addSegment("", memColor);
 		memBarUI.addSegment("", bufColor);
 		memBarUI.setTickMarks(getTickMarks(), "{}");
-		jpb.setUI(memBarUI);
+		memoryProgressBar = new GuiUtil.CustomUIProgressBar(0, 100, memBarUI);
+		memoryProgressBar.setStringPainted(true);
+		memoryProgressBar.setForeground(new Color(75, 140, 181));
+		memoryProgressBar.setString(Messages.getString("StatusTab.5"));
 
 		JLabel mem = builder.addLabel("<html><b>" + Messages.getString("StatusTab.6") + "</b> (" + Messages.getString("StatusTab.12") + ")</html>", FormLayoutUtil.flip(cc.xy(3, 7), colSpec, orientation));
 		mem.setForeground(fgColor);
-		builder.add(jpb, FormLayoutUtil.flip(cc.xyw(3, 9, 1), colSpec, orientation));
+		builder.add(memoryProgressBar, FormLayoutUtil.flip(cc.xyw(3, 9, 1), colSpec, orientation));
 
 		// Bitrate
 		String bitColSpec = "left:pref, 3dlu, right:pref:grow";

@@ -27,7 +27,6 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Font;
 import java.awt.event.*;
-import java.util.Locale;
 import javax.swing.*;
 import net.pms.Messages;
 import net.pms.PMS;
@@ -87,8 +86,7 @@ public class NavigationShareTab {
 
 	public JComponent build() {
 		// Apply the orientation for the locale
-		Locale locale = new Locale(configuration.getLanguage());
-		ComponentOrientation orientation = ComponentOrientation.getOrientation(locale);
+		ComponentOrientation orientation = ComponentOrientation.getOrientation(PMS.getLocale());
 		String colSpec = FormLayoutUtil.getColSpec(PANEL_COL_SPEC, orientation);
 
 		// Set basic layout
