@@ -431,6 +431,7 @@ class DBInitializer extends DBBase {
 			sb.append("CREATE TABLE SPECIALFOLDERS (");
 			sb.append("  FOLDERID          BIGINT REFERENCES FOLDERS(ID)");
 			sb.append(", CLASSNAME		   VARCHAR(512)");
+			sb.append(", EXTERNALLISTENERCLASSNAME VARCHAR(512)");
 			sb.append(", SAVEFILEPATH      VARCHAR_IGNORECASE(1024)");
 			sb.append(", CONSTRAINT PK_SPECIALFOLDERS PRIMARY KEY (FOLDERID))");
 			stmt.executeUpdate(sb.toString());
@@ -696,6 +697,10 @@ class DBInitializer extends DBBase {
 		if(realStorageVersion.equals("1.3")){
 			updateDb13_14();
 			realStorageVersion = "1.4";
+		}
+		if(realStorageVersion.equals("1.4")){
+			updateDb14_15();
+			realStorageVersion = "1.5";
 		}
 	}
 
@@ -1121,6 +1126,27 @@ class DBInitializer extends DBBase {
 			if(log.isInfoEnabled()) log.info("Updated DB from version 1.3 to 1.4");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.3 to 1.4", se);
+		} finally {
+			close(conn, stmt);
+    	}
+	}
+
+	private void updateDb14_15() {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = cp.getConnection();
+			
+			//do updates
+			stmt = conn.prepareStatement("ALTER TABLE SPECIALFOLDERS ADD EXTERNALLISTENERCLASSNAME VARCHAR(512)");
+			stmt.executeUpdate();
+			
+			//update db version
+			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.5");
+			if(log.isInfoEnabled()) log.info("Updated DB from version 1.4 to 1.5");
+		} catch (SQLException se) {
+			log.error("Failed to update DB from version 1.4 to 1.5", se);
 		} finally {
 			close(conn, stmt);
     	}

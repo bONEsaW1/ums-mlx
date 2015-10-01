@@ -11,24 +11,38 @@ import net.pms.plugins.PluginBase;
  */
 @SuppressWarnings("deprecation")
 public abstract class BaseWrapper implements PluginBase {
-	private ExternalListener listener;
+	private ExternalListener externalListener;
 
 	/**
 	 * Instantiates a new base wrapper.
 	 *
-	 * @param listener the listener
+	 * @param externalListener the external listener
 	 */
-	public BaseWrapper(ExternalListener listener) {
-		this.listener = listener;
+	public BaseWrapper(ExternalListener externalListener) {
+		setExternalListener(externalListener);
 	}
+
+	/**
+	 * Instantiates a new base wrapper.
+	 */
+	public BaseWrapper() { }
 
 	/**
 	 * Gets the external listener.
 	 *
 	 * @return the listener
 	 */
-	public ExternalListener getListener() {
-		return listener;
+	public ExternalListener getExternalListener() {
+		return externalListener;
+	}
+	
+	/**
+	 * Sets the external listener.
+	 *
+	 * @param externalListener the external listener
+	 */
+	protected void setExternalListener(ExternalListener externalListener) {
+		this.externalListener = externalListener;
 	}
 
 	/* (non-Javadoc)
@@ -36,7 +50,7 @@ public abstract class BaseWrapper implements PluginBase {
 	 */
 	@Override
 	public String getName() {
-		return listener.name();
+		return externalListener.name();
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +113,7 @@ public abstract class BaseWrapper implements PluginBase {
 	 */
 	@Override
 	public void shutdown() {
-		listener.shutdown();
+		externalListener.shutdown();
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +121,7 @@ public abstract class BaseWrapper implements PluginBase {
 	 */
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		return listener.config();
+		return externalListener.config();
 	}
 
 	/* (non-Javadoc)

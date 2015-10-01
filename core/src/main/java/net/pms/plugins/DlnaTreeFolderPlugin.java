@@ -1,8 +1,9 @@
 package net.pms.plugins;
 
 import java.io.IOException;
+
 import javax.swing.Icon;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import net.pms.dlna.DLNAResource;
 
@@ -36,7 +37,7 @@ public interface DlnaTreeFolderPlugin extends PluginBase {
 	void setDisplayName(String name);
 
 	/***
-	 * Gets the configuration panel that will be shown to the user for editing
+	 * Gets the configuration component that will be shown to the user for editing
 	 * in the pms client.<br>
 	 * If null is being returned, the edit option won't be enabled in the
 	 * context menu of the pms client tree
@@ -44,7 +45,7 @@ public interface DlnaTreeFolderPlugin extends PluginBase {
 	 * @return the panel to configure the plugin or null if no configuration is
 	 *         required
 	 */
-	JPanel getInstanceConfigurationPanel();
+	JComponent getInstanceConfigurationPanel();
 
 	/***
 	 * Gets the file or folder that will be displayed on the renderer

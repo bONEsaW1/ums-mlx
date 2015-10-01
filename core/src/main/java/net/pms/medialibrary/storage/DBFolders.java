@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import net.pms.external.*;
 import net.pms.medialibrary.commons.dataobjects.DOCondition;
 import net.pms.medialibrary.commons.dataobjects.DOFilter;
 import net.pms.medialibrary.commons.dataobjects.DOFolder;
@@ -47,6 +48,7 @@ import net.pms.medialibrary.commons.enumarations.ThumbnailPrioType;
 import net.pms.medialibrary.commons.exceptions.StorageException;
 import net.pms.plugins.DlnaTreeFolderPlugin;
 import net.pms.plugins.PluginsFactory;
+import net.pms.plugins.wrappers.*;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
@@ -246,12 +248,13 @@ class DBFolders extends DBBase {
 	
 	private void updateSpecialFolder(DOSpecialFolder f, PreparedStatement stmt, Connection conn) throws SQLException {
 		stmt = conn.prepareStatement("UPDATE SPECIALFOLDERS" + 
-                        				" SET CLASSNAME = ?, SAVEFILEPATH = ?" + 
+                        				" SET CLASSNAME = ?, SAVEFILEPATH = ?, EXTERNALLISTENERCLASSNAME = ?" + 
                         				" WHERE FOLDERID = ?");
 		stmt.clearParameters();
 		stmt.setString(1, f.getSpecialFolderImplementation().getClass().getName());
 		stmt.setString(2, f.getConfigFilePath());
-		stmt.setLong(3, f.getId());
+		stmt.setString(3, getExternalListenerClassName(f));
+		stmt.setLong(4, f.getId());
 		stmt.executeUpdate();
 	}
 
@@ -339,11 +342,12 @@ class DBFolders extends DBBase {
 	}
 
 	private void insertSpecialFolder(DOSpecialFolder f, PreparedStatement stmt, Connection conn) throws SQLException {
-		stmt = conn.prepareStatement("INSERT INTO SPECIALFOLDERS (FOLDERID, CLASSNAME, SAVEFILEPATH) VALUES (?, ?, ?)");
+		stmt = conn.prepareStatement("INSERT INTO SPECIALFOLDERS (FOLDERID, CLASSNAME, SAVEFILEPATH, EXTERNALLISTENERCLASSNAME) VALUES (?, ?, ?, ?)");
 		stmt.clearParameters();
 		stmt.setLong(1, f.getId());
 		stmt.setString(2, f.getSpecialFolderImplementation().getClass().getName());
 		stmt.setString(3, f.getConfigFilePath());
+		stmt.setString(4, getExternalListenerClassName(f));
 		stmt.executeUpdate();
     }
 
@@ -521,6 +525,7 @@ class DBFolders extends DBBase {
 		return folder;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private DOSpecialFolder getSpecialFolder(DOFolder f, PreparedStatement stmt, Connection conn) throws SQLException {
 	    DOSpecialFolder res = new DOSpecialFolder();
 		res.setName(f.getName());
@@ -532,7 +537,7 @@ class DBFolders extends DBBase {
 		ResultSet rs = null;
 		try {
     		//Get conditions for folder
-    		stmt = conn.prepareStatement("SELECT CLASSNAME, SAVEFILEPATH" +
+    		stmt = conn.prepareStatement("SELECT CLASSNAME, SAVEFILEPATH, EXTERNALLISTENERCLASSNAME" +
     										" FROM SPECIALFOLDERS" +
     										" WHERE FOLDERID = ?");
     		stmt.clearParameters();
@@ -542,6 +547,7 @@ class DBFolders extends DBBase {
     		if (rs.next()) {
     			String className = rs.getString(1);
     			res.setConfigFilePath(rs.getString(2));
+    			String externalListenerClassName = rs.getString(3);
     			
     			//load and configure the special folder
     			DlnaTreeFolderPlugin sf = PluginsFactory.getDlnaTreeFolderPluginByName(className);
@@ -564,15 +570,27 @@ class DBFolders extends DBBase {
     				log.error(String.format("Failed to load configuration file '%s' for SpecialFolder of type '%s'", res.getConfigFilePath(), className), t);
     			}
     			
+    			if(externalListenerClassName != null && !externalListenerClassName.equals("")) {
+    				// Set the specified external listener for wrapper plugins
+    				ExternalListener externalListener = PluginsFactory.getExternalListenerByClassName(externalListenerClassName);
+    				if(sf instanceof AdditionalFolderAtRootWrapper && externalListener instanceof AdditionalFolderAtRoot) {
+        				((AdditionalFolderAtRootWrapper)sf).setAdditionalFolderAtRoot((AdditionalFolderAtRoot) externalListener);
+    				}
+    				else if(sf instanceof AdditionalFoldersAtRootWrapper && externalListener instanceof AdditionalFoldersAtRoot) {
+        				((AdditionalFoldersAtRootWrapper)sf).setAdditionalFoldersAtRoot((AdditionalFoldersAtRoot) externalListener);
+    				}
+    			}
+    			
     			res.setSpecialFolderImplementation(sf);
     		}
 		} finally {
-			close(rs);			
+			close(rs);
 		}
 		
 	    return res;
     }
 
+	@SuppressWarnings("resource")
 	private DOMediaLibraryFolder getMediaLibraryFolder(DOFolder f, PreparedStatement stmt, Connection conn) throws SQLException{
 		DOMediaLibraryFolder res = new DOMediaLibraryFolder();
 		res.setName(f.getName());
@@ -707,5 +725,17 @@ class DBFolders extends DBBase {
 			}
 		});
 		return tmpList;
+	}
+	
+	private String getExternalListenerClassName(DOSpecialFolder f) {
+		String externalListenerClassName = null;
+		if(f.getSpecialFolderImplementation() instanceof BaseWrapper) {
+			@SuppressWarnings("deprecation")
+			ExternalListener externalListener = ((BaseWrapper)f.getSpecialFolderImplementation()).getExternalListener();
+			if(externalListener != null) {
+				externalListenerClassName = externalListener.getClass().getName();
+			}
+		}
+		return externalListenerClassName;
 	}
 }

@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import net.pms.PMS;
+import net.pms.external.*;
 import net.pms.notifications.NotificationCenter;
 import net.pms.notifications.types.PluginEvent;
 import net.pms.notifications.types.PluginEvent.Event;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * This class takes care of registering plugins. Plugin jars are loaded,
  * instantiated and stored for later retrieval.
  */
+@SuppressWarnings("deprecation")
 public class PluginsFactory {
 	/**
 	 * For logging messages.
@@ -70,7 +72,12 @@ public class PluginsFactory {
 	/**
 	 * All registered plugins
 	 */
-	private static List<PluginBase> plugins = new ArrayList<PluginBase>();
+	private static final List<PluginBase> plugins = new ArrayList<PluginBase>();
+	
+	/**
+	 * All registered external listeners
+	 */
+	private static final List<ExternalListener> externalListeners = new ArrayList<ExternalListener>();
 
 	/**
 	 * Gets all registered plugins
@@ -131,11 +138,10 @@ public class PluginsFactory {
 	 *
 	 * @return the additional folder at root list
 	 */
-	@SuppressWarnings("deprecation")
-	public static List<net.pms.external.AdditionalFolderAtRoot> getAdditionalFolderAtRootList() {
-		List<net.pms.external.AdditionalFolderAtRoot> res = new ArrayList<net.pms.external.AdditionalFolderAtRoot>();
+	public static List<AdditionalFolderAtRoot> getAdditionalFolderAtRootList() {
+		List<AdditionalFolderAtRoot> res = new ArrayList<AdditionalFolderAtRoot>();
 		for(AdditionalFolderAtRootWrapper wp : getPlugins(AdditionalFolderAtRootWrapper.class)) {
-			res.add(wp.getFolder());
+			res.add(wp.getAdditionalFolderAtRoot());
 		}
 		return res;
 	}
@@ -145,11 +151,10 @@ public class PluginsFactory {
 	 *
 	 * @return the additional folders at root list
 	 */
-	@SuppressWarnings("deprecation")
-	public static List<net.pms.external.AdditionalFoldersAtRoot> getAdditionalFoldersAtRootList() {
-		List<net.pms.external.AdditionalFoldersAtRoot> res = new ArrayList<net.pms.external.AdditionalFoldersAtRoot>();
+	public static List<AdditionalFoldersAtRoot> getAdditionalFoldersAtRootList() {
+		List<AdditionalFoldersAtRoot> res = new ArrayList<AdditionalFoldersAtRoot>();
 		for(AdditionalFoldersAtRootWrapper wp : getPlugins(AdditionalFoldersAtRootWrapper.class)) {
-			res.add(wp.getFolders());
+			res.add(wp.getAdditionalFoldersAtRoot());
 		}
 		return res;
 	}
@@ -184,6 +189,21 @@ public class PluginsFactory {
 	public static FileImportPlugin getFileImportPluginByName(String className) {
 		FileImportPlugin plugin =  getPluginByName(FileImportPlugin.class, className);
 		return plugin;
+	}
+
+	/**
+	 * Gets the external listener by its class name.
+	 *
+	 * @param externalListenerClassName the external listener class name
+	 * @return the external listener by class name
+	 */
+	public static ExternalListener getExternalListenerByClassName(String externalListenerClassName) {
+		for(ExternalListener externalListener : externalListeners) {
+			if(externalListener.getClass().getName().equals(externalListenerClassName)) {
+				return externalListener;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -231,7 +251,6 @@ public class PluginsFactory {
 	 * class. This main plugin class is then loaded and an instance is created
 	 * and registered for later use.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void lookup() {
 		File pluginDirectory = new File(PMS.getConfiguration().getPluginDirectory());
 
@@ -318,8 +337,8 @@ public class PluginsFactory {
 				}
 				if (instance instanceof PluginBase) {
 					registerPlugin((PluginBase) instance);
-				} else if (instance instanceof net.pms.external.ExternalListener) {
-					registerOldPlugin((net.pms.external.ExternalListener) instance);
+				} else if (instance instanceof ExternalListener) {
+					registerExternalListenerPlugin((ExternalListener) instance);
 				}
 			} catch (Exception e) {
 				LOGGER.error("Error loading plugin", e);
@@ -361,25 +380,28 @@ public class PluginsFactory {
 	/**
 	 * Registers an old style plugin inside a wrapper, to make the
 	 * transition to the new plugin system smooth
-	 * @param listener
+	 * @param externalListener
 	 */
-	@SuppressWarnings("deprecation")
-	private static void registerOldPlugin(net.pms.external.ExternalListener listener) {
+	private static void registerExternalListenerPlugin(ExternalListener externalListener) {
 		BaseWrapper wp = null;
-		if(listener instanceof net.pms.external.AdditionalFolderAtRoot) {
-			wp = new AdditionalFolderAtRootWrapper((net.pms.external.AdditionalFolderAtRoot) listener);
-		} else if(listener instanceof net.pms.external.AdditionalFolderAtRoot) {
-			wp = new AdditionalFoldersAtRootWrapper((net.pms.external.AdditionalFoldersAtRoot) listener);
-		} else if(listener instanceof net.pms.external.FinalizeTranscoderArgsListener) {
-			wp = new FinalizeTranscoderArgsListenerWrapper((net.pms.external.FinalizeTranscoderArgsListener) listener);
-		} else if(listener instanceof net.pms.external.StartStopListener) {
-			wp = new StartStopListenerWrapper((net.pms.external.StartStopListener) listener);
-		} else if(listener != null) {
-			wp = new ExternalListenerWrapper(listener);
+		if(externalListener instanceof AdditionalFolderAtRoot) {
+			wp = new AdditionalFolderAtRootWrapper((AdditionalFolderAtRoot) externalListener);
+		} else if(externalListener instanceof AdditionalFolderAtRoot) {
+			wp = new AdditionalFoldersAtRootWrapper((AdditionalFoldersAtRoot) externalListener);
+		} else if(externalListener instanceof FinalizeTranscoderArgsListener) {
+			wp = new FinalizeTranscoderArgsListenerWrapper((net.pms.external.FinalizeTranscoderArgsListener) externalListener);
+		} else if(externalListener instanceof StartStopListener) {
+			wp = new StartStopListenerWrapper((net.pms.external.StartStopListener) externalListener);
+		} else if(externalListener != null) {
+			wp = new ExternalListenerWrapper(externalListener);
 		}
 		
 		if(wp != null) {
 			registerPlugin(wp);
+		}
+		
+		if(!externalListeners.contains(externalListener)) {
+			externalListeners.add(externalListener);
 		}
 	}
 
