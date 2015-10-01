@@ -27,12 +27,12 @@ import net.pms.configuration.BaseConfiguration;
 /**
  * Holds the global configuration for the plugin.
  */
-public class GlobalConfiguration extends BaseConfiguration {	
+public class GlobalConfiguration extends BaseConfiguration {
 	private static final String KEY_importLanguage = "importLanguage";
-	
+
 	/** The properties file path. */
 	private String propertiesFilePath;
-	
+
 	/**
 	 * Instantiates a new global configuration.
 	 */
@@ -46,7 +46,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save() throws IOException {
-			save(propertiesFilePath);
+		save(propertiesFilePath);
 	}
 
 	/**
@@ -57,15 +57,16 @@ public class GlobalConfiguration extends BaseConfiguration {
 	public void load() throws IOException {
 		load(propertiesFilePath);
 	}
-	
+
 	/**
 	 * Gets the language to use when importing data
+	 * 
 	 * @return the language. e.g. en, de, fr
 	 */
 	public String getImportLanguage() {
 		return getValue(KEY_importLanguage, PMS.getConfiguration().getLanguage());
 	}
-	
+
 	/**
 	 * Sets the language to use when importing data
 	 */

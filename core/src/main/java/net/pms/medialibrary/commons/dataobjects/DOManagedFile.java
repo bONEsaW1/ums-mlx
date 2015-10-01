@@ -20,8 +20,8 @@ package net.pms.medialibrary.commons.dataobjects;
 
 public class DOManagedFile {
 	private boolean watchEnabled;
-	private String  path;
-	
+	private String path;
+
 	private boolean videoEnabled;
 	private boolean audioEnabled;
 	private boolean picturesEnabled;
@@ -109,7 +109,8 @@ public class DOManagedFile {
 	}
 
 	public DOFileImportTemplate getFileImportTemplate() {
-		if(importConfig == null) importConfig = new DOFileImportTemplate();
+		if (importConfig == null)
+			importConfig = new DOFileImportTemplate();
 		return importConfig;
 	}
 
@@ -127,40 +128,42 @@ public class DOManagedFile {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof DOManagedFile)) { 
-			return false; 
+		if (!(obj instanceof DOManagedFile)) {
+			return false;
 		}
 
 		DOManagedFile compObj = (DOManagedFile) obj;
-		if (isWatchEnabled() == compObj.isWatchEnabled() 
-				&& getPath().equals(compObj.getPath()) 
+		if (isWatchEnabled() == compObj.isWatchEnabled()
+				&& getPath().equals(compObj.getPath())
 				&& isAudioEnabled() == compObj.isAudioEnabled()
-		        && isPicturesEnabled() == compObj.isPicturesEnabled() 
-		        && isVideoEnabled() == compObj.isVideoEnabled()
-		        && isSubFoldersEnabled() == compObj.isSubFoldersEnabled()
-		        //&& isPluginImportEnabled() == compObj.isPluginImportEnabled() //don't use this attribute as it isn't part of the primary key in the db
-		        ) { 
-			return true; 
+				&& isPicturesEnabled() == compObj.isPicturesEnabled()
+				&& isVideoEnabled() == compObj.isVideoEnabled()
+				&& isSubFoldersEnabled() == compObj.isSubFoldersEnabled()
+		// && isPluginImportEnabled() == compObj.isPluginImportEnabled() //don't use this attribute as it isn't part of
+		// the primary key in the db
+		) {
+			return true;
 		}
 
 		return false;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + (isWatchEnabled() ? 1 : 2);
 		hashCode *= 24 + getPath().hashCode();
 		hashCode *= 24 + (isAudioEnabled() ? 3 : 4);
 		hashCode *= 24 + (isPicturesEnabled() ? 5 : 6);
 		hashCode *= 24 + (isVideoEnabled() ? 7 : 8);
 		hashCode *= 24 + (isSubFoldersEnabled() ? 11 : 12);
-		//hashCode *= 24 + (isFileImportEnabled() ? 13 : 14); //don't use this attribute as it isn't part of the primary key in the db
+		// hashCode *= 24 + (isFileImportEnabled() ? 13 : 14); //don't use this attribute as it isn't part of the
+		// primary key in the db
 		return hashCode;
 	}
-	
+
 	@Override
-	public String toString(){
-		return String.format("folder=%s, watch=%s, subfolders=%s, video=%s, audio=%s, pictures=%s, fileImport=%s, fileImportTemplate=%s", 
+	public String toString() {
+		return String.format("folder=%s, watch=%s, subfolders=%s, video=%s, audio=%s, pictures=%s, fileImport=%s, fileImportTemplate=%s",
 				getPath(), isWatchEnabled(), isSubFoldersEnabled(), isVideoEnabled(), isAudioEnabled(), isPicturesEnabled(), isPluginImportEnabled(), getFileImportTemplate().getId());
 	}
 }

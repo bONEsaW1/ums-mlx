@@ -23,8 +23,8 @@ import java.util.EventObject;
 import net.pms.medialibrary.commons.dataobjects.DOMediaLibraryFolder;
 import net.pms.medialibrary.commons.enumarations.DialogActionType;
 
-public class FolderDialogFolderUpdateEvent extends EventObject{
-	
+public class FolderDialogFolderUpdateEvent extends EventObject {
+
 	private static final long serialVersionUID = 1L;
 	private DialogActionType actionType;
 	private DOMediaLibraryFolder mediaLibraryFolder;

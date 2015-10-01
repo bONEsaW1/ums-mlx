@@ -57,27 +57,26 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class AddAutoFolderDialog extends JDialog {
-	private static final long                    serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	private final int MIN_BUTTON_WIDTH = 60;
 	private static final Logger logger = LoggerFactory.getLogger(AddAutoFolderDialog.class);
 
 	private List<AutoFolderDialogActionListener> autoFolderDialogActionListeners;
 
-	private JComboBox                            cbAutoFolder;
-	private JComboBox                            cbProperty;
-	private JRadioButton                         rbAscending;
-	private JRadioButton                         rbDescending;
-	private JButton                              bCancel;
-	private JButton                              bOk;
-	private JPanel                               jPanelButtons;
-	private JLabel                               lOptionName;
-	private JTextField                           tfOption;
-	private JButton                              bBrowse;
+	private JComboBox cbAutoFolder;
+	private JComboBox cbProperty;
+	private JRadioButton rbAscending;
+	private JRadioButton rbDescending;
+	private JButton bCancel;
+	private JButton bOk;
+	private JPanel jPanelButtons;
+	private JLabel lOptionName;
+	private JTextField tfOption;
+	private JButton bBrowse;
 	private JTextField tfMinOccurences;
 	private JPanel pMinOccurences;
 
-	private List<AutoFolderType>                 autoFolderTypes;
-
+	private List<AutoFolderType> autoFolderTypes;
 
 	public AddAutoFolderDialog(List<AutoFolderType> autoFolderTypes) {
 		((java.awt.Frame) getOwner()).setIconImage(new ImageIcon(getClass().getResource("/resources/images/icon-16.png")).getImage());
@@ -93,12 +92,12 @@ public class AddAutoFolderDialog extends JDialog {
 		jPanelButtons = new JPanel();
 		cbAutoFolder = new JComboBox();
 		cbProperty = new JComboBox();
-		
+
 		tfMinOccurences = new JTextField("3");
 		pMinOccurences = new JPanel(new BorderLayout());
 		pMinOccurences.add(tfMinOccurences, BorderLayout.CENTER);
 		pMinOccurences.add(new JLabel(Messages.getString("ML.AddAutoFolderDialog.lMinOccurences")), BorderLayout.WEST);
-		
+
 		cbAutoFolder.addActionListener(new ActionListener() {
 
 			@Override
@@ -168,7 +167,8 @@ public class AddAutoFolderDialog extends JDialog {
 
 		bOk = new JButton(Messages.getString("ML.AddAutoFolderDialog.bOk"));
 		bOk.setName("buttonOk");
-		if (bOk.getPreferredSize().width < MIN_BUTTON_WIDTH) bOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bOk.getPreferredSize().height));
+		if (bOk.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bOk.getPreferredSize().height));
 		bOk.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -179,7 +179,8 @@ public class AddAutoFolderDialog extends JDialog {
 
 		bCancel = new JButton(Messages.getString("ML.AddAutoFolderDialog.bCancel"));
 		bCancel.setName("buttonCancel");
-		if (bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH) bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
+		if (bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
 		bCancel.setMinimumSize(new Dimension(60, 20));
 		bCancel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -206,7 +207,7 @@ public class AddAutoFolderDialog extends JDialog {
 
 		for (AutoFolderType ft : autoFolderTypes) {
 			cbAutoFolder.addItem(new AutoFolderTypeCBItem(ft, Messages.getString("ML.AutoFolderType." + ft)));
-		}		
+		}
 
 		rebuildPanel();
 	}
@@ -216,9 +217,9 @@ public class AddAutoFolderDialog extends JDialog {
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		switch (fc.showOpenDialog(this)) {
-			case JFileChooser.APPROVE_OPTION:
-				tfOption.setText(fc.getSelectedFile().getAbsolutePath());
-				break;
+		case JFileChooser.APPROVE_OPTION:
+			tfOption.setText(fc.getSelectedFile().getAbsolutePath());
+			break;
 		}
 	}
 
@@ -227,7 +228,7 @@ public class AddAutoFolderDialog extends JDialog {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("2dlu, fill:p:grow, 2dlu, p, 2dlu, p, 2dlu, fill:p:grow, 2dlu", // columns
-		        "2dlu, p, 2dlu, p, 2dlu, p"); // raws
+				"2dlu, p, 2dlu, p, 2dlu, p"); // raws
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -237,7 +238,7 @@ public class AddAutoFolderDialog extends JDialog {
 		builder.add(rbDescending, cc.xy(6, 2));
 
 		builder.add(pMinOccurences, cc.xyw(4, 4, 5));
-		
+
 		// Add A-Z options
 		builder.add(cbProperty, cc.xy(2, 4));
 
@@ -251,7 +252,7 @@ public class AddAutoFolderDialog extends JDialog {
 
 		getContentPane().removeAll();
 		getContentPane().add(builder.getPanel());
-		
+
 		pack();
 	}
 
@@ -276,10 +277,10 @@ public class AddAutoFolderDialog extends JDialog {
 			int minOccurences = 0;
 			try {
 				minOccurences = Integer.parseInt(tfMinOccurences.getText());
-			} catch(NumberFormatException ex) {
+			} catch (NumberFormatException ex) {
 				logger.warn("Failed to read value for min occurences. Using 0 by default");
 			}
-			
+
 			for (AutoFolderDialogActionListener l : autoFolderDialogActionListeners) {
 				l.autoFolderDialogActionReceived(new AutoFolderDialogActionEvent(this, folderType, rbAscending.isSelected(), minOccurences, actionType, userObject));
 			}

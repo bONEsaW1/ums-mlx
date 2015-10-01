@@ -54,22 +54,22 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DBVideoFileInfo extends DBFileInfo {	
+class DBVideoFileInfo extends DBFileInfo {
 	private static final Logger log = LoggerFactory.getLogger(DBVideoFileInfo.class);
-	
-	DBVideoFileInfo(JdbcConnectionPool cp){
+
+	DBVideoFileInfo(JdbcConnectionPool cp) {
 		super(cp);
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Package Methods
 	 * 
 	 *********************************************/
-	
-	int cleanVideoFileInfos() throws StorageException{
+
+	int cleanVideoFileInfos() throws StorageException {
 		int res = 0;
-		
+
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -78,44 +78,44 @@ class DBVideoFileInfo extends DBFileInfo {
 		// Delete all entries related to video files in the DB
 		try {
 			conn = cp.getConnection();
-			
-			//prepare for rollback
+
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
-			//get all filePaths
+
+			// get all filePaths
 			String statement = "SELECT FILE.ID, FILE.FOLDERPATH, FILE.FILENAME" +
 					" FROM FILE, VIDEO" +
 					" WHERE VIDEO.FILEID = FILE.ID";
 			stmt = conn.prepareStatement(statement);
-			rs = stmt.executeQuery();			
-			
-			//delete all entries which can't be found
-			while(rs.next()){
+			rs = stmt.executeQuery();
+
+			// delete all entries which can't be found
+			while (rs.next()) {
 				long fileId = rs.getLong(1);
 				String filePath = rs.getString(2) + File.separator + rs.getString(3);
 				File file = new File(filePath);
-				if(!file.exists()){
+				if (!file.exists()) {
 					deleteVideo(fileId, conn, stmt);
 					res++;
-					
+
 					log.info("Removed video from library while cleaning: " + filePath);
 				}
 			}
 			conn.commit();
-			
+
 			NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.VideoInserted));
-        } catch (SQLException e) {
+		} catch (SQLException e) {
 			try {
 				conn.rollback(savePoint);
 			} catch (SQLException e1) {
 				log.error("Failed to roll back transaction to save point after a problem occured while cleaning videos", e);
 			}
 			throw new StorageException("Failed to clear videos properly", e);
-        } finally {
+		} finally {
 			close(conn, stmt, rs, savePoint);
-        }
-		
+		}
+
 		return res;
 	}
 
@@ -130,69 +130,69 @@ class DBVideoFileInfo extends DBFileInfo {
 		try {
 			conn = cp.getConnection();
 
-			//prepare for rollback
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
-			//clear audio tracks
-			stmt = conn.prepareStatement("DELETE FROM VIDEOAUDIO");
-	        stmt.executeUpdate();
 
-			//clear subtitles
+			// clear audio tracks
+			stmt = conn.prepareStatement("DELETE FROM VIDEOAUDIO");
+			stmt.executeUpdate();
+
+			// clear subtitles
 			stmt = conn.prepareStatement("DELETE FROM SUBTITLES ");
-	        stmt.executeUpdate();
-	        
-			//for all videos, delete itself, associated file and file tags
+			stmt.executeUpdate();
+
+			// for all videos, delete itself, associated file and file tags
 			String statement = "SELECT FILEID FROM VIDEO";
 			stmt = conn.prepareStatement(statement);
 			rs = stmt.executeQuery();
 			int nbDeletedVideos = 0;
-			while(rs.next()){
+			while (rs.next()) {
 				String fileIdStr = "";
-				try{
-    				long fileId = rs.getLong(1);
-    				deleteVideo(fileId, conn, stmt);
-    		        nbDeletedVideos++;
+				try {
+					long fileId = rs.getLong(1);
+					deleteVideo(fileId, conn, stmt);
+					nbDeletedVideos++;
 				} catch (SQLException e) {
 					throw new StorageException("Failed to clear video id=" + fileIdStr + " properly", e);
-		        }
+				}
 			}
 
 			conn.commit();
 			res = nbDeletedVideos;
-			
+
 			NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.VideoDeleted));
-        } catch (SQLException e) {
+		} catch (SQLException e) {
 			try {
 				conn.rollback(savePoint);
 			} catch (SQLException e1) {
 				log.error("Failed to roll back transaction to save point after a problem occured during delete", e);
 			}
 			throw new StorageException("Failed to clear videos properly", e);
-        } finally {
+		} finally {
 			close(conn, stmt, rs, savePoint);
-        }
-        
-        return res;
+		}
+
+		return res;
 	}
 
 	void deleteVideo(long fileId) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		Savepoint savePoint = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//prepare for rollback
+
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
+
 			deleteVideo(fileId, conn, stmt);
 			conn.commit();
-			
+
 			NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.VideoDeleted));
-        } catch (SQLException e) {
+		} catch (SQLException e) {
 			try {
 				conn.rollback(savePoint);
 			} catch (SQLException e1) {
@@ -201,9 +201,9 @@ class DBVideoFileInfo extends DBFileInfo {
 			throw new StorageException("Failed to delete video with id=" + fileId, e);
 		} finally {
 			close(conn, stmt, savePoint);
-        }
+		}
 	}
-	
+
 	List<DOVideoFileInfo> getVideoFileInfo(DOFilter filter, boolean sortAscending, final ConditionType sortField, SortOption sortOption, int maxResults, boolean onlyActive) throws StorageException {
 		HashMap<Integer, DOVideoFileInfo> videos = new LinkedHashMap<Integer, DOVideoFileInfo>();
 
@@ -214,54 +214,55 @@ class DBVideoFileInfo extends DBFileInfo {
 		// Get video
 		try {
 			conn = cp.getConnection();
-			
+
 			// create the where clause
 			String whereClause = "VIDEO.FILEID = FILE.ID";
-			if(onlyActive) {
+			if (onlyActive) {
 				whereClause += " AND FILE.ENABLED = 1";
 			}
 			if (filter.getConditions().size() > 0) {
 				whereClause += " AND (" + formatEquation(filter) + ")";
 			}
-			
+
 			// create order condition
 			String orderByClause = sortField.toString();
 			if (orderByClause.contains("_")) {
 				orderByClause = orderByClause.replace('_', '.');
 			}
-			
+
 			if (sortAscending) {
 				orderByClause += " ASC";
 			} else {
 				orderByClause += " DESC";
 			}
 
-			if(sortField != ConditionType.VIDEO_NAME){
+			if (sortField != ConditionType.VIDEO_NAME) {
 				orderByClause += ", " + ConditionType.VIDEO_NAME.toString().replace('_', '.') + " ASC";
 			}
 			orderByClause += ", " + ConditionType.FILE_FILENAME.toString().replace('_', '.') + " ASC";
 			orderByClause += ", " + ConditionType.FILE_DATEINSERTEDDB.toString().replace('_', '.') + " ASC";
-			
-			if(log.isDebugEnabled()) log.debug(String.format("Video query clause: WHERE %s ORDER BY %s", whereClause, orderByClause));
 
-			String statement = "SELECT FILE.ID, FILE.FOLDERPATH, FILE.FILENAME, FILE.TYPE, FILE.SIZEBYTE, FILE.DATELASTUPDATEDDB, FILE.DATEINSERTEDDB" 
-			        + ", FILE.DATEMODIFIEDOS, FILE.THUMBNAILPATH, FILE.PLAYCOUNT, FILE.ENABLED, FILE.FILEIMPORTVERSION" // FILE
-			        + ", VIDEO.ORIGINALNAME, VIDEO.NAME, VIDEO.SORTNAME, VIDEO.TMDBID, VIDEO.IMDBID, VIDEO.OVERVIEW, VIDEO.BUDGET, VIDEO.REVENUE, VIDEO.HOMEPAGEURL, VIDEO.TRAILERURL" 
-			        + ", VIDEO.AGERATINGLEVEL, VIDEO.AGERATINGREASON, VIDEO.RATINGPERCENT, VIDEO.RATINGVOTERS, VIDEO.DIRECTOR, VIDEO.TAGLINE"
-			        + ", VIDEO.ASPECTRATIO, VIDEO.BITRATE, VIDEO.BITSPERPIXEL, VIDEO.CODECV, VIDEO.DURATIONSEC, VIDEO.CONTAINER, VIDEO.DVDTRACK, VIDEO.FRAMERATE"
-			        + ", VIDEO.HEIGHT, VIDEO.MIMETYPE, VIDEO.MODEL, VIDEO.MUXABLE, VIDEO.WIDTH, VIDEO.YEAR, VIDEO.MUXINGMODE, VIDEO.FRAMERATEMODE"
-			        + ", VIDEO.ASPECTRATIOCONTAINER, VIDEO.ASPECTRATIOVIDEOTRACK, VIDEO.REFRAMES, VIDEO.AVCLEVEL, VIDEO.STEREOSCOPY, VIDEO.MATRIXCOEFFICIENTS, VIDEO.EMBEDDEDFONTEXISTS"// VIDEO
-			        + ", FILEPLAYS.DATEPLAYEND" //last play
-			        + ", VIDEOAUDIO.LANG, VIDEOAUDIO.NRAUDIOCHANNELS, VIDEOAUDIO.SAMPLEFREQ, VIDEOAUDIO.CODECA, VIDEOAUDIO.BITSPERSAMPLE, VIDEOAUDIO.DELAYMS, VIDEOAUDIO.MUXINGMODE, VIDEOAUDIO.BITRATE" //VIDEOAUDIO
-			        + ", SUBTITLES.FILEPATH, SUBTITLES.LANG, SUBTITLES.TYPE" //SUBTITLES
-			        + ", FILETAGS.KEY, FILETAGS.VALUE" //TAGS
-			        + " FROM FILE, VIDEO" 
-			        + " LEFT JOIN VIDEOAUDIO ON VIDEO.FILEID = VIDEOAUDIO.FILEID"
-			        + " LEFT JOIN SUBTITLES ON VIDEO.FILEID = SUBTITLES.FILEID" 
-			        + " LEFT JOIN FILETAGS ON VIDEO.FILEID = FILETAGS.FILEID" 
-			        + " LEFT JOIN FILEPLAYS ON VIDEO.FILEID = FILEPLAYS.FILEID" 
-			        + " WHERE " + whereClause
-			        + " ORDER BY " + orderByClause;
+			if (log.isDebugEnabled())
+				log.debug(String.format("Video query clause: WHERE %s ORDER BY %s", whereClause, orderByClause));
+
+			String statement = "SELECT FILE.ID, FILE.FOLDERPATH, FILE.FILENAME, FILE.TYPE, FILE.SIZEBYTE, FILE.DATELASTUPDATEDDB, FILE.DATEINSERTEDDB"
+					+ ", FILE.DATEMODIFIEDOS, FILE.THUMBNAILPATH, FILE.PLAYCOUNT, FILE.ENABLED, FILE.FILEIMPORTVERSION" // FILE
+					+ ", VIDEO.ORIGINALNAME, VIDEO.NAME, VIDEO.SORTNAME, VIDEO.TMDBID, VIDEO.IMDBID, VIDEO.OVERVIEW, VIDEO.BUDGET, VIDEO.REVENUE, VIDEO.HOMEPAGEURL, VIDEO.TRAILERURL"
+					+ ", VIDEO.AGERATINGLEVEL, VIDEO.AGERATINGREASON, VIDEO.RATINGPERCENT, VIDEO.RATINGVOTERS, VIDEO.DIRECTOR, VIDEO.TAGLINE"
+					+ ", VIDEO.ASPECTRATIO, VIDEO.BITRATE, VIDEO.BITSPERPIXEL, VIDEO.CODECV, VIDEO.DURATIONSEC, VIDEO.CONTAINER, VIDEO.DVDTRACK, VIDEO.FRAMERATE"
+					+ ", VIDEO.HEIGHT, VIDEO.MIMETYPE, VIDEO.MODEL, VIDEO.MUXABLE, VIDEO.WIDTH, VIDEO.YEAR, VIDEO.MUXINGMODE, VIDEO.FRAMERATEMODE"
+					+ ", VIDEO.ASPECTRATIOCONTAINER, VIDEO.ASPECTRATIOVIDEOTRACK, VIDEO.REFRAMES, VIDEO.AVCLEVEL, VIDEO.STEREOSCOPY, VIDEO.MATRIXCOEFFICIENTS, VIDEO.EMBEDDEDFONTEXISTS"// VIDEO
+					+ ", FILEPLAYS.DATEPLAYEND" // last play
+					+ ", VIDEOAUDIO.LANG, VIDEOAUDIO.NRAUDIOCHANNELS, VIDEOAUDIO.SAMPLEFREQ, VIDEOAUDIO.CODECA, VIDEOAUDIO.BITSPERSAMPLE, VIDEOAUDIO.DELAYMS, VIDEOAUDIO.MUXINGMODE, VIDEOAUDIO.BITRATE" // VIDEOAUDIO
+					+ ", SUBTITLES.FILEPATH, SUBTITLES.LANG, SUBTITLES.TYPE" // SUBTITLES
+					+ ", FILETAGS.KEY, FILETAGS.VALUE" // TAGS
+					+ " FROM FILE, VIDEO"
+					+ " LEFT JOIN VIDEOAUDIO ON VIDEO.FILEID = VIDEOAUDIO.FILEID"
+					+ " LEFT JOIN SUBTITLES ON VIDEO.FILEID = SUBTITLES.FILEID"
+					+ " LEFT JOIN FILETAGS ON VIDEO.FILEID = FILETAGS.FILEID"
+					+ " LEFT JOIN FILEPLAYS ON VIDEO.FILEID = FILEPLAYS.FILEID"
+					+ " WHERE " + whereClause
+					+ " ORDER BY " + orderByClause;
 			stmt = conn.prepareStatement(statement);
 
 			rs = stmt.executeQuery();
@@ -272,7 +273,7 @@ class DBVideoFileInfo extends DBFileInfo {
 					videoFile.setId(rs.getInt(pos++));
 
 					if (!videos.containsKey(videoFile.getId())) {
-						//import all fields when having a video with a new id
+						// import all fields when having a video with a new id
 						videoFile.setFolderPath(rs.getString(pos++));
 						videoFile.setFileName(rs.getString(pos++));
 						videoFile.setType(FileType.valueOf(rs.getString(pos++)));
@@ -284,7 +285,7 @@ class DBVideoFileInfo extends DBFileInfo {
 						videoFile.setPlayCount(rs.getInt(pos++));
 						videoFile.setActive(rs.getBoolean(pos++));
 						videoFile.setFileImportVersion(rs.getInt(pos++));
-						
+
 						videoFile.setOriginalName(rs.getString(pos++));
 						videoFile.setName(rs.getString(pos++));
 						videoFile.setSortName(rs.getString(pos++));
@@ -303,7 +304,7 @@ class DBVideoFileInfo extends DBFileInfo {
 						videoFile.setBitrate(rs.getInt(pos++));
 						videoFile.setBitsPerPixel(rs.getInt(pos++));
 						videoFile.setCodecV(rs.getString(pos++));
-						videoFile.setDurationSec(rs.getInt(pos++));	
+						videoFile.setDurationSec(rs.getInt(pos++));
 						videoFile.setContainer(rs.getString(pos++));
 						videoFile.setDvdtrack(rs.getInt(pos++));
 						videoFile.setFrameRate(rs.getString(pos++));
@@ -311,7 +312,7 @@ class DBVideoFileInfo extends DBFileInfo {
 						videoFile.setMimeType(rs.getString(pos++));
 						videoFile.setModel(rs.getString(pos++));
 						videoFile.setMuxable(rs.getBoolean(pos++));
-	
+
 						videoFile.setWidth(rs.getInt(pos++));
 						videoFile.setYear(rs.getInt(pos++));
 						videoFile.setMuxingMode(rs.getString(pos++));
@@ -325,18 +326,18 @@ class DBVideoFileInfo extends DBFileInfo {
 						videoFile.setEmbeddedFontExists(rs.getBoolean(pos++));
 
 						videos.put(videoFile.getId(), videoFile);
-					}else{
-						//skip the already imported fields if the video with this id is already contained in the list
+					} else {
+						// skip the already imported fields if the video with this id is already contained in the list
 						pos = 52;
-						
+
 						videoFile = videos.get(videoFile.getId());
 					}
-					
-					//play count history
+
+					// play count history
 					Timestamp playTimestamp = rs.getTimestamp(pos++);
-					if(playTimestamp != null) {
+					if (playTimestamp != null) {
 						Date playDate = new Date(playTimestamp.getTime());
-						if(!videoFile.getPlayHistory().contains(playDate)) {
+						if (!videoFile.getPlayHistory().contains(playDate)) {
 							videoFile.addPlayToHistory(playDate);
 						}
 					}
@@ -354,7 +355,7 @@ class DBVideoFileInfo extends DBFileInfo {
 
 					boolean doInsertAudioTrack = true;
 					for (DLNAMediaAudio currTrack : videoFile.getAudioCodes()) {
-						if(currTrack.equals(audioTrack)) {
+						if (currTrack.equals(audioTrack)) {
 							doInsertAudioTrack = false;
 							break;
 						}
@@ -367,14 +368,14 @@ class DBVideoFileInfo extends DBFileInfo {
 					String subtitleFilePath = rs.getString(pos++);
 					boolean doInsertSubtitleTrack = true;
 					for (DLNAMediaSubtitle currTrack : videoFile.getSubtitlesCodes()) {
-						if(currTrack.isExternal() && currTrack.getExternalFile() != null && currTrack.getExternalFile().getAbsolutePath().equals(subtitleFilePath)) { 
+						if (currTrack.isExternal() && currTrack.getExternalFile() != null && currTrack.getExternalFile().getAbsolutePath().equals(subtitleFilePath)) {
 							// Avoid checking an external subtitle file multiple times
 							doInsertSubtitleTrack = false;
 							break;
 						}
 					}
-					
-					if(doInsertSubtitleTrack){
+
+					if (doInsertSubtitleTrack) {
 						DLNAMediaSubtitle subtitleTrack = new DLNAMediaSubtitle();
 						File subTitleFile;
 						if (subtitleFilePath != null && !subtitleFilePath.equals("") && (subTitleFile = new File(subtitleFilePath)).exists()) {
@@ -384,7 +385,7 @@ class DBVideoFileInfo extends DBFileInfo {
 						subtitleTrack.setType(SubtitleType.values()[rs.getInt(pos++)]);
 
 						for (DLNAMediaSubtitle currTrack : videoFile.getSubtitlesCodes()) {
-							if(currTrack.equals(subtitleTrack)) { 
+							if (currTrack.equals(subtitleTrack)) {
 								doInsertSubtitleTrack = false;
 								break;
 							}
@@ -403,20 +404,20 @@ class DBVideoFileInfo extends DBFileInfo {
 					if (tagKey == null) {
 						// do nothing
 					} else if (tagKey.equals(GENRE_KEY)) {
-						//it's a genre
+						// it's a genre
 						if (!videoFile.getGenres().contains(tagValue)) {
 							videoFile.getGenres().add(tagValue);
 						}
 					} else {
-						//it's a tag
-						if(videoFile.getTags().containsKey(tagKey)) {
-							//add the tag to the existing list
+						// it's a tag
+						if (videoFile.getTags().containsKey(tagKey)) {
+							// add the tag to the existing list
 							List<String> tagValues = videoFile.getTags().get(tagKey);
-							if(!tagValues.contains(tagValue)) {
+							if (!tagValues.contains(tagValue)) {
 								tagValues.add(tagValue);
 							}
 						} else {
-							//create a new list as it doesn't exist yet
+							// create a new list as it doesn't exist yet
 							List<String> l = new ArrayList<String>();
 							l.add(tagValue);
 							videoFile.getTags().put(tagKey, l);
@@ -431,22 +432,22 @@ class DBVideoFileInfo extends DBFileInfo {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		List<DOVideoFileInfo> res = new ArrayList<DOVideoFileInfo>(videos.values());
-		
-		//re-sort if needed (according to sort prefixes and sortOption)
-		if(sortOption == SortOption.Random){
+
+		// re-sort if needed (according to sort prefixes and sortOption)
+		if (sortOption == SortOption.Random) {
 			Collections.shuffle(res);
-		} else if(sortOption == SortOption.FileProperty){
+		} else if (sortOption == SortOption.FileProperty) {
 			final OmitPrefixesConfiguration omitConfig = MediaLibraryConfiguration.getInstance().getOmitPrefixesConfiguration();
 			if (omitConfig.isSorting() && (sortField == ConditionType.VIDEO_NAME || sortField == ConditionType.VIDEO_ORIGINALNAME || sortField == ConditionType.VIDEO_SORTNAME)) {
 				Collections.sort(res, new Comparator<DOVideoFileInfo>() {
-	
+
 					@Override
 					public int compare(DOVideoFileInfo o1, DOVideoFileInfo o2) {
 						String s1 = "";
 						String s2 = "";
-						
+
 						switch (sortField) {
 						case VIDEO_NAME:
 							s1 = o1.getName();
@@ -464,60 +465,62 @@ class DBVideoFileInfo extends DBFileInfo {
 							log.warn(String.format("Unhandled sort field reveived (%s). This should never happen", sortField));
 							break;
 						}
-						
+
 						s1 = s1.toLowerCase();
 						s2 = s2.toLowerCase();
-	
-						for(String prefix : omitConfig.getPrefixes()){
+
+						for (String prefix : omitConfig.getPrefixes()) {
 							String compStr = prefix.toLowerCase();
-							if(Character.isJavaIdentifierStart(compStr.charAt(compStr.length() -1))){
+							if (Character.isJavaIdentifierStart(compStr.charAt(compStr.length() - 1))) {
 								compStr += " ";
 							}
-							if (s1.startsWith(compStr)) s1 = s1.substring(compStr.length());
-							if (s2.startsWith(compStr)) s2 = s2.substring(compStr.length());						
+							if (s1.startsWith(compStr))
+								s1 = s1.substring(compStr.length());
+							if (s2.startsWith(compStr))
+								s2 = s2.substring(compStr.length());
 						}
-	
+
 						return s1.compareTo(s2);
 					}
 				});
-				
-				if(!sortAscending){
+
+				if (!sortAscending) {
 					Collections.reverse(res);
 				}
-			}			
+			}
 		}
-		
-		//limit the number of videos if configured
-		if(maxResults > 0 && maxResults < res.size()){
+
+		// limit the number of videos if configured
+		if (maxResults > 0 && maxResults < res.size()) {
 			res = res.subList(0, maxResults);
 		}
-		
+
 		return res;
 	}
-	
-	List<String> getVideoProperties(ConditionType conditionType, boolean isAscending, int minOccurences) throws StorageException{
+
+	List<String> getVideoProperties(ConditionType conditionType, boolean isAscending, int minOccurences) throws StorageException {
 		List<String> retVal = new ArrayList<String>();
 
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		// Get connection
 		try {
 			conn = cp.getConnection();
 		} catch (SQLException ex) {
 			throw new StorageException("Failed to get get video properties", ex);
 		}
-		
+
 		String suf = "VIDEO_CONTAINS_";
-		if(conditionType.toString().startsWith(suf)){
+		if (conditionType.toString().startsWith(suf)) {
 			try {
-				
+
 				retVal = new ArrayList<String>();
 				String tableName = conditionType.toString().substring(suf.length());
 				String columnName = "";
 
-				if(conditionType == ConditionType.VIDEO_CONTAINS_VIDEOAUDIO || conditionType == ConditionType.VIDEO_CONTAINS_SUBTITLES){
+				if (conditionType == ConditionType.VIDEO_CONTAINS_VIDEOAUDIO || conditionType == ConditionType.VIDEO_CONTAINS_SUBTITLES) {
 					columnName = "LANG";
 
 					String q = "SELECT " + columnName
@@ -531,25 +534,25 @@ class DBVideoFileInfo extends DBFileInfo {
 					while (rs.next()) {
 						retVal.add(rs.getString(1));
 					}
-				} else if(conditionType == ConditionType.VIDEO_CONTAINS_GENRE){
+				} else if (conditionType == ConditionType.VIDEO_CONTAINS_GENRE) {
 					retVal = getTagValues(GENRE_KEY, isAscending, minOccurences);
-				}	
+				}
 			} catch (SQLException se) {
 				throw new StorageException("Failed to get get video properties", se);
 			} finally {
 				close(conn, stmt, rs);
 			}
 		}
-		else{
-			try {			
+		else {
+			try {
 				retVal = new ArrayList<String>();
 				String columnName = conditionType.toString().substring(6);
-				
+
 				stmt = conn.prepareStatement("SELECT DISTINCT " + columnName
-												+ " FROM VIDEO"
-												+ " GROUP BY " + columnName
-												+ " HAVING COUNT(" + columnName + ") >= ?"
-												+ " ORDER BY " + columnName + " " + (isAscending ? "ASC" : "DESC"));
+						+ " FROM VIDEO"
+						+ " GROUP BY " + columnName
+						+ " HAVING COUNT(" + columnName + ") >= ?"
+						+ " ORDER BY " + columnName + " " + (isAscending ? "ASC" : "DESC"));
 				stmt.setInt(1, minOccurences);
 				rs = stmt.executeQuery();
 				while (rs.next()) {
@@ -563,41 +566,41 @@ class DBVideoFileInfo extends DBFileInfo {
 		}
 		return retVal;
 	}
-	
+
 	int getFilteredVideoCount(DOFilter filter) throws StorageException {
 		int nbItems = 0;
-		
+
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
+
 			String statement = "SELECT COUNT(FILE.ID)" +
-        				" FROM FILE, VIDEO" +
-        				" LEFT JOIN VIDEOAUDIO ON VIDEO.FILEID = VIDEOAUDIO.FILEID" +
-        				" LEFT JOIN SUBTITLES ON VIDEO.FILEID = SUBTITLES.FILEID" +
-        				" LEFT JOIN FILETAGS ON VIDEO.FILEID = FILETAGS.FILEID";
-			if(filter.getConditions().size() > 0) {
+					" FROM FILE, VIDEO" +
+					" LEFT JOIN VIDEOAUDIO ON VIDEO.FILEID = VIDEOAUDIO.FILEID" +
+					" LEFT JOIN SUBTITLES ON VIDEO.FILEID = SUBTITLES.FILEID" +
+					" LEFT JOIN FILETAGS ON VIDEO.FILEID = FILETAGS.FILEID";
+			if (filter.getConditions().size() > 0) {
 				statement += " WHERE " + formatEquation(filter);
 			}
 			stmt = conn.prepareStatement(statement);
 			rs = stmt.executeQuery();
-			
-			if(rs.next()){
+
+			if (rs.next()) {
 				nbItems = rs.getInt(1);
-			}			
+			}
 		} catch (SQLException se) {
 			throw new StorageException(String.format("Failed to get filtered video count for filter with equation='%s' and %s conditions", filter.getEquation(), filter.getConditions().size()), se);
 		} finally {
 			close(conn, stmt, rs);
-		}	
-		
-		return nbItems;
-    }
+		}
 
-    int getVideoCount() throws StorageException {
+		return nbItems;
+	}
+
+	int getVideoCount() throws StorageException {
 		int count = 0;
 
 		Connection conn = null;
@@ -607,18 +610,18 @@ class DBVideoFileInfo extends DBFileInfo {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT Count(ID) FROM VIDEO");
 			rs = stmt.executeQuery();
-			if(rs.next()){
+			if (rs.next()) {
 				count = rs.getInt(1);
 			}
-		    
+
 		} catch (SQLException se) {
 			throw new StorageException("Failed to get video count", se);
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		return count;
-    }
+	}
 
 	void insertVideoFileInfo(DOVideoFileInfo fileInfo) throws StorageException {
 
@@ -627,20 +630,20 @@ class DBVideoFileInfo extends DBFileInfo {
 		ResultSet rs = null;
 		Savepoint savePoint = null;
 
-		try {			
+		try {
 			conn = cp.getConnection();
-			
-			//prepare transaction
+
+			// prepare transaction
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
+
 			super.insertFileInfo(fileInfo, conn, stmt, rs);
 
 			stmt = conn.prepareStatement("INSERT INTO VIDEO (FILEID, AGERATINGLEVEL, AGERATINGREASON, RATINGPERCENT, RATINGVOTERS"
-			        + ", DIRECTOR, TAGLINE, ASPECTRATIO, BITRATE, BITSPERPIXEL, CODECV, DURATIONSEC, CONTAINER, DVDTRACK, FRAMERATE, MIMETYPE, MODEL, MUXABLE"
-			        + ", WIDTH, YEAR, HEIGHT, ORIGINALNAME, NAME, TMDBID, IMDBID, OVERVIEW, BUDGET, REVENUE, HOMEPAGEURL, TRAILERURL, SORTNAME, MUXINGMODE"
-			        + ", ASPECTRATIOCONTAINER, ASPECTRATIOVIDEOTRACK, REFRAMES, AVCLEVEL, STEREOSCOPY, MATRIXCOEFFICIENTS, EMBEDDEDFONTEXISTS)"
-			        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ ", DIRECTOR, TAGLINE, ASPECTRATIO, BITRATE, BITSPERPIXEL, CODECV, DURATIONSEC, CONTAINER, DVDTRACK, FRAMERATE, MIMETYPE, MODEL, MUXABLE"
+					+ ", WIDTH, YEAR, HEIGHT, ORIGINALNAME, NAME, TMDBID, IMDBID, OVERVIEW, BUDGET, REVENUE, HOMEPAGEURL, TRAILERURL, SORTNAME, MUXINGMODE"
+					+ ", ASPECTRATIOCONTAINER, ASPECTRATIOVIDEOTRACK, REFRAMES, AVCLEVEL, STEREOSCOPY, MATRIXCOEFFICIENTS, EMBEDDEDFONTEXISTS)"
+					+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.clearParameters();
 			stmt.setInt(1, fileInfo.getId());
 			stmt.setString(2, fileInfo.getAgeRating().getLevel());
@@ -675,8 +678,8 @@ class DBVideoFileInfo extends DBFileInfo {
 			stmt.setString(30, fileInfo.getTrailerUrl());
 			stmt.setString(31, fileInfo.getSortName());
 			stmt.setString(32, fileInfo.getMuxingMode());
-			stmt.setString(33,  fileInfo.getAspectRatioContainer());
-			stmt.setString(34,  fileInfo.getAspectRatioVideoTrack());
+			stmt.setString(33, fileInfo.getAspectRatioContainer());
+			stmt.setString(34, fileInfo.getAspectRatioVideoTrack());
 			stmt.setByte(35, fileInfo.getReferenceFrameCount());
 			stmt.setString(36, fileInfo.getAvcLevel());
 			stmt.setString(37, fileInfo.getStereoscopy());
@@ -685,9 +688,9 @@ class DBVideoFileInfo extends DBFileInfo {
 			stmt.executeUpdate();
 
 			insertOrUpdateVideoPropertyLists(fileInfo, stmt, conn);
-			
+
 			conn.commit();
-			
+
 			NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.VideoInserted));
 		} catch (Exception e) {
 			try {
@@ -702,7 +705,7 @@ class DBVideoFileInfo extends DBFileInfo {
 	}
 
 	void updateFileInfo(DOVideoFileInfo fileInfo) throws StorageException {
-		
+
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -710,67 +713,67 @@ class DBVideoFileInfo extends DBFileInfo {
 
 		try {
 			conn = cp.getConnection();
-			
-			//prepare for rollback
+
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
-			//update the properties from the super class
-			super.updateFileInfo(fileInfo, conn, stmt, rs);
-			
-			//update video properties
-    		stmt = conn.prepareStatement("UPDATE VIDEO SET AGERATINGLEVEL = ?, AGERATINGREASON = ?, RATINGPERCENT = ?, RATINGVOTERS = ?"
-    		        + ", DIRECTOR = ?, TAGLINE = ?, ASPECTRATIO = ?, BITRATE = ?, BITSPERPIXEL = ?, CODECV = ?, DURATIONSEC = ?, CONTAINER = ?, DVDTRACK = ?, FRAMERATE = ?, MIMETYPE = ?, MODEL = ?, MUXABLE = ?"
-    		        + ", WIDTH = ?, YEAR = ?, HEIGHT = ?, ORIGINALNAME = ?, NAME = ?, TMDBID = ?, IMDBID = ?, OVERVIEW = ?, BUDGET = ?, REVENUE = ?, HOMEPAGEURL = ?, TRAILERURL = ?, SORTNAME = ?, MUXINGMODE = ?"
-    		        + ", ASPECTRATIOCONTAINER = ?, ASPECTRATIOVIDEOTRACK = ?, REFRAMES = ?, AVCLEVEL = ?, STEREOSCOPY = ?, MATRIXCOEFFICIENTS = ?, EMBEDDEDFONTEXISTS = ?"
-    		        + " WHERE FILEID = ?");
-    		stmt.clearParameters();
-    		stmt.setString(1, fileInfo.getAgeRating().getLevel());
-    		stmt.setString(2, fileInfo.getAgeRating().getReason());
-    		stmt.setInt(3, fileInfo.getRating().getRatingPercent());
-    		stmt.setInt(4, fileInfo.getRating().getVotes());
-    		stmt.setString(5, fileInfo.getDirector());
-    		stmt.setString(6, fileInfo.getTagLine());
-    		stmt.setString(7, fileInfo.getAspectRatioDvdIso());
-    		stmt.setInt(8, fileInfo.getBitrate());
-    		stmt.setInt(9, fileInfo.getBitsPerPixel());
-    		stmt.setString(10, fileInfo.getCodecV());
-    		stmt.setDouble(11, fileInfo.getDurationSec());
-    		stmt.setString(12, fileInfo.getContainer());
-    		stmt.setInt(13, fileInfo.getDvdtrack());
-    		stmt.setString(14, fileInfo.getFrameRate());
-    		stmt.setString(15, fileInfo.getMimeType());
-    		stmt.setString(16, fileInfo.getModel());
-    		stmt.setBoolean(17, fileInfo.isMuxable());
-    		stmt.setInt(18, fileInfo.getWidth());
-    		stmt.setInt(19, fileInfo.getYear());
-    		stmt.setInt(20, fileInfo.getHeight());
-    
-    		stmt.setString(21, fileInfo.getOriginalName());
-    		stmt.setString(22, fileInfo.getName());
-    		stmt.setInt(23, fileInfo.getTmdbId());
-    		stmt.setString(24, fileInfo.getImdbId());
-    		stmt.setString(25, fileInfo.getOverview() == null ? null : (fileInfo.getOverview().length() > DBConstants.VIDEO_OVERVIEW_FIELDLENGTH ? fileInfo.getOverview().substring(0, DBConstants.VIDEO_OVERVIEW_FIELDLENGTH) : fileInfo.getOverview()));
-    		stmt.setInt(26, fileInfo.getBudget());
-    		stmt.setInt(27, fileInfo.getRevenue());
-    		stmt.setString(28, fileInfo.getHomepageUrl());
-    		stmt.setString(29, fileInfo.getTrailerUrl());
-    		stmt.setString(30, fileInfo.getSortName());
-    		stmt.setString(31, fileInfo.getMuxingMode());
-    		stmt.setString(32,  fileInfo.getAspectRatioContainer());
-    		stmt.setString(33,  fileInfo.getAspectRatioVideoTrack());
-    		stmt.setByte(34, fileInfo.getReferenceFrameCount());
-    		stmt.setString(35, fileInfo.getAvcLevel());
-    		stmt.setString(36, fileInfo.getStereoscopy());
-    		stmt.setString(37, fileInfo.getMatrixCoefficients());
-    		stmt.setBoolean(38, fileInfo.isEmbeddedFontExists());
-    		stmt.setInt(39, fileInfo.getId());
-    		stmt.executeUpdate();
 
-    		insertOrUpdateVideoPropertyLists(fileInfo, stmt, conn);
-			
+			// update the properties from the super class
+			super.updateFileInfo(fileInfo, conn, stmt, rs);
+
+			// update video properties
+			stmt = conn.prepareStatement("UPDATE VIDEO SET AGERATINGLEVEL = ?, AGERATINGREASON = ?, RATINGPERCENT = ?, RATINGVOTERS = ?"
+					+ ", DIRECTOR = ?, TAGLINE = ?, ASPECTRATIO = ?, BITRATE = ?, BITSPERPIXEL = ?, CODECV = ?, DURATIONSEC = ?, CONTAINER = ?, DVDTRACK = ?, FRAMERATE = ?, MIMETYPE = ?, MODEL = ?, MUXABLE = ?"
+					+ ", WIDTH = ?, YEAR = ?, HEIGHT = ?, ORIGINALNAME = ?, NAME = ?, TMDBID = ?, IMDBID = ?, OVERVIEW = ?, BUDGET = ?, REVENUE = ?, HOMEPAGEURL = ?, TRAILERURL = ?, SORTNAME = ?, MUXINGMODE = ?"
+					+ ", ASPECTRATIOCONTAINER = ?, ASPECTRATIOVIDEOTRACK = ?, REFRAMES = ?, AVCLEVEL = ?, STEREOSCOPY = ?, MATRIXCOEFFICIENTS = ?, EMBEDDEDFONTEXISTS = ?"
+					+ " WHERE FILEID = ?");
+			stmt.clearParameters();
+			stmt.setString(1, fileInfo.getAgeRating().getLevel());
+			stmt.setString(2, fileInfo.getAgeRating().getReason());
+			stmt.setInt(3, fileInfo.getRating().getRatingPercent());
+			stmt.setInt(4, fileInfo.getRating().getVotes());
+			stmt.setString(5, fileInfo.getDirector());
+			stmt.setString(6, fileInfo.getTagLine());
+			stmt.setString(7, fileInfo.getAspectRatioDvdIso());
+			stmt.setInt(8, fileInfo.getBitrate());
+			stmt.setInt(9, fileInfo.getBitsPerPixel());
+			stmt.setString(10, fileInfo.getCodecV());
+			stmt.setDouble(11, fileInfo.getDurationSec());
+			stmt.setString(12, fileInfo.getContainer());
+			stmt.setInt(13, fileInfo.getDvdtrack());
+			stmt.setString(14, fileInfo.getFrameRate());
+			stmt.setString(15, fileInfo.getMimeType());
+			stmt.setString(16, fileInfo.getModel());
+			stmt.setBoolean(17, fileInfo.isMuxable());
+			stmt.setInt(18, fileInfo.getWidth());
+			stmt.setInt(19, fileInfo.getYear());
+			stmt.setInt(20, fileInfo.getHeight());
+
+			stmt.setString(21, fileInfo.getOriginalName());
+			stmt.setString(22, fileInfo.getName());
+			stmt.setInt(23, fileInfo.getTmdbId());
+			stmt.setString(24, fileInfo.getImdbId());
+			stmt.setString(25, fileInfo.getOverview() == null ? null : (fileInfo.getOverview().length() > DBConstants.VIDEO_OVERVIEW_FIELDLENGTH ? fileInfo.getOverview().substring(0, DBConstants.VIDEO_OVERVIEW_FIELDLENGTH) : fileInfo.getOverview()));
+			stmt.setInt(26, fileInfo.getBudget());
+			stmt.setInt(27, fileInfo.getRevenue());
+			stmt.setString(28, fileInfo.getHomepageUrl());
+			stmt.setString(29, fileInfo.getTrailerUrl());
+			stmt.setString(30, fileInfo.getSortName());
+			stmt.setString(31, fileInfo.getMuxingMode());
+			stmt.setString(32, fileInfo.getAspectRatioContainer());
+			stmt.setString(33, fileInfo.getAspectRatioVideoTrack());
+			stmt.setByte(34, fileInfo.getReferenceFrameCount());
+			stmt.setString(35, fileInfo.getAvcLevel());
+			stmt.setString(36, fileInfo.getStereoscopy());
+			stmt.setString(37, fileInfo.getMatrixCoefficients());
+			stmt.setBoolean(38, fileInfo.isEmbeddedFontExists());
+			stmt.setInt(39, fileInfo.getId());
+			stmt.executeUpdate();
+
+			insertOrUpdateVideoPropertyLists(fileInfo, stmt, conn);
+
 			conn.commit();
-			
+
 			NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.VideoUpdated));
 		} catch (Exception e) {
 			try {
@@ -782,16 +785,16 @@ class DBVideoFileInfo extends DBFileInfo {
 		} finally {
 			close(conn, stmt, rs, savePoint);
 		}
-    }
+	}
 
-	private void insertOrUpdateVideoPropertyLists(DOVideoFileInfo videoFileInfo, PreparedStatement stmt, Connection conn) throws StorageException{
+	private void insertOrUpdateVideoPropertyLists(DOVideoFileInfo videoFileInfo, PreparedStatement stmt, Connection conn) throws StorageException {
 		insertOrUpdateAudioTracks(videoFileInfo, stmt, conn);
 		insertOrUpdateSubtitles(videoFileInfo, stmt, conn);
 		insertOrUpdateGenres(videoFileInfo, stmt, conn);
 	}
-	
+
 	private void insertOrUpdateAudioTracks(DOVideoFileInfo videoFileInfo, PreparedStatement stmt, Connection conn) throws StorageException {
-		//delete all audio tracks that might be linked to the video file
+		// delete all audio tracks that might be linked to the video file
 		try {
 			stmt = conn.prepareStatement("DELETE FROM VIDEOAUDIO WHERE FILEID = ?");
 			stmt.clearParameters();
@@ -800,12 +803,12 @@ class DBVideoFileInfo extends DBFileInfo {
 		} catch (Exception e) {
 			throw new StorageException("Failed to delete all audio tracks linked to video with id=" + videoFileInfo.getId(), e);
 		}
-		
+
 		// Insert audio tracks for video
 		for (DLNAMediaAudio media : videoFileInfo.getAudioCodes()) {
 			try {
 				stmt = conn.prepareStatement("INSERT INTO VIDEOAUDIO(FILEID, LANG, NRAUDIOCHANNELS, SAMPLEFREQ, CODECA, BITSPERSAMPLE, DELAYMS, MUXINGMODE, BITRATE)"
-				        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				stmt.clearParameters();
 				stmt.setInt(1, videoFileInfo.getId());
 				stmt.setString(2, media.getLang());
@@ -822,9 +825,9 @@ class DBVideoFileInfo extends DBFileInfo {
 			}
 		}
 	}
-	
+
 	private void insertOrUpdateSubtitles(DOVideoFileInfo videoFileInfo, PreparedStatement stmt, Connection conn) throws StorageException {
-		//delete all subtitles that might be linked to the video file
+		// delete all subtitles that might be linked to the video file
 		try {
 			stmt = conn.prepareStatement("DELETE FROM SUBTITLES WHERE FILEID = ?");
 			stmt.clearParameters();
@@ -837,7 +840,7 @@ class DBVideoFileInfo extends DBFileInfo {
 		// Insert subtitles for video
 		for (DLNAMediaSubtitle subtitle : videoFileInfo.getSubtitlesCodes()) {
 			try {
-				stmt = conn.prepareStatement("INSERT INTO SUBTITLES (FILEID, FILEPATH, LANG, TYPE)" 
+				stmt = conn.prepareStatement("INSERT INTO SUBTITLES (FILEID, FILEPATH, LANG, TYPE)"
 						+ " VALUES (?, ?, ?, ?)");
 				stmt.clearParameters();
 				stmt.setInt(1, videoFileInfo.getId());
@@ -854,9 +857,9 @@ class DBVideoFileInfo extends DBFileInfo {
 			}
 		}
 	}
-	
+
 	private void insertOrUpdateGenres(DOVideoFileInfo videoFileInfo, PreparedStatement stmt, Connection conn) throws StorageException {
-		//delete all genres that might be linked to the video file
+		// delete all genres that might be linked to the video file
 		try {
 			stmt = conn.prepareStatement("DELETE FROM FILETAGS WHERE FILEID = ? AND KEY = ?");
 			stmt.clearParameters();
@@ -870,7 +873,7 @@ class DBVideoFileInfo extends DBFileInfo {
 		// Insert genres for video
 		for (String genre : videoFileInfo.getGenres()) {
 			try {
-				stmt = conn.prepareStatement("INSERT INTO FILETAGS(FILEID, KEY, VALUE)" 
+				stmt = conn.prepareStatement("INSERT INTO FILETAGS(FILEID, KEY, VALUE)"
 						+ " VALUES (?, ?, ?)");
 				stmt.clearParameters();
 				stmt.setInt(1, videoFileInfo.getId());
@@ -880,9 +883,9 @@ class DBVideoFileInfo extends DBFileInfo {
 			} catch (Exception e) {
 				throw new StorageException("Failed to insert genre " + genre + " for file " + videoFileInfo.getFileName(false), e);
 			}
-		}	
+		}
 	}
-	
+
 	private void deleteVideo(long fileId, Connection conn, PreparedStatement stmt) throws StorageException {
 		String fileIdStr = "";
 		try {

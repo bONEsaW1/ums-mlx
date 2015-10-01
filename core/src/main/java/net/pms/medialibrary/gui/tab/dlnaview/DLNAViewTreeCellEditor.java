@@ -41,7 +41,7 @@ public class DLNAViewTreeCellEditor extends DefaultTreeCellEditor {
 	@Override
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 		if (value instanceof DefaultMutableTreeNode
-				&& ((DefaultMutableTreeNode)value).getUserObject() instanceof DOFolder) {
+				&& ((DefaultMutableTreeNode) value).getUserObject() instanceof DOFolder) {
 			editingNode = (DefaultMutableTreeNode) value;
 		}
 
@@ -54,28 +54,28 @@ public class DLNAViewTreeCellEditor extends DefaultTreeCellEditor {
 	@Override
 	public Object getCellEditorValue() {
 		Object res = null;
-		
-    	if(editingNode != null && editingNode.getUserObject() instanceof DOFolder) {
-    		DOFolder f = (DOFolder)editingNode.getUserObject();
-    		f.setName(realEditor.getCellEditorValue().toString());
-    		res = f;
-    	}
-    	
-    	DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-    	for(TreeModelListener l : model.getListeners(TreeModelListener.class)){
-    		Object[] children = new Object[1];
-    		children[0] = editingNode;
-    		l.treeNodesChanged(new TreeModelEvent(this, editingNode.getPath(), new int[1], children));
-    	}
+
+		if (editingNode != null && editingNode.getUserObject() instanceof DOFolder) {
+			DOFolder f = (DOFolder) editingNode.getUserObject();
+			f.setName(realEditor.getCellEditorValue().toString());
+			res = f;
+		}
+
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		for (TreeModelListener l : model.getListeners(TreeModelListener.class)) {
+			Object[] children = new Object[1];
+			children[0] = editingNode;
+			l.treeNodesChanged(new TreeModelEvent(this, editingNode.getPath(), new int[1], children));
+		}
 
 		editingNode = null;
 		return res;
 	}
-	
+
 	@Override
 	public boolean isCellEditable(EventObject event) {
-		return event == null || 
-        		((((DLNAViewTree)event.getSource()).getSelectedNode() != null 
-        				&& ((DLNAViewTree)event.getSource()).getSelectedNode().getUserObject() instanceof DOFolder));
+		return event == null ||
+				((((DLNAViewTree) event.getSource()).getSelectedNode() != null
+				&& ((DLNAViewTree) event.getSource()).getSelectedNode().getUserObject() instanceof DOFolder));
 	}
 }

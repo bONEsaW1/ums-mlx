@@ -2,7 +2,6 @@ package net.pms.plugin.webservice;
 
 import javax.xml.ws.Endpoint;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +18,9 @@ public abstract class ServiceBase {
 	 * 
 	 * Start to listen for remote requests
 	 * 
-	 * @param host
-	 *            ip or host name
-	 * @param port
-	 *            port to use
-	 * @param path
-	 *            name of the web service
+	 * @param host ip or host name
+	 * @param port port to use
+	 * @param path name of the web service
 	 */
 	public void bind(String host, int port, String path) {
 		String endpointURL = "http://" + host + ":" + port + "/" + path;
@@ -42,7 +38,7 @@ public abstract class ServiceBase {
 	 */
 	public void shutdown() {
 		log.debug("Shut down " + getClass().getName());
-		if (endpoint != null){
+		if (endpoint != null) {
 			endpoint.stop();
 			endpoint = null;
 		}

@@ -109,50 +109,50 @@ import net.pms.plugins.PluginsFactory;
 
 class DisplayPanel extends JPanel {
 	private static final Logger log = LoggerFactory.getLogger(DisplayPanel.class);
-	private static final long                serialVersionUID   = 4154536836952807722L;
-	private IMediaLibraryStorage             storage;
-	private DOMediaLibraryFolder             folder;
+	private static final long serialVersionUID = 4154536836952807722L;
+	private IMediaLibraryStorage storage;
+	private DOMediaLibraryFolder folder;
 	private List<FolderDialogActionListener> folderDialogActionListeners;
 
-	private JCheckBox                        cbDisplayItems;
+	private JCheckBox cbDisplayItems;
 	private JTextField tfMaxFiles;
-	private JCheckBox                        cbInheritSort;
-	private JCheckBox                        cbInheritDisplayFileAs;
-	private JComboBox                        cbTemplate;
-	private JButton                          bNewTemplate;
-	private JButton                          bDeleteTemplate;
-	private JButton                          bEditTemplate;
-	private JButton                          bTemplateApply;
-	private JButton                          bTemplateCancel;
-	private JRadioButton                     rbDisplayItemAsFile;
-	private JRadioButton                     rbDisplayIemAsFolder;
-	private JScrollPane                      spTree;
-	private DefaultTreeModel                 treeModel;
-	private JLabel                           lTemplate;
-	private JComboBox						 cbSortOption;
-	private JComboBox                        cbSortType;
-	private JRadioButton                     rbSortAsc;
-	private JRadioButton                     rbSortDesc;
-	private FileDisplayPanel                 pFileDispay;
+	private JCheckBox cbInheritSort;
+	private JCheckBox cbInheritDisplayFileAs;
+	private JComboBox cbTemplate;
+	private JButton bNewTemplate;
+	private JButton bDeleteTemplate;
+	private JButton bEditTemplate;
+	private JButton bTemplateApply;
+	private JButton bTemplateCancel;
+	private JRadioButton rbDisplayItemAsFile;
+	private JRadioButton rbDisplayIemAsFolder;
+	private JScrollPane spTree;
+	private DefaultTreeModel treeModel;
+	private JLabel lTemplate;
+	private JComboBox cbSortOption;
+	private JComboBox cbSortType;
+	private JRadioButton rbSortAsc;
+	private JRadioButton rbSortDesc;
+	private FileDisplayPanel pFileDispay;
 
-	private JPanel                           pTemplate;
-	private JPopupMenu                       treeContextMenu;
+	private JPanel pTemplate;
+	private JPopupMenu treeContextMenu;
 
-	private FolderHelper                     folderHelper       = FolderHelper.getInstance();
-	private boolean                          isCreatingTemplate = false;
-	private boolean                          isEditingTemplate  = false;
+	private FolderHelper folderHelper = FolderHelper.getInstance();
+	private boolean isCreatingTemplate = false;
+	private boolean isEditingTemplate = false;
 
-	protected long                           editingTemplateId;
+	protected long editingTemplateId;
 
-	private JTree                            tree;
+	private JTree tree;
 
-	private JMenuItem                        miRemove;
-	private JMenuItem                        miRename;
-	private JMenuItem                        miEdit;
-	private JMenuItem                        miAddFile;
-	private JMenuItem                        miAddFolder;
-	private JMenuItem                        miAddInfo;
-	private JMenu                            mAdd;
+	private JMenuItem miRemove;
+	private JMenuItem miRename;
+	private JMenuItem miEdit;
+	private JMenuItem miAddFile;
+	private JMenuItem miAddFolder;
+	private JMenuItem miAddInfo;
+	private JMenu mAdd;
 	private JLabel lMaxFiles;
 
 	DisplayPanel(DOMediaLibraryFolder f, IMediaLibraryStorage storage, List<FolderDialogActionListener> folderDialogActionListeners) {
@@ -167,7 +167,7 @@ class DisplayPanel extends JPanel {
 	}
 
 	private void initPluginChangeListener() {
-		NotificationCenter.getInstance(PluginEvent.class).subscribe(new NotificationSubscriber<PluginEvent>() {			
+		NotificationCenter.getInstance(PluginEvent.class).subscribe(new NotificationSubscriber<PluginEvent>() {
 			@Override
 			public void onMessage(PluginEvent obj) {
 				refreshAddMenu(true);
@@ -212,9 +212,10 @@ class DisplayPanel extends JPanel {
 
 	int getMaxFiles() {
 		int res = 0;
-		try{
+		try {
 			res = Integer.parseInt(tfMaxFiles.getText());
-		} catch (Exception ex) {}
+		} catch (Exception ex) {
+		}
 		return res;
 	}
 
@@ -227,10 +228,10 @@ class DisplayPanel extends JPanel {
 	}
 
 	FileDisplayProperties getDisplayProperties() throws TemplateException {
-		if (isEditingTemplate) { 
-			throw new TemplateException(Messages.getString("ML.DisplayPanel.ForceSaveTemplateMsg")); 
+		if (isEditingTemplate) {
+			throw new TemplateException(Messages.getString("ML.DisplayPanel.ForceSaveTemplateMsg"));
 		}
-		
+
 		FileDisplayProperties props = new FileDisplayProperties();
 		props.setDisplayNameMask(getDisdplayNameMask());
 		props.setFileDisplayType(getFileDisplayType());
@@ -242,8 +243,8 @@ class DisplayPanel extends JPanel {
 		props.setThumbnailPriorities(pFileDispay.getThumbnailPriorities());
 		return props;
 	}
-	
-	SortOption getSortOption(){
+
+	SortOption getSortOption() {
 		SortOptionCBItem item = (SortOptionCBItem) cbSortOption.getSelectedItem();
 		return item.getSortOption();
 	}
@@ -290,7 +291,7 @@ class DisplayPanel extends JPanel {
 		// display items
 		cbDisplayItems = new JCheckBox(Messages.getString("ML.DisplayPanel.DisplayItems." + folder.getFileType().toString()));
 		cbDisplayItems.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tfMaxFiles.setVisible(cbDisplayItems.isSelected());
@@ -303,18 +304,20 @@ class DisplayPanel extends JPanel {
 
 		// create sort line
 		cbSortOption = new JComboBox();
-		for(SortOption so : SortOption.values()){
-			if(so == SortOption.Unknown) continue;
-			
+		for (SortOption so : SortOption.values()) {
+			if (so == SortOption.Unknown)
+				continue;
+
 			cbSortOption.addItem(new SortOptionCBItem(so, Messages.getString("ML.SortOption." + so.toString())));
 		}
 		cbSortOption.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(cbSortOption.getSelectedItem() == null) return;
-				
-				boolean isVisible = ((SortOptionCBItem)cbSortOption.getSelectedItem()).getSortOption() == SortOption.FileProperty;
+				if (cbSortOption.getSelectedItem() == null)
+					return;
+
+				boolean isVisible = ((SortOptionCBItem) cbSortOption.getSelectedItem()).getSortOption() == SortOption.FileProperty;
 				cbSortType.setVisible(isVisible);
 				rbSortAsc.setVisible(isVisible);
 				rbSortDesc.setVisible(isVisible);
@@ -367,7 +370,7 @@ class DisplayPanel extends JPanel {
 
 		// create file display type
 		DOFileEntryBase fileEntry = new DOFileEntryBase(-1, null, 0, folder.getDisplayProperties().getDisplayNameMask(), folder.getDisplayProperties()
-		        .getThumbnailPriorities(), folder.getDisplayProperties().getFileDisplayType(), 0, null, null);
+				.getThumbnailPriorities(), folder.getDisplayProperties().getFileDisplayType(), 0, null, null);
 		pFileDispay = new FileDisplayPanel(fileEntry, folder.getFileType());
 		pFileDispay.setFileDisplayModeVisible(false);
 		pFileDispay.setMaxLineLengthVisible(false);
@@ -382,14 +385,14 @@ class DisplayPanel extends JPanel {
 	}
 
 	private void cbInheritDisplayFileAsSelected() {
-		if(isEditingTemplate){
+		if (isEditingTemplate) {
 			JOptionPane.showMessageDialog(this, Messages.getString("ML.DisplayPanel.SaveTemplateOnInheritDisplayAs"));
 			cbInheritDisplayFileAs.setSelected(false);
 		} else {
 			folder.setInheritDisplayFileAs(cbInheritDisplayFileAs.isSelected());
 			updateGUI();
 		}
-    }
+	}
 
 	private void initFolderDisplayType() {
 
@@ -425,7 +428,7 @@ class DisplayPanel extends JPanel {
 				tree.setEditable(true);
 			}
 		});
-		
+
 		bEditTemplate = new JButton(Messages.getString("ML.DisplayPanel.bEditTemplate"));
 		bEditTemplate.addMouseListener(new MouseAdapter() {
 			@Override
@@ -465,7 +468,7 @@ class DisplayPanel extends JPanel {
 					if (storage.isTemplateIdInUse(selTemplateId)) {
 						JOptionPane.showMessageDialog(SwingUtilities.getRoot(cbTemplate), Messages.getString("ML.DisplayPanel.TemplateInUse"));
 					} else if (JOptionPane.showConfirmDialog(SwingUtilities.getRoot(cbTemplate), String.format(Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateMsg"), cbTemplate.getSelectedItem())
-					        , Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							, Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						storage.deleteTemplate(selTemplateId);
 						spTree.setViewportView(null);
 						updateTemplateList();
@@ -550,15 +553,15 @@ class DisplayPanel extends JPanel {
 		});
 
 		switch (folder.getDisplayProperties().getFileDisplayType()) {
-			case FILE:
-				rbDisplayItemAsFile.setSelected(true);
-				break;
-			case FOLDER:
-				rbDisplayIemAsFolder.setSelected(true);
-				break;
-			default:
-				log.warn(String.format("Unhandled file display type received (%s). This should never happen!", folder.getDisplayProperties().getFileDisplayType()));
-				break;
+		case FILE:
+			rbDisplayItemAsFile.setSelected(true);
+			break;
+		case FOLDER:
+			rbDisplayIemAsFolder.setSelected(true);
+			break;
+		default:
+			log.warn(String.format("Unhandled file display type received (%s). This should never happen!", folder.getDisplayProperties().getFileDisplayType()));
+			break;
 		}
 
 		if (folder.getDisplayProperties().isSortAscending()) {
@@ -634,7 +637,7 @@ class DisplayPanel extends JPanel {
 				addNode(FileDisplayType.FILE);
 			}
 		});
-		
+
 		refreshAddMenu(false);
 
 		miRename = new JMenuItem(Messages.getString("ML.DisplayPanel.Menu.Rename"));
@@ -675,104 +678,104 @@ class DisplayPanel extends JPanel {
 		mAdd.add(miAddInfo);
 		mAdd.add(miAddFolder);
 		mAdd.add(miAddFile);
-		
-		if(refreshPlugins) {			
-			//Get, sort and add plugins to context menu
+
+		if (refreshPlugins) {
+			// Get, sort and add plugins to context menu
 			List<FileDetailPlugin> plugins = PluginsFactory.getFileDetailPlugins();
-			if(plugins.size() > 0) {
+			if (plugins.size() > 0) {
 				mAdd.addSeparator();
-				
+
 				Collections.sort(plugins, new Comparator<FileDetailPlugin>() {
 					@Override
-		            public int compare(FileDetailPlugin o1, FileDetailPlugin o2) {
-			            return o1.getName().compareTo(o2.getName());
-		            }
+					public int compare(FileDetailPlugin o1, FileDetailPlugin o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
 				});
-				
-				for(FileDetailPlugin entry : plugins){
-					if(entry.isPluginAvailable() && entry.isInstanceAvailable()) {
-		    			FileEntryPluginMenuItem dynItem = new FileEntryPluginMenuItem(entry);
-		    			dynItem.addActionListener(new ActionListener() {
-		    				
-		    				@Override
-		    				public void actionPerformed(ActionEvent e) {
-		    					if (tree.getSelectionPath() != null) {						
-		    						DefaultMutableTreeNode parent = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
-		    						if (parent.getUserObject() instanceof DOFileEntryFolder) {
-		    							DOFileEntryFolder parentFolder = (DOFileEntryFolder) parent.getUserObject();
-		    							FileDetailPlugin plugin = ((FileEntryPluginMenuItem)e.getSource()).getPlugin();
-		    
-		    							String configDir = PMS.getConfiguration().getProfileDirectory() + File.separatorChar + "mlx_fileentry_plugin_configs" + File.separatorChar;		
-		    							File cfgDir = new File(configDir);
-		    							if(!cfgDir.isDirectory()){
-		    								cfgDir.mkdirs();
-		    							}
-		    							
-		    							File configFile;
-		    							int i = 1;
-		    							do {
-		    								configFile = new File(configDir + plugin.getClass().getSimpleName() + "_" + i++ + ".cfg");
-		    							} while (configFile.exists());
-		    							
-		    							DOFileEntryPlugin fileEntry = new DOFileEntryPlugin(-1, parentFolder, 0, "", parentFolder.getThumbnailPriorities(), parentFolder.getMaxLineLength(), plugin, configFile.getAbsolutePath());
-		    							
-		    							if(plugin.getConfigurationPanel() != null){
-		    								if(configFile.exists()){
-		    									try {
-		    	                                    plugin.loadConfiguration(configFile.getAbsolutePath());
-		                                        } catch (IOException ex) {
-		    	                                    log.error(String.format("Failed to load configuration file %s for plugin of type %s", configFile.getAbsoluteFile(), plugin.getClass().getName()), ex);
-		                                        }
-		    								}
-		                                    showPluginDialog(fileEntry, true);
-		    							} else {
-		    								DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(fileEntry);
-		    								treeModel.insertNodeInto(newNode, (MutableTreeNode) tree.getSelectionPath().getLastPathComponent(), 0);
-		    								tree.setSelectionPath(new TreePath(newNode.getPath()));
-		    								tree.startEditingAtPath(tree.getSelectionPath());
-		    							}
-		    						}
-		    					}
-		    				}
-		    			});
-		    			mAdd.add(dynItem);
-		    		}			
+
+				for (FileDetailPlugin entry : plugins) {
+					if (entry.isPluginAvailable() && entry.isInstanceAvailable()) {
+						FileEntryPluginMenuItem dynItem = new FileEntryPluginMenuItem(entry);
+						dynItem.addActionListener(new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								if (tree.getSelectionPath() != null) {
+									DefaultMutableTreeNode parent = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
+									if (parent.getUserObject() instanceof DOFileEntryFolder) {
+										DOFileEntryFolder parentFolder = (DOFileEntryFolder) parent.getUserObject();
+										FileDetailPlugin plugin = ((FileEntryPluginMenuItem) e.getSource()).getPlugin();
+
+										String configDir = PMS.getConfiguration().getProfileDirectory() + File.separatorChar + "mlx_fileentry_plugin_configs" + File.separatorChar;
+										File cfgDir = new File(configDir);
+										if (!cfgDir.isDirectory()) {
+											cfgDir.mkdirs();
+										}
+
+										File configFile;
+										int i = 1;
+										do {
+											configFile = new File(configDir + plugin.getClass().getSimpleName() + "_" + i++ + ".cfg");
+										} while (configFile.exists());
+
+										DOFileEntryPlugin fileEntry = new DOFileEntryPlugin(-1, parentFolder, 0, "", parentFolder.getThumbnailPriorities(), parentFolder.getMaxLineLength(), plugin, configFile.getAbsolutePath());
+
+										if (plugin.getConfigurationPanel() != null) {
+											if (configFile.exists()) {
+												try {
+													plugin.loadConfiguration(configFile.getAbsolutePath());
+												} catch (IOException ex) {
+													log.error(String.format("Failed to load configuration file %s for plugin of type %s", configFile.getAbsoluteFile(), plugin.getClass().getName()), ex);
+												}
+											}
+											showPluginDialog(fileEntry, true);
+										} else {
+											DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(fileEntry);
+											treeModel.insertNodeInto(newNode, (MutableTreeNode) tree.getSelectionPath().getLastPathComponent(), 0);
+											tree.setSelectionPath(new TreePath(newNode.getPath()));
+											tree.startEditingAtPath(tree.getSelectionPath());
+										}
+									}
+								}
+							}
+						});
+						mAdd.add(dynItem);
+					}
 				}
 			}
 		}
 	}
 
 	private void showPluginDialog(DOFileEntryPlugin plugin, boolean isNew) {
-		if(plugin == null){
+		if (plugin == null) {
 			return;
 		}
-		
+
 		FileEntryPluginDialog d = new FileEntryPluginDialog(plugin, isNew);
 		d.addFileEntryPluginDialogActionListener(new FileEntryPluginDialogActionListener() {
-			
+
 			@Override
-			public void fileEntryPluginDialogActionReceived(FileEntryPluginDialogActionEvent e) {				
+			public void fileEntryPluginDialogActionReceived(FileEntryPluginDialogActionEvent e) {
 				if (e.getActionType() == DialogActionType.APPLY || e.getActionType() == DialogActionType.OK) {
 					try {
-		                e.getFileEntryPlugin().getPlugin().saveConfiguration(e.getFileEntryPlugin().getPluginConfigFilePath());
-	                } catch (IOException e1) {
-		                log.error(String.format("Failed to save config file %s for plugin %s", e.getFileEntryPlugin().getPluginConfigFilePath(), e.getFileEntryPlugin().getClass().getName()), e1);
-	                }
-	                
+						e.getFileEntryPlugin().getPlugin().saveConfiguration(e.getFileEntryPlugin().getPluginConfigFilePath());
+					} catch (IOException e1) {
+						log.error(String.format("Failed to save config file %s for plugin %s", e.getFileEntryPlugin().getPluginConfigFilePath(), e.getFileEntryPlugin().getClass().getName()), e1);
+					}
+
 					DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getFileEntryPlugin());
 					DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
-					if(e.isNew()) {
+					if (e.isNew()) {
 						treeModel.insertNodeInto(newNode, selNode, getNewNodeInsertPosition(e.getFileEntryPlugin(), selNode));
 						tree.setSelectionPath(new TreePath(newNode.getPath()));
-						((FileEntryPluginDialog)e.getSource()).setIsNew(false);
+						((FileEntryPluginDialog) e.getSource()).setIsNew(false);
 					} else {
-						selNode.setUserObject(e.getFileEntryPlugin());		
+						selNode.setUserObject(e.getFileEntryPlugin());
 						treeModel.reload(selNode);
 					}
 				}
 
-                if (e.getActionType() == DialogActionType.OK || e.getActionType() == DialogActionType.CANCEL) {
-                		((FileEntryPluginDialog)e.getSource()).dispose();
+				if (e.getActionType() == DialogActionType.OK || e.getActionType() == DialogActionType.CANCEL) {
+					((FileEntryPluginDialog) e.getSource()).dispose();
 				}
 			}
 		});
@@ -794,14 +797,14 @@ class DisplayPanel extends JPanel {
 					@Override
 					public void configureFileDialogAction(FilterFileDialogDialogEventArgs e) {
 						switch (e.getActionType()) {
-							case OK:
-								DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getEntry());
-								DefaultMutableTreeNode nodeToDropOnto = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
-								treeModel.insertNodeInto(newNode, nodeToDropOnto, getNewNodeInsertPosition(e.getEntry(), nodeToDropOnto));
-								tree.expandPath(tree.getSelectionPath());
-								break;
-							default:
-								break;
+						case OK:
+							DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getEntry());
+							DefaultMutableTreeNode nodeToDropOnto = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
+							treeModel.insertNodeInto(newNode, nodeToDropOnto, getNewNodeInsertPosition(e.getEntry(), nodeToDropOnto));
+							tree.expandPath(tree.getSelectionPath());
+							break;
+						default:
+							break;
 						}
 						((ConfigureFileEntryDialog) e.getSource()).dispose();
 					}
@@ -813,32 +816,32 @@ class DisplayPanel extends JPanel {
 			}
 		}
 	}
-	
-	private int getNewNodeInsertPosition(DOFileEntryBase fileEntry, DefaultMutableTreeNode nodeToDropOnto){
+
+	private int getNewNodeInsertPosition(DOFileEntryBase fileEntry, DefaultMutableTreeNode nodeToDropOnto) {
 		int res = 0;
-		if(!isFolder(fileEntry)){
-        	for(int i = 0; i <nodeToDropOnto.getChildCount(); i++){
-        		if(!isFolder((DOFileEntryBase)((DefaultMutableTreeNode)nodeToDropOnto.getChildAt(i)).getUserObject())){
-        			res = i;
-        			break;
-        		}
-        	}  
-        	if(res == -1){
-        		res = nodeToDropOnto.getChildCount();
-        	}		
+		if (!isFolder(fileEntry)) {
+			for (int i = 0; i < nodeToDropOnto.getChildCount(); i++) {
+				if (!isFolder((DOFileEntryBase) ((DefaultMutableTreeNode) nodeToDropOnto.getChildAt(i)).getUserObject())) {
+					res = i;
+					break;
+				}
+			}
+			if (res == -1) {
+				res = nodeToDropOnto.getChildCount();
+			}
 		}
 		return res;
 	}
-    
-    private boolean isFolder(DOFileEntryBase fileEntry){
-    	boolean res = true;
-    	if(fileEntry instanceof DOFileEntryFile
-    			|| (fileEntry instanceof DOFileEntryPlugin && !((DOFileEntryPlugin)fileEntry).getPlugin().isFolder())
-    			|| (fileEntry instanceof DOFileEntryInfo)) {
-    		res = false;
-    	}
-    	return res;
-    }
+
+	private boolean isFolder(DOFileEntryBase fileEntry) {
+		boolean res = true;
+		if (fileEntry instanceof DOFileEntryFile
+				|| (fileEntry instanceof DOFileEntryPlugin && !((DOFileEntryPlugin) fileEntry).getPlugin().isFolder())
+				|| (fileEntry instanceof DOFileEntryInfo)) {
+			res = false;
+		}
+		return res;
+	}
 
 	private void renameSelectedNode() {
 		tree.startEditingAtPath(tree.getSelectionPath());
@@ -859,9 +862,9 @@ class DisplayPanel extends JPanel {
 	private void editNodeRequested() {
 		if (tree.getSelectionPath() != null && tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
 			DefaultMutableTreeNode dtn = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
-			if(dtn.getUserObject() instanceof DOFileEntryPlugin) {
-                showPluginDialog((DOFileEntryPlugin) dtn.getUserObject(), false);
-			}else if (dtn.getUserObject() instanceof DOFileEntryBase) {
+			if (dtn.getUserObject() instanceof DOFileEntryPlugin) {
+				showPluginDialog((DOFileEntryPlugin) dtn.getUserObject(), false);
+			} else if (dtn.getUserObject() instanceof DOFileEntryBase) {
 				DOFileEntryBase f = (DOFileEntryBase) dtn.getUserObject();
 
 				ConfigureFileEntryDialog d = new ConfigureFileEntryDialog(f, f.getParent(), folder.getFileType());
@@ -872,11 +875,11 @@ class DisplayPanel extends JPanel {
 						if (tree.getSelectionPath() != null && tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
 							DefaultMutableTreeNode dtn = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
 							switch (e.getActionType()) {
-								case OK:
-									dtn.setUserObject(e.getEntry());
-									break;
-								default:
-									break;
+							case OK:
+								dtn.setUserObject(e.getEntry());
+								break;
+							default:
+								break;
 							}
 							((ConfigureFileEntryDialog) e.getSource()).dispose();
 						}
@@ -951,7 +954,7 @@ class DisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, fill:500:grow, 3px", // columns
-		        "2dlu, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px, fill:p:grow, 2dlu"); // rows
+				"2dlu, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px, fill:p:grow, 2dlu"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -981,14 +984,14 @@ class DisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, p, 3px, fill:10:grow, 3px, p, 3px", // columns
-		        "p"); // rows
+				"p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
-		
+
 		builder.add(cbDisplayItems, cc.xy(2, 1));
 		builder.add(lMaxFiles, cc.xy(4, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
 		builder.add(tfMaxFiles, cc.xy(6, 1));
-		
+
 		return builder.getPanel();
 	}
 
@@ -997,7 +1000,7 @@ class DisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, p, 3px, p, 3px, p, 7px, p, 3px, r:p:grow, 3px", // columns
-		        "p"); // rows
+				"p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -1015,7 +1018,7 @@ class DisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px, p, 3px", // columns
-		        "p"); // rows
+				"p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -1035,7 +1038,7 @@ class DisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, p, 10px, p, 3px, r:p:grow, 3px", // columns
-		        "p"); // rows
+				"p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -1058,7 +1061,7 @@ class DisplayPanel extends JPanel {
 		} else {
 			cbInheritDisplayFileAs.setSelected(false);
 		}
-		
+
 		cbSortOption.setSelectedItem(new SortOptionCBItem(folder.getDisplayProperties().getSortOption(), Messages.getString("ML.SortOption." + folder.getDisplayProperties().getSortOption().toString())));
 
 		FileDisplayProperties fdp = folder.getDisplayProperties();
@@ -1124,7 +1127,7 @@ class DisplayPanel extends JPanel {
 			rbDisplayItemAsFile.setVisible(false);
 		} else {
 			rbDisplayIemAsFolder.setVisible(true);
-			rbDisplayItemAsFile.setVisible(true);			
+			rbDisplayItemAsFile.setVisible(true);
 		}
 	}
 
@@ -1187,8 +1190,8 @@ class DisplayPanel extends JPanel {
 								miEdit.setEnabled(true);
 							} else if (node.getUserObject() instanceof DOFileEntryPlugin) {
 								mAdd.setVisible(false);
-								if(((DOFileEntryPlugin)node.getUserObject()).getPlugin().getConfigurationPanel() == null){
-									miEdit.setEnabled(false);									
+								if (((DOFileEntryPlugin) node.getUserObject()).getPlugin().getConfigurationPanel() == null) {
+									miEdit.setEnabled(false);
 								} else {
 									miEdit.setEnabled(true);
 								}
@@ -1203,7 +1206,7 @@ class DisplayPanel extends JPanel {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					if (tree.getSelectionPath() != null && tree.getSelectionPath().getLastPathComponent() != null
-					        && tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
+							&& tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
 						DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
 						if (selNode != null) {
 							if (e.getKeyCode() == (KeyEvent.VK_DELETE | KeyEvent.VK_D)) {
@@ -1240,12 +1243,12 @@ class DisplayPanel extends JPanel {
 			int nbMissing = 0;
 			for (int i = 0; i < folder.getChildren().size(); i++) {
 				DOFileEntryBase currFile = folder.getChildren().get(i);
-				//don't show unavailable plugins
-				if(currFile instanceof DOFileEntryPlugin && (((DOFileEntryPlugin)currFile).getPlugin() == null || !((DOFileEntryPlugin)currFile).getPlugin().isInstanceAvailable())){
+				// don't show unavailable plugins
+				if (currFile instanceof DOFileEntryPlugin && (((DOFileEntryPlugin) currFile).getPlugin() == null || !((DOFileEntryPlugin) currFile).getPlugin().isInstanceAvailable())) {
 					nbMissing++;
 					continue;
 				}
-				
+
 				DefaultMutableTreeNode newFolderNode = new DefaultMutableTreeNode(currFile);
 				treeModel.insertNodeInto(newFolderNode, folderNode, currFile.getPositionInParent() - nbMissing);
 				if (currFile instanceof DOFileEntryFolder) {
@@ -1260,7 +1263,7 @@ class DisplayPanel extends JPanel {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (tree.getSelectionPath() != null && tree.getSelectionPath().getLastPathComponent() != null
-			        && tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
+					&& tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
 				if (currentNode != null) {
 					if (e.getKeyCode() == 127) { // delete

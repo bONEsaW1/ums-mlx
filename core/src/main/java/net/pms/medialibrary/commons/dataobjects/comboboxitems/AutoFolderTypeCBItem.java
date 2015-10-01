@@ -23,12 +23,12 @@ import net.pms.medialibrary.commons.enumarations.AutoFolderType;
 public class AutoFolderTypeCBItem implements Comparable<AutoFolderTypeCBItem> {
 	private AutoFolderType autoFolderType;
 	private String displayName;
-	
-	public AutoFolderTypeCBItem(){
+
+	public AutoFolderTypeCBItem() {
 		this(AutoFolderType.UNKNOWN, "");
 	}
-	
-	public AutoFolderTypeCBItem(AutoFolderType autoFolderType, String displayName){
+
+	public AutoFolderTypeCBItem(AutoFolderType autoFolderType, String displayName) {
 		this.setAutoFolderType(autoFolderType);
 		this.setDisplayName(displayName);
 	}
@@ -40,7 +40,7 @@ public class AutoFolderTypeCBItem implements Comparable<AutoFolderTypeCBItem> {
 	public String getDisplayName() {
 		return displayName;
 	}
-	
+
 	public void setAutoFolderType(AutoFolderType autoFolderType) {
 		this.autoFolderType = autoFolderType;
 	}
@@ -48,35 +48,35 @@ public class AutoFolderTypeCBItem implements Comparable<AutoFolderTypeCBItem> {
 	public AutoFolderType getAutoFolderType() {
 		return autoFolderType;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDisplayName();
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(!(o instanceof AutoFolderTypeCBItem)){
+	public boolean equals(Object o) {
+		if (!(o instanceof AutoFolderTypeCBItem)) {
 			return false;
 		}
 
-		AutoFolderTypeCBItem compObj = (AutoFolderTypeCBItem)o;
-		if(getDisplayName() == compObj.getDisplayName()
-			&& getAutoFolderType() == compObj.getAutoFolderType()){
+		AutoFolderTypeCBItem compObj = (AutoFolderTypeCBItem) o;
+		if (getDisplayName() == compObj.getDisplayName()
+				&& getAutoFolderType() == compObj.getAutoFolderType()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + getDisplayName().hashCode();
 		hashCode *= 24 + getAutoFolderType().hashCode();
 		return hashCode;
 	}
 
 	@Override
-    public int compareTo(AutoFolderTypeCBItem o) {
-	    return getDisplayName().compareTo(o.getDisplayName());
-    }
+	public int compareTo(AutoFolderTypeCBItem o) {
+		return getDisplayName().compareTo(o.getDisplayName());
+	}
 }

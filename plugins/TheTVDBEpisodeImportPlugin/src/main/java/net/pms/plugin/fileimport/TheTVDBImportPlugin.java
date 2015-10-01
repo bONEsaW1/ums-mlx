@@ -36,176 +36,176 @@ import net.pms.plugins.FileImportPlugin;
  */
 public class TheTVDBImportPlugin implements FileImportPlugin {
 
-    private static final Logger logger = LoggerFactory.getLogger(TheTVDBImportPlugin.class);
-    private TheTVDBApi tvDB = new TheTVDBApi("D19EF2AFF971007D");
-    /**
-     * The found episode object
-     */
-    private Episode currentEpisode;
-    private Series currentSeries;
-    private String cover;
-    
-    public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.fileimport.thetvdb.lang.messages");
-    
-    // Holds only the project version. It's used to always use the maven buildnumber in code
-    private static final PmsProperties properties = new PmsProperties();
-    static {
-        try {
-            properties.loadFromResourceFile("/thetvdbimportplugin.properties", TheTVDBImportPlugin.class);
-        } catch (IOException e) {
-        	logger.error("Could not load thetvdbimportplugin.properties", e);
-        }
-    }
-    
-    private GlobalConfigurationPanel pGlobalConfiguration;
-    
-    // The global configuration is shared amongst all plugin instances.
-    private static final GlobalConfiguration globalConfig;
+	private static final Logger logger = LoggerFactory.getLogger(TheTVDBImportPlugin.class);
+	private TheTVDBApi tvDB = new TheTVDBApi("D19EF2AFF971007D");
+	/**
+	 * The found episode object
+	 */
+	private Episode currentEpisode;
+	private Series currentSeries;
+	private String cover;
 
-    static {
-        globalConfig = new GlobalConfiguration();
-        try {
-            globalConfig.load();
-        } catch (IOException e) {
-        	logger.error("Failed to load global configuration", e);
-        }
-    }
+	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.fileimport.thetvdb.lang.messages");
 
-    /**
-     * Available tags.
-     */
-    private enum Tag {
-    	EpisodeNumber,
-    	SeasonNumber,
-    	FirstAired,
-    	GuestStars,
-        Writers,
-    	Runtime,
-    	Network,
-    	SeriesName
-    }
+	// Holds only the project version. It's used to always use the maven buildnumber in code
+	private static final PmsProperties properties = new PmsProperties();
+	static {
+		try {
+			properties.loadFromResourceFile("/thetvdbimportplugin.properties", TheTVDBImportPlugin.class);
+		} catch (IOException e) {
+			logger.error("Could not load thetvdbimportplugin.properties", e);
+		}
+	}
 
-    public void importFile(String title, String filePath) throws FileImportException {
-        currentSeries = null;
-        currentEpisode = null;
-        cover = null;
+	private GlobalConfigurationPanel pGlobalConfiguration;
 
-        logDebug("importing TheTVDB episode with file: " + filePath);
+	// The global configuration is shared amongst all plugin instances.
+	private static final GlobalConfiguration globalConfig;
 
-        Banners banners;
-        boolean parseOk = true;
-        EpisodeFileParser fileParser = new EpisodeFileParser(filePath);
-        EpisodeFile fileObg = new EpisodeFile();
-        try {
-            fileObg = fileParser.parse();
-        } catch (EpisodeFileParserException ex) {
-            parseOk = false;
-        }
+	static {
+		globalConfig = new GlobalConfiguration();
+		try {
+			globalConfig.load();
+		} catch (IOException e) {
+			logger.error("Failed to load global configuration", e);
+		}
+	}
 
-        logDebug("Got season '" + fileObg.getSeason() + "'");
-        logDebug("Got episode '" + fileObg.getEpisode() + "'");
+	/**
+	 * Available tags.
+	 */
+	private enum Tag {
+		EpisodeNumber,
+		SeasonNumber,
+		FirstAired,
+		GuestStars,
+		Writers,
+		Runtime,
+		Network,
+		SeriesName
+	}
 
-        if (parseOk) {
-            logDebug("Search TVDB for series '" + fileObg.getSeries() + "'");
-            List<Series> series = tvDB.searchSeries(fileObg.getSeries(), globalConfig.getImportLanguage());
-            if (series != null && series.size() > 0) {
-                //we've found at least one result
+	public void importFile(String title, String filePath) throws FileImportException {
+		currentSeries = null;
+		currentEpisode = null;
+		cover = null;
 
-                //use the first one
-                currentSeries = tvDB.getSeries(series.get(0).getId(), globalConfig.getImportLanguage());
+		logDebug("importing TheTVDB episode with file: " + filePath);
 
-                //log the results received
-                logInfo("Series matched for '" + fileObg.getSeries() + "' on TvDB has imdbDb='" + currentSeries.getImdbId() + "', name='" + currentSeries.getSeriesName() + "'.");
-                currentEpisode = tvDB.getEpisode(currentSeries.getId(), fileObg.getSeason(), fileObg.getEpisode(), globalConfig.getImportLanguage());
+		Banners banners;
+		boolean parseOk = true;
+		EpisodeFileParser fileParser = new EpisodeFileParser(filePath);
+		EpisodeFile fileObg = new EpisodeFile();
+		try {
+			fileObg = fileParser.parse();
+		} catch (EpisodeFileParserException ex) {
+			parseOk = false;
+		}
 
-                if (currentEpisode != null) {
-                    //log the results received
-                    logInfo("Episode matched for series '" + currentSeries.getSeriesName() + "' Title='" + currentEpisode.getEpisodeName() + "'");
-                }
+		logDebug("Got season '" + fileObg.getSeason() + "'");
+		logDebug("Got episode '" + fileObg.getEpisode() + "'");
 
-                // Find the most suitable cover
-                banners = tvDB.getBanners(series.get(0).getId());
-                if (!banners.getSeasonList().isEmpty()) {
-                    for (Banner banner : banners.getSeasonList()) {
-                        if ((banner.getSeason() == fileObg.getSeason()) && (banner.getBannerType2() == BannerType.Season)) {
-                            cover = banner.getUrl();
-                            break;
-                        }
-                    }
-                } else {
-                    cover = banners.getPosterList().get(0).getUrl();
-                }
-                if (cover == null) {
-                    cover = currentSeries.getPoster();
-                }
-                logInfo("Using cover from " + cover);
+		if (parseOk) {
+			logDebug("Search TVDB for series '" + fileObg.getSeries() + "'");
+			List<Series> series = tvDB.searchSeries(fileObg.getSeries(), globalConfig.getImportLanguage());
+			if (series != null && series.size() > 0) {
+				// we've found at least one result
 
-                if (series.size() > 1) {
-                    String seriesStr = "Other (not considered) matches are ";
-                    for (int i = 1; i < series.size(); i++) {
-                        seriesStr += String.format("id=%s, name='%s';", series.get(i).getId(), series.get(i).getSeriesName());
-                    }
-                    seriesStr = seriesStr.substring(0, seriesStr.length() - 2);
-                    logInfo(seriesStr);
-                }
-            } else {
-                throw new FileImportException(String.format("No TV Episode information found for title='%s'", title));
-            }
-        } else {
-            throw new FileImportException(String.format("Unable to parse TV Episode information from file '%s'", filePath));
-        }
-    }
+				// use the first one
+				currentSeries = tvDB.getSeries(series.get(0).getId(), globalConfig.getImportLanguage());
 
-    @Override
-    public void importFileById(String id) throws FileImportException {
-        currentSeries = null;
-        currentEpisode = null;
+				// log the results received
+				logInfo("Series matched for '" + fileObg.getSeries() + "' on TvDB has imdbDb='" + currentSeries.getImdbId() + "', name='" + currentSeries.getSeriesName() + "'.");
+				currentEpisode = tvDB.getEpisode(currentSeries.getId(), fileObg.getSeason(), fileObg.getEpisode(), globalConfig.getImportLanguage());
 
-        currentEpisode = tvDB.getEpisodeById(id, globalConfig.getImportLanguage());
-        currentSeries = tvDB.getSeries(currentEpisode.getSeriesId(), globalConfig.getImportLanguage());
-    }
+				if (currentEpisode != null) {
+					// log the results received
+					logInfo("Episode matched for series '" + currentSeries.getSeriesName() + "' Title='" + currentEpisode.getEpisodeName() + "'");
+				}
 
-    @Override
-    public boolean isImportByIdPossible() {
-        return true;
-    }
+				// Find the most suitable cover
+				banners = tvDB.getBanners(series.get(0).getId());
+				if (!banners.getSeasonList().isEmpty()) {
+					for (Banner banner : banners.getSeasonList()) {
+						if ((banner.getSeason() == fileObg.getSeason()) && (banner.getBannerType2() == BannerType.Season)) {
+							cover = banner.getUrl();
+							break;
+						}
+					}
+				} else {
+					cover = banners.getPosterList().get(0).getUrl();
+				}
+				if (cover == null) {
+					cover = currentSeries.getPoster();
+				}
+				logInfo("Using cover from " + cover);
 
-    @Override
-    public boolean isSearchForFilePossible() {
-        return false;
-    }
+				if (series.size() > 1) {
+					String seriesStr = "Other (not considered) matches are ";
+					for (int i = 1; i < series.size(); i++) {
+						seriesStr += String.format("id=%s, name='%s';", series.get(i).getId(), series.get(i).getSeriesName());
+					}
+					seriesStr = seriesStr.substring(0, seriesStr.length() - 2);
+					logInfo(seriesStr);
+				}
+			} else {
+				throw new FileImportException(String.format("No TV Episode information found for title='%s'", title));
+			}
+		} else {
+			throw new FileImportException(String.format("Unable to parse TV Episode information from file '%s'", filePath));
+		}
+	}
 
-    @Override
-    public List<Object> searchForFile(String name) {
-        List<Object> res = new ArrayList<Object>();
-        return res;
-    }
+	@Override
+	public void importFileById(String id) throws FileImportException {
+		currentSeries = null;
+		currentEpisode = null;
 
-    @Override
-    public void importFileBySearchObject(Object searchObject) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+		currentEpisode = tvDB.getEpisodeById(id, globalConfig.getImportLanguage());
+		currentSeries = tvDB.getSeries(currentEpisode.getSeriesId(), globalConfig.getImportLanguage());
+	}
 
-    @Override
-    public List<FileProperty> getSupportedFileProperties() {
-        //add all supported properties
-        List<FileProperty> res = new ArrayList<FileProperty>();
-        res.add(FileProperty.VIDEO_COVERURL);
-        res.add(FileProperty.VIDEO_DIRECTOR);
-        res.add(FileProperty.VIDEO_GENRES);
-        res.add(FileProperty.VIDEO_IMDBID);
-        res.add(FileProperty.VIDEO_OVERVIEW);
-        res.add(FileProperty.VIDEO_RATINGPERCENT);
-        res.add(FileProperty.VIDEO_NAME);
-        res.add(FileProperty.VIDEO_SORTNAME);
-        res.add(FileProperty.VIDEO_YEAR);
-        return res;
-    }
+	@Override
+	public boolean isImportByIdPossible() {
+		return true;
+	}
 
-    @Override
-    public Object getFileProperty(FileProperty property) {
-        Object res = null;
-        // return the proper object for every supported file property
+	@Override
+	public boolean isSearchForFilePossible() {
+		return false;
+	}
+
+	@Override
+	public List<Object> searchForFile(String name) {
+		List<Object> res = new ArrayList<Object>();
+		return res;
+	}
+
+	@Override
+	public void importFileBySearchObject(Object searchObject) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public List<FileProperty> getSupportedFileProperties() {
+		// add all supported properties
+		List<FileProperty> res = new ArrayList<FileProperty>();
+		res.add(FileProperty.VIDEO_COVERURL);
+		res.add(FileProperty.VIDEO_DIRECTOR);
+		res.add(FileProperty.VIDEO_GENRES);
+		res.add(FileProperty.VIDEO_IMDBID);
+		res.add(FileProperty.VIDEO_OVERVIEW);
+		res.add(FileProperty.VIDEO_RATINGPERCENT);
+		res.add(FileProperty.VIDEO_NAME);
+		res.add(FileProperty.VIDEO_SORTNAME);
+		res.add(FileProperty.VIDEO_YEAR);
+		return res;
+	}
+
+	@Override
+	public Object getFileProperty(FileProperty property) {
+		Object res = null;
+		// return the proper object for every supported file property
 		switch (property) {
 		case VIDEO_COVERURL:
 			res = cover;
@@ -252,107 +252,107 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 			break;
 		}
 
-        return res;
-    }
+		return res;
+	}
 
-    @Override
-    public List<String> getSupportedTags(FileType fileType) {
-        List<String> res = new ArrayList<String>();
-        for (Tag t : Tag.values()) {
-            res.add(t.toString());
-        }
+	@Override
+	public List<String> getSupportedTags(FileType fileType) {
+		List<String> res = new ArrayList<String>();
+		for (Tag t : Tag.values()) {
+			res.add(t.toString());
+		}
 
-        return res;
-    }
+		return res;
+	}
 
-    @Override
-    public List<String> getTags(String tagName) {
-        List<String> res = new ArrayList<String>();
-        if (tagName.equals(Tag.EpisodeNumber.toString())) {
-            res.add(String.valueOf(currentEpisode.getEpisodeNumber()));
-        } else if (tagName.equals(Tag.SeasonNumber.toString())) {
-            res.add(String.valueOf(currentEpisode.getSeasonNumber()));
-        } else if (tagName.equals(Tag.FirstAired.toString())) {
-            res.add(String.valueOf(currentEpisode.getFirstAired()));
-        } else if (tagName.equals(Tag.GuestStars.toString())) {
-            res.addAll(currentEpisode.getGuestStars());
-        } else if (tagName.equals(Tag.Writers.toString())) {
-            res.addAll(currentEpisode.getWriters());
-        } else if (tagName.equals(Tag.Runtime.toString())) {
-            res.add(String.valueOf(currentSeries.getRuntime()));
-        } else if (tagName.equals(Tag.Network.toString())) {
-            res.add(String.valueOf(currentSeries.getNetwork()));
-        } else if (tagName.equals(Tag.SeriesName.toString())) {
-            res.add(String.valueOf(currentSeries.getSeriesName()));
-        }
-        
-        return res;
-    }
+	@Override
+	public List<String> getTags(String tagName) {
+		List<String> res = new ArrayList<String>();
+		if (tagName.equals(Tag.EpisodeNumber.toString())) {
+			res.add(String.valueOf(currentEpisode.getEpisodeNumber()));
+		} else if (tagName.equals(Tag.SeasonNumber.toString())) {
+			res.add(String.valueOf(currentEpisode.getSeasonNumber()));
+		} else if (tagName.equals(Tag.FirstAired.toString())) {
+			res.add(String.valueOf(currentEpisode.getFirstAired()));
+		} else if (tagName.equals(Tag.GuestStars.toString())) {
+			res.addAll(currentEpisode.getGuestStars());
+		} else if (tagName.equals(Tag.Writers.toString())) {
+			res.addAll(currentEpisode.getWriters());
+		} else if (tagName.equals(Tag.Runtime.toString())) {
+			res.add(String.valueOf(currentSeries.getRuntime()));
+		} else if (tagName.equals(Tag.Network.toString())) {
+			res.add(String.valueOf(currentSeries.getNetwork()));
+		} else if (tagName.equals(Tag.SeriesName.toString())) {
+			res.add(String.valueOf(currentSeries.getSeriesName()));
+		}
 
-    @Override
-    public List<FileType> getSupportedFileTypes() {
-        return Arrays.asList(FileType.VIDEO);
-    }
+		return res;
+	}
 
-    public int getMinPollingIntervalMs() {
-        return 1000;
-    }
+	@Override
+	public List<FileType> getSupportedFileTypes() {
+		return Arrays.asList(FileType.VIDEO);
+	}
 
-    public String getName() {
-        return "TheTVDB";
-    }
+	public int getMinPollingIntervalMs() {
+		return 1000;
+	}
 
-    @Override
-    public String getVersion() {
-        return properties.get("project.version");
-    }
+	public String getName() {
+		return "TheTVDB";
+	}
 
-    @Override
-    public Icon getPluginIcon() {
-        return new ImageIcon(getClass().getResource("/thetvdb-32.png"));
-    }
+	@Override
+	public String getVersion() {
+		return properties.get("project.version");
+	}
 
-    @Override
-    public String getShortDescription() {
-        return messages.getString("TheTVDBEpisodeImportPlugin.ShortDescription");
-    }
+	@Override
+	public Icon getPluginIcon() {
+		return new ImageIcon(getClass().getResource("/thetvdb-32.png"));
+	}
 
-    @Override
-    public String getLongDescription() {
-        return messages.getString("TheTVDBEpisodeImportPlugin.LongDescription");
-    }
+	@Override
+	public String getShortDescription() {
+		return messages.getString("TheTVDBEpisodeImportPlugin.ShortDescription");
+	}
 
-    @Override
-    public String getUpdateUrl() {
-        return null;
-    }
+	@Override
+	public String getLongDescription() {
+		return messages.getString("TheTVDBEpisodeImportPlugin.LongDescription");
+	}
 
-    @Override
-    public String getWebSiteUrl() {
-        return null;
-    }
+	@Override
+	public String getUpdateUrl() {
+		return null;
+	}
 
-    @Override
-    public void initialize() {
-    }
+	@Override
+	public String getWebSiteUrl() {
+		return null;
+	}
 
-    @Override
-    public void shutdown() {
-    }
+	@Override
+	public void initialize() {
+	}
 
-    @Override
-    public JComponent getGlobalConfigurationPanel() {
-        if (pGlobalConfiguration == null) {
-            pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
-        }
-        pGlobalConfiguration.applyConfig();
+	@Override
+	public void shutdown() {
+	}
 
-        return pGlobalConfiguration;
-    }
+	@Override
+	public JComponent getGlobalConfigurationPanel() {
+		if (pGlobalConfiguration == null) {
+			pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
+		}
+		pGlobalConfiguration.applyConfig();
 
-    @Override
-    public void saveConfiguration() {
-		if(pGlobalConfiguration != null) {
+		return pGlobalConfiguration;
+	}
+
+	@Override
+	public void saveConfiguration() {
+		if (pGlobalConfiguration != null) {
 			pGlobalConfiguration.updateConfiguration(globalConfig);
 			try {
 				globalConfig.save();
@@ -360,23 +360,23 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 				logger.error("Failed to save global configuration", e);
 			}
 		}
-    }
+	}
 
-    @Override
-    public boolean isPluginAvailable() {
-        return true;
-    }
+	@Override
+	public boolean isPluginAvailable() {
+		return true;
+	}
 
-    private void logDebug(String message) {
-        if (logger.isDebugEnabled()) {
-        	logger.debug(message);
-        }
+	private void logDebug(String message) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(message);
+		}
 
-    }
+	}
 
-    private void logInfo(String message) {
-        if (logger.isInfoEnabled()) {
-        	logger.info(message);
-        }
-    }
+	private void logInfo(String message) {
+		if (logger.isInfoEnabled()) {
+			logger.info(message);
+		}
+	}
 }

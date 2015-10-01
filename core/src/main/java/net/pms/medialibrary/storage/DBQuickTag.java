@@ -75,7 +75,7 @@ class DBQuickTag extends DBBase {
 
 	public List<DOQuickTagEntry> getQuickTags() throws StorageException {
 		List<DOQuickTagEntry> res = new ArrayList<DOQuickTagEntry>();
-		
+
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -85,11 +85,11 @@ class DBQuickTag extends DBBase {
 
 			// delete all existing quick tags
 			stmt = conn.prepareStatement("SELECT NAME, TAGNAME, TAGVALUE, VIRTUALKEY, KEYCOMBINATION"
-										 + " FROM QUICKTAG"
-										 + " ORDER BY NAME ASC");
+					+ " FROM QUICKTAG"
+					+ " ORDER BY NAME ASC");
 			rs = stmt.executeQuery();
-			while(rs.next()) {
-				res.add(new DOQuickTagEntry(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4), 
+			while (rs.next()) {
+				res.add(new DOQuickTagEntry(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4),
 						KeyCombination.valueOf(rs.getString(5))));
 			}
 		} catch (SQLException ex) {

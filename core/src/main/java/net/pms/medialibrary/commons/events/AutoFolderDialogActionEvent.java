@@ -23,7 +23,7 @@ import java.util.EventObject;
 import net.pms.medialibrary.commons.enumarations.DialogActionType;
 import net.pms.medialibrary.commons.enumarations.AutoFolderType;
 
-public class AutoFolderDialogActionEvent extends EventObject{	
+public class AutoFolderDialogActionEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
 	private AutoFolderType autoFolderType;
 	private boolean isAscending;

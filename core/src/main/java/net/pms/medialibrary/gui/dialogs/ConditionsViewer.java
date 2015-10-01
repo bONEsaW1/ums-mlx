@@ -38,70 +38,71 @@ import net.pms.medialibrary.commons.enumarations.ConditionType;
 import net.pms.medialibrary.commons.enumarations.ConditionUnit;
 import net.pms.medialibrary.commons.helpers.FolderHelper;
 
-public class ConditionsViewer extends JDialog{
-    private static final long serialVersionUID = 4045025554595034476L;
+public class ConditionsViewer extends JDialog {
+	private static final long serialVersionUID = 4045025554595034476L;
 
-    public ConditionsViewer(DOFilter filter, String folderName, Dialog owner){
-    	super(owner, true);
-    	setTitle(String.format(Messages.getString("ML.ConditionsViewer.Title"), folderName));
-    	setResizable(false);
-    	
+	public ConditionsViewer(DOFilter filter, String folderName, Dialog owner) {
+		super(owner, true);
+		setTitle(String.format(Messages.getString("ML.ConditionsViewer.Title"), folderName));
+		setResizable(false);
+
 		PanelBuilder builder;
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("5px, r:p, 20px, p, 20px, p, 20px, p, 5px", // columns
-		        "10px, p, p, p, p, p, p, p, p, p, p, " +
-		        "p, p, p, p, p, p, p, p, p, p, " +
-		        "p, p, p, p, p, p, p, p, p, p, " +
-		        "p, p, p, p, p, p, p, p, p, p, 5px, p, 2px, p, p"); // rows
+				"10px, p, p, p, p, p, p, p, p, p, p, " +
+						"p, p, p, p, p, p, p, p, p, p, " +
+						"p, p, p, p, p, p, p, p, p, p, " +
+						"p, p, p, p, p, p, p, p, p, p, 5px, p, 2px, p, p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
-    	
-		//add conditions
+
+		// add conditions
 		int i = 2;
-		for(DOCondition c : filter.getConditions()){
+		for (DOCondition c : filter.getConditions()) {
 			String coString;
-			if(c.getType() == ConditionType.FILE_CONTAINS_TAG){
-				//add the tag name if required
-				coString = String.format("'%s' %s",  c.getTagName(), Messages.getString("ML.Condition.Operator.Contains." + c.getOperator().toString()));
-			} else if(c.getType().toString().contains("_CONTAINS_")) {
-				//do a certain mapping for some condition types
+			if (c.getType() == ConditionType.FILE_CONTAINS_TAG) {
+				// add the tag name if required
+				coString = String.format("'%s' %s", c.getTagName(), Messages.getString("ML.Condition.Operator.Contains." + c.getOperator().toString()));
+			} else if (c.getType().toString().contains("_CONTAINS_")) {
+				// do a certain mapping for some condition types
 				coString = Messages.getString("ML.Condition.Operator.Contains." + c.getOperator().toString());
 			} else {
-				//normal behavior
+				// normal behavior
 				coString = Messages.getString("ML.Condition.Operator." + c.getOperator().toString());
 			}
-			
-			builder.addLabel(c.getName() , cc.xy(2, i));
+
+			builder.addLabel(c.getName(), cc.xy(2, i));
 			builder.addLabel(FolderHelper.getInstance().getConditionTypeCBItem(c.getType()).getDisplayName(), cc.xy(4, i));
 			builder.addLabel(coString, cc.xy(6, i));
 			String cStr = c.getCondition();
-			if(c.getUnit() != ConditionUnit.UNKNOWN){
+			if (c.getUnit() != ConditionUnit.UNKNOWN) {
 				cStr += " " + FolderHelper.getInstance().getConditionUnitCBItem(c.getUnit()).getDisplayName();
 			}
 			builder.addLabel(cStr, cc.xy(8, i));
 			i++;
 		}
-		
-		//add equation
+
+		// add equation
 		JTextField tfEq = new JTextField(filter.getEquation());
 		tfEq.setEditable(false);
 		builder.add(tfEq, cc.xyw(2, 43, 7));
-		
-		//add button
+
+		// add button
 		JButton bOk = new JButton(Messages.getString("ML.ConditionsViewer.bOk"));
-		if(bOk.getPreferredSize().width < 60) bOk.setPreferredSize(new Dimension(60, bOk.getPreferredSize().height));
-		bOk.addActionListener(new ActionListener() {			
+		if (bOk.getPreferredSize().width < 60)
+			bOk.setPreferredSize(new Dimension(60, bOk.getPreferredSize().height));
+		bOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		
+
 		builder.addSeparator("", cc.xyw(1, 45, 9));
-		builder.add(bOk , cc.xyw(1, 46, 9, CellConstraints.CENTER, CellConstraints.FILL));
-		
+		builder.add(bOk, cc.xyw(1, 46, 9, CellConstraints.CENTER, CellConstraints.FILL));
+
 		getContentPane().add(builder.getPanel());
 		pack();
-    }
+	}
 }

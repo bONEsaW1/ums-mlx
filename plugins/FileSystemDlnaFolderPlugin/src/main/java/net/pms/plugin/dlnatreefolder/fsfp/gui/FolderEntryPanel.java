@@ -37,16 +37,15 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * A FolderEntryPanel represents one shared folder showing up
- * with a text field and a button to browse for a folder
- * and one to delete the shared folder
+ * A FolderEntryPanel represents one shared folder showing up with a text field and a button to browse for a folder and
+ * one to delete the shared folder
  */
 public class FolderEntryPanel extends JPanel {
-	private static final long    serialVersionUID = 436739054166843859L;
-	private JTextField           tfFolderPath;
-	private JButton              bBrowse;
-	private JButton              bRemove;
-	private List<ActionListener> removeListeners  = new ArrayList<ActionListener>();
+	private static final long serialVersionUID = 436739054166843859L;
+	private JTextField tfFolderPath;
+	private JButton bBrowse;
+	private JButton bRemove;
+	private List<ActionListener> removeListeners = new ArrayList<ActionListener>();
 
 	/**
 	 * Instantiates a new folder entry panel with an empty folder path
@@ -118,8 +117,7 @@ public class FolderEntryPanel extends JPanel {
 	}
 
 	/**
-	 * Adds the action listener which will be notified
-	 * when a shared folder requests deletion
+	 * Adds the action listener which will be notified when a shared folder requests deletion
 	 *
 	 * @param l the listener
 	 */
@@ -144,7 +142,7 @@ public class FolderEntryPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("p, 3px, fill:10:grow, 3px, p, 3px, p", // columns
-		        "p"); // raws
+				"p"); // raws
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 

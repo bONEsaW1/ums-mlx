@@ -31,7 +31,7 @@ public class iPhotoFolderPlugin implements DlnaTreeFolderPlugin {
 	private static final Logger logger = LoggerFactory.getLogger(iPhotoFolderPlugin.class);
 	private Properties properties = new Properties();
 	protected static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("net.pms.plugin.dlnatreefolder.iphoto.lang.messages");
-	
+
 	private String rootFolderName = "root";
 
 	public iPhotoFolderPlugin() {
@@ -47,75 +47,75 @@ public class iPhotoFolderPlugin implements DlnaTreeFolderPlugin {
 	public DLNAResource getDLNAResource() {
 		VirtualFolder iPhotoVirtualFolder = null;
 
-			InputStream inputStream = null;
+		InputStream inputStream = null;
 
-			try {
-				// This command will show the XML files for recently opened iPhoto databases
-				Process process = Runtime.getRuntime().exec("defaults read com.apple.iApps iPhotoRecentDatabases");
-				inputStream = process.getInputStream();
-				List<String> lines = IOUtils.readLines(inputStream);
-				logger.debug("iPhotoRecentDatabases: {}", lines);
+		try {
+			// This command will show the XML files for recently opened iPhoto databases
+			Process process = Runtime.getRuntime().exec("defaults read com.apple.iApps iPhotoRecentDatabases");
+			inputStream = process.getInputStream();
+			List<String> lines = IOUtils.readLines(inputStream);
+			logger.debug("iPhotoRecentDatabases: {}", lines);
 
-				if (lines.size() >= 2) {
-					// we want the 2nd line
-					String line = lines.get(1);
+			if (lines.size() >= 2) {
+				// we want the 2nd line
+				String line = lines.get(1);
 
-					// Remove extra spaces
-					line = line.trim();
+				// Remove extra spaces
+				line = line.trim();
 
-					// Remove quotes
-					line = line.substring(1, line.length() - 1);
+				// Remove quotes
+				line = line.substring(1, line.length() - 1);
 
-					URI uri = new URI(line);
-					URL url = uri.toURL();
-					File file = FileUtils.toFile(url);
-					logger.debug("Resolved URL to file: {} -> {}", url, file.getAbsolutePath());
+				URI uri = new URI(line);
+				URL url = uri.toURL();
+				File file = FileUtils.toFile(url);
+				logger.debug("Resolved URL to file: {} -> {}", url, file.getAbsolutePath());
 
-					// Load the properties XML file.
-					Map<String, Object> iPhotoLib = Plist.load(file);
+				// Load the properties XML file.
+				Map<String, Object> iPhotoLib = Plist.load(file);
 
-					// The list of all photos
-					Map<?, ?> photoList = (Map<?, ?>) iPhotoLib.get("Master Image List");
+				// The list of all photos
+				Map<?, ?> photoList = (Map<?, ?>) iPhotoLib.get("Master Image List");
 
-					// The list of events (rolls)
-					@SuppressWarnings("unchecked")
-					List<Map<?, ?>> listOfRolls = (List<Map<?, ?>>) iPhotoLib.get("List of Rolls");
+				// The list of events (rolls)
+				@SuppressWarnings("unchecked")
+				List<Map<?, ?>> listOfRolls = (List<Map<?, ?>>) iPhotoLib.get("List of Rolls");
 
-					iPhotoVirtualFolder = new VirtualFolder(rootFolderName, null);
+				iPhotoVirtualFolder = new VirtualFolder(rootFolderName, null);
 
-					for (Map<?, ?> roll : listOfRolls) {
-						Object rollName = roll.get("RollName");
+				for (Map<?, ?> roll : listOfRolls) {
+					Object rollName = roll.get("RollName");
 
-						if (rollName != null) {
-							VirtualFolder virtualFolder = new VirtualFolder(rollName.toString(), null);
+					if (rollName != null) {
+						VirtualFolder virtualFolder = new VirtualFolder(rollName.toString(), null);
 
-							// List of photos in an event (roll)
-							List<?> rollPhotos = (List<?>) roll.get("KeyList");
+						// List of photos in an event (roll)
+						List<?> rollPhotos = (List<?>) roll.get("KeyList");
 
-							for (Object photo : rollPhotos) {
-								Map<?, ?> photoProperties = (Map<?, ?>) photoList.get(photo);
+						for (Object photo : rollPhotos) {
+							Map<?, ?> photoProperties = (Map<?, ?>) photoList.get(photo);
 
-								if (photoProperties != null) {
-									Object imagePath = photoProperties.get("ImagePath");
+							if (photoProperties != null) {
+								Object imagePath = photoProperties.get("ImagePath");
 
-									if (imagePath != null) {
-										RealFile realFile = new RealFile(new File(imagePath.toString()));
-										virtualFolder.addChild(realFile);
-									}
+								if (imagePath != null) {
+									RealFile realFile = new RealFile(new File(imagePath.toString()));
+									virtualFolder.addChild(realFile);
 								}
 							}
-
-							iPhotoVirtualFolder.addChild(virtualFolder);
 						}
+
+						iPhotoVirtualFolder.addChild(virtualFolder);
 					}
-				} else {
-					logger.info("iPhoto folder not found");
 				}
-			} catch (Exception e) {
-				logger.error("Something went wrong with the iPhoto Library scan: ", e);
-			} finally {
-				IOUtils.closeQuietly(inputStream);
+			} else {
+				logger.info("iPhoto folder not found");
 			}
+		} catch (Exception e) {
+			logger.error("Something went wrong with the iPhoto Library scan: ", e);
+		} finally {
+			IOUtils.closeQuietly(inputStream);
+		}
 
 		return iPhotoVirtualFolder;
 	}
@@ -124,20 +124,20 @@ public class iPhotoFolderPlugin implements DlnaTreeFolderPlugin {
 	public String getName() {
 		return "iPhoto";
 	}
-	
+
 	@Override
-	public void setDisplayName(String name){
+	public void setDisplayName(String name) {
 		rootFolderName = name;
 	}
 
 	@Override
 	public void loadInstanceConfiguration(String configFilePath) throws IOException {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
 	public void saveInstanceConfiguration(String configFilePath) throws IOException {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
@@ -146,13 +146,13 @@ public class iPhotoFolderPlugin implements DlnaTreeFolderPlugin {
 	}
 
 	@Override
-    public boolean isInstanceAvailable() {
-	    return System.getProperty("os.name").toLowerCase().indexOf( "mac" ) >= 0;
-    }
+	public boolean isInstanceAvailable() {
+		return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
+	}
 
 	@Override
 	public boolean isPluginAvailable() {
-	    return System.getProperty("os.name").toLowerCase().indexOf( "mac" ) >= 0;
+		return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
 	}
 
 	@Override
@@ -207,7 +207,7 @@ public class iPhotoFolderPlugin implements DlnaTreeFolderPlugin {
 	public Icon getTreeNodeIcon() {
 		return new ImageIcon(getClass().getResource("/iphoto-16.png"));
 	}
-	
+
 	/**
 	 * Loads the properties from the plugin properties file
 	 */

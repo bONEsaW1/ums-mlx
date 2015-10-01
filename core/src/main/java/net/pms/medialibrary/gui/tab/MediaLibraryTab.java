@@ -45,8 +45,8 @@ public class MediaLibraryTab {
 	private DLNAViewPanel dlnaViewPanel;
 	private GeneralOptionsView generalOptionsPanel;
 	private LibraryViewPanel libraryManagerView;
-	
-	public MediaLibraryTab(){
+
+	public MediaLibraryTab() {
 		init();
 		optionChooser.setOptionType(OptionType.GENERAL);
 	}
@@ -58,7 +58,7 @@ public class MediaLibraryTab {
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.add(optionChooser, cc.xy(2, 2));
 		builder.add(dlnaViewPanel, cc.xy(4, 2));
 		builder.add(generalOptionsPanel, cc.xy(4, 2));
@@ -66,20 +66,20 @@ public class MediaLibraryTab {
 
 		return builder.getPanel();
 	}
-	
-	private void init(){        
+
+	private void init() {
 		optionChooser = new OptionChooser();
 		optionChooser.addSelectionChangeListener(new SelectionChangeListener() {
-			
+
 			@Override
 			public void SelectionChanged(EventObject e) {
-				if(e instanceof SelectionChangeEvent){
+				if (e instanceof SelectionChangeEvent) {
 					setOptionTypeSelected(((SelectionChangeEvent) e).getOptionType());
 				}
 			}
 		});
-        dlnaViewPanel = new DLNAViewPanel();
-        dlnaViewPanel.setLibraryShowListener(new LibraryShowListener() {			
+		dlnaViewPanel = new DLNAViewPanel();
+		dlnaViewPanel.setLibraryShowListener(new LibraryShowListener() {
 			@Override
 			public void show(DOFilter filter, FileType fileType) {
 				libraryManagerView.configure(filter, fileType);
@@ -87,33 +87,33 @@ public class MediaLibraryTab {
 				optionChooser.setOptionType(OptionType.LIBRARY);
 			}
 		});
-        generalOptionsPanel = new GeneralOptionsView();
-        libraryManagerView = new LibraryViewPanel();
-        
-        setOptionTypeSelected(OptionType.GENERAL);
+		generalOptionsPanel = new GeneralOptionsView();
+		libraryManagerView = new LibraryViewPanel();
+
+		setOptionTypeSelected(OptionType.GENERAL);
 	}
-	
-	private void setOptionTypeSelected(OptionType optionType){
-		switch(optionType){
-			case GENERAL:
-				dlnaViewPanel.setVisible(false);
-				generalOptionsPanel.setVisible(true);
-				libraryManagerView.setVisible(false);
-				break;
-			case LIBRARY:
-				dlnaViewPanel.setVisible(false);
-				generalOptionsPanel.setVisible(false);
-				libraryManagerView.setVisible(true);
-				break;
-			case TREE:
-				dlnaViewPanel.setVisible(true);
-				generalOptionsPanel.setVisible(false);
-				libraryManagerView.setVisible(false);
-				break;
-			default:
-				log.warn(String.format("Unhandled option type received (%s). This should never happen!", optionType));
-				break;
+
+	private void setOptionTypeSelected(OptionType optionType) {
+		switch (optionType) {
+		case GENERAL:
+			dlnaViewPanel.setVisible(false);
+			generalOptionsPanel.setVisible(true);
+			libraryManagerView.setVisible(false);
+			break;
+		case LIBRARY:
+			dlnaViewPanel.setVisible(false);
+			generalOptionsPanel.setVisible(false);
+			libraryManagerView.setVisible(true);
+			break;
+		case TREE:
+			dlnaViewPanel.setVisible(true);
+			generalOptionsPanel.setVisible(false);
+			libraryManagerView.setVisible(false);
+			break;
+		default:
+			log.warn(String.format("Unhandled option type received (%s). This should never happen!", optionType));
+			break;
 		}
-		
+
 	}
 }

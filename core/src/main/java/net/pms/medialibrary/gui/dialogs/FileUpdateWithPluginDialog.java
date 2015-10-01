@@ -72,35 +72,34 @@ public class FileUpdateWithPluginDialog extends JDialog {
 	private JLabel lValueHeader;
 	private JList lResults;
 	private JButton bImport;
-	
+
 	private String nameValue = "";
 	private String idValue = "";
 
 	private boolean isUpdate = false;
 	private FileImportPlugin importPlugin;
-	
-	private ActionListener radioButtonActionaListener = new ActionListener() {		
+
+	private ActionListener radioButtonActionaListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			handleRadioButtonSelectionChange();
 		}
 	};
 
-	
 	public FileUpdateWithPluginDialog(DOFileInfo fileInfo) {
-		((java.awt.Frame)getOwner()).setIconImage(new ImageIcon(getClass().getResource("/resources/images/icon-16.png")).getImage());
+		((java.awt.Frame) getOwner()).setIconImage(new ImageIcon(getClass().getResource("/resources/images/icon-16.png")).getImage());
 		setTitle(String.format(Messages.getString("ML.FileUpdateWithPluginDialog.Title"), fileInfo.getFileName(true)));
 		setLayout(new GridLayout());
-		
-		if(fileInfo instanceof DOVideoFileInfo) {
-			DOVideoFileInfo videoFileInfo = (DOVideoFileInfo)fileInfo;
+
+		if (fileInfo instanceof DOVideoFileInfo) {
+			DOVideoFileInfo videoFileInfo = (DOVideoFileInfo) fileInfo;
 			idValue = videoFileInfo.getImdbId();
 			nameValue = videoFileInfo.getName();
 		}
-		
+
 		init();
 		build();
-		
+
 		rbName.setSelected(true);
 		tfValue.setText(idValue);
 		handleRadioButtonSelectionChange();
@@ -125,42 +124,43 @@ public class FileUpdateWithPluginDialog extends JDialog {
 		rbName.addActionListener(radioButtonActionaListener);
 		ButtonGroup bgImportType = new ButtonGroup();
 		bgImportType.add(rbId);
-		bgImportType.add(rbName);		
-		
+		bgImportType.add(rbName);
+
 		cbPlugins = new JComboBox();
 		tfValue = new JTextField();
 		lValueHeader = new JLabel();
 		lResults = new JList(new DefaultListModel());
 		lResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		lResults.addListSelectionListener(new ListSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				if(lResults.getSelectedValue() != null) {
+				if (lResults.getSelectedValue() != null) {
 					bImport.setEnabled(true);
 				}
 			}
 		});
-		
-		//buttons
+
+		// buttons
 		JButton bSearch = new JButton(Messages.getString("ML.FileUpdateWithPluginDialog.bSearch"));
-		if(bSearch.getPreferredSize().width < MIN_BUTTON_WIDTH) bSearch.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bSearch.getPreferredSize().height));
+		if (bSearch.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bSearch.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bSearch.getPreferredSize().height));
 		bSearch.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(tfValue.getText().equals("") || cbPlugins.getSelectedItem() == null || !(cbPlugins.getSelectedItem() instanceof FileImportPluginWrapper)) {
+				if (tfValue.getText().equals("") || cbPlugins.getSelectedItem() == null || !(cbPlugins.getSelectedItem() instanceof FileImportPluginWrapper)) {
 					return;
 				}
-				
+
 				String value = tfValue.getText();
-				FileImportPlugin plugin = ((FileImportPluginWrapper)cbPlugins.getSelectedItem()).getFileImportPlugin();
-				
+				FileImportPlugin plugin = ((FileImportPluginWrapper) cbPlugins.getSelectedItem()).getFileImportPlugin();
+
 				bImport.setEnabled(false);
-				DefaultListModel listModel = (DefaultListModel)lResults.getModel();
+				DefaultListModel listModel = (DefaultListModel) lResults.getModel();
 				listModel.removeAllElements();
-				
-				if(rbId.isSelected()) {
+
+				if (rbId.isSelected()) {
 					try {
 						setCursor(new Cursor(Cursor.WAIT_CURSOR));
 						plugin.importFileById(value);
@@ -170,42 +170,44 @@ public class FileUpdateWithPluginDialog extends JDialog {
 					} finally {
 						setCursor(Cursor.getDefaultCursor());
 					}
-				} else if(rbName.isSelected()) {
+				} else if (rbName.isSelected()) {
 					setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					List<Object> results = plugin.searchForFile(value);
-					for(int i = 0; i< results.size(); i++) {
+					for (int i = 0; i < results.size(); i++) {
 						listModel.add(0, results.get(i));
 					}
 					setCursor(Cursor.getDefaultCursor());
 				}
 			}
 		});
-		
+
 		bImport = new JButton(Messages.getString("ML.FileUpdateWithPluginDialog.bImport"));
 		bImport.setEnabled(false);
-		if(bImport.getPreferredSize().width < MIN_BUTTON_WIDTH) bImport.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bImport.getPreferredSize().height));
+		if (bImport.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bImport.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bImport.getPreferredSize().height));
 		bImport.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileImportPlugin plugin = ((FileImportPluginWrapper)cbPlugins.getSelectedItem()).getFileImportPlugin();
-				if(rbName.isSelected()) {
+				FileImportPlugin plugin = ((FileImportPluginWrapper) cbPlugins.getSelectedItem()).getFileImportPlugin();
+				if (rbName.isSelected()) {
 					try {
 						plugin.importFileBySearchObject(lResults.getSelectedValue());
-					} catch(Throwable t) {
-						//catch all calls to plugin with throwable to avoid plugins crashing pms
+					} catch (Throwable t) {
+						// catch all calls to plugin with throwable to avoid plugins crashing pms
 						log.error(String.format("Failed to query importFileBySearchObject for plugin %s", plugin.getName()), t);
 					}
 				}
 				setUpdate(true);
 				importPlugin = plugin;
-				
+
 				dispose();
 			}
 		});
 
 		JButton bCancel = new JButton(Messages.getString("ML.FileUpdateWithPluginDialog.bCancel"));
-		if(bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH) bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
+		if (bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
 		bCancel.addActionListener(new ActionListener() {
 
 			@Override
@@ -222,12 +224,12 @@ public class FileUpdateWithPluginDialog extends JDialog {
 
 	private void build() {
 		FormLayout layout = new FormLayout("5px, r:p, 5px, p, 5px, f:p:g, 5px",
-										   "5px, p, 5px, p, 5px, p, 5px, p, 5px, f:80:g, 5px, p, 5px");
+				"5px, p, 5px, p, 5px, p, 5px, p, 5px, f:80:g, 5px, p, 5px");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.addLabel(Messages.getString("ML.FileUpdateWithPluginDialog.lImportBy"), cc.xy(2, 2));
 		builder.add(rbName, cc.xy(4, 2));
 		builder.add(rbId, cc.xy(6, 2));
@@ -237,7 +239,7 @@ public class FileUpdateWithPluginDialog extends JDialog {
 
 		builder.add(lValueHeader, cc.xy(2, 6));
 		builder.add(tfValue, cc.xyw(4, 6, 3));
-		
+
 		builder.addLabel(Messages.getString("ML.FileUpdateWithPluginDialog.lResults"), cc.xyw(2, 8, 5, CellConstraints.LEFT, CellConstraints.DEFAULT));
 
 		JPanel pResults = new JPanel(new BorderLayout());
@@ -251,44 +253,44 @@ public class FileUpdateWithPluginDialog extends JDialog {
 		builder.add(spResults, cc.xyw(2, 10, 5));
 
 		builder.add(pButtons, cc.xyw(2, 12, 5));
-		
+
 		add(builder.getPanel());
 	}
-	
+
 	private void handleRadioButtonSelectionChange() {
-		if(rbId.isSelected()) {
-			//update plugins combo box
+		if (rbId.isSelected()) {
+			// update plugins combo box
 			cbPlugins.removeAllItems();
-			for(FileImportPlugin fileImportPlugin : PluginsFactory.getFileImportPlugins()) {
-				if(fileImportPlugin.isImportByIdPossible()) {
+			for (FileImportPlugin fileImportPlugin : PluginsFactory.getFileImportPlugins()) {
+				if (fileImportPlugin.isImportByIdPossible()) {
 					cbPlugins.addItem(new FileImportPluginWrapper(fileImportPlugin));
 				}
 			}
-			
-			//store current value
+
+			// store current value
 			nameValue = tfValue.getText();
-			
-			//update value
+
+			// update value
 			lValueHeader.setText(Messages.getString("ML.FileUpdateWithPluginDialog.rbId"));
 			tfValue.setText(idValue);
-		} else if(rbName.isSelected()) {
-			//update plugins combo box
+		} else if (rbName.isSelected()) {
+			// update plugins combo box
 			cbPlugins.removeAllItems();
-			for(FileImportPlugin fileImportPlugin : PluginsFactory.getFileImportPlugins()) {
-				if(fileImportPlugin.isSearchForFilePossible()) {
+			for (FileImportPlugin fileImportPlugin : PluginsFactory.getFileImportPlugins()) {
+				if (fileImportPlugin.isSearchForFilePossible()) {
 					cbPlugins.addItem(new FileImportPluginWrapper(fileImportPlugin));
 				}
 			}
-			
-			//store current value
+
+			// store current value
 			idValue = tfValue.getText();
 
-			//update value
+			// update value
 			lValueHeader.setText(Messages.getString("ML.FileUpdateWithPluginDialog.rbName"));
 			tfValue.setText(nameValue);
 		}
 	}
-	
+
 	private class FileImportPluginWrapper {
 		private FileImportPlugin fileImportPlugin;
 
@@ -303,7 +305,7 @@ public class FileUpdateWithPluginDialog extends JDialog {
 		public void setFileImportPlugin(FileImportPlugin fileImportPlugin) {
 			this.fileImportPlugin = fileImportPlugin;
 		}
-		
+
 		@Override
 		public String toString() {
 			return fileImportPlugin == null ? "" : fileImportPlugin.getName();

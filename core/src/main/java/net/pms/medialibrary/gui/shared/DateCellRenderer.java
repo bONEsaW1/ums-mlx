@@ -34,7 +34,7 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
 		if (value instanceof Date) {
 			String strDate = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(value);
 			setText(strDate);
-			if(getPreferredSize().width > table.getColumnModel().getColumn(column).getWidth()){
+			if (getPreferredSize().width > table.getColumnModel().getColumn(column).getWidth()) {
 				strDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(value);
 				setText(strDate);
 			}

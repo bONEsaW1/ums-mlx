@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class FileSearchObject {
 	private JSONObject jsonObject;
-	
+
 	public FileSearchObject(JSONObject jsonObject) {
 		setJsonObject(jsonObject);
 	}
@@ -17,29 +17,29 @@ public class FileSearchObject {
 	public void setJsonObject(JSONObject jsonObject) {
 		this.jsonObject = jsonObject;
 	}
-	
+
 	@Override
 	public String toString() {
 		String res = "";
 		try {
 			Object elem = jsonObject.get("Title");
-			if(elem != null) {
+			if (elem != null) {
 				res = elem.toString();
 			}
 		} catch (JSONException e) {
-			//do nothing
+			// do nothing
 		}
-		
+
 		try {
 			Object elem = jsonObject.get("Released");
-			if(elem != null) {
+			if (elem != null) {
 				String dStr = elem.toString();
-				if(dStr.length() > 3) {
+				if (dStr.length() > 3) {
 					res += String.format(" (%s)", dStr.substring(dStr.length() - 4, dStr.length()));
 				}
 			}
 		} catch (JSONException e) {
-			//do nothing
+			// do nothing
 		}
 		return res;
 	}

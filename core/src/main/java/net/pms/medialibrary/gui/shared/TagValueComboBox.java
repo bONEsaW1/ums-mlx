@@ -34,12 +34,12 @@ public class TagValueComboBox extends JComboBox {
 	}
 
 	public void setTagName(String tagName) {
-		if(this.tagName == null || !this.tagName.equals(tagName)) {
+		if (this.tagName == null || !this.tagName.equals(tagName)) {
 			this.tagName = tagName;
 			refreshItems();
 		}
 	}
-	
+
 	private void refreshItems() {
 		List<String> tagValues = MediaLibraryStorage.getInstance().getTagValues(tagName, true, 1);
 		setModel(new DefaultComboBoxModel(tagValues.toArray()));

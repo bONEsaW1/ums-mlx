@@ -37,7 +37,7 @@ public class LibraryWebService extends ServiceBase implements Library {
 		ILibraryManager lib;
 		if ((lib = getLibraryManager()) != null) {
 			DOFileImportTemplate fileImportTemplate = null;
-			if(useFileImportTemplate) {
+			if (useFileImportTemplate) {
 				fileImportTemplate = MediaLibraryStorage.getInstance().getFileImportTemplate(fileImportTemplateId);
 			}
 			lib.scanFolder(new DOManagedFile(false, folderPath, scanVideo, scanAudio, scanPictures, scanSubFolders, useFileImportTemplate, fileImportTemplate));

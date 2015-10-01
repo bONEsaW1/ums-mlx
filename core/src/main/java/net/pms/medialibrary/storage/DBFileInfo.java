@@ -57,94 +57,94 @@ import net.pms.notifications.types.DBEvent;
 class DBFileInfo extends DBBase {
 	private static final Logger log = LoggerFactory.getLogger(DBFileInfo.class);
 	protected static final String GENRE_KEY = "_X-?__GENRE__%*Y_";
-	
-	DBFileInfo(JdbcConnectionPool cp){
+
+	DBFileInfo(JdbcConnectionPool cp) {
 		super(cp);
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Package Methods
 	 * 
 	 *********************************************/
 
-	List<String> getExistingTags(FileType fileType) throws StorageException {		
+	List<String> getExistingTags(FileType fileType) throws StorageException {
 		List<String> retVal = new ArrayList<String>();
 
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
-		//Get date last updated
+
+		// Get date last updated
 		try {
 			conn = cp.getConnection();
-			
+
 			stmt = conn.prepareStatement("SELECT DISTINCT FILETAGS.KEY"
-						+ " FROM FILETAGS"
-						+ " LEFT JOIN FILE ON FILETAGS.FILEID = FILE.ID"
-						+ " WHERE FILE.TYPE = ? AND FILETAGS.KEY != ?"
-						+ " ORDER BY KEY ASC");
+					+ " FROM FILETAGS"
+					+ " LEFT JOIN FILE ON FILETAGS.FILEID = FILE.ID"
+					+ " WHERE FILE.TYPE = ? AND FILETAGS.KEY != ?"
+					+ " ORDER BY KEY ASC");
 			stmt.setString(1, fileType.toString());
 			stmt.setString(2, GENRE_KEY);
 			rs = stmt.executeQuery();
-			while(rs.next()) {
-				retVal.add(rs.getString(1));				
+			while (rs.next()) {
+				retVal.add(rs.getString(1));
 			}
 		} catch (SQLException ex) {
 			throw new StorageException("Failed to get tags for file type=" + fileType, ex);
 		} finally {
 			close(conn, stmt, rs);
-		}		
-		
+		}
+
 		return retVal;
 	}
 
-	List<String> getTagValues(String tagName, boolean isAscending, int minOccurences) throws StorageException {		
+	List<String> getTagValues(String tagName, boolean isAscending, int minOccurences) throws StorageException {
 		List<String> retVal = new ArrayList<String>();
 
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
-		//Get date last updated
+
+		// Get date last updated
 		try {
 			conn = cp.getConnection();
-			
+
 			String q = "SELECT FILETAGS.VALUE"
-						+ " FROM FILETAGS"
-						+ " WHERE FILETAGS.KEY = ?"
-						+ " GROUP BY FILETAGS.VALUE"
-						+ " HAVING COUNT(FILETAGS.FILEID) >= ?"
-						+ " ORDER BY FILETAGS.VALUE " + (isAscending ? "ASC" : "DESC");
-			
+					+ " FROM FILETAGS"
+					+ " WHERE FILETAGS.KEY = ?"
+					+ " GROUP BY FILETAGS.VALUE"
+					+ " HAVING COUNT(FILETAGS.FILEID) >= ?"
+					+ " ORDER BY FILETAGS.VALUE " + (isAscending ? "ASC" : "DESC");
+
 			stmt = conn.prepareStatement(q);
 			stmt.setString(1, tagName);
 			stmt.setInt(2, minOccurences);
 			rs = stmt.executeQuery();
-			while(rs.next()) {
-				retVal.add(rs.getString(1));				
+			while (rs.next()) {
+				retVal.add(rs.getString(1));
 			}
 		} catch (SQLException ex) {
 			throw new StorageException("Failed to get available values for tag=" + tagName, ex);
 		} finally {
 			close(conn, stmt, rs);
-		}		
-		
+		}
+
 		return retVal;
 	}
-	
-	void delete(long id) throws StorageException{
+
+	void delete(long id) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		Savepoint savePoint = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//prepare for rollback
+
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
+
 			deleteFile(id, conn, stmt);
 
 			conn.commit();
@@ -157,21 +157,21 @@ class DBFileInfo extends DBBase {
 			throw new StorageException("Failed to delete file with id=" + id, e);
 		} finally {
 			close(conn, stmt, savePoint);
-		}		
+		}
 	}
-	
-	protected void deleteFile(long id, Connection conn, PreparedStatement stmt) throws SQLException{			
-		//delete play counts
+
+	protected void deleteFile(long id, Connection conn, PreparedStatement stmt) throws SQLException {
+		// delete play counts
 		stmt = conn.prepareStatement("DELETE FROM FILEPLAYS WHERE FILEID = ?");
 		stmt.setLong(1, id);
 		stmt.execute();
-			
-		//delete file tags
+
+		// delete file tags
 		stmt = conn.prepareStatement("DELETE FROM FILETAGS WHERE FILEID = ?");
 		stmt.setLong(1, id);
-	    stmt.executeUpdate();
-			
-		//delete file
+		stmt.executeUpdate();
+
+		// delete file
 		stmt = conn.prepareStatement("DELETE FROM FILE WHERE ID = ?");
 		stmt.setLong(1, id);
 		stmt.execute();
@@ -179,9 +179,9 @@ class DBFileInfo extends DBBase {
 		NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(DBEvent.Type.FileTagChanged));
 	}
 
-	protected void insertFileInfo(DOFileInfo fileInfo, Connection conn, PreparedStatement stmt, ResultSet rs) throws SQLException {		
+	protected void insertFileInfo(DOFileInfo fileInfo, Connection conn, PreparedStatement stmt, ResultSet rs) throws SQLException {
 		stmt = conn.prepareStatement("INSERT INTO FILE (FOLDERPATH, FILENAME, TYPE, DATELASTUPDATEDDB, DATEINSERTEDDB, DATEMODIFIEDOS, THUMBNAILPATH, SIZEBYTE, PLAYCOUNT, ENABLED, FILEIMPORTVERSION)"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		stmt.setString(1, fileInfo.getFolderPath());
 		stmt.setString(2, fileInfo.getFileName());
 		stmt.setString(3, fileInfo.getType().toString());
@@ -194,15 +194,15 @@ class DBFileInfo extends DBBase {
 		stmt.setBoolean(10, fileInfo.isActive());
 		stmt.setInt(11, fileInfo.getFileImportVersion());
 		stmt.executeUpdate();
-		
+
 		rs = stmt.getGeneratedKeys();
 		if (rs != null && rs.next()) {
 			fileInfo.setId(rs.getInt(1));
 		}
-		
+
 		insertOrUpdateTags(fileInfo.getId(), fileInfo.getTags(), stmt, conn);
 	}
-		
+
 	void insertFileInfo(DOFileInfo fileInfo) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -211,11 +211,11 @@ class DBFileInfo extends DBBase {
 
 		try {
 			conn = cp.getConnection();
-			
-			//prepare for rollback
+
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
+
 			insertFileInfo(fileInfo, conn, stmt, rs);
 
 			conn.commit();
@@ -229,36 +229,36 @@ class DBFileInfo extends DBBase {
 		} finally {
 			close(conn, stmt, rs, savePoint);
 		}
-    }
+	}
 
 	void updateFileInfo(DOFileInfo fileInfo, Connection conn,
 			PreparedStatement stmt, ResultSet rs) throws SQLException {
-			stmt = conn.prepareStatement("UPDATE FILE SET FOLDERPATH = ?, FILENAME = ?, TYPE = ?, DATELASTUPDATEDDB = ?, DATEINSERTEDDB = ?, DATEMODIFIEDOS = ?,"
-					+ " THUMBNAILPATH = ?, SIZEBYTE = ?, PLAYCOUNT = ?, ENABLED = ?, FILEIMPORTVERSION = ?"
-			        + " WHERE ID = ?");
-			stmt.setString(1, fileInfo.getFolderPath());
-			stmt.setString(2, fileInfo.getFileName());
-			stmt.setString(3, fileInfo.getType().toString());
-			stmt.setTimestamp(4, new Timestamp(fileInfo.getDateLastUpdatedDb().getTime()));
-			stmt.setTimestamp(5, new Timestamp(fileInfo.getDateInsertedDb().getTime()));
-			stmt.setTimestamp(6, new Timestamp(fileInfo.getDateModifiedOs().getTime()));
-			stmt.setString(7, fileInfo.getThumbnailPath());
-			stmt.setLong(8, fileInfo.getSize());
-			stmt.setInt(9, fileInfo.getPlayCount());
-			stmt.setBoolean(10, fileInfo.isActive());
-			stmt.setInt(11, fileInfo.getFileImportVersion());
-			stmt.setLong(12, fileInfo.getId());
-			stmt.executeUpdate();
-			
-			rs = stmt.getGeneratedKeys();
-			if (rs != null && rs.next()) {
-				//set the auto increment id as the file id
-				fileInfo.setId(rs.getInt(1));
-			}
-			
-			insertOrUpdateTags(fileInfo.getId(), fileInfo.getTags(), stmt, conn);
+		stmt = conn.prepareStatement("UPDATE FILE SET FOLDERPATH = ?, FILENAME = ?, TYPE = ?, DATELASTUPDATEDDB = ?, DATEINSERTEDDB = ?, DATEMODIFIEDOS = ?,"
+				+ " THUMBNAILPATH = ?, SIZEBYTE = ?, PLAYCOUNT = ?, ENABLED = ?, FILEIMPORTVERSION = ?"
+				+ " WHERE ID = ?");
+		stmt.setString(1, fileInfo.getFolderPath());
+		stmt.setString(2, fileInfo.getFileName());
+		stmt.setString(3, fileInfo.getType().toString());
+		stmt.setTimestamp(4, new Timestamp(fileInfo.getDateLastUpdatedDb().getTime()));
+		stmt.setTimestamp(5, new Timestamp(fileInfo.getDateInsertedDb().getTime()));
+		stmt.setTimestamp(6, new Timestamp(fileInfo.getDateModifiedOs().getTime()));
+		stmt.setString(7, fileInfo.getThumbnailPath());
+		stmt.setLong(8, fileInfo.getSize());
+		stmt.setInt(9, fileInfo.getPlayCount());
+		stmt.setBoolean(10, fileInfo.isActive());
+		stmt.setInt(11, fileInfo.getFileImportVersion());
+		stmt.setLong(12, fileInfo.getId());
+		stmt.executeUpdate();
+
+		rs = stmt.getGeneratedKeys();
+		if (rs != null && rs.next()) {
+			// set the auto increment id as the file id
+			fileInfo.setId(rs.getInt(1));
+		}
+
+		insertOrUpdateTags(fileInfo.getId(), fileInfo.getTags(), stmt, conn);
 	}
-	
+
 	void updateFileInfo(DOFileInfo fileInfo) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -267,11 +267,11 @@ class DBFileInfo extends DBBase {
 
 		try {
 			conn = cp.getConnection();
-			
-			//prepare for rollback
+
+			// prepare for rollback
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
+
 			updateFileInfo(fileInfo, conn, stmt, rs);
 			conn.commit();
 		} catch (Exception e) {
@@ -294,9 +294,9 @@ class DBFileInfo extends DBBase {
 
 		try {
 			conn = cp.getConnection();
-			
+
 			stmt = conn.prepareStatement("UPDATE FILE SET FILENAME = ?"
-			        + " WHERE FOLDERPATH = ? AND FILENAME = ?");
+					+ " WHERE FOLDERPATH = ? AND FILENAME = ?");
 			stmt.setString(1, newFileName);
 			stmt.setString(2, folderPath);
 			stmt.setString(3, oldFileName);
@@ -307,20 +307,20 @@ class DBFileInfo extends DBBase {
 			close(conn, stmt, rs, savePoint);
 		}
 	}
-	
+
 	private void insertOrUpdateTags(long filedId, Map<String, List<String>> tags, PreparedStatement stmt, Connection conn) throws SQLException {
-		//delete all existing tags
+		// delete all existing tags
 		stmt = conn.prepareStatement("DELETE FROM FILETAGS WHERE FILEID = ? AND KEY != ?");
 		stmt.setLong(1, filedId);
 		stmt.setString(2, GENRE_KEY);
-		   stmt.executeUpdate();
-		
+		stmt.executeUpdate();
+
 		// Insert tags
 		for (String key : tags.keySet()) {
 			List<String> values = tags.get(key);
-			for(String value : values) {
+			for (String value : values) {
 				try {
-					stmt = conn.prepareStatement("INSERT INTO FILETAGS(FILEID, KEY, VALUE)" 
+					stmt = conn.prepareStatement("INSERT INTO FILETAGS(FILEID, KEY, VALUE)"
 							+ " VALUES (?, ?, ?)");
 					stmt.clearParameters();
 					stmt.setLong(1, filedId);
@@ -332,10 +332,10 @@ class DBFileInfo extends DBBase {
 				}
 			}
 		}
-		
+
 		NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(DBEvent.Type.FileTagChanged));
 	}
-	
+
 	List<DOFileInfo> getFileInfo(DOFilter filter, boolean sortAscending, final ConditionType sortField, int maxResults, SortOption sortOption) throws StorageException {
 		HashMap<Integer, DOFileInfo> files = new LinkedHashMap<Integer, DOFileInfo>();
 
@@ -346,16 +346,16 @@ class DBFileInfo extends DBBase {
 		// Get file
 		try {
 			conn = cp.getConnection();
-			
+
 			// create the where clause
 			String whereClause = formatEquation(filter);
-			
+
 			// create order condition
 			String orderByClause = sortField.toString();
 			if (orderByClause.contains("_")) {
 				orderByClause = orderByClause.replace('_', '.');
 			}
-			
+
 			if (sortAscending) {
 				orderByClause += " ASC";
 			} else {
@@ -364,20 +364,21 @@ class DBFileInfo extends DBBase {
 
 			orderByClause += ", " + ConditionType.FILE_FILENAME.toString().replace('_', '.') + " ASC";
 			orderByClause += ", " + ConditionType.FILE_DATEINSERTEDDB.toString().replace('_', '.') + " ASC";
-			
-			if(log.isDebugEnabled()) log.debug(String.format("File query clause: WHERE %s ORDER BY %s", whereClause, orderByClause));
 
-			String statement = "SELECT FILE.ID, FILE.FOLDERPATH, FILE.FILENAME, FILE.TYPE, FILE.SIZEBYTE, FILE.DATELASTUPDATEDDB, FILE.DATEINSERTEDDB" 
-			        + ", FILE.DATEMODIFIEDOS, FILE.THUMBNAILPATH, FILE.PLAYCOUNT, FILE.ENABLED, FILE.FILEIMPORTVERSION" // FILE
-			        + ", FILEPLAYS.DATEPLAYEND" //last play
-			        + ", FILETAGS.KEY, FILETAGS.VALUE" //TAGS
-			        + " FROM FILE" 
-			        + " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID" 
-			        + " LEFT JOIN FILEPLAYS ON FILE.ID = FILEPLAYS.FILEID";
-					if(filter.getConditions().size() > 0){
-						statement += " WHERE " + whereClause;
-					}
-					statement += " ORDER BY " + orderByClause;
+			if (log.isDebugEnabled())
+				log.debug(String.format("File query clause: WHERE %s ORDER BY %s", whereClause, orderByClause));
+
+			String statement = "SELECT FILE.ID, FILE.FOLDERPATH, FILE.FILENAME, FILE.TYPE, FILE.SIZEBYTE, FILE.DATELASTUPDATEDDB, FILE.DATEINSERTEDDB"
+					+ ", FILE.DATEMODIFIEDOS, FILE.THUMBNAILPATH, FILE.PLAYCOUNT, FILE.ENABLED, FILE.FILEIMPORTVERSION" // FILE
+					+ ", FILEPLAYS.DATEPLAYEND" // last play
+					+ ", FILETAGS.KEY, FILETAGS.VALUE" // TAGS
+					+ " FROM FILE"
+					+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
+					+ " LEFT JOIN FILEPLAYS ON FILE.ID = FILEPLAYS.FILEID";
+			if (filter.getConditions().size() > 0) {
+				statement += " WHERE " + whereClause;
+			}
+			statement += " ORDER BY " + orderByClause;
 			stmt = conn.prepareStatement(statement);
 
 			rs = stmt.executeQuery();
@@ -387,7 +388,7 @@ class DBFileInfo extends DBBase {
 					int pos = 1;
 					file.setId(rs.getInt(pos++));
 
-					if (!files.containsKey(file.getId())) {				
+					if (!files.containsKey(file.getId())) {
 						file.setFolderPath(rs.getString(pos++));
 						file.setFileName(rs.getString(pos++));
 						file.setType(FileType.valueOf(rs.getString(pos++)));
@@ -401,13 +402,14 @@ class DBFileInfo extends DBBase {
 						file.setFileImportVersion(rs.getInt(pos++));
 
 						files.put(file.getId(), file);
-					}else{
+					} else {
 						pos = 11;
 					}
-					
-					try{
+
+					try {
 						file.addPlayToHistory(new Date(rs.getTimestamp(pos++).getTime()));
-					}catch(Exception ex){ }
+					} catch (Exception ex) {
+					}
 
 					DOFileInfo currFile = files.get(file.getId());
 
@@ -422,7 +424,7 @@ class DBFileInfo extends DBBase {
 						if (currFile.getTags().containsKey(tagKey)) {
 							currFile.getTags().remove(tagKey);
 						}
-						if(currFile.getTags().containsKey(tagKey)) {
+						if (currFile.getTags().containsKey(tagKey)) {
 							currFile.getTags().get(tagKey).add(tagValue);
 						} else {
 							List<String> l = new ArrayList<String>();
@@ -439,72 +441,72 @@ class DBFileInfo extends DBBase {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
-		List<DOFileInfo> res = new ArrayList<DOFileInfo>(files.values());		
-		
-		//Shuffle the list if configured
-		if(sortOption == SortOption.Random){
+
+		List<DOFileInfo> res = new ArrayList<DOFileInfo>(files.values());
+
+		// Shuffle the list if configured
+		if (sortOption == SortOption.Random) {
 			Collections.shuffle(res);
 		}
-		
-		//limit the number of videos if configured
-		if(maxResults > 0 && maxResults < res.size()){
+
+		// limit the number of videos if configured
+		if (maxResults > 0 && maxResults < res.size()) {
 			res = res.subList(0, maxResults);
-		}			
+		}
 
 		return res;
 	}
-	
-	java.util.Date getFileInfoLastUpdated(String filePath) throws StorageException {		
+
+	java.util.Date getFileInfoLastUpdated(String filePath) throws StorageException {
 		Date retVal = new Date(0);
 
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
-		//split the file name and path
+
+		// split the file name and path
 		int lastPathSeparatorIndex = filePath.lastIndexOf(File.separatorChar) + 1;
 		String folderPath = filePath.substring(0, lastPathSeparatorIndex);
 		String fileName = filePath.substring(lastPathSeparatorIndex);
-		
-		//Get date last updated
+
+		// Get date last updated
 		try {
 			conn = cp.getConnection();
-			
+
 			stmt = conn.prepareStatement("SELECT DATELASTUPDATEDDB FROM FILE WHERE FOLDERPATH = ? AND FILENAME = ?");
 			stmt.setString(1, folderPath);
 			stmt.setString(2, fileName);
 			rs = stmt.executeQuery();
-			if(rs.next()) {
-				retVal = rs.getDate(1);				
+			if (rs.next()) {
+				retVal = rs.getDate(1);
 			}
 		} catch (SQLException ex) {
 			throw new StorageException("Failed to get last update date for file " + filePath, ex);
 		} finally {
 			close(conn, stmt, rs);
-		}		
-		
+		}
+
 		return retVal;
 	}
-	
-	void updateFilePlay(long filedId, int playTimeSec, java.util.Date datePlayEnd) throws StorageException{
+
+	void updateFilePlay(long filedId, int playTimeSec, java.util.Date datePlayEnd) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		Savepoint savePoint = null;
-		
-		//increment the play count for the file
+
+		// increment the play count for the file
 		try {
 			conn = cp.getConnection();
 
 			conn.setAutoCommit(false);
 			savePoint = conn.setSavepoint();
-			
+
 			stmt = conn.prepareStatement("UPDATE FILE SET PLAYCOUNT = PLAYCOUNT + 1 WHERE ID = ?");
 			stmt.setLong(1, filedId);
 			stmt.executeUpdate();
 
 			stmt = conn.prepareStatement("INSERT INTO FILEPLAYS (FILEID, PLAYTIMESEC, DATEPLAYEND)"
-	                + "VALUES (?, ?, ?)");
+					+ "VALUES (?, ?, ?)");
 			stmt.clearParameters();
 			stmt.setLong(1, filedId);
 			stmt.setInt(2, playTimeSec);
@@ -530,18 +532,18 @@ class DBFileInfo extends DBBase {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		
+
 		String fileName = filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1);
 		String folderPath = filePath.substring(0, filePath.lastIndexOf(File.separatorChar) + 1);
-		
-		//increment the play count for the file
+
+		// increment the play count for the file
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT ID FROM FILE WHERE FILENAME = ? AND FOLDERPATH = ?");
 			stmt.setString(1, fileName);
 			stmt.setString(2, folderPath);
 			rs = stmt.executeQuery();
-			if(rs.next()){
+			if (rs.next()) {
 				retVal = rs.getLong(1);
 			}
 		} catch (SQLException ex) {
@@ -549,9 +551,9 @@ class DBFileInfo extends DBBase {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		return retVal;
-    }
+	}
 
 	int getFileCountRequiringUpdate(FileType fileType, int currentFileVersion) throws StorageException {
 		int retVal = -1;
@@ -559,15 +561,15 @@ class DBFileInfo extends DBBase {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		
-		//increment the play count for the file
+
+		// increment the play count for the file
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT COUNT(ID) FROM FILE WHERE TYPE = ? AND FILEIMPORTVERSION < ?");
 			stmt.setString(1, fileType.toString());
 			stmt.setInt(2, currentFileVersion);
 			rs = stmt.executeQuery();
-			if(rs.next()){
+			if (rs.next()) {
 				retVal = rs.getInt(1);
 			}
 		} catch (SQLException ex) {
@@ -575,7 +577,7 @@ class DBFileInfo extends DBBase {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		return retVal;
 	}
 
@@ -585,50 +587,50 @@ class DBFileInfo extends DBBase {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		
-		//increment the play count for the file
+
+		// increment the play count for the file
 		try {
 			conn = cp.getConnection();
-			
+
 			// Prepare the statement
 			String query = "SELECT FILENAME, FOLDERPATH FROM FILE WHERE";
 			boolean hasPreviousClause = false;
-			if(fileTypesToUpdate.contains(FileType.VIDEO)) {
+			if (fileTypesToUpdate.contains(FileType.VIDEO)) {
 				query += " (TYPE = ? AND FILEIMPORTVERSION < ?)";
 				hasPreviousClause = true;
 			}
-			if(fileTypesToUpdate.contains(FileType.AUDIO)) {
-				if(hasPreviousClause) {
+			if (fileTypesToUpdate.contains(FileType.AUDIO)) {
+				if (hasPreviousClause) {
 					query += " OR";
 				}
 				query += " (TYPE = ? AND FILEIMPORTVERSION < ?)";
 				hasPreviousClause = true;
 			}
-			if(fileTypesToUpdate.contains(FileType.PICTURES)) {
-				if(hasPreviousClause) {
+			if (fileTypesToUpdate.contains(FileType.PICTURES)) {
+				if (hasPreviousClause) {
 					query += " OR";
 				}
 				query += " (TYPE = ? AND FILEIMPORTVERSION < ?)";
 				hasPreviousClause = true;
 			}
 			stmt = conn.prepareStatement(query);
-			
+
 			// Add parameters
 			int pos = 1;
-			if(fileTypesToUpdate.contains(FileType.VIDEO)) {
+			if (fileTypesToUpdate.contains(FileType.VIDEO)) {
 				stmt.setString(pos++, FileType.VIDEO.toString());
 				stmt.setInt(pos++, VersionConstants.VIDEO_FILE_VERSION);
 			}
-			if(fileTypesToUpdate.contains(FileType.AUDIO)) {
+			if (fileTypesToUpdate.contains(FileType.AUDIO)) {
 				stmt.setString(pos++, FileType.AUDIO.toString());
 				stmt.setInt(pos++, VersionConstants.AUDIO_FILE_VERSION);
 			}
-			if(fileTypesToUpdate.contains(FileType.PICTURES)) {
+			if (fileTypesToUpdate.contains(FileType.PICTURES)) {
 				stmt.setString(pos++, FileType.PICTURES.toString());
 				stmt.setInt(pos++, VersionConstants.PICTURE_FILE_VERSION);
 			}
 			rs = stmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				String fileName = rs.getString(1);
 				String filePath = rs.getString(2);
 				res.add(FileHelper.combine(filePath, fileName));
@@ -638,10 +640,10 @@ class DBFileInfo extends DBBase {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		return res;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Protected Methods
@@ -652,71 +654,71 @@ class DBFileInfo extends DBBase {
 		String retVal = filter.getEquation();
 		String[] elems = retVal.split(" ");
 		String[] formattedElems = elems.clone();
-		
-		for(DOCondition condition : filter.getConditions()){
-			
-			//replace the _ with . in order to use the corrected table in the DB
+
+		for (DOCondition condition : filter.getConditions()) {
+
+			// replace the _ with . in order to use the corrected table in the DB
 			String conStr = condition.getType().toString();
-			if(conStr.contains("FILE_")){
+			if (conStr.contains("FILE_")) {
 				conStr = conStr.replaceAll("FILE_", "FILE.");
-			}else if(conStr.contains("FILEPLAYS_")){
+			} else if (conStr.contains("FILEPLAYS_")) {
 				conStr = conStr.replaceAll("FILEPLAYS_", "FILEPLAYS.");
-			}else if(conStr.contains("VIDEO_")){
+			} else if (conStr.contains("VIDEO_")) {
 				conStr = conStr.replaceAll("VIDEO_", "VIDEO.");
-			}else if(conStr.contains("AUDIO_")){
+			} else if (conStr.contains("AUDIO_")) {
 				conStr = conStr.replaceAll("AUDIO_", "AUDIO.");
-			}else if(conStr.contains("IMAGE_")){
+			} else if (conStr.contains("IMAGE_")) {
 				conStr = conStr.replaceAll("IMAGE_", "PICTURES.");
 			}
-			
-			//escape some characters			
+
+			// escape some characters
 			String prepCon = sqlFormatString(condition.getCondition());
-			
-			//convert the units that need to be
-			if(condition.getValueType() == ConditionValueType.FILESIZE) {
+
+			// convert the units that need to be
+			if (condition.getValueType() == ConditionValueType.FILESIZE) {
 				prepCon = getConvertedFileSizeUnitString(condition);
-			} else if(condition.getValueType() == ConditionValueType.TIMESPAN) {
+			} else if (condition.getValueType() == ConditionValueType.TIMESPAN) {
 				prepCon = getConvertedTimespanUnitString(condition);
 			}
-			
+
 			String querySuffix = "";
 			String innerSelect;
-			
-			//these conditions are special cases
+
+			// these conditions are special cases
 			switch (condition.getType()) {
 			case FILE_CONTAINS_TAG:
 				innerSelect = "SELECT DISTINCT(FILE.ID)"
-								+ " FROM FILE"
-							    + " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
-								+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", condition.getTagName());
-				
+						+ " FROM FILE"
+						+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
+						+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", condition.getTagName());
+
 				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
 				querySuffix = "))";
 				break;
 			case VIDEO_CONTAINS_VIDEOAUDIO:
 				innerSelect = "SELECT DISTINCT(FILE.ID)"
 						+ " FROM FILE"
-					    + " LEFT JOIN VIDEOAUDIO ON FILE.ID = VIDEOAUDIO.FILEID"
+						+ " LEFT JOIN VIDEOAUDIO ON FILE.ID = VIDEOAUDIO.FILEID"
 						+ " WHERE VIDEOAUDIO.LANG";
-		
+
 				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
 				querySuffix = "))";
 				break;
 			case VIDEO_CONTAINS_GENRE:
 				innerSelect = "SELECT DISTINCT(FILE.ID)"
 						+ " FROM FILE"
-					    + " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
+						+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
 						+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", GENRE_KEY);
-		
+
 				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
 				querySuffix = "))";
 				break;
 			case VIDEO_CONTAINS_SUBTITLES:
 				innerSelect = "SELECT DISTINCT(FILE.ID)"
 						+ " FROM FILE"
-					    + " LEFT JOIN SUBTITLES ON FILE.ID = SUBTITLES.FILEID"
+						+ " LEFT JOIN SUBTITLES ON FILE.ID = SUBTITLES.FILEID"
 						+ " WHERE SUBTITLES.LANG";
-		
+
 				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
 				querySuffix = "))";
 				break;
@@ -724,7 +726,7 @@ class DBFileInfo extends DBBase {
 				// do nothing, the 'normal' cases are handled later
 				break;
 			}
-			
+
 			String originalConString = conStr;
 			List<String> notLikeCons;
 			switch (condition.getOperator()) {
@@ -789,7 +791,7 @@ class DBFileInfo extends DBBase {
 						}
 						if (prefix.toLowerCase().startsWith(prepCon.toLowerCase())) {
 							notLikeCons.add(String.format(" AND (%s NOT LIKE '%s%%' OR %s LIKE '%s%%')",
-													originalConString, formattedPrefixes, originalConString, formattedPrefixes + prepCon));
+									originalConString, formattedPrefixes, originalConString, formattedPrefixes + prepCon));
 						} else {
 							conStr += String.format(" OR %s LIKE '%s%%'", originalConString, formattedPrefixes + prepCon);
 						}
@@ -828,53 +830,53 @@ class DBFileInfo extends DBBase {
 			}
 
 			conStr += querySuffix;
-			
-			//Update equation
-			for(int i = 0; i < elems.length; i++){
+
+			// Update equation
+			for (int i = 0; i < elems.length; i++) {
 				String elem = elems[i];
 				String compConditionName = elem;
-				
+
 				String openBrackets = "";
-				while(compConditionName.length() > 0 && (compConditionName.charAt(0) == '(' || compConditionName.charAt(0) == ' ')){
-					if(compConditionName.charAt(0) == ' '){
+				while (compConditionName.length() > 0 && (compConditionName.charAt(0) == '(' || compConditionName.charAt(0) == ' ')) {
+					if (compConditionName.charAt(0) == ' ') {
 						continue;
 					}
-					
+
 					compConditionName = compConditionName.substring(1);
 					openBrackets += "(";
 				}
-				
+
 				String closeBrackets = "";
-				while(compConditionName.length() > 0 && (compConditionName.charAt(compConditionName.length() - 1) == ')' || compConditionName.charAt(compConditionName.length() - 1) == ' ')){
-					if(compConditionName.charAt(compConditionName.length() - 1) == ' '){
+				while (compConditionName.length() > 0 && (compConditionName.charAt(compConditionName.length() - 1) == ')' || compConditionName.charAt(compConditionName.length() - 1) == ' ')) {
+					if (compConditionName.charAt(compConditionName.length() - 1) == ' ') {
 						continue;
 					}
-					
+
 					compConditionName = compConditionName.substring(0, compConditionName.length() - 1);
 					closeBrackets += ")";
 				}
-				
-				if(compConditionName.equals(condition.getName())){
+
+				if (compConditionName.equals(condition.getName())) {
 					formattedElems[i] = openBrackets + conStr + closeBrackets;
 				}
 			}
 		}
-		
+
 		retVal = "";
-		for(int i = 0; i < formattedElems.length; i++){
+		for (int i = 0; i < formattedElems.length; i++) {
 			retVal += formattedElems[i] + " ";
 		}
-		
+
 		return retVal.trim();
 	}
 
 	private String sqlFormatString(String condition) {
 		String res = condition;
-		if(res.contains("'")){ 
-			res = res.replaceAll("'", "''"); 
+		if (res.contains("'")) {
+			res = res.replaceAll("'", "''");
 		}
-		if(res.contains("\\")){ 
-			res = res.replaceAll("\\\\", "\\\\\\\\"); 
+		if (res.contains("\\")) {
+			res = res.replaceAll("\\\\", "\\\\\\\\");
 		}
 		return res;
 	}
@@ -882,7 +884,7 @@ class DBFileInfo extends DBBase {
 	protected String getConvertedTimespanUnitString(DOCondition condition) {
 		int tOriginal = Integer.parseInt(condition.getCondition());
 		int res = 0;
-		switch(condition.getUnit()) {
+		switch (condition.getUnit()) {
 		case TIMESPAN_SECONDS:
 			res = tOriginal;
 			break;
@@ -908,79 +910,79 @@ class DBFileInfo extends DBBase {
 			log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
 			break;
 		}
-		
+
 		return String.valueOf(res);
 	}
 
 	protected String getConvertedTimespanDateString(DOCondition condition) {
-		assert(condition != null);
-		
-    	Calendar c = Calendar.getInstance();
-		try{
-			int timespan = Integer.parseInt(condition.getCondition());
-    		switch(condition.getUnit()){
-    			case TIMESPAN_SECONDS:
-    		    	c.add(Calendar.SECOND, -timespan);
-    				break;
-    			case TIMESPAN_MINUTES:
-    		    	c.add(Calendar.MINUTE, -timespan);
-    				break;
-    			case TIMESPAN_HOURS:
-    		    	c.add(Calendar.HOUR, -timespan);
-    				break;
-    			case TIMESPAN_DAYS:
-    		    	c.add(Calendar.DAY_OF_MONTH, -timespan);
-    				break;
-    			case TIMESPAN_WEEKS:
-    		    	c.add(Calendar.WEEK_OF_YEAR, -timespan);
-    				break;
-    			case TIMESPAN_MONTHS:
-    		    	c.add(Calendar.MONTH, -timespan);
-    				break;
-    			case TIMESPAN_YEARS:
-    		    	c.add(Calendar.YEAR, -timespan);
-    				break;
-				default:
-					log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
-					break;
-    		}
-    	}catch(Exception ex){
-    		log.error("Failed to convert time span to length in seconds. string was '" + condition.getCondition() + "'");
-    	}
+		assert (condition != null);
 
-	    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(c.getTime());
-    }
+		Calendar c = Calendar.getInstance();
+		try {
+			int timespan = Integer.parseInt(condition.getCondition());
+			switch (condition.getUnit()) {
+			case TIMESPAN_SECONDS:
+				c.add(Calendar.SECOND, -timespan);
+				break;
+			case TIMESPAN_MINUTES:
+				c.add(Calendar.MINUTE, -timespan);
+				break;
+			case TIMESPAN_HOURS:
+				c.add(Calendar.HOUR, -timespan);
+				break;
+			case TIMESPAN_DAYS:
+				c.add(Calendar.DAY_OF_MONTH, -timespan);
+				break;
+			case TIMESPAN_WEEKS:
+				c.add(Calendar.WEEK_OF_YEAR, -timespan);
+				break;
+			case TIMESPAN_MONTHS:
+				c.add(Calendar.MONTH, -timespan);
+				break;
+			case TIMESPAN_YEARS:
+				c.add(Calendar.YEAR, -timespan);
+				break;
+			default:
+				log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
+				break;
+			}
+		} catch (Exception ex) {
+			log.error("Failed to convert time span to length in seconds. string was '" + condition.getCondition() + "'");
+		}
+
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(c.getTime());
+	}
 
 	protected String getConvertedFileSizeUnitString(DOCondition condition) {
-		assert(condition != null);
-		
-		long size = 0;
-		try{
-    		size = Long.parseLong(condition.getCondition());
-    		switch(condition.getUnit()){
-    			case FILESIZE_BYTE:
-    				//do nothing
-    				break;
-    			case FILESIZE_KILOBYTE:
-    				size = size * 1024;
-    				break;
-    			case FILESIZE_MEGABYTE:
-    				size = size * 1024 * 1024;
-    				break;
-    			case FILESIZE_GIGABYTE:
-    				size = size * 1024 * 1024 * 1024;
-    				break;
-    			case FILESIZE_TERABYTE:
-    				size = size * 1024 * 1024 * 1024 * 1024;
-    				break;
-				default:
-					log.warn(String.format("Unhandled file size unit received (%s). This should never happen!", condition.getUnit()));
-					break;
-    		}
-    	}catch(Exception ex){
-    		log.error("Failed to convert time span to length in seconds. string was '" + condition.getCondition() + "'");
-    	}
+		assert (condition != null);
 
-	    return String.valueOf(size);
-    }
+		long size = 0;
+		try {
+			size = Long.parseLong(condition.getCondition());
+			switch (condition.getUnit()) {
+			case FILESIZE_BYTE:
+				// do nothing
+				break;
+			case FILESIZE_KILOBYTE:
+				size = size * 1024;
+				break;
+			case FILESIZE_MEGABYTE:
+				size = size * 1024 * 1024;
+				break;
+			case FILESIZE_GIGABYTE:
+				size = size * 1024 * 1024 * 1024;
+				break;
+			case FILESIZE_TERABYTE:
+				size = size * 1024 * 1024 * 1024 * 1024;
+				break;
+			default:
+				log.warn(String.format("Unhandled file size unit received (%s). This should never happen!", condition.getUnit()));
+				break;
+			}
+		} catch (Exception ex) {
+			log.error("Failed to convert time span to length in seconds. string was '" + condition.getCondition() + "'");
+		}
+
+		return String.valueOf(size);
+	}
 }

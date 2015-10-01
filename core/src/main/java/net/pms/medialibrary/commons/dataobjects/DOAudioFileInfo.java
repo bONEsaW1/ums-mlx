@@ -34,13 +34,13 @@ public class DOAudioFileInfo extends DOFileInfo {
 	private String lang;
 	private String coverPath;
 	private String muxingMode;
-	
-	public DOAudioFileInfo(){
+
+	public DOAudioFileInfo() {
 		this(16, "", 0, "", "", "", "", "", 0, 0, 0, 0, "", "", "");
 	}
-	
-	public DOAudioFileInfo(int bitsperSample, String sampleFrequency, int nrAudioChannels, String codecA, String album, String artist, String songName, String genre, 
-			int year, int track, int delay, int duration, String lang, String coverPath, String muxingMode){
+
+	public DOAudioFileInfo(int bitsperSample, String sampleFrequency, int nrAudioChannels, String codecA, String album, String artist, String songName, String genre,
+			int year, int track, int delay, int duration, String lang, String coverPath, String muxingMode) {
 		setBitsperSample(bitsperSample);
 		setSampleFrequency(sampleFrequency);
 		setNrAudioChannels(nrAudioChannels);
@@ -57,118 +57,118 @@ public class DOAudioFileInfo extends DOFileInfo {
 		setCoverPath(coverPath);
 		setMuxingMode(muxingMode);
 	}
-	
+
 	public void setBitsperSample(int bitsperSample) {
-	    this.bitsperSample = bitsperSample;
-    }
-	
+		this.bitsperSample = bitsperSample;
+	}
+
 	public int getBitsperSample() {
-	    return bitsperSample;
-    }
+		return bitsperSample;
+	}
 
 	public void setSampleFrequency(String sampleFrequency) {
-	    this.sampleFrequency = sampleFrequency;
-    }
+		this.sampleFrequency = sampleFrequency;
+	}
 
 	public String getSampleFrequency() {
-	    return sampleFrequency;
-    }
+		return sampleFrequency;
+	}
 
 	public void setNrAudioChannels(int nrAudioChannels) {
-	    this.nrAudioChannels = nrAudioChannels;
-    }
+		this.nrAudioChannels = nrAudioChannels;
+	}
 
 	public int getNrAudioChannels() {
-	    return nrAudioChannels;
-    }
+		return nrAudioChannels;
+	}
 
 	public void setCodecA(String codecA) {
-	    this.codecA = codecA;
-    }
+		this.codecA = codecA;
+	}
 
 	public String getCodecA() {
-	    return codecA;
-    }
+		return codecA;
+	}
 
 	public void setAlbum(String album) {
-	    this.album = album;
-    }
+		this.album = album;
+	}
 
 	public String getAlbum() {
-	    return album;
-    }
+		return album;
+	}
 
 	public void setArtist(String artist) {
-	    this.artist = artist;
-    }
+		this.artist = artist;
+	}
 
 	public String getArtist() {
-	    return artist;
-    }
+		return artist;
+	}
 
 	public void setSongName(String songName) {
-	    this.songName = songName;
-    }
+		this.songName = songName;
+	}
 
 	public String getSongName() {
-	    return songName;
-    }
+		return songName;
+	}
 
 	public void setGenre(String genre) {
-	    this.genre = genre;
-    }
+		this.genre = genre;
+	}
 
 	public String getGenre() {
-	    return genre;
-    }
+		return genre;
+	}
 
 	public void setYear(int year) {
-	    this.year = year;
-    }
+		this.year = year;
+	}
 
 	public int getYear() {
-	    return year;
-    }
+		return year;
+	}
 
 	public void setTrack(int track) {
-	    this.track = track;
-    }
+		this.track = track;
+	}
 
 	public int getTrack() {
-	    return track;
-    }
+		return track;
+	}
 
 	public void setDelay(int delay) {
-	    this.delay = delay;
-    }
+		this.delay = delay;
+	}
 
 	public int getDelay() {
-	    return delay;
-    }
+		return delay;
+	}
 
 	public void setDuration(int duration) {
-	    this.duration = duration;
-    }
+		this.duration = duration;
+	}
 
 	public int getDuration() {
-	    return duration;
-    }
+		return duration;
+	}
 
 	public void setLang(String lang) {
-	    this.lang = lang;
-    }
+		this.lang = lang;
+	}
 
 	public String getLang() {
-	    return lang;
-    }
+		return lang;
+	}
 
 	public void setCoverPath(String coverPath) {
-	    this.coverPath = coverPath;
-    }
+		this.coverPath = coverPath;
+	}
 
 	public String getCoverPath() {
-	    return coverPath;
-    }
+		return coverPath;
+	}
 
 	public void setMuxingMode(String muxingMode) {
 		this.muxingMode = muxingMode;

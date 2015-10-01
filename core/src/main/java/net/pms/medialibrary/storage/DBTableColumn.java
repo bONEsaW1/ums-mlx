@@ -39,39 +39,39 @@ import org.slf4j.LoggerFactory;
  */
 class DBTableColumn extends DBFileInfo {
 	private static final Logger log = LoggerFactory.getLogger(DBTableColumn.class);
-	
+
 	DBTableColumn(JdbcConnectionPool cp) {
 		super(cp);
-    }
+	}
 
 	List<DOTableColumnConfiguration> getTableColumnConfigurations(FileType fileType) throws StorageException {
 		ArrayList<DOTableColumnConfiguration> res = new ArrayList<DOTableColumnConfiguration>();
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT CONDITIONTYPE, TAGNAME, COLUMNINDEX, WIDTH"
 					+ " FROM TABLECOLUMNCONFIGURATION"
-					+ " WHERE FILETYPE = ?" 
+					+ " WHERE FILETYPE = ?"
 					+ " ORDER BY COLUMNINDEX ASC");
 			stmt.clearParameters();
 			stmt.setString(1, fileType.toString());
 			rs = stmt.executeQuery();
-			
-			while(rs.next()){
+
+			while (rs.next()) {
 				ConditionType ct;
-				try{
+				try {
 					ct = Enum.valueOf(ConditionType.class, rs.getString(1));
-				}catch(Exception ex){
+				} catch (Exception ex) {
 					log.warn(String.format("Failed to add column of type %s. This is probably a leftover from an update", rs.getString(1)));
 					continue;
 				}
 				String tagName = rs.getString(2);
 				int columnIndex = rs.getInt(3);
 				int width = rs.getInt(4);
-				res.add( new DOTableColumnConfiguration(ct, tagName, columnIndex, width));
+				res.add(new DOTableColumnConfiguration(ct, tagName, columnIndex, width));
 			}
 		} catch (SQLException se) {
 			throw new StorageException(String.format("Failed to get table column configuration for fileType=%s", fileType), se);
@@ -84,7 +84,7 @@ class DBTableColumn extends DBFileInfo {
 	void insertTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("INSERT INTO TABLECOLUMNCONFIGURATION (COLUMNINDEX, WIDTH, FILETYPE, CONDITIONTYPE, TAGNAME) VALUES (?, ?, ?, ?, ?)");
@@ -96,7 +96,7 @@ class DBTableColumn extends DBFileInfo {
 			stmt.setString(5, c.getTagName());
 			stmt.executeUpdate();
 		} catch (SQLException se) {
-			throw new StorageException(String.format("Failed to insert table column configuration for columnIndex=%s, width=%s, fileType=%s, conditionType=%s, tagName=%s", 
+			throw new StorageException(String.format("Failed to insert table column configuration for columnIndex=%s, width=%s, fileType=%s, conditionType=%s, tagName=%s",
 					c.getColumnIndex(), c.getWidth(), fileType, c.getConditionType(), c.getTagName()), se);
 		} finally {
 			close(conn, stmt);
@@ -106,7 +106,7 @@ class DBTableColumn extends DBFileInfo {
 	public void updateTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("UPDATE TABLECOLUMNCONFIGURATION"
@@ -118,7 +118,7 @@ class DBTableColumn extends DBFileInfo {
 			stmt.setString(4, c.getConditionType().toString());
 			stmt.executeUpdate();
 		} catch (SQLException se) {
-			throw new StorageException(String.format("Failed to update table column configuration for columnIndex=%s, width=%s, fileType=%s, conditionType=%s", 
+			throw new StorageException(String.format("Failed to update table column configuration for columnIndex=%s, width=%s, fileType=%s, conditionType=%s",
 					c.getColumnIndex(), c.getWidth(), fileType, c.getConditionType()), se);
 		} finally {
 			close(conn, stmt);
@@ -128,7 +128,7 @@ class DBTableColumn extends DBFileInfo {
 	public void updateTableColumnConfiguration(ConditionType ct, String tagName, int width, FileType fileType) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("UPDATE TABLECOLUMNCONFIGURATION"
@@ -140,7 +140,7 @@ class DBTableColumn extends DBFileInfo {
 			stmt.setString(4, tagName);
 			stmt.executeUpdate();
 		} catch (SQLException se) {
-			throw new StorageException(String.format("Failed to update table column width for conditionType=%s, tagName='%s' width=%s, fileType=%s", 
+			throw new StorageException(String.format("Failed to update table column width for conditionType=%s, tagName='%s' width=%s, fileType=%s",
 					ct, tagName, width, fileType), se);
 		} finally {
 			close(conn, stmt);
@@ -152,7 +152,7 @@ class DBTableColumn extends DBFileInfo {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT CONDITIONTYPE, TAGNAME, WIDTH"
@@ -161,8 +161,8 @@ class DBTableColumn extends DBFileInfo {
 			stmt.setString(1, fileType.toString());
 			stmt.setInt(2, columnIndex);
 			rs = stmt.executeQuery();
-			
-			if(rs.next()){
+
+			if (rs.next()) {
 				ConditionType ct = Enum.valueOf(ConditionType.class, rs.getString(1));
 				String tagName = rs.getString(2);
 				int width = rs.getInt(3);
@@ -181,7 +181,7 @@ class DBTableColumn extends DBFileInfo {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-				
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT COLUMNINDEX, WIDTH"
@@ -191,8 +191,8 @@ class DBTableColumn extends DBFileInfo {
 			stmt.setString(2, ct.toString());
 			stmt.setString(3, tagName);
 			rs = stmt.executeQuery();
-				
-			if(rs.next()){
+
+			if (rs.next()) {
 				int columnIndex = rs.getInt(1);
 				int width = rs.getInt(2);
 				res = new DOTableColumnConfiguration(ct, tagName, columnIndex, width);
@@ -210,20 +210,20 @@ class DBTableColumn extends DBFileInfo {
 	}
 
 	public void clearTableColumnConfiguration(FileType fileType) throws StorageException {
-			Connection conn = null;
-			PreparedStatement stmt = null;
-				
-			try {
-				conn = cp.getConnection();
-				stmt = conn.prepareStatement("DELETE FROM TABLECOLUMNCONFIGURATION"
-						+ " WHERE FILETYPE = ?");
-				stmt.setString(1, fileType.toString());
-				stmt.executeUpdate();
-			} catch (SQLException se) {
-				throw new StorageException(String.format("Failed to delete table column configuration for fileType=%s", fileType), se);
-			} finally {
-				close(conn, stmt);
-			}
+		Connection conn = null;
+		PreparedStatement stmt = null;
+
+		try {
+			conn = cp.getConnection();
+			stmt = conn.prepareStatement("DELETE FROM TABLECOLUMNCONFIGURATION"
+					+ " WHERE FILETYPE = ?");
+			stmt.setString(1, fileType.toString());
+			stmt.executeUpdate();
+		} catch (SQLException se) {
+			throw new StorageException(String.format("Failed to delete table column configuration for fileType=%s", fileType), se);
+		} finally {
+			close(conn, stmt);
+		}
 	}
 
 	public int getTableConfigurationMaxColumnIndex(FileType fileType) throws StorageException {
@@ -231,7 +231,7 @@ class DBTableColumn extends DBFileInfo {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT MAX(COLUMNINDEX)"
@@ -239,8 +239,8 @@ class DBTableColumn extends DBFileInfo {
 					+ " WHERE FILETYPE = ?");
 			stmt.setString(1, fileType.toString());
 			rs = stmt.executeQuery();
-			
-			if(rs.next()){
+
+			if (rs.next()) {
 				res = rs.getInt(1);
 			}
 		} catch (SQLException se) {
@@ -254,7 +254,7 @@ class DBTableColumn extends DBFileInfo {
 	public void deleteTableColumnConfiguration(int columnIndex, FileType fileType) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("DELETE FROM TABLECOLUMNCONFIGURATION"
@@ -272,7 +272,7 @@ class DBTableColumn extends DBFileInfo {
 	public void deleteAllTableColumnConfiguration(FileType fileType) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("DELETE FROM TABLECOLUMNCONFIGURATION"

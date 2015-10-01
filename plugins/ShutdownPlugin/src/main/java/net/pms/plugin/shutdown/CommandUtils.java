@@ -23,12 +23,14 @@ package net.pms.plugin.shutdown;
 public abstract class CommandUtils {
 	/**
 	 * Return the platform specific command to power off the system.
+	 * 
 	 * @return The command and its arguments.
 	 */
 	abstract String[] getPowerOffCommand();
 
 	/**
 	 * Return the platform specific command to restart the system.
+	 * 
 	 * @return The command and its arguments.
 	 */
 	abstract String[] getRestartCommand();

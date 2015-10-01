@@ -23,92 +23,89 @@ public class RatingResource extends DLNAResource {
 	private InputStream resStream;
 
 	public RatingResource(DOVideoFileInfo video, float rating) {
-	    this.video = video;
-	    this.rating = rating;
-	    
+		this.video = video;
+		this.rating = rating;
+
 		videoOk = "/resources/videos/action_success-512.mpg";
 		videoKo = "/resources/videos/button_cancel-512.mpg";
-    }
+	}
 
 	@Override
-    public InputStream getInputStream() throws IOException {
-		
-		try{
-	    	Session session = TmdbHelper.getSession();
-	    	if(session != null && video != null && video.getTmdbId() > 0){
-	    		//update rating
-	    		if(log.isInfoEnabled()) log.info(String.format("Rate video '%s' %s/10. Session=%s", video.getTmdbId(), rating, session.getSession()));
-	    		
-		    		ServerResponse resp = Movie.addRating(video.getTmdbId(), rating, session);
-		    		if(resp == ServerResponse.SUCCESS){
-		    			if(log.isInfoEnabled()) log.info(String.format("Successfully rated video '%s' (id=%s) with %s stars", video.getName(), video.getId(), rating));
-		    			resStream = getResourceInputStream(videoOk);
-		    		}else {
-		    			log.warn(String.format("Failed to rate video '%s' (id=%s). Server response was='%s'", video.getName(), video.getId(), resp));
-		    			resStream = getResourceInputStream(videoKo);	
-		    		}
-	    	} 			
-		}catch(IOException ex){
+	public InputStream getInputStream() throws IOException {
+
+		try {
+			Session session = TmdbHelper.getSession();
+			if (session != null && video != null && video.getTmdbId() > 0) {
+				// update rating
+				if (log.isInfoEnabled())
+					log.info(String.format("Rate video '%s' %s/10. Session=%s", video.getTmdbId(), rating, session.getSession()));
+
+				ServerResponse resp = Movie.addRating(video.getTmdbId(), rating, session);
+				if (resp == ServerResponse.SUCCESS) {
+					if (log.isInfoEnabled())
+						log.info(String.format("Successfully rated video '%s' (id=%s) with %s stars", video.getName(), video.getId(), rating));
+					resStream = getResourceInputStream(videoOk);
+				} else {
+					log.warn(String.format("Failed to rate video '%s' (id=%s). Server response was='%s'", video.getName(), video.getId(), resp));
+					resStream = getResourceInputStream(videoKo);
+				}
+			}
+		} catch (IOException ex) {
 			String msg = ex.getMessage();
-			if(msg.contains("401")){
-    			log.warn(String.format("Failed to rate video '%s' (id=%s). Server response was=401 (not authorized)", video.getName(), video.getId()));
-    			resStream = getResourceInputStream(videoKo);
+			if (msg.contains("401")) {
+				log.warn(String.format("Failed to rate video '%s' (id=%s). Server response was=401 (not authorized)", video.getName(), video.getId()));
+				resStream = getResourceInputStream(videoKo);
 			} else {
 				throw ex;
 			}
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			log.error("Failed to rate movie", ex);
 			resStream = getResourceInputStream(videoKo);
-		}	
-
-	    return resStream;
-    }
-	
-	/*protected InputStream getResourceInputStream(String fileName) {
-		fileName = "/resources/" + fileName;
-		ClassLoader cll = this.getClass().getClassLoader();
-		InputStream is = cll.getResourceAsStream(fileName.substring(1));
-		while (is == null && cll.getParent() != null) {
-			cll = cll.getParent();
-			is = cll.getResourceAsStream(fileName.substring(1));
 		}
-		return is;
-	}*/
 
-	@Override
-	protected InputStream getResourceInputStream(String resourcePath){
-		return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);		
+		return resStream;
 	}
-	
+
+	/*
+	 * protected InputStream getResourceInputStream(String fileName) { fileName = "/resources/" + fileName; ClassLoader
+	 * cll = this.getClass().getClassLoader(); InputStream is = cll.getResourceAsStream(fileName.substring(1)); while
+	 * (is == null && cll.getParent() != null) { cll = cll.getParent(); is =
+	 * cll.getResourceAsStream(fileName.substring(1)); } return is; }
+	 */
 
 	@Override
-    public String getName() {
-	    return String.valueOf(rating).replace(".0", "");
-    }
+	protected InputStream getResourceInputStream(String resourcePath) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+	}
 
 	@Override
-    public InputStream getThumbnailInputStream() throws IOException{
+	public String getName() {
+		return String.valueOf(rating).replace(".0", "");
+	}
+
+	@Override
+	public InputStream getThumbnailInputStream() throws IOException {
 		return getResourceInputStream((String.format("/resources/images/rate-%s.png", rating)).toString());
 	}
 
 	@Override
-    public String getSystemName() {
-	    return getName();
-    }
+	public String getSystemName() {
+		return getName();
+	}
 
 	@Override
-    public boolean isFolder() {
-	    return false;
-    }
+	public boolean isFolder() {
+		return false;
+	}
 
 	@Override
-    public boolean isValid() {
-	    return true;
-    }
+	public boolean isValid() {
+		return true;
+	}
 
 	@Override
-    public long length() {
-	    return 0;
-    }
+	public long length() {
+		return 0;
+	}
 
 }

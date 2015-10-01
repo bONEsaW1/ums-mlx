@@ -29,21 +29,21 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class LibraryManagerView extends JPanel {
-    private static final long serialVersionUID = -1315789010762303892L;
+	private static final long serialVersionUID = -1315789010762303892L;
 
-	public LibraryManagerView(){
+	public LibraryManagerView() {
 		setLayout(new GridLayout());
 		add(build());
 	}
-	
-	private Component build(){
+
+	private Component build() {
 		FormLayout layout = new FormLayout("fill:10:grow", "fill:10:grow");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 		CellConstraints cc = new CellConstraints();
 
 		builder.add(new JLabel("****** Needs to be done ******"), cc.xy(1, 1, CellConstraints.CENTER, CellConstraints.CENTER));
-		
-		return builder.getPanel();		
+
+		return builder.getPanel();
 	}
 }

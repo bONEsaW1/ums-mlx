@@ -11,9 +11,10 @@ import net.pms.dlna.DLNAResource;
 public class StartStopEvent {
 	private DLNAResource resource;
 	private Event event;
-	
+
 	/**
 	 * Get a new instance of StartStopEvent
+	 * 
 	 * @param resource the resource being played
 	 * @param event start or stop
 	 */
@@ -21,9 +22,10 @@ public class StartStopEvent {
 		this.resource = resource;
 		this.event = event;
 	}
-	
+
 	/**
 	 * Gets the DLNA resource
+	 * 
 	 * @return the DLNA resource
 	 */
 	public DLNAResource getDlnaResource() {
@@ -32,12 +34,13 @@ public class StartStopEvent {
 
 	/**
 	 * Gets the event (start or stop)
+	 * 
 	 * @return the event
 	 */
 	public Event getEvent() {
 		return event;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("Resource=%s, Event=%s", getDlnaResource(), getEvent());

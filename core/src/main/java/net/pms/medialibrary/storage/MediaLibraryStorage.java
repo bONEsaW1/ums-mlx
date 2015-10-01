@@ -62,15 +62,15 @@ import net.pms.notifications.types.DBEvent;
 import net.pms.notifications.types.DBEvent.Type;
 import net.pms.notifications.types.ManagedFoldersChangedEvent;
 
-public class MediaLibraryStorage implements IMediaLibraryStorage {		
+public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public static final int ROOT_FOLDER_ID = 1;
 	public static final int ALL_CHILDREN = Integer.MAX_VALUE;
 
 	private static final Logger log = LoggerFactory.getLogger(MediaLibraryStorage.class);
 	private static MediaLibraryStorage instance;
-	
+
 	private JdbcConnectionPool cp;
-	
+
 	private DBInitializer dbInitializer;
 	private DBGlobal dbGlobal;
 	private DBFileInfo dbFileInfo;
@@ -84,16 +84,18 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	private DBTableColumn dbTableColumn;
 	private DBFileImport dbFileImport;
 	private DBQuickTag dbQuickTag;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param name The name of the database file. The location will be determined automatically depending on OS
 	 */
-	private MediaLibraryStorage(String name){
+	private MediaLibraryStorage(String name) {
 		dbInitializer = new DBInitializer(name, this);
 		cp = dbInitializer.getConnectionPool();
-		if(log.isDebugEnabled()) log.debug("JdbcConnectionPool created");
-		
+		if (log.isDebugEnabled())
+			log.debug("JdbcConnectionPool created");
+
 		dbGlobal = new DBGlobal(cp);
 		dbFileInfo = new DBFileInfo(cp);
 		dbVideoFileInfo = new DBVideoFileInfo(cp);
@@ -106,44 +108,48 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		dbTableColumn = new DBTableColumn(cp);
 		dbFileImport = new DBFileImport(cp);
 		dbQuickTag = new DBQuickTag(cp);
-		
-		if(dbInitializer.isConnected()){
+
+		if (dbInitializer.isConnected()) {
 			dbInitializer.configureDb();
 		}
 	}
-	
+
 	/**
 	 * Creates a new instance of the MediaLibraryStorage which can be retrieved through getInstance()
+	 * 
 	 * @param fileName the name of the database file
 	 */
-	public static void configure(String fileName){
-		if(instance != null){
-			if(log.isDebugEnabled()) log.debug("Dispose of the currently active instance, as configure has been called");
+	public static void configure(String fileName) {
+		if (instance != null) {
+			if (log.isDebugEnabled())
+				log.debug("Dispose of the currently active instance, as configure has been called");
 			instance.dipose();
 			instance = null;
 		}
 		instance = new MediaLibraryStorage(fileName);
 	}
-	
+
 	/**
 	 * Gets the static instance of MediaLibraryStorage
+	 * 
 	 * @return MediaLibraryStorage instance
 	 */
 	public static MediaLibraryStorage getInstance() {
 		return instance;
 	}
-	
+
 	/**
 	 * Disposes the storage by releasing the connection pool
 	 */
-	public void dipose(){
-		if(cp != null){
-	        cp.dispose();
-            cp = null;
-	        if(log.isInfoEnabled()) log.info("Disposed of the JDBC connection pool while disposing MediaLibraryStorage");
+	public void dipose() {
+		if (cp != null) {
+			cp.dispose();
+			cp = null;
+			if (log.isInfoEnabled())
+				log.info("Disposed of the JDBC connection pool while disposing MediaLibraryStorage");
 		}
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Global
@@ -154,9 +160,9 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void reset() {
 		dbInitializer.resetDb();
 	}
-	
+
 	@Override
-	public String getStorageVersion(){
+	public String getStorageVersion() {
 		String res = null;
 		try {
 			res = dbGlobal.getDbVersion();
@@ -165,9 +171,9 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-		
+
 	@Override
-	public String getMetaDataValue(String key){
+	public String getMetaDataValue(String key) {
 		String res = null;
 		try {
 			res = dbGlobal.getMetaDataValue(key);
@@ -176,21 +182,22 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-		
+
 	@Override
-	public void setMetaDataValue(String key, String value){
+	public void setMetaDataValue(String key, String value) {
 		try {
 			dbGlobal.setMetaDataValue(key, value);
-			if(log.isDebugEnabled()) log.debug(String.format("Metadata value set. key=%s, value=%s", key, value));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Metadata value set. key=%s, value=%s", key, value));
 		} catch (StorageException e) {
 			log.error("Storage error (set)", e);
 		}
 	}
 
 	@Override
-    public boolean isFunctional() {
-	    return dbInitializer != null && dbInitializer.isConnected();
-    }
+	public boolean isFunctional() {
+		return dbInitializer != null && dbInitializer.isConnected();
+	}
 
 	@Override
 	public void cleanStorage() {
@@ -200,7 +207,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 
 		try {
 			nbVideo = dbVideoFileInfo.cleanVideoFileInfos();
-			if (log.isInfoEnabled()) log.info(String.format("%s videos removed from library while cleaning storage", nbVideo));
+			if (log.isInfoEnabled())
+				log.info(String.format("%s videos removed from library while cleaning storage", nbVideo));
 		} catch (StorageException e) {
 			log.error("Storage error (get)", e);
 		}
@@ -211,24 +219,24 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		String statusMsg = String.format(Messages.getString("ML.Messages.CleanLibraryDone"), nbVideo, nbAudio, nbPictures);
 		PMS.get().getFrame().setStatusLine(statusMsg);
 	}
-	
+
 	@Override
-	public long getRootFolderId(){
+	public long getRootFolderId() {
 		long rootFolderId;
-		try{
+		try {
 			rootFolderId = Long.parseLong(MediaLibraryStorage.getInstance().getMetaDataValue(MetaDataKeys.ROOT_FOLDER_ID.toString()));
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			rootFolderId = MediaLibraryStorage.ROOT_FOLDER_ID;
 		}
 		return rootFolderId;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Table columns
 	 * 
 	 *********************************************/
-	
+
 	@Override
 	public List<DOTableColumnConfiguration> getTableColumnConfigurations(FileType fileType) {
 		List<DOTableColumnConfiguration> res = null;
@@ -278,7 +286,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void insertTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType) {
 		try {
 			dbTableColumn.insertTableColumnConfiguration(c, fileType);
-			if(log.isDebugEnabled()) log.debug(String.format("Inserted table column configuration. %s, tag='%s' index=%s, width=%s", c.getConditionType(), c.getTagName(), c.getColumnIndex(), c.getWidth()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Inserted table column configuration. %s, tag='%s' index=%s, width=%s", c.getConditionType(), c.getTagName(), c.getColumnIndex(), c.getWidth()));
 		} catch (StorageException e) {
 			log.error("Storage error (insert)", e);
 		}
@@ -288,7 +297,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void updateTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType) {
 		try {
 			dbTableColumn.updateTableColumnConfiguration(c, fileType);
-			if(log.isDebugEnabled()) log.debug(String.format("Updated table column configuration. %s, index=%s, width=%s", c.getConditionType(), c.getColumnIndex(), c.getWidth()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated table column configuration. %s, index=%s, width=%s", c.getConditionType(), c.getColumnIndex(), c.getWidth()));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
@@ -298,7 +308,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void updateTableColumnWidth(ConditionType ct, String tagName, int width, FileType fileType) {
 		try {
 			dbTableColumn.updateTableColumnConfiguration(ct, tagName, width, fileType);
-			if(log.isDebugEnabled()) log.debug(String.format("Updated table column width for conditionType=%s, tagName=%s, fileType=%s, width=%s", ct, tagName, fileType, width));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated table column width for conditionType=%s, tagName=%s, fileType=%s, width=%s", ct, tagName, fileType, width));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
@@ -307,22 +318,23 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void deleteTableColumnConfiguration(DOTableColumnConfiguration cConf, FileType fileType) {
 		try {
-			//get the existing columns
+			// get the existing columns
 			List<DOTableColumnConfiguration> existingColumns = getTableColumnConfigurations(fileType);
-			
-			//clear the existing columns
+
+			// clear the existing columns
 			dbTableColumn.clearTableColumnConfiguration(fileType);
-			
-			//insert all columns with updated indexes except the deleted one
+
+			// insert all columns with updated indexes except the deleted one
 			int index = 0;
-			for(DOTableColumnConfiguration c : existingColumns) {
-				if(!cConf.equals(c)) {
+			for (DOTableColumnConfiguration c : existingColumns) {
+				if (!cConf.equals(c)) {
 					c.setColumnIndex(index++);
 					dbTableColumn.insertTableColumnConfiguration(c, fileType);
 				}
 			}
-			
-			if(log.isDebugEnabled()) log.debug(String.format("Deleted table column configuration for file type=%s, column index=%s", fileType, cConf.getColumnIndex()));
+
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted table column configuration for file type=%s, column index=%s", fileType, cConf.getColumnIndex()));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
@@ -331,10 +343,11 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void deleteAllTableColumnConfigurations(FileType fileType) {
 		try {
-			//clear the existing columns
+			// clear the existing columns
 			dbTableColumn.deleteAllTableColumnConfiguration(fileType);
-			
-			if(log.isDebugEnabled()) log.debug(String.format("Deleted all table column configuration for file type=%s", fileType));
+
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted all table column configuration for file type=%s", fileType));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
@@ -343,51 +356,54 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void moveTableColumnConfiguration(int fromIndex, int toIndex, FileType fileType) {
 		try {
-			//get the existing columns
+			// get the existing columns
 			List<DOTableColumnConfiguration> existingColumns = getTableColumnConfigurations(fileType);
-			
-			//get the column to move
+
+			// get the column to move
 			DOTableColumnConfiguration cMove = null;
-			for(DOTableColumnConfiguration c : existingColumns) {
-				if(c.getColumnIndex() == fromIndex) {
+			for (DOTableColumnConfiguration c : existingColumns) {
+				if (c.getColumnIndex() == fromIndex) {
 					cMove = c;
 					break;
 				}
 			}
-			
-			//clear the existing columns
+
+			// clear the existing columns
 			dbTableColumn.clearTableColumnConfiguration(fileType);
-			
-			//insert all columns with updated indexes. Create new objects to avoid modifying the indexes of the existing ones
+
+			// insert all columns with updated indexes. Create new objects to avoid modifying the indexes of the
+			// existing ones
 			int index = 0;
-			for(DOTableColumnConfiguration c : existingColumns) {
-				if(c.getColumnIndex() == fromIndex) {
-					//don't add the column we're moving where it previously was
+			for (DOTableColumnConfiguration c : existingColumns) {
+				if (c.getColumnIndex() == fromIndex) {
+					// don't add the column we're moving where it previously was
 					continue;
-				} else if(index == toIndex) {
-					//insert the moved column
+				} else if (index == toIndex) {
+					// insert the moved column
 					dbTableColumn.insertTableColumnConfiguration(new DOTableColumnConfiguration(cMove.getConditionType(), cMove.getTagName(), index++, cMove.getWidth()), fileType);
 				}
-				
+
 				dbTableColumn.insertTableColumnConfiguration(new DOTableColumnConfiguration(c.getConditionType(), c.getTagName(), index++, c.getWidth()), fileType);
 			}
-			
-			//special case where the column moves to the last position
-			if(toIndex == index) {
-				dbTableColumn.insertTableColumnConfiguration(new DOTableColumnConfiguration(cMove.getConditionType(), cMove.getTagName(), index++, cMove.getWidth()), fileType);				
+
+			// special case where the column moves to the last position
+			if (toIndex == index) {
+				dbTableColumn.insertTableColumnConfiguration(new DOTableColumnConfiguration(cMove.getConditionType(), cMove.getTagName(), index++, cMove.getWidth()), fileType);
 			}
-			
-			if(log.isDebugEnabled()) log.debug(String.format("Moved table column configuration for file type=%s, from=%s, to=%s", fileType, fromIndex, toIndex));
+
+			if (log.isDebugEnabled())
+				log.debug(String.format("Moved table column configuration for file type=%s, from=%s, to=%s", fileType, fromIndex, toIndex));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
-		}		
+		}
 	}
 
 	@Override
 	public void clearTableColumnConfigurations(FileType fileType) {
 		try {
 			dbTableColumn.clearTableColumnConfiguration(fileType);
-			if(log.isDebugEnabled()) log.debug(String.format("Deleted all column configurations for file type=%s", fileType));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted all column configurations for file type=%s", fileType));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
@@ -403,7 +419,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * FileInfo (global for video, audio and pictures)
@@ -418,50 +434,51 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 
 		DOCondition fileNameCondition = new DOCondition(ConditionType.FILE_FILENAME, ConditionOperator.IS, fileName, "c1", ConditionValueType.STRING, ConditionUnit.UNKNOWN, null);
 		DOCondition folderPathCondition = new DOCondition(ConditionType.FILE_FOLDERPATH, ConditionOperator.IS, folderPath, "c2", ConditionValueType.STRING, ConditionUnit.UNKNOWN, null);
-		DOFilter filter = new DOFilter("c1 AND c2", Arrays.asList(new DOCondition[] {fileNameCondition, folderPathCondition }));
-		
+		DOFilter filter = new DOFilter("c1 AND c2", Arrays.asList(new DOCondition[] { fileNameCondition, folderPathCondition }));
+
 		DOFileInfo res = null;
-		
+
 		FileType fileType = FileImportHelper.getFileType(fileName);
-		switch(fileType) {
-			case VIDEO:
-				List<DOVideoFileInfo> videoFileInfos = getVideoFileInfo(filter, true, ConditionType.FILE_FILENAME, 1, SortOption.Unknown, false);
-				if(videoFileInfos.size() > 0) {
-					res = videoFileInfos.get(0);
-				}
-				break;
-			case AUDIO:
-			case PICTURES:
-			default:
-				log.error("Currently, only files of type VIDEO are supported by the method 'public DOFileInfo getFileInfo(String filePath)'");
+		switch (fileType) {
+		case VIDEO:
+			List<DOVideoFileInfo> videoFileInfos = getVideoFileInfo(filter, true, ConditionType.FILE_FILENAME, 1, SortOption.Unknown, false);
+			if (videoFileInfos.size() > 0) {
+				res = videoFileInfos.get(0);
+			}
+			break;
+		case AUDIO:
+		case PICTURES:
+		default:
+			log.error("Currently, only files of type VIDEO are supported by the method 'public DOFileInfo getFileInfo(String filePath)'");
 		}
-		
+
 		return res;
-	}	
-	
+	}
+
 	@Override
 	public void deleteAllFileInfo() {
 		int nbDeletedVideos = 0;
-//		int nbDeletedAudio = 0;
-//		int nbDeletedPictures = 0;
-		
+		// int nbDeletedAudio = 0;
+		// int nbDeletedPictures = 0;
+
 		try {
 			nbDeletedVideos = dbVideoFileInfo.deleteAllVideos();
-			if(log.isInfoEnabled()) log.info(String.format("Deleted %s videos", nbDeletedVideos));
+			if (log.isInfoEnabled())
+				log.info(String.format("Deleted %s videos", nbDeletedVideos));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
 
-//		dbAudioFileInfo.deleteAudioFileInfo();
-//		dbPicturesFileInfo.deletePicturesFileInfo();
-		
-		//show deletion in GUI
+		// dbAudioFileInfo.deleteAudioFileInfo();
+		// dbPicturesFileInfo.deletePicturesFileInfo();
+
+		// show deletion in GUI
 		PMS.get().getFrame().setStatusLine(nbDeletedVideos + " videos have been deleted from the library");
 	}
 
 	@Override
 	public void insertOrUpdateFileInfo(DOFileInfo fileInfo) {
-		if(getFileInfoLastUpdated(fileInfo.getFilePath()).equals(new Date(0))) {
+		if (getFileInfoLastUpdated(fileInfo.getFilePath()).equals(new Date(0))) {
 			insertFileInfo(fileInfo);
 		} else {
 			updateFileInfo(fileInfo);
@@ -471,49 +488,52 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void insertFileInfo(DOFileInfo fileInfo) {
 		String statusMsg = null;
-		
+
 		updateCover(fileInfo);
 		fileInfo.setDateInsertedDb(new java.util.Date());
 		fileInfo.setDateLastUpdatedDb(new java.util.Date());
-		
-		switch(fileInfo.getType()){
-			case AUDIO:
+
+		switch (fileInfo.getType()) {
+		case AUDIO:
 			try {
-				dbAudioFileInfo.insertAudioFileInfo((DOAudioFileInfo)fileInfo);
-				if(log.isInfoEnabled()) log.info(String.format("Imported audio file %s", fileInfo.getFilePath()));
+				dbAudioFileInfo.insertAudioFileInfo((DOAudioFileInfo) fileInfo);
+				if (log.isInfoEnabled())
+					log.info(String.format("Imported audio file %s", fileInfo.getFilePath()));
 			} catch (StorageException e) {
 				log.error("Storage error (get)", e);
 			}
-				break;
-			case PICTURES:
-				dbPicturesFileInfo.insertPicturesFileInfo((DOImageFileInfo)fileInfo);
-				if(log.isInfoEnabled()) log.info(String.format("Imported picture %s", fileInfo.getFilePath()));
-				break;
-			case VIDEO:
+			break;
+		case PICTURES:
+			dbPicturesFileInfo.insertPicturesFileInfo((DOImageFileInfo) fileInfo);
+			if (log.isInfoEnabled())
+				log.info(String.format("Imported picture %s", fileInfo.getFilePath()));
+			break;
+		case VIDEO:
 			try {
-				dbVideoFileInfo.insertVideoFileInfo((DOVideoFileInfo)fileInfo);
-				if(log.isInfoEnabled()) log.info(String.format("Imported video file %s", fileInfo.getFilePath()));
+				dbVideoFileInfo.insertVideoFileInfo((DOVideoFileInfo) fileInfo);
+				if (log.isInfoEnabled())
+					log.info(String.format("Imported video file %s", fileInfo.getFilePath()));
 				statusMsg = Messages.getString("ML.Messages.VideoInserted") + " " + fileInfo.toString();
 			} catch (StorageException e) {
 				log.error("Storage error (get)", e);
 			}
-				break;
+			break;
 		default:
 			log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileInfo.getType()));
 			break;
 		}
-		
+
 		// notify of the insert in the GUI
-		if(statusMsg != null) {
+		if (statusMsg != null) {
 			PMS.get().getFrame().setStatusLine(statusMsg);
 		}
 	}
 
 	private void updateCover(DOFileInfo fileInfo) {
-		//copy the thumbnail if required
+		// copy the thumbnail if required
 		File thumbnailFile = new File(fileInfo.getThumbnailPath());
 		String coverPath = FileImportHelper.getCoverPath(fileInfo.getThumbnailPath(), fileInfo);
-		if(thumbnailFile.exists() && !fileInfo.getThumbnailPath().equals(coverPath)) {
+		if (thumbnailFile.exists() && !fileInfo.getThumbnailPath().equals(coverPath)) {
 			try {
 				FileImportHelper.copyFile(thumbnailFile, new File(coverPath), true);
 				fileInfo.setThumbnailPath(coverPath);
@@ -526,23 +546,26 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void updateFileInfo(DOFileInfo fileInfo) {
 		String statusMsg = null;
-		
+
 		updateCover(fileInfo);
 		fileInfo.setDateLastUpdatedDb(new java.util.Date());
-		
-		switch(fileInfo.getType()){
-			case AUDIO:
-				dbAudioFileInfo.updateAudioFileInfo((DOAudioFileInfo)fileInfo);
-				if(log.isInfoEnabled()) log.info(String.format("Updated audio file %s", fileInfo.getFilePath()));
-				break;
-			case PICTURES:
-				dbPicturesFileInfo.updatePicturesFileInfo((DOImageFileInfo)fileInfo);
-				if(log.isInfoEnabled()) log.info(String.format("Updated picture %s", fileInfo.getFilePath()));
-				break;
-			case VIDEO:
+
+		switch (fileInfo.getType()) {
+		case AUDIO:
+			dbAudioFileInfo.updateAudioFileInfo((DOAudioFileInfo) fileInfo);
+			if (log.isInfoEnabled())
+				log.info(String.format("Updated audio file %s", fileInfo.getFilePath()));
+			break;
+		case PICTURES:
+			dbPicturesFileInfo.updatePicturesFileInfo((DOImageFileInfo) fileInfo);
+			if (log.isInfoEnabled())
+				log.info(String.format("Updated picture %s", fileInfo.getFilePath()));
+			break;
+		case VIDEO:
 			try {
-				dbVideoFileInfo.updateFileInfo((DOVideoFileInfo)fileInfo);
-				if(log.isDebugEnabled()) log.debug(String.format("Updated video file %s", fileInfo.getFilePath()));
+				dbVideoFileInfo.updateFileInfo((DOVideoFileInfo) fileInfo);
+				if (log.isDebugEnabled())
+					log.debug(String.format("Updated video file %s", fileInfo.getFilePath()));
 				statusMsg = Messages.getString("ML.Messages.VideoUpdated") + " " + fileInfo.toString();
 			} catch (StorageException e) {
 				log.error("Storage error (update)", e);
@@ -552,16 +575,16 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileInfo.getType()));
 			break;
 		}
-		
+
 		// notify of the insert in the GUI
-		if(statusMsg != null) {
+		if (statusMsg != null) {
 			PMS.get().getFrame().setStatusLine(statusMsg);
 		}
 	}
 
 	@Override
 	public void deleteFileInfoByFilePath(String filePath) {
-		
+
 		// Get the file info
 		int pos = filePath.lastIndexOf(File.separatorChar) + 1;
 		String folderPath = filePath.substring(0, pos);
@@ -570,24 +593,24 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		conditions.add(new DOCondition(ConditionType.FILE_FOLDERPATH, ConditionOperator.IS, folderPath, "c1", ConditionValueType.STRING, null, null));
 		conditions.add(new DOCondition(ConditionType.FILE_FILENAME, ConditionOperator.IS, fileName, "c2", ConditionValueType.STRING, null, null));
 		DOFilter filter = new DOFilter("c1 AND c2", conditions);
-		
+
 		List<DOFileInfo> fileInfos = getFileInfo(filter, true, ConditionType.FILE_FILENAME, 1, SortOption.FileProperty);
-		if(fileInfos == null || fileInfos.size() == 0) {
+		if (fileInfos == null || fileInfos.size() == 0) {
 			log.warn(String.format("Failed to delete file '%s' because no file could be found in the library for this path.", filePath));
 			return;
 		}
-		
+
 		// Call the delete method according to the type
 		DOFileInfo fileInfo = fileInfos.get(0);
 		switch (fileInfo.getType()) {
 		case AUDIO:
 			// TODO: implement
 			break;
-			
+
 		case PICTURES:
 			// TODO: implement
 			break;
-			
+
 		case VIDEO:
 			deleteVideo(fileInfo.getId());
 			break;
@@ -596,8 +619,9 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.warn("Unexpected file type received. Type=" + fileInfo.getType());
 			break;
 		}
-		
-		if(log.isInfoEnabled()) log.info(String.format("Deleted file %s from library", filePath));
+
+		if (log.isInfoEnabled())
+			log.info(String.format("Deleted file %s from library", filePath));
 	}
 
 	@Override
@@ -620,18 +644,19 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void updatePlayCount(long fileId, int playTimeSec, Date datePlayEnd) {
 		try {
 			dbFileInfo.updateFilePlay(fileId, playTimeSec, datePlayEnd);
-			if(log.isDebugEnabled()) log.debug(String.format("Plays updated for file with id=%s play time=%ssec", fileId, playTimeSec));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Plays updated for file with id=%s play time=%ssec", fileId, playTimeSec));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
 	}
 
-	@Override	
+	@Override
 	public void updatePlayCount(String filePath, int playTimeSec, Date datePlayEnd) {
 		try {
 			long fileId = dbFileInfo.getIdForFilePath(filePath);
 			if (fileId <= 0) {
-				//TODO: insert the file if it doesn't already exist!?
+				// TODO: insert the file if it doesn't already exist!?
 				log.error("File id is less than zero : " + fileId + ", playTimeSec:" + playTimeSec + ", date play end:" + datePlayEnd + " for path :" + filePath);
 			} else {
 				updatePlayCount(fileId, playTimeSec, datePlayEnd);
@@ -669,15 +694,15 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		int nbVideo = getFileCountRequiringUpdate(FileType.VIDEO, VersionConstants.VIDEO_FILE_VERSION);
 		int nbAudio = getFileCountRequiringUpdate(FileType.AUDIO, VersionConstants.AUDIO_FILE_VERSION);
 		int nbPictures = getFileCountRequiringUpdate(FileType.PICTURES, VersionConstants.PICTURE_FILE_VERSION);
-		
+
 		HashMap<FileType, Integer> res = new HashMap<FileType, Integer>();
-		if(nbVideo > 0) {
+		if (nbVideo > 0) {
 			res.put(FileType.VIDEO, nbVideo);
 		}
-		if(nbAudio > 0) {
+		if (nbAudio > 0) {
 			res.put(FileType.AUDIO, nbAudio);
 		}
-		if(nbPictures > 0) {
+		if (nbPictures > 0) {
 			res.put(FileType.PICTURES, nbPictures);
 		}
 		return res;
@@ -707,7 +732,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * VideoFileInfo
@@ -718,17 +743,19 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void deleteAllVideos() {
 		try {
 			int nbDeleted = dbVideoFileInfo.deleteAllVideos();
-			if(log.isInfoEnabled()) log.info(String.format("Deleted %s videos", nbDeleted));
+			if (log.isInfoEnabled())
+				log.info(String.format("Deleted %s videos", nbDeleted));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
 	}
-	
+
 	@Override
 	public void deleteVideo(long fileId) {
 		try {
 			dbVideoFileInfo.deleteVideo(fileId);
-			if(log.isInfoEnabled()) log.info(String.format("Deleted video with id=%s", fileId));
+			if (log.isInfoEnabled())
+				log.info(String.format("Deleted video with id=%s", fileId));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
@@ -744,9 +771,9 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	@Override
-	public List<String> getVideoProperties(ConditionType conditionType, boolean isAscending, int minOccurences){
+	public List<String> getVideoProperties(ConditionType conditionType, boolean isAscending, int minOccurences) {
 		List<String> res = null;
 		try {
 			res = dbVideoFileInfo.getVideoProperties(conditionType, isAscending, minOccurences);
@@ -755,7 +782,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public int getFilteredVideoCount(DOFilter filter) {
 		int res = 0;
@@ -765,10 +792,10 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
+	}
 
 	@Override
-    public int getVideoCount() {
+	public int getVideoCount() {
 		int res = 0;
 		try {
 			res = dbVideoFileInfo.getVideoCount();
@@ -776,8 +803,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
-	
+	}
+
 	/*********************************************
 	 * 
 	 * AudioFileInfo
@@ -787,11 +814,12 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void deleteAudioFileInfo() {
 		int nbDeleted = dbAudioFileInfo.deleteAudioFileInfo();
-		if(log.isInfoEnabled()) log.info(String.format("Deleted %s videos", nbDeleted));
+		if (log.isInfoEnabled())
+			log.info(String.format("Deleted %s videos", nbDeleted));
 	}
 
 	@Override
-    public int getAudioCount() {
+	public int getAudioCount() {
 		int res = 0;
 		try {
 			res = dbAudioFileInfo.getAudioCount();
@@ -799,8 +827,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
-	
+	}
+
 	/*********************************************
 	 * 
 	 * PicturesFileInfo
@@ -810,11 +838,12 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void deletePicturesFileInfo() {
 		int nbDeleted = dbPicturesFileInfo.deletePicturesFileInfo();
-		if(log.isInfoEnabled()) log.info(String.format("Deleted %s videos", nbDeleted));
+		if (log.isInfoEnabled())
+			log.info(String.format("Deleted %s videos", nbDeleted));
 	}
 
 	@Override
-    public int getPicturesCount() {
+	public int getPicturesCount() {
 		int res = 0;
 		try {
 			res = dbPicturesFileInfo.getPicturesCount();
@@ -822,8 +851,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
-	
+	}
+
 	/*********************************************
 	 * 
 	 * MediaLibraryFolders
@@ -835,12 +864,13 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		f.setId(-1);
 		try {
 			dbMediaLibraryFolders.insertFolder(f);
-			if(f instanceof DOMediaLibraryFolder){
-				for(DOFolder child : ((DOMediaLibraryFolder)f).getChildFolders()){
+			if (f instanceof DOMediaLibraryFolder) {
+				for (DOFolder child : ((DOMediaLibraryFolder) f).getChildFolders()) {
 					insertFolder(child);
 				}
 			}
-			if(log.isDebugEnabled()) log.debug(String.format("Inserted folder '%s' (id=%s)", f.getName(), f.getId()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Inserted folder '%s' (id=%s)", f.getName(), f.getId()));
 		} catch (StorageException e) {
 			log.error("Storage error (insert)", e);
 		}
@@ -849,28 +879,31 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	@Override
 	public void updateFolder(DOFolder f) {
 		try {
-			dbMediaLibraryFolders.updateFolder(f);	
-			if(log.isDebugEnabled()) log.debug(String.format("Updated folder '%s' (id=%s)", f.getName(), f.getId()));
+			dbMediaLibraryFolders.updateFolder(f);
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated folder '%s' (id=%s)", f.getName(), f.getId()));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
 	}
-	
+
 	@Override
-	public void updateMediaLibraryFolderLocation(long id, long parentId, int locationInParent){
+	public void updateMediaLibraryFolderLocation(long id, long parentId, int locationInParent) {
 		try {
 			dbMediaLibraryFolders.updateFolderLocation(id, parentId, locationInParent);
-			if(log.isDebugEnabled()) log.debug(String.format("Updated folder location (id=%s)", id));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated folder location (id=%s)", id));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
 	}
-	
+
 	@Override
 	public void deleteFolder(long id) {
 		try {
 			dbMediaLibraryFolders.deleteFolder(id);
-			if(log.isDebugEnabled()) log.debug(String.format("Deleted folder with id=%s", id));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted folder with id=%s", id));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
@@ -888,15 +921,16 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	}
 
 	@Override
-    public void updateFolderDisplayName(long folderId, String displayName) {
+	public void updateFolderDisplayName(long folderId, String displayName) {
 		try {
 			dbMediaLibraryFolders.updateFolderDisplayName(folderId, displayName);
-			if(log.isDebugEnabled()) log.debug(String.format("Updated name of folder with id=%s to '%s'", folderId, displayName));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated name of folder with id=%s to '%s'", folderId, displayName));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
-    }
-	
+	}
+
 	/*********************************************
 	 * 
 	 * Templates
@@ -904,37 +938,40 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	 *********************************************/
 
 	@Override
-    public void insertTemplate(DOTemplate template, DOFileEntryFolder fileFolder) {
+	public void insertTemplate(DOTemplate template, DOFileEntryFolder fileFolder) {
 		try {
 			dbTemplates.insertTemplate(template, fileFolder);
-			if(log.isDebugEnabled()) log.debug(String.format("Inserted template '%s' with id=%s", template.getName(), template.getId()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Inserted template '%s' with id=%s", template.getName(), template.getId()));
 		} catch (StorageException e) {
 			log.error("Storage error (insert)", e);
 		}
-    }
+	}
 
 	@Override
-    public void updateTemplate(DOTemplate template, DOFileEntryFolder fileFolder) {
+	public void updateTemplate(DOTemplate template, DOFileEntryFolder fileFolder) {
 		try {
 			dbTemplates.updateTemplate(template, fileFolder);
-			if(log.isDebugEnabled()) log.debug(String.format("Updated template '%s' with id=%s", template.getName(), template.getId()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated template '%s' with id=%s", template.getName(), template.getId()));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
 		}
-    }
+	}
 
 	@Override
-	public void deleteTemplate(long templateId){
+	public void deleteTemplate(long templateId) {
 		try {
 			dbTemplates.deleteTemplate(templateId);
-			if(log.isDebugEnabled()) log.debug(String.format("Deleted template with id=%s", templateId));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted template with id=%s", templateId));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
 	}
 
 	@Override
-    public List<DOTemplate> getAllTemplates() {
+	public List<DOTemplate> getAllTemplates() {
 		List<DOTemplate> res = null;
 		try {
 			res = dbTemplates.getAllTemplates();
@@ -942,10 +979,10 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
+	}
 
 	@Override
-    public boolean isTemplateIdInUse(long templateId) {
+	public boolean isTemplateIdInUse(long templateId) {
 		boolean res = true;
 		try {
 			res = dbTemplates.isTemplateIdInUse(templateId);
@@ -953,8 +990,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
-	
+	}
+
 	/*********************************************
 	 * 
 	 * FileFolder
@@ -962,7 +999,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	 *********************************************/
 
 	@Override
-    public DOFileEntryFolder getFileFolder(long templateId) {
+	public DOFileEntryFolder getFileFolder(long templateId) {
 		DOFileEntryFolder res = null;
 		try {
 			res = dbFileFolder.getFileFolder(templateId);
@@ -971,7 +1008,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * ManagedFolders
@@ -987,19 +1024,20 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 			log.error("Storage error (get)", e);
 		}
 		return res;
-    }
+	}
 
 	@Override
-	public void setManagedFolders(List<DOManagedFile> folders){
+	public void setManagedFolders(List<DOManagedFile> folders) {
 		try {
 			dbManagedFolders.setManagedFolders(folders);
 			NotificationCenter.getInstance(ManagedFoldersChangedEvent.class).post(new ManagedFoldersChangedEvent());
-			if(log.isDebugEnabled()) log.debug(String.format("Saved %s managed folders", folders.size()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Saved %s managed folders", folders.size()));
 		} catch (StorageException e) {
 			log.error("Storage error (set)", e);
 		}
 	}
-	
+
 	/*********************************************
 	 * 
 	 * File import
@@ -1025,7 +1063,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		} catch (StorageException e) {
 			log.error("Storage error (get)", e);
 		}
-		return res;	
+		return res;
 	}
 
 	@Override
@@ -1043,7 +1081,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void insertFileImportTemplate(DOFileImportTemplate template) {
 		try {
 			dbFileImport.insertTemplate(template);
-			if(log.isDebugEnabled()) log.debug(String.format("Inserted import template '%s' with id=%s", template.getName(), template.getId()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Inserted import template '%s' with id=%s", template.getName(), template.getId()));
 		} catch (StorageException e) {
 			log.error("Storage error (insert)", e);
 		}
@@ -1053,17 +1092,19 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void updateFileImportTemplate(DOFileImportTemplate template) {
 		try {
 			dbFileImport.updateTemplate(template);
-			if(log.isDebugEnabled()) log.debug(String.format("Updated import template '%s' with id=%s", template.getName(), template.getId()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Updated import template '%s' with id=%s", template.getName(), template.getId()));
 		} catch (StorageException e) {
 			log.error("Storage error (update)", e);
-		}		
+		}
 	}
 
 	@Override
 	public void deleteFileImportTemplate(int templateId) {
 		try {
 			dbFileImport.deleteFileImportTemplate(templateId);
-			if(log.isDebugEnabled()) log.debug(String.format("Deleted file import template with id=%s", templateId));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted file import template with id=%s", templateId));
 		} catch (StorageException e) {
 			log.error("Storage error (delete)", e);
 		}
@@ -1079,9 +1120,9 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	@Override
-	public List<String> getTagValues(String tagName, boolean isAscending, int minOccurences){
+	public List<String> getTagValues(String tagName, boolean isAscending, int minOccurences) {
 		List<String> res = null;
 		try {
 			res = dbFileInfo.getTagValues(tagName, isAscending, minOccurences);
@@ -1090,7 +1131,7 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		}
 		return res;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Quick Tags
@@ -1101,7 +1142,8 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 	public void setQuickTagEntries(List<DOQuickTagEntry> quickTags) {
 		try {
 			dbQuickTag.setQuickTags(quickTags);
-			if(log.isDebugEnabled()) log.debug(String.format("Inserted %s quick tags", quickTags.size()));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Inserted %s quick tags", quickTags.size()));
 		} catch (StorageException e) {
 			log.error("Storage error (insert)", e);
 		}

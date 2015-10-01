@@ -64,22 +64,22 @@ import net.pms.medialibrary.gui.shared.ThumbnailPrioChooser.ActionType;
 
 public class FileDisplayPanel extends JPanel {
 	private static final Logger log = LoggerFactory.getLogger(FileDisplayPanel.class);
-	private static final long         serialVersionUID = 6342698042364671785L;
+	private static final long serialVersionUID = 6342698042364671785L;
 	private MediaLibraryConfiguration libConfig;
-	private JLabel                    lMask;
-	private JTextField                tfDisplaynameMask;
-	private JComboBox                 cbMaskHelp;
-	private JRadioButton              rbSingleFile;
-	private JRadioButton              rbMultipleFiles;
+	private JLabel lMask;
+	private JTextField tfDisplaynameMask;
+	private JComboBox cbMaskHelp;
+	private JRadioButton rbSingleFile;
+	private JRadioButton rbMultipleFiles;
 
-	private JPanel                    pThumbnailPrio;
-	private JPanel                    pDisplayNameMask;
-	private JPanel                    pFileDisplayMode;
-	private JComboBox                 cbScreeResolution;
-	private JTextField                tfMaxLineLength;
-	private JPanel                    pMaxLineLength;
-	private FileType                  fileType;
-	private boolean                   isUpdating;
+	private JPanel pThumbnailPrio;
+	private JPanel pDisplayNameMask;
+	private JPanel pFileDisplayMode;
+	private JComboBox cbScreeResolution;
+	private JTextField tfMaxLineLength;
+	private JPanel pMaxLineLength;
+	private FileType fileType;
+	private boolean isUpdating;
 	private List<ThumbnailPrioChooser> prioChoosers = new ArrayList<ThumbnailPrioChooser>();
 
 	public FileDisplayPanel(DOFileEntryBase fileEntry, FileType fileType) {
@@ -96,17 +96,17 @@ public class FileDisplayPanel extends JPanel {
 		if (fileEntry instanceof DOFileEntryFile) {
 			FileDisplayMode fileDisplayMode = ((DOFileEntryFile) fileEntry).getFileDisplayMode();
 			switch (fileDisplayMode) {
-				case SINGLE:
-					rbSingleFile.setSelected(true);
-					break;
-				case MULTIPLE:
-					rbMultipleFiles.setSelected(true);
-					tfDisplaynameMask.setEnabled(false);
-					cbMaskHelp.setEnabled(false);
-					break;
-				default:
-					log.warn(String.format("Unhandled file display mode received (%s). This should never happen!", fileDisplayMode));
-					break;
+			case SINGLE:
+				rbSingleFile.setSelected(true);
+				break;
+			case MULTIPLE:
+				rbMultipleFiles.setSelected(true);
+				tfDisplaynameMask.setEnabled(false);
+				cbMaskHelp.setEnabled(false);
+				break;
+			default:
+				log.warn(String.format("Unhandled file display mode received (%s). This should never happen!", fileDisplayMode));
+				break;
 			}
 		}
 		refreshPanel();
@@ -127,7 +127,7 @@ public class FileDisplayPanel extends JPanel {
 		JLabel lTitle = new JLabel(Messages.getString("ML.FileDisplayPanel.lTitle"));
 		rbSingleFile = new JRadioButton(Messages.getString("ML.FileDisplayPanel.rbSingleFile"));
 		rbSingleFile.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tfDisplaynameMask.setEnabled(true);
@@ -136,7 +136,7 @@ public class FileDisplayPanel extends JPanel {
 		});
 		rbMultipleFiles = new JRadioButton(Messages.getString("ML.FileDisplayPanel.rbMultipleFiles"));
 		rbMultipleFiles.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tfDisplaynameMask.setText("");
@@ -161,115 +161,115 @@ public class FileDisplayPanel extends JPanel {
 	}
 
 	private JPanel getThumbnailPrioPanel(List<DOThumbnailPriority> prios) {
-		if(prios == null || prios.size() == 0){
+		if (prios == null || prios.size() == 0) {
 			prios = Arrays.asList(new DOThumbnailPriority(-1, ThumbnailPrioType.THUMBNAIL, 30, 0));
 		}
-		
+
 		String rowSpecs = "";
-		for(int i = 0; i < prios.size(); i++){
+		for (int i = 0; i < prios.size(); i++) {
 			rowSpecs += "5px, p, ";
 		}
-		if(rowSpecs.endsWith(", ")) {
-			rowSpecs = rowSpecs.substring(0, rowSpecs.length() -2);
+		if (rowSpecs.endsWith(", ")) {
+			rowSpecs = rowSpecs.substring(0, rowSpecs.length() - 2);
 		}
-		
+
 		PanelBuilder builder;
 		CellConstraints cc = new CellConstraints();
 		FormLayout layout = new FormLayout("5px, p, 5px, p, 5px, fill:10:grow, 5px, p, 15px, p, 3px, p, 3px, p, 3px, p, 5px", // columns
-		        rowSpecs); // rows
+				rowSpecs); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
-		
+
 		List<ThumbnailPrioType> pts = new ArrayList<ThumbnailPrioType>();
 		pts.add(ThumbnailPrioType.THUMBNAIL);
 		pts.add(ThumbnailPrioType.PICTURE);
 		pts.add(ThumbnailPrioType.GENERATED);
-		
+
 		int row = 2;
 		int prioIndex = 1;
 		prioChoosers.clear();
-		for(DOThumbnailPriority prio : prios){
+		for (DOThumbnailPriority prio : prios) {
 			ThumbnailPrioChooser pc = new ThumbnailPrioChooser("#" + prioIndex++, prio, pts);
 			pc.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//Add
-					if(e.getActionCommand().equals(ActionType.Add.toString())){
+					// Add
+					if (e.getActionCommand().equals(ActionType.Add.toString())) {
 						boolean newPrioAdded = false;
 						DOThumbnailPriority newPrio = new DOThumbnailPriority(-1, ThumbnailPrioType.PICTURE, 30, e.getModifiers());
 						List<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
-						for(DOThumbnailPriority prio : getThumbnailPriorities()){
-							if(prio.getPriorityIndex() == e.getModifiers()){
+						for (DOThumbnailPriority prio : getThumbnailPriorities()) {
+							if (prio.getPriorityIndex() == e.getModifiers()) {
 								prios.add(newPrio);
 								newPrioAdded = true;
 							}
-							if(prio.getPriorityIndex() >= e.getModifiers()){
+							if (prio.getPriorityIndex() >= e.getModifiers()) {
 								prio.setPriorityIndex(prio.getPriorityIndex() + 1);
 							}
 							prios.add(prio);
 						}
-						
-						if(!newPrioAdded){
-							prios.add(newPrio);							
+
+						if (!newPrioAdded) {
+							prios.add(newPrio);
 						}
-						
+
 						setThumbnailPriorities(prios);
 					}
-					
-					//Remove
-					else if(e.getActionCommand().equals(ActionType.Remove.toString())){
+
+					// Remove
+					else if (e.getActionCommand().equals(ActionType.Remove.toString())) {
 						List<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
-						for(DOThumbnailPriority prio : getThumbnailPriorities()){
-							if(prio.getPriorityIndex() != e.getModifiers()){
-								if(prio.getPriorityIndex() >= e.getModifiers()){
+						for (DOThumbnailPriority prio : getThumbnailPriorities()) {
+							if (prio.getPriorityIndex() != e.getModifiers()) {
+								if (prio.getPriorityIndex() >= e.getModifiers()) {
 									prio.setPriorityIndex(prio.getPriorityIndex() - 1);
 								}
 								prios.add(prio);
 							}
 						}
-						
-						setThumbnailPriorities(prios);						
+
+						setThumbnailPriorities(prios);
 					}
-					
-					//Move up
-					else if(e.getActionCommand().equals(ActionType.MoveUp.toString())){
-						if(e.getModifiers() > 0) {
-    						List<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
-    						for(DOThumbnailPriority prio : getThumbnailPriorities()){								
-    							if(prio.getPriorityIndex() == e.getModifiers()){
-    								prio.setPriorityIndex(prio.getPriorityIndex() - 1);
-    							} else if(prio.getPriorityIndex() == e.getModifiers() - 1){
-    								prio.setPriorityIndex(prio.getPriorityIndex() + 1);
-    							}
-    							prios.add(prio);
-    						}
-    						
-    						setThumbnailPriorities(prios);
+
+					// Move up
+					else if (e.getActionCommand().equals(ActionType.MoveUp.toString())) {
+						if (e.getModifiers() > 0) {
+							List<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
+							for (DOThumbnailPriority prio : getThumbnailPriorities()) {
+								if (prio.getPriorityIndex() == e.getModifiers()) {
+									prio.setPriorityIndex(prio.getPriorityIndex() - 1);
+								} else if (prio.getPriorityIndex() == e.getModifiers() - 1) {
+									prio.setPriorityIndex(prio.getPriorityIndex() + 1);
+								}
+								prios.add(prio);
+							}
+
+							setThumbnailPriorities(prios);
 						}
 					}
-					
-					//Move down
-					else if(e.getActionCommand().equals(ActionType.MoveDown.toString())){
+
+					// Move down
+					else if (e.getActionCommand().equals(ActionType.MoveDown.toString())) {
 						List<DOThumbnailPriority> currentPrios = getThumbnailPriorities();
-						if(e.getModifiers() < currentPrios.size() - 1) {
-    						List<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
-    						for(DOThumbnailPriority prio : getThumbnailPriorities()){								
-    							if(prio.getPriorityIndex() == e.getModifiers()){
-    								prio.setPriorityIndex(prio.getPriorityIndex() + 1);
-    							} else if(prio.getPriorityIndex() == e.getModifiers() + 1){
-    								prio.setPriorityIndex(prio.getPriorityIndex() - 1);
-    							}
-    							prios.add(prio);
-    						}
-    						
-    						setThumbnailPriorities(prios);
+						if (e.getModifiers() < currentPrios.size() - 1) {
+							List<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
+							for (DOThumbnailPriority prio : getThumbnailPriorities()) {
+								if (prio.getPriorityIndex() == e.getModifiers()) {
+									prio.setPriorityIndex(prio.getPriorityIndex() + 1);
+								} else if (prio.getPriorityIndex() == e.getModifiers() + 1) {
+									prio.setPriorityIndex(prio.getPriorityIndex() - 1);
+								}
+								prios.add(prio);
+							}
+
+							setThumbnailPriorities(prios);
 						}
 					}
 				}
-			});			
+			});
 			prioChoosers.add(pc);
-			
+
 			builder.add(pc.lTitle, cc.xy(2, row));
 			builder.add(pc.cbPrioType, cc.xy(4, row));
 			builder.add(pc.tfPicturePath, cc.xy(6, row));
@@ -280,7 +280,7 @@ public class FileDisplayPanel extends JPanel {
 			builder.add(pc.bAdd, cc.xy(12, row));
 			builder.add(pc.bMoveDown, cc.xy(14, row));
 			builder.add(pc.bMoveUp, cc.xy(16, row));
-			
+
 			row += 2;
 		}
 
@@ -338,7 +338,7 @@ public class FileDisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("p, 3px, fill:100:grow, 3px, p", // columns
-		        "p"); // rows
+				"p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -350,10 +350,10 @@ public class FileDisplayPanel extends JPanel {
 
 	}
 
-	public List<DOThumbnailPriority> getThumbnailPriorities() {		
+	public List<DOThumbnailPriority> getThumbnailPriorities() {
 		int index = 0;
 		List<DOThumbnailPriority> res = new ArrayList<DOThumbnailPriority>();
-		for(ThumbnailPrioChooser pc : prioChoosers){
+		for (ThumbnailPrioChooser pc : prioChoosers) {
 			DOThumbnailPriority prio = pc.getTumbnailPrio();
 			prio.setPriorityIndex(index++);
 			res.add(prio);
@@ -365,9 +365,9 @@ public class FileDisplayPanel extends JPanel {
 		Collections.sort(thumbnailPriorities, new Comparator<DOThumbnailPriority>() {
 
 			@Override
-            public int compare(DOThumbnailPriority o1, DOThumbnailPriority o2) {
-	            return ((Integer)o1.getPriorityIndex()).compareTo(o2.getPriorityIndex());
-            }
+			public int compare(DOThumbnailPriority o1, DOThumbnailPriority o2) {
+				return ((Integer) o1.getPriorityIndex()).compareTo(o2.getPriorityIndex());
+			}
 		});
 		JPanel newPanel = getThumbnailPrioPanel(thumbnailPriorities);
 		pThumbnailPrio = newPanel;
@@ -418,7 +418,7 @@ public class FileDisplayPanel extends JPanel {
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		lMask.setEnabled(enabled);
-		for(ThumbnailPrioChooser pc : prioChoosers){
+		for (ThumbnailPrioChooser pc : prioChoosers) {
 			pc.setEnabled(enabled);
 		}
 		tfDisplaynameMask.setEnabled(enabled);
@@ -432,7 +432,7 @@ public class FileDisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, fill:300:grow, 3px", // columns
-		        "3px, p, 3px, p, 3px, p, 3px, fill:100:grow, 3px"); // rows
+				"3px, p, 3px, p, 3px, p, 3px, fill:100:grow, 3px"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -451,7 +451,7 @@ public class FileDisplayPanel extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("p, 3px, p, 3px, fill:10:grow, 3px, p", // columns
-		        "p, p,  fill:p:grow, p, p"); // rows
+				"p, p,  fill:p:grow, p, p"); // rows
 		builder = new PanelBuilder(layout);
 
 		// Max line length
@@ -460,7 +460,7 @@ public class FileDisplayPanel extends JPanel {
 
 		List<ScreeResolutionCBItem> resItems = new ArrayList<ScreeResolutionCBItem>();
 		resItems
-		        .add(new ScreeResolutionCBItem(ScreenResolution.NO_LIMIT, Messages.getString("ML.GeneralOptions.ScreenResolutions." + ScreenResolution.NO_LIMIT.toString())));
+				.add(new ScreeResolutionCBItem(ScreenResolution.NO_LIMIT, Messages.getString("ML.GeneralOptions.ScreenResolutions." + ScreenResolution.NO_LIMIT.toString())));
 		resItems.add(new ScreeResolutionCBItem(ScreenResolution.HD, Messages.getString("ML.GeneralOptions.ScreenResolutions." + ScreenResolution.HD.toString())));
 		resItems.add(new ScreeResolutionCBItem(ScreenResolution.SD_16_9, Messages.getString("ML.GeneralOptions.ScreenResolutions." + ScreenResolution.SD_16_9.toString())));
 		resItems.add(new ScreeResolutionCBItem(ScreenResolution.SD_4_3, Messages.getString("ML.GeneralOptions.ScreenResolutions." + ScreenResolution.SD_4_3.toString())));
@@ -539,18 +539,18 @@ public class FileDisplayPanel extends JPanel {
 				JComboBox cb = (JComboBox) e.getSource();
 				ScreenResolution res = ((ScreeResolutionCBItem) cb.getSelectedItem()).getScreenResolution();
 				switch (res) {
-					case HD:
-						tfMaxLineLength.setText("55");
-						break;
-					case NO_LIMIT:
-						tfMaxLineLength.setText("0");
-						break;
-					case SD_16_9:
-						tfMaxLineLength.setText("40");
-						break;
-					case SD_4_3:
-						tfMaxLineLength.setText("20");
-						break;
+				case HD:
+					tfMaxLineLength.setText("55");
+					break;
+				case NO_LIMIT:
+					tfMaxLineLength.setText("0");
+					break;
+				case SD_16_9:
+					tfMaxLineLength.setText("40");
+					break;
+				case SD_4_3:
+					tfMaxLineLength.setText("20");
+					break;
 				default:
 					break;
 				}
@@ -566,26 +566,26 @@ public class FileDisplayPanel extends JPanel {
 	private void updateMaxLineLength(int maxLineLength) {
 		tfMaxLineLength.setText(String.valueOf(maxLineLength));
 		switch (maxLineLength) {
-			case 55:
-				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.HD, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-				        + ScreenResolution.HD.toString())));
-				break;
-			case 40:
-				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_16_9, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-				        + ScreenResolution.SD_16_9.toString())));
-				break;
-			case 20:
-				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_4_3, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-				        + ScreenResolution.SD_4_3.toString())));
-				break;
-			case 0:
-				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.NO_LIMIT, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-				        + ScreenResolution.NO_LIMIT.toString())));
-				break;
-			default:
-				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.CUSTOM, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-				        + ScreenResolution.CUSTOM.toString())));
-				break;
+		case 55:
+			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.HD, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+					+ ScreenResolution.HD.toString())));
+			break;
+		case 40:
+			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_16_9, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+					+ ScreenResolution.SD_16_9.toString())));
+			break;
+		case 20:
+			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_4_3, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+					+ ScreenResolution.SD_4_3.toString())));
+			break;
+		case 0:
+			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.NO_LIMIT, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+					+ ScreenResolution.NO_LIMIT.toString())));
+			break;
+		default:
+			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.CUSTOM, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+					+ ScreenResolution.CUSTOM.toString())));
+			break;
 		}
 	}
 }

@@ -37,24 +37,24 @@ import net.pms.notifications.types.DBEvent;
 import net.pms.notifications.types.DBEvent.Type;
 
 public class LibraryManager implements ILibraryManager {
-	
+
 	private static LibraryManager instance;
 
 	private IMediaLibraryStorage mediaLibraryStorage;
 	private FileScanner fileScanner;
 	private List<ILibraryManagerEventListener> libraryManagerEventListeners;
-	
-	private LibraryManager() throws InitialisationException{
+
+	private LibraryManager() throws InitialisationException {
 		this.mediaLibraryStorage = MediaLibraryStorage.getInstance();
 		this.fileScanner = FileScanner.getInstance();
 		this.libraryManagerEventListeners = new ArrayList<ILibraryManagerEventListener>();
 	}
-	
-	public static LibraryManager getInstance() throws InitialisationException{
-		if(instance == null){
-			try{
+
+	public static LibraryManager getInstance() throws InitialisationException {
+		if (instance == null) {
+			try {
 				instance = new LibraryManager();
-			}catch (InitialisationException ex){
+			} catch (InitialisationException ex) {
 				throw new InitialisationException("Both components MediaLibraryStorage and FileScanner have to be configured before this method can be called", ex);
 			}
 		}
@@ -69,7 +69,7 @@ public class LibraryManager implements ILibraryManager {
 	@Override
 	public void clearAudio() {
 		this.mediaLibraryStorage.deleteAudioFileInfo();
-		for(ILibraryManagerEventListener l : this.libraryManagerEventListeners){
+		for (ILibraryManagerEventListener l : this.libraryManagerEventListeners) {
 			l.itemCountChanged(getAudioCount(), FileType.AUDIO);
 		}
 
@@ -80,10 +80,10 @@ public class LibraryManager implements ILibraryManager {
 	@Override
 	public void clearPictures() {
 		this.mediaLibraryStorage.deletePicturesFileInfo();
-		for(ILibraryManagerEventListener l : this.libraryManagerEventListeners){
+		for (ILibraryManagerEventListener l : this.libraryManagerEventListeners) {
 			l.itemCountChanged(getPictureCount(), FileType.PICTURES);
 		}
-		
+
 		// Notify a DB clear pictures event
 		NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.ClearPictures));
 	}
@@ -91,7 +91,7 @@ public class LibraryManager implements ILibraryManager {
 	@Override
 	public void resetStorage() {
 		this.mediaLibraryStorage.reset();
-		for(ILibraryManagerEventListener l : this.libraryManagerEventListeners){
+		for (ILibraryManagerEventListener l : this.libraryManagerEventListeners) {
 			l.itemCountChanged(getVideoCount(), FileType.VIDEO);
 			l.itemCountChanged(getAudioCount(), FileType.AUDIO);
 			l.itemCountChanged(getPictureCount(), FileType.PICTURES);
@@ -104,12 +104,12 @@ public class LibraryManager implements ILibraryManager {
 	@Override
 	public void clearVideo() {
 		this.mediaLibraryStorage.deleteAllVideos();
-		for(ILibraryManagerEventListener l : this.libraryManagerEventListeners){
+		for (ILibraryManagerEventListener l : this.libraryManagerEventListeners) {
 			l.itemCountChanged(getVideoCount(), FileType.VIDEO);
 		}
-		
+
 		// Notify a DB clear video event
-		NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.ClearVideo));		
+		NotificationCenter.getInstance(DBEvent.class).post(new DBEvent(Type.ClearVideo));
 	}
 
 	@Override
@@ -133,33 +133,33 @@ public class LibraryManager implements ILibraryManager {
 	}
 
 	@Override
-    public int getAudioCount() {
-	    return this.mediaLibraryStorage.getAudioCount();
-    }
+	public int getAudioCount() {
+		return this.mediaLibraryStorage.getAudioCount();
+	}
 
 	@Override
-    public int getPictureCount() {
-	    return this.mediaLibraryStorage.getPicturesCount();
-    }
+	public int getPictureCount() {
+		return this.mediaLibraryStorage.getPicturesCount();
+	}
 
 	@Override
-    public int getVideoCount() {
-	    return this.mediaLibraryStorage.getVideoCount();
-    }
+	public int getVideoCount() {
+		return this.mediaLibraryStorage.getVideoCount();
+	}
 
 	@Override
-    public void scanFolder(DOManagedFile mFolder) {
-	    this.fileScanner.scanFolder(mFolder);
-    }
+	public void scanFolder(DOManagedFile mFolder) {
+		this.fileScanner.scanFolder(mFolder);
+	}
 
 	@Override
 	public void addFileScannerEventListener(IFileScannerEventListener listener) {
-	    this.fileScanner.addFileScannerEventListener(listener);
-    }
-	
+		this.fileScanner.addFileScannerEventListener(listener);
+	}
+
 	@Override
-	public void addLibraryManagerEventListener(ILibraryManagerEventListener l){
-		if(!this.libraryManagerEventListeners.contains(l)){
+	public void addLibraryManagerEventListener(ILibraryManagerEventListener l) {
+		if (!this.libraryManagerEventListeners.contains(l)) {
 			this.libraryManagerEventListeners.add(l);
 		}
 	}

@@ -105,44 +105,44 @@ public class FileDisplayTable extends JPanel {
 	private static final Logger log = LoggerFactory.getLogger(FileDisplayTable.class);
 	private final int MAX_MENUITEMS_PER_COLUMN = 20;
 	private final int DEFAULT_COLUMN_WIDTH = 75;
-	
+
 	private FileType fileType;
 	private ETable table;
 	private JPopupMenu columnSelectorMenu;
 	private JLabel statusLabel;
-	
+
 	private JPopupMenu fileEditMenu = new JPopupMenu();
-	
+
 	private boolean isUpdating = false;
 	private boolean isColumnDragging = false;
 	private int colMoveToIndex;
 	private int colMoveFromIndex;
-	
+
 	private SelectionInList<DOFileInfo> selectionInList;
 	private List<DOQuickTagEntry> quickTags;
 
 	public FileDisplayTable(FileType fileType) {
 		super(new BorderLayout());
-		
+
 		selectionInList = new SelectionInList<DOFileInfo>();
 		selectionInList.addListDataListener(new ListDataListener() {
-			
+
 			@Override
 			public void intervalRemoved(ListDataEvent arg0) {
 				refreshStatusMessage();
 			}
-			
+
 			@Override
 			public void intervalAdded(ListDataEvent arg0) {
 				refreshStatusMessage();
 			}
-			
+
 			@Override
 			public void contentsChanged(ListDataEvent arg0) {
 				refreshStatusMessage();
 			}
 		});
-		
+
 		setFileType(fileType);
 		refreshQuickTags();
 		init();
@@ -160,90 +160,90 @@ public class FileDisplayTable extends JPanel {
 	public void setContent(List<DOFileInfo> files) {
 		selectionInList.setList(files);
 	}
-	
+
 	private void refreshQuickTags() {
 		quickTags = MediaLibraryStorage.getInstance().getQuickTagEntries();
 	}
-	
+
 	private void refreshStatusMessage() {
 		int nbItems = selectionInList.getSize();
 		double totalSeconds = 0;
 		long totalSize = 0;
-		for(DOFileInfo fileInfo : selectionInList.getList()) {
+		for (DOFileInfo fileInfo : selectionInList.getList()) {
 			totalSize += fileInfo.getSize();
-			
-			if(fileInfo instanceof DOVideoFileInfo) {
+
+			if (fileInfo instanceof DOVideoFileInfo) {
 				DOVideoFileInfo videoFileInfo = (DOVideoFileInfo) fileInfo;
 				totalSeconds += videoFileInfo.getDurationSec();
 			}
 		}
-		
-		String statusMsg = String.format(Messages.getString("ML.FileDisplayTable.VideoStatusMessage"), nbItems, 
-				GUIHelper.formatSecondsToDisplayString((int)totalSeconds), GUIHelper.formatSizeToDisplayString(totalSize));
+
+		String statusMsg = String.format(Messages.getString("ML.FileDisplayTable.VideoStatusMessage"), nbItems,
+				GUIHelper.formatSecondsToDisplayString((int) totalSeconds), GUIHelper.formatSizeToDisplayString(totalSize));
 		statusLabel.setText(statusMsg);
 	}
 
 	private void init() {
-		initTable();		
+		initTable();
 		updateTableModel();
 		initNotifications();
-		
-		//configure the context menu for column selection
+
+		// configure the context menu for column selection
 		columnSelectorMenu = new JPopupMenu();
 		columnSelectorMenu.setLayout(new SpringLayout());
 		refreshColumnSelectorMenu();
-		
-		//configure the context menu for file edition
-		refreshFileEditMenu(); 
-		
+
+		// configure the context menu for file edition
+		refreshFileEditMenu();
+
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setPreferredSize(table.getPreferredSize());
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		add(scrollPane, BorderLayout.CENTER);
-		
+
 		statusLabel = new JLabel();
 		statusLabel.setHorizontalAlignment(JLabel.CENTER);
 		add(statusLabel, BorderLayout.SOUTH);
 	}
 
 	private void initTable() {
-		//configure the table
+		// configure the table
 		table = new ETable();
-		//align all the cells to the left and format the date according to available space
+		// align all the cells to the left and format the date according to available space
 		table.setDefaultRenderer(Integer.class, new FileDisplayTableCellRenderer());
 		table.setDefaultRenderer(Double.class, new FileDisplayTableCellRenderer());
 		table.setDefaultRenderer(Date.class, new DateCellRenderer());
-		
+
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(false);
 		table.setAutoCreateRowSorter(true);
 		table.setRowHeight(table.getRowHeight() + 4);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		//listen to mouse events on header in order to show the context menu
+
+		// listen to mouse events on header in order to show the context menu
 		table.getTableHeader().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getButton() == MouseEvent.BUTTON3){
+				if (e.getButton() == MouseEvent.BUTTON3) {
 					columnSelectorMenu.setLocation(e.getLocationOnScreen());
 					columnSelectorMenu.show(table.getTableHeader(), e.getX(), e.getY());
 				}
 			}
-			
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				handleColumnMoved();
 			}
 		});
-		
-		//listen to column events like move, resize or add
+
+		// listen to column events like move, resize or add
 		table.getColumnModel().addColumnModelListener(new TableColumnModelListener() {
-					
+
 			@Override
 			public void columnMoved(TableColumnModelEvent arg0) {
-				if(arg0.getFromIndex() != (colMoveFromIndex > 0 ? colMoveFromIndex : arg0.getToIndex())) {
-					if(!isColumnDragging) {
+				if (arg0.getFromIndex() != (colMoveFromIndex > 0 ? colMoveFromIndex : arg0.getToIndex())) {
+					if (!isColumnDragging) {
 						colMoveFromIndex = arg0.getFromIndex();
 						isColumnDragging = true;
 					}
@@ -252,23 +252,29 @@ public class FileDisplayTable extends JPanel {
 			}
 
 			@Override
-			public void columnSelectionChanged(ListSelectionEvent arg0) { }			
+			public void columnSelectionChanged(ListSelectionEvent arg0) {
+			}
+
 			@Override
-			public void columnRemoved(TableColumnModelEvent arg0) { }	
+			public void columnRemoved(TableColumnModelEvent arg0) {
+			}
+
 			@Override
-			public void columnMarginChanged(ChangeEvent arg0) { }			
+			public void columnMarginChanged(ChangeEvent arg0) {
+			}
+
 			@Override
 			public void columnAdded(TableColumnModelEvent arg0) {
-				TableColumn c = ((DefaultTableColumnModel)arg0.getSource()).getColumn(arg0.getToIndex());
+				TableColumn c = ((DefaultTableColumnModel) arg0.getSource()).getColumn(arg0.getToIndex());
 				c.addPropertyChangeListener(new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent e) {
 						TableColumn c = (TableColumn) e.getSource();
-						if(!isUpdating && e.getPropertyName().equals("preferredWidth")) {
-							//store the width of the column when it changes
+						if (!isUpdating && e.getPropertyName().equals("preferredWidth")) {
+							// store the width of the column when it changes
 							String columnName = (String) c.getHeaderValue();
 							DOTableColumnConfiguration columnConfiguration = getColumnConfigurationForName(columnName);
-							if(columnConfiguration != null) {
+							if (columnConfiguration != null) {
 								MediaLibraryStorage.getInstance().updateTableColumnWidth(columnConfiguration.getConditionType(), columnConfiguration.getTagName(), c.getWidth(), getFileType());
 							}
 						}
@@ -276,114 +282,114 @@ public class FileDisplayTable extends JPanel {
 				});
 			}
 		});
-		
-		//listen to mouse events to select a row on right click and show the context menu
-		//http://www.stupidjavatricks.com/?p=12
+
+		// listen to mouse events to select a row on right click and show the context menu
+		// http://www.stupidjavatricks.com/?p=12
 		table.addMouseListener(new MouseAdapter()
 		{
 			@Override
-			public void mouseClicked( MouseEvent e )
+			public void mouseClicked(MouseEvent e)
 			{
 				if (SwingUtilities.isRightMouseButton(e))
 				{
 					int rowNumber = table.rowAtPoint(e.getPoint());
 
-					//store for use on menu item click
+					// store for use on menu item click
 					boolean doSelect = true;
-					if(table.getSelectedRowCount() > 1) {
-						for(int selectedRowNumber : table.getSelectedRows()) {
-							if(selectedRowNumber == rowNumber) {
+					if (table.getSelectedRowCount() > 1) {
+						for (int selectedRowNumber : table.getSelectedRows()) {
+							if (selectedRowNumber == rowNumber) {
 								doSelect = false;
 								break;
 							}
 						}
 					}
-					
-					if(doSelect) {
-						table.getSelectionModel().setSelectionInterval(rowNumber, rowNumber);						
+
+					if (doSelect) {
+						table.getSelectionModel().setSelectionInterval(rowNumber, rowNumber);
 					}
-					
+
 					refreshFileEditMenu();
 
-					//show the context menu
+					// show the context menu
 					fileEditMenu.show(table, e.getX(), e.getY());
 
-					//make it look a bit nicer
+					// make it look a bit nicer
 					table.requestFocus();
 				}
 			}
 		});
-		
-		//listen for key events
+
+		// listen for key events
 		table.addKeyListener(new KeyAdapter() {
-			
+
 			@Override
-			public void keyPressed(KeyEvent e) {				
-				//handle quick tags
-				for(DOQuickTagEntry quickTag : quickTags) {
-					
-					if(e.getKeyCode() != quickTag.getKeyCode()) {
+			public void keyPressed(KeyEvent e) {
+				// handle quick tags
+				for (DOQuickTagEntry quickTag : quickTags) {
+
+					if (e.getKeyCode() != quickTag.getKeyCode()) {
 						continue;
 					}
-					
-					switch(quickTag.getKeyCombination()) {
+
+					switch (quickTag.getKeyCombination()) {
 					case Ctrl:
-						if(!e.isControlDown()) {
+						if (!e.isControlDown()) {
 							continue;
 						}
 						break;
 					case Alt:
-						if(!e.isAltDown()) {
+						if (!e.isAltDown()) {
 							continue;
 						}
 						break;
 					case Shift:
-						if(!e.isShiftDown()) {
+						if (!e.isShiftDown()) {
 							continue;
 						}
 						break;
 					case CtrlShift:
-						if(!(e.isControlDown() && e.isShiftDown())) {
+						if (!(e.isControlDown() && e.isShiftDown())) {
 							continue;
 						}
 						break;
 					case CtrlAlt:
-						if(!(e.isControlDown() && e.isAltDown())) {
+						if (!(e.isControlDown() && e.isAltDown())) {
 							continue;
 						}
 						break;
 					case ShiftAlt:
-						if(!(e.isShiftDown() && e.isAltDown())) {
+						if (!(e.isShiftDown() && e.isAltDown())) {
 							continue;
 						}
 						break;
 					case CtrlShiftAlt:
-						if(!(e.isShiftDown() && e.isShiftDown() && e.isAltDown())) {
+						if (!(e.isShiftDown() && e.isShiftDown() && e.isAltDown())) {
 							continue;
 						}
 						break;
 					default:
 						continue;
 					}
-					
+
 					tagSelectedFiles(quickTag);
 				}
-				
-				//handle the default events
-				if(e.isControlDown()) {
-					switch(e.getKeyCode()) {
+
+				// handle the default events
+				if (e.isControlDown()) {
+					switch (e.getKeyCode()) {
 					case KeyEvent.VK_ADD:
 						List<DOFileInfo> updatedFiles = new ArrayList<DOFileInfo>();
-						for(DOFileInfo fileInfo : getSelectedFiles()) {
-								fileInfo.setPlayCount(fileInfo.getPlayCount() + 1);
-								updatedFiles.add(fileInfo);
+						for (DOFileInfo fileInfo : getSelectedFiles()) {
+							fileInfo.setPlayCount(fileInfo.getPlayCount() + 1);
+							updatedFiles.add(fileInfo);
 						}
 						updateFiles(updatedFiles);
 						break;
 					case KeyEvent.VK_SUBTRACT:
 						updatedFiles = new ArrayList<DOFileInfo>();
-						for(DOFileInfo fileInfo : getSelectedFiles()) {
-							if(fileInfo.getPlayCount() > 0) {
+						for (DOFileInfo fileInfo : getSelectedFiles()) {
+							if (fileInfo.getPlayCount() > 0) {
 								fileInfo.setPlayCount(fileInfo.getPlayCount() - 1);
 								updatedFiles.add(fileInfo);
 							}
@@ -395,28 +401,27 @@ public class FileDisplayTable extends JPanel {
 						break;
 					}
 				}
-				
 
-				if(!e.isShiftDown() && !e.isShiftDown() && !e.isAltDown()) {
-					if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+				if (!e.isShiftDown() && !e.isShiftDown() && !e.isAltDown()) {
+					if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 						deleteSelectedFiles();
-					}		
+					}
 				}
 			}
 		});
-		
-		//listen for cell edit events to update the changes in the DB
+
+		// listen for cell edit events to update the changes in the DB
 		CellEditorListener cellEditorListener = new CellEditorListener() {
 
 			private boolean propertyChanged;
 
 			@Override
 			public void editingStopped(ChangeEvent e) {
-				if(getSelectedFiles().size() != 1) {
-					//only allow editing if a file is actually selected. This return should never be reached
+				if (getSelectedFiles().size() != 1) {
+					// only allow editing if a file is actually selected. This return should never be reached
 					return;
 				}
-				
+
 				FileDisplayTableAdapter tm = (FileDisplayTableAdapter) table.getModel();
 				ConditionType ct = tm.getColumnConditionType(table.getSelectedColumn());
 				DOFileInfo fileInfo = getSelectedFiles().get(0);
@@ -425,13 +430,13 @@ public class FileDisplayTable extends JPanel {
 
 				propertyChanged = false;
 				fileInfo.addPropertyChangeListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						propertyChanged = true;
 					}
 				});
-				
+
 				if (obj instanceof Boolean) {
 					boolean newVal = (Boolean) obj;
 					switch (ct) {
@@ -511,8 +516,8 @@ public class FileDisplayTable extends JPanel {
 						}
 					}
 				}
-				
-				if(propertyChanged) {
+
+				if (propertyChanged) {
 					MediaLibraryStorage.getInstance().updateFileInfo(fileInfo);
 				}
 			}
@@ -522,21 +527,20 @@ public class FileDisplayTable extends JPanel {
 			}
 		};
 
-
 		table.getDefaultEditor(String.class).addCellEditorListener(cellEditorListener);
 		table.getDefaultEditor(Integer.class).addCellEditorListener(cellEditorListener);
 		table.getDefaultEditor(Boolean.class).addCellEditorListener(cellEditorListener);
 	}
-	
+
 	private void initNotifications() {
 		NotificationCenter.getInstance(DBEvent.class).subscribe(new NotificationSubscriber<DBEvent>() {
-			
+
 			@Override
 			public void onMessage(DBEvent obj) {
-				if(obj.getType() == Type.FileTagChanged) {
+				if (obj.getType() == Type.FileTagChanged) {
 					// Do refresh tag columns in the UI thread
 					SwingUtilities.invokeLater(new Runnable() {
-						
+
 						@Override
 						public void run() {
 							((FileDisplayTableAdapter) table.getModel()).refreshColumnConfigurations();
@@ -551,51 +555,51 @@ public class FileDisplayTable extends JPanel {
 
 	private DOTableColumnConfiguration getColumnConfigurationForName(String columnName) {
 		DOTableColumnConfiguration result = null;
-		if(columnName != null) {
+		if (columnName != null) {
 			List<DOTableColumnConfiguration> columnConfigurations = MediaLibraryStorage.getInstance().getTableColumnConfigurations(getFileType());
-			
-			for(DOTableColumnConfiguration columnConfiguration : columnConfigurations){
-				if(columnConfiguration != null && columnConfiguration.toString().equals(columnName)){
+
+			for (DOTableColumnConfiguration columnConfiguration : columnConfigurations) {
+				if (columnConfiguration != null && columnConfiguration.toString().equals(columnName)) {
 					result = columnConfiguration;
 					break;
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
 	private void updateFiles(List<DOFileInfo> updatedFiles) {
-		for(DOFileInfo fileInfo : getSelectedFiles()) {
+		for (DOFileInfo fileInfo : getSelectedFiles()) {
 			MediaLibraryStorage.getInstance().updateFileInfo(fileInfo);
-		}				
+		}
 		table.validate();
 		table.repaint();
 	}
 
 	private void refreshFileEditMenu() {
 		String iconsFolder = "/resources/images/";
-		
+
 		fileEditMenu.removeAll();
-		
-		//edit
+
+		// edit
 		JMenuItem miEdit = new JMenuItem(Messages.getString("ML.ContextMenu.EDIT"));
 		miEdit.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "edit-16.png")));
 		miEdit.addActionListener(new ActionListener() {
-			
+
 			@Override
-			public void actionPerformed(ActionEvent arg0) {				
+			public void actionPerformed(ActionEvent arg0) {
 				editSelectedFiles();
 			}
 		});
 		fileEditMenu.add(miEdit);
 
-		//update
+		// update
 		JMenu mUpdate = new JMenu(Messages.getString("ML.ContextMenu.UPDATE"));
 		mUpdate.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "update-16.png")));
 		fileEditMenu.add(mUpdate);
-		
-		//sort the collection of templates by name
+
+		// sort the collection of templates by name
 		List<DOFileImportTemplate> templates = MediaLibraryStorage.getInstance().getFileImportTemplates();
 		Collections.sort(templates, new Comparator<DOFileImportTemplate>() {
 
@@ -604,22 +608,22 @@ public class FileDisplayTable extends JPanel {
 				return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 			}
 		});
-		
-		//add the templates
-		for(DOFileImportTemplate template : templates) {
+
+		// add the templates
+		for (DOFileImportTemplate template : templates) {
 			final EMenuItem miTemplate = new EMenuItem(template);
 			miTemplate.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					DOFileImportTemplate templateToUse = (DOFileImportTemplate)miTemplate.getUserObject();
+					DOFileImportTemplate templateToUse = (DOFileImportTemplate) miTemplate.getUserObject();
 					updateSelectedFiles(templateToUse);
 				}
 			});
 			mUpdate.add(miTemplate);
 		}
 
-		//configure
+		// configure
 		JMenuItem miConfigureTemplate = new JMenuItem(Messages.getString("ML.ContextMenu.CONFIGURE"));
 		miConfigureTemplate.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "configure-16.png")));
 		miConfigureTemplate.addActionListener(new ActionListener() {
@@ -630,9 +634,9 @@ public class FileDisplayTable extends JPanel {
 		});
 		mUpdate.addSeparator();
 		mUpdate.add(miConfigureTemplate);
-		
-		//import by name or id
-		if(getSelectedFiles().size() == 1) {
+
+		// import by name or id
+		if (getSelectedFiles().size() == 1) {
 			JMenuItem miImportWithPlugin = new JMenuItem(Messages.getString("ML.ContextMenu.UPDATEBYNAMEORID"));
 			miImportWithPlugin.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "id-16.png")));
 			miImportWithPlugin.addActionListener(new ActionListener() {
@@ -644,31 +648,31 @@ public class FileDisplayTable extends JPanel {
 			mUpdate.addSeparator();
 			mUpdate.add(miImportWithPlugin);
 		}
-		
-		//tag
+
+		// tag
 		JMenu mTag = new JMenu(Messages.getString("ML.ContextMenu.TAG"));
 		mTag.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "tag-16.png")));
 		fileEditMenu.add(mTag);
-		
-		//add quick tags
-		for(DOQuickTagEntry quickTag : quickTags) {
+
+		// add quick tags
+		for (DOQuickTagEntry quickTag : quickTags) {
 			final EMenuItem miTemplate = new EMenuItem(quickTag);
 			miTemplate.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					DOQuickTagEntry tagToUse = (DOQuickTagEntry)miTemplate.getUserObject();
+					DOQuickTagEntry tagToUse = (DOQuickTagEntry) miTemplate.getUserObject();
 					tagSelectedFiles(tagToUse);
 				}
 			});
 			mTag.add(miTemplate);
 		}
 
-		//configure
+		// configure
 		JMenuItem miConfigureTags = new JMenuItem(Messages.getString("ML.ContextMenu.CONFIGURE"));
 		miConfigureTags.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "configure-16.png")));
 		miConfigureTags.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				QuickTagDialog dialog = new QuickTagDialog(getFileType());
@@ -683,8 +687,8 @@ public class FileDisplayTable extends JPanel {
 		});
 		mTag.addSeparator();
 		mTag.add(miConfigureTags);
-		
-		//mark as played
+
+		// mark as played
 		JMenuItem miMarkPlayed = new JMenuItem(Messages.getString("ML.ContextMenu.MARKPLAYED"));
 		miMarkPlayed.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "mark_played-16.png")));
 		miMarkPlayed.addActionListener(new ActionListener() {
@@ -692,22 +696,22 @@ public class FileDisplayTable extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				List<DOFileInfo> updatedFiles = new ArrayList<DOFileInfo>();
-				for(DOFileInfo fileInfo : getSelectedFiles()) {
-					if(fileInfo.getPlayCount() == 0) {
+				for (DOFileInfo fileInfo : getSelectedFiles()) {
+					if (fileInfo.getPlayCount() == 0) {
 						fileInfo.setPlayCount(1);
 						updatedFiles.add(fileInfo);
 					}
 				}
 				updateFiles(updatedFiles);
-			}		
+			}
 		});
 		fileEditMenu.add(miMarkPlayed);
-		
-		//delete
+
+		// delete
 		JMenuItem miDelete = new JMenuItem(Messages.getString("ML.ContextMenu.DELETE"));
 		miDelete.setIcon(new ImageIcon(getClass().getResource(iconsFolder + "delete-16.png")));
 		miDelete.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				deleteSelectedFiles();
@@ -718,7 +722,7 @@ public class FileDisplayTable extends JPanel {
 	}
 
 	private void updateByNameOrId() {
-		if(getSelectedFiles().size() == 1) {
+		if (getSelectedFiles().size() == 1) {
 			DOFileInfo fileInfo = getSelectedFiles().get(0);
 			FileUpdateWithPluginDialog dialog = new FileUpdateWithPluginDialog(fileInfo);
 			dialog.pack();
@@ -726,8 +730,8 @@ public class FileDisplayTable extends JPanel {
 			dialog.setLocation(GUIHelper.getCenterDialogOnParentLocation(dialog.getSize(), this));
 			dialog.setModal(true);
 			dialog.setVisible(true);
-			
-			if(dialog.isUpdate()) {
+
+			if (dialog.isUpdate()) {
 				FileImportPlugin plugin = dialog.getPlugin();
 				FileImportHelper.updateFileInfo(plugin, fileInfo);
 				MediaLibraryStorage.getInstance().updateFileInfo(fileInfo);
@@ -736,40 +740,40 @@ public class FileDisplayTable extends JPanel {
 	}
 
 	private void showFileImportTemplateDialog() {
-		//show the dialog
+		// show the dialog
 		FileImportTemplateDialog vid = new FileImportTemplateDialog(SwingUtilities.getWindowAncestor(this), 1);
 		vid.setLocation(GUIHelper.getCenterDialogOnParentLocation(vid.getPreferredSize(), this));
 		vid.setResizable(false);
 		vid.setModal(true);
-		
+
 		vid.pack();
 		vid.setVisible(true);
 	}
 
 	private void editSelectedFiles() {
 		List<DOFileInfo> selectedFiles = getSelectedFiles();
-		
+
 		FileEditDialog editDialog;
-		if(selectedFiles.size() == 1) {
+		if (selectedFiles.size() == 1) {
 			@SuppressWarnings("unchecked")
 			FileEditLinkedList fel = new FileEditLinkedList() {
 				AbstractTableAdapter<DOFileInfo> tm = (AbstractTableAdapter<DOFileInfo>) table.getModel();
-				
+
 				@Override
 				public boolean hasPreviousFile() {
 					return table.getSelectionModel().getLeadSelectionIndex() > 0;
 				}
-				
+
 				@Override
 				public boolean hasNextFile() {
 					return table.getSelectionModel().getLeadSelectionIndex() + 1 < tm.getRowCount();
 				}
-				
+
 				@Override
 				public DOFileInfo getSelected() {
 					return tm.getRow(table.convertRowIndexToModel(table.getSelectionModel().getLeadSelectionIndex()));
 				}
-				
+
 				@Override
 				public DOFileInfo selectPreviousFile() {
 					int rowNumber = table.getSelectionModel().getLeadSelectionIndex() - 1;
@@ -777,7 +781,7 @@ public class FileDisplayTable extends JPanel {
 					table.scrollRectToVisible(new Rectangle(table.getCellRect(rowNumber, 0, true)));
 					return getSelected();
 				}
-				
+
 				@Override
 				public DOFileInfo selectNextFile() {
 					int rowNumber = table.getSelectionModel().getLeadSelectionIndex() + 1;
@@ -806,29 +810,29 @@ public class FileDisplayTable extends JPanel {
 		List<DOFileInfo> filesToUpdate = getSelectedFiles();
 		final int nbFilesToUpdate = filesToUpdate.size();
 		IProgress progressReporter = new IProgress() {
-			
+
 			@Override
 			public void workComplete() {
 				repaint();
 				PMS.get().getFrame().setStatusLine(String.format(Messages.getString("ML.Messages.UpdateFinished"), nbFilesToUpdate));
 			}
-			
+
 			@Override
 			public void reportProgress(int percentComplete) {
 				repaint();
 			}
 		};
-		
+
 		FileImportHelper.updateFileInfos(template, filesToUpdate, true, progressReporter);
 	}
 
 	private void tagSelectedFiles(DOQuickTagEntry quickTag) {
 		for (DOFileInfo file : getSelectedFiles()) {
-			if(!file.getTags().containsKey(quickTag.getTagName())) {
+			if (!file.getTags().containsKey(quickTag.getTagName())) {
 				file.getTags().put(quickTag.getTagName(), new ArrayList<String>());
 			}
 			List<String> tagNames = file.getTags().get(quickTag.getTagName());
-			if(!tagNames.contains(quickTag.getTagValue())) {
+			if (!tagNames.contains(quickTag.getTagValue())) {
 				tagNames.add(quickTag.getTagValue());
 				MediaLibraryStorage.getInstance().updateFileInfo(file);
 			}
@@ -838,30 +842,30 @@ public class FileDisplayTable extends JPanel {
 	private void deleteSelectedFiles() {
 		List<DOFileInfo> selectedFiles = getSelectedFiles();
 		String questionStr;
-		
-		if(selectedFiles.size() == 0) {
+
+		if (selectedFiles.size() == 0) {
 			return;
 		}
-		
-		if(selectedFiles.size() == 1) {
+
+		if (selectedFiles.size() == 1) {
 			questionStr = String.format(Messages.getString("ML.DeleteFileDialog.Option.SingleFile"), selectedFiles.get(0).getFilePath());
 		} else {
 			questionStr = String.format(Messages.getString("ML.DeleteFileDialog.Option.MultipleFiles"), selectedFiles.size());
 		}
-		
+
 		Object[] options = { Messages.getString("ML.DeleteFileDialog.bCancel"), Messages.getString("ML.DeleteFileDialog.bDeleteFromComputer"),
 				Messages.getString("ML.DeleteFileDialog.bRemoveFromLibrary") };
 		int dialogResponse = JOptionPane.showOptionDialog((JFrame) (SwingUtilities.getWindowAncestor((Component) PMS.get().getFrame())),
-						String.format(Messages.getString("ML.DeleteFileDialog.pQuestion"), questionStr), Messages.getString("ML.DeleteFileDialog.Header"),
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options,
-						options[2]);
-		
+				String.format(Messages.getString("ML.DeleteFileDialog.pQuestion"), questionStr), Messages.getString("ML.DeleteFileDialog.Header"),
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null, options,
+				options[2]);
+
 		boolean deleteFile = false;
 		boolean removeFromLibrary = false;
-		switch(dialogResponse) {
+		switch (dialogResponse) {
 		case 0:
-			//do nothing
+			// do nothing
 			break;
 		case 1:
 			deleteFile = true;
@@ -871,26 +875,26 @@ public class FileDisplayTable extends JPanel {
 			removeFromLibrary = true;
 			break;
 		}
-		
-		if(removeFromLibrary) {
-			for(DOFileInfo fileInfo : selectedFiles) {
-				if(deleteFile) {
+
+		if (removeFromLibrary) {
+			for (DOFileInfo fileInfo : selectedFiles) {
+				if (deleteFile) {
 					File fDelete = new File(fileInfo.getFilePath());
 					try {
 						fDelete.delete();
 						log.info("Deleted file " + fDelete.getAbsolutePath());
-					} catch(SecurityException ex) {
+					} catch (SecurityException ex) {
 						log.error("Failed to delete file " + fDelete.getAbsolutePath());
 						return;
 					}
 				}
-				
+
 				MediaLibraryStorage.getInstance().deleteVideo(fileInfo.getId());
 				selectionInList.getList().remove(fileInfo);
-			}					
+			}
 		}
 	}
-	
+
 	private Dimension getMultiEditSize() {
 		MediaLibraryStorage storage = MediaLibraryStorage.getInstance();
 		int width = 750;
@@ -898,10 +902,11 @@ public class FileDisplayTable extends JPanel {
 		try {
 			width = Integer.parseInt(storage.getMetaDataValue("FileEditDialog_MultiEdit_Width"));
 			height = Integer.parseInt(storage.getMetaDataValue("FileEditDialog_MultiEdit_Height"));
-		} catch (NumberFormatException ex) { }
+		} catch (NumberFormatException ex) {
+		}
 		return new Dimension(width, height);
 	}
-	
+
 	private void setMultiEditSize(Dimension size) {
 		MediaLibraryStorage storage = MediaLibraryStorage.getInstance();
 		storage.setMetaDataValue("FileEditDialog_MultiEdit_Width", String.valueOf(size.width));
@@ -915,10 +920,11 @@ public class FileDisplayTable extends JPanel {
 		try {
 			width = Integer.parseInt(storage.getMetaDataValue("FileEditDialog_SingleEdit_Width"));
 			height = Integer.parseInt(storage.getMetaDataValue("FileEditDialog_SingleEdit_Height"));
-		} catch (NumberFormatException ex) { }
+		} catch (NumberFormatException ex) {
+		}
 		return new Dimension(width, height);
 	}
-	
+
 	private void setSingleEditSize(Dimension size) {
 		MediaLibraryStorage storage = MediaLibraryStorage.getInstance();
 		storage.setMetaDataValue("FileEditDialog_SingleEdit_Width", String.valueOf(size.width));
@@ -929,37 +935,38 @@ public class FileDisplayTable extends JPanel {
 		List<DOFileInfo> selectedFiles = new ArrayList<DOFileInfo>();
 		@SuppressWarnings("unchecked")
 		AbstractTableAdapter<DOFileInfo> tm = ((AbstractTableAdapter<DOFileInfo>) table.getModel());
-		for(int rowNumber : table.getSelectedRows()) {
+		for (int rowNumber : table.getSelectedRows()) {
 			selectedFiles.add(tm.getRow(table.convertRowIndexToModel(rowNumber)));
 		}
 		return selectedFiles;
 	}
-	
+
 	private void handleColumnMoved() {
-		if(colMoveFromIndex != colMoveToIndex) {
-			MediaLibraryStorage.getInstance().moveTableColumnConfiguration(colMoveFromIndex, colMoveToIndex, getFileType());		
+		if (colMoveFromIndex != colMoveToIndex) {
+			MediaLibraryStorage.getInstance().moveTableColumnConfiguration(colMoveFromIndex, colMoveToIndex, getFileType());
 			colMoveFromIndex = colMoveToIndex = 0;
 		}
 		isColumnDragging = false;
 	}
 
 	private void refreshColumnSelectorMenu() {
-		//clear all the menu items
+		// clear all the menu items
 		columnSelectorMenu.removeAll();
-		
-		//create the list of items that will be shown
+
+		// create the list of items that will be shown
 		List<ConditionTypeCBItem> sortedItems = new ArrayList<ConditionTypeCBItem>();
-		for(ConditionType ct : ConditionType.values()){
-			if(ct == ConditionType.UNKNOWN) continue;
-			if((getFileType() == FileType.FILE && ct.toString().startsWith("FILE"))
+		for (ConditionType ct : ConditionType.values()) {
+			if (ct == ConditionType.UNKNOWN)
+				continue;
+			if ((getFileType() == FileType.FILE && ct.toString().startsWith("FILE"))
 					|| (getFileType() == FileType.VIDEO && (ct.toString().startsWith("FILE") || ct.toString().startsWith("VIDEO")))
 					|| (getFileType() == FileType.AUDIO && (ct.toString().startsWith("FILE") || ct.toString().startsWith("AUDIO")))
-					|| (getFileType() == FileType.PICTURES && (ct.toString().startsWith("FILE") || ct.toString().startsWith("IMAGE")))){
+					|| (getFileType() == FileType.PICTURES && (ct.toString().startsWith("FILE") || ct.toString().startsWith("IMAGE")))) {
 				sortedItems.add(new ConditionTypeCBItem(ct, Messages.getString("ML.Condition.Header.Type." + ct.toString())));
 			}
 		}
-		
-		//sort the items by their localized name
+
+		// sort the items by their localized name
 		Collections.sort(sortedItems, new Comparator<ConditionTypeCBItem>() {
 			@Override
 			public int compare(ConditionTypeCBItem o1, ConditionTypeCBItem o2) {
@@ -967,17 +974,17 @@ public class FileDisplayTable extends JPanel {
 			}
 		});
 
-		//compute the dimension of the final layout
+		// compute the dimension of the final layout
 		int nbItemsMin = sortedItems.size() + 3;
 		int rows = nbItemsMin > MAX_MENUITEMS_PER_COLUMN ? MAX_MENUITEMS_PER_COLUMN : nbItemsMin;
-		int cols = (nbItemsMin > MAX_MENUITEMS_PER_COLUMN ? (int)Math.ceil((double)nbItemsMin / MAX_MENUITEMS_PER_COLUMN) : 1);
-		
-		//create the first two lines of the menu item, where the first line will contain the default items
-		//plus the ones needed for filling it up.
-		//the second line will consist of separators
+		int cols = (nbItemsMin > MAX_MENUITEMS_PER_COLUMN ? (int) Math.ceil((double) nbItemsMin / MAX_MENUITEMS_PER_COLUMN) : 1);
+
+		// create the first two lines of the menu item, where the first line will contain the default items
+		// plus the ones needed for filling it up.
+		// the second line will consist of separators
 		JMenuItem miShowAll = new JMenuItem(Messages.getString("ML.FileDisplayTable.CntextMenu.ShowAll"));
 		miShowAll.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showAllColumns();
@@ -986,34 +993,34 @@ public class FileDisplayTable extends JPanel {
 		columnSelectorMenu.add(miShowAll);
 		JMenuItem miHideAll = new JMenuItem(Messages.getString("ML.FileDisplayTable.CntextMenu.HideAll"));
 		miHideAll.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				hideAllColumns();
 			}
 		});
 		columnSelectorMenu.add(miHideAll);
-		
-		for(int i = 2 ; i < cols; i++){
+
+		for (int i = 2; i < cols; i++) {
 			JMenuItem miDummy = new JMenuItem();
 			miDummy.setVisible(false);
 			columnSelectorMenu.add(miDummy);
 		}
 
-		for(int i = 0 ; i < cols; i++){
+		for (int i = 0; i < cols; i++) {
 			columnSelectorMenu.addSeparator();
 		}
-		
-		//add all elements to menu, attach the listener handling the click event and set them selected if needed
-		for(ConditionTypeCBItem ctItem : sortedItems) {
-			if(ctItem.getConditionType() == ConditionType.FILE_CONTAINS_TAG) {
+
+		// add all elements to menu, attach the listener handling the click event and set them selected if needed
+		for (ConditionTypeCBItem ctItem : sortedItems) {
+			if (ctItem.getConditionType() == ConditionType.FILE_CONTAINS_TAG) {
 				// Special case for file tags: Group all available tags in sub-menu items
 				JMenu tagsMenu = new JMenu(ctItem.toString());
-				columnSelectorMenu.add(tagsMenu);	
-				
+				columnSelectorMenu.add(tagsMenu);
+
 				// Add all tags for the current file type
 				FolderHelper.getInstance().getExistingTags(getFileType());
-				for(String tagName : FolderHelper.getInstance().getExistingTags(getFileType())) {
+				for (String tagName : FolderHelper.getInstance().getExistingTags(getFileType())) {
 					DOTableColumnConfiguration cConf = MediaLibraryStorage.getInstance().getTableColumnConfiguration(getFileType(), ctItem.getConditionType(), tagName);
 					boolean isSelected = cConf != null;
 					JCustomCheckBoxMenuItem mi = new JCustomCheckBoxMenuItem(tagName, isSelected);
@@ -1023,36 +1030,37 @@ public class FileDisplayTable extends JPanel {
 							JCustomCheckBoxMenuItem mi = (JCustomCheckBoxMenuItem) e.getSource();
 							ConditionType conditionType = ConditionType.FILE_CONTAINS_TAG;
 							String tagName = mi.getText();
-							
-							if(mi.isSelected()){
-								//add the column
+
+							if (mi.isSelected()) {
+								// add the column
 								int colIndex = MediaLibraryStorage.getInstance().getTableConfigurationMaxColumnIndex(getFileType()) + 1;
 								int rowWidth = DEFAULT_COLUMN_WIDTH;
 								DOTableColumnConfiguration columnConfiguration = new DOTableColumnConfiguration(conditionType, tagName, colIndex, rowWidth);
-								
+
 								TableColumn newCol = new TableColumn();
 								newCol.setHeaderValue(columnConfiguration.toString());
 								newCol.setWidth(rowWidth);
 								newCol.setModelIndex(colIndex);
-	
-								//insert the column into the db before triggering the update to load the data properly
+
+								// insert the column into the db before triggering the update to load the data properly
 								MediaLibraryStorage.getInstance().insertTableColumnConfiguration(columnConfiguration, fileType);
-	
+
 								updateTableModel();
 							} else {
-								//remove the column
-								if(table.getColumnCount() > 1) {
+								// remove the column
+								if (table.getColumnCount() > 1) {
 									List<DOTableColumnConfiguration> columnConfigurations = MediaLibraryStorage.getInstance().getTableColumnConfigurations(getFileType());
-									for(DOTableColumnConfiguration columnConfiguration : columnConfigurations) {
-										if(columnConfiguration.getConditionType() == conditionType && columnConfiguration.getTagName().equals(tagName)) {
-											//delete the column from the db before triggering the update to remove the row properly
+									for (DOTableColumnConfiguration columnConfiguration : columnConfigurations) {
+										if (columnConfiguration.getConditionType() == conditionType && columnConfiguration.getTagName().equals(tagName)) {
+											// delete the column from the db before triggering the update to remove the
+											// row properly
 											MediaLibraryStorage.getInstance().deleteTableColumnConfiguration(new DOTableColumnConfiguration(conditionType, tagName, columnConfiguration.getColumnIndex(), 0), fileType);
-											updateTableModel();										
+											updateTableModel();
 											break;
 										}
 									}
 								} else {
-									//don't allow to remove the last column
+									// don't allow to remove the last column
 									mi.setSelected(true);
 								}
 							}
@@ -1063,108 +1071,109 @@ public class FileDisplayTable extends JPanel {
 			} else {
 				DOTableColumnConfiguration cConf = MediaLibraryStorage.getInstance().getTableColumnConfiguration(getFileType(), ctItem.getConditionType());
 				boolean isSelected = cConf != null;
-				
+
 				JCheckBoxMenuItem mi = new JCustomCheckBoxMenuItem(ctItem, isSelected);
-				mi.addActionListener(new ActionListener() {				
+				mi.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-							JCustomCheckBoxMenuItem mi = (JCustomCheckBoxMenuItem) e.getSource();
-							ConditionType conditionType = ((ConditionTypeCBItem)mi.getUserObject()).getConditionType();
-							
-							if(mi.isSelected()){
-								//add the column
-								int colIndex = MediaLibraryStorage.getInstance().getTableConfigurationMaxColumnIndex(getFileType()) + 1;
-								int rowWidth = DEFAULT_COLUMN_WIDTH;
-								DOTableColumnConfiguration columnConfiguration = new DOTableColumnConfiguration(conditionType, null, colIndex, rowWidth);
+						JCustomCheckBoxMenuItem mi = (JCustomCheckBoxMenuItem) e.getSource();
+						ConditionType conditionType = ((ConditionTypeCBItem) mi.getUserObject()).getConditionType();
 
-								TableColumn newCol = new TableColumn();
-								newCol.setHeaderValue(columnConfiguration.toString());
-								newCol.setWidth(rowWidth);
-								newCol.setModelIndex(colIndex);
-	
-								//insert the column into the db before triggering the update to load the data properly
-								MediaLibraryStorage.getInstance().insertTableColumnConfiguration(columnConfiguration, fileType);
-	
-								updateTableModel();
-							} else {
-								//remove the column
-								if(table.getColumnCount() > 1) {
-									List<DOTableColumnConfiguration> columnConfigurations = MediaLibraryStorage.getInstance().getTableColumnConfigurations(getFileType());
-									for(DOTableColumnConfiguration columnConfiguration : columnConfigurations) {
-										if(columnConfiguration.getConditionType() == conditionType) {
-											//delete the column from the db before triggering the update to remove the row properly
-											MediaLibraryStorage.getInstance().deleteTableColumnConfiguration(new DOTableColumnConfiguration(conditionType, null, columnConfiguration.getColumnIndex(), 0), fileType);
-											updateTableModel();										
-											break;										
-										}
+						if (mi.isSelected()) {
+							// add the column
+							int colIndex = MediaLibraryStorage.getInstance().getTableConfigurationMaxColumnIndex(getFileType()) + 1;
+							int rowWidth = DEFAULT_COLUMN_WIDTH;
+							DOTableColumnConfiguration columnConfiguration = new DOTableColumnConfiguration(conditionType, null, colIndex, rowWidth);
+
+							TableColumn newCol = new TableColumn();
+							newCol.setHeaderValue(columnConfiguration.toString());
+							newCol.setWidth(rowWidth);
+							newCol.setModelIndex(colIndex);
+
+							// insert the column into the db before triggering the update to load the data properly
+							MediaLibraryStorage.getInstance().insertTableColumnConfiguration(columnConfiguration, fileType);
+
+							updateTableModel();
+						} else {
+							// remove the column
+							if (table.getColumnCount() > 1) {
+								List<DOTableColumnConfiguration> columnConfigurations = MediaLibraryStorage.getInstance().getTableColumnConfigurations(getFileType());
+								for (DOTableColumnConfiguration columnConfiguration : columnConfigurations) {
+									if (columnConfiguration.getConditionType() == conditionType) {
+										// delete the column from the db before triggering the update to remove the row
+										// properly
+										MediaLibraryStorage.getInstance().deleteTableColumnConfiguration(new DOTableColumnConfiguration(conditionType, null, columnConfiguration.getColumnIndex(), 0), fileType);
+										updateTableModel();
+										break;
 									}
-								} else {
-									//don't allow to remove the last column
-									mi.setSelected(true);
 								}
+							} else {
+								// don't allow to remove the last column
+								mi.setSelected(true);
 							}
+						}
 					}
 				});
-				
-				columnSelectorMenu.add(mi);	
+
+				columnSelectorMenu.add(mi);
 			}
 		}
-		
-		//add some invisible menu items to fill up the remaining spaces if required
-		while(rows * cols - cols >= columnSelectorMenu.getComponentCount()){
+
+		// add some invisible menu items to fill up the remaining spaces if required
+		while (rows * cols - cols >= columnSelectorMenu.getComponentCount()) {
 			rows--;
 		}
-		
-		while(columnSelectorMenu.getComponentCount() < rows * cols){
+
+		while (columnSelectorMenu.getComponentCount() < rows * cols) {
 			JMenuItem miDummy = new JMenuItem();
 			miDummy.setVisible(false);
 			columnSelectorMenu.add(miDummy);
 		}
-		
-		//Lay out the panel.
-		SpringUtilities.makeCompactGrid(columnSelectorMenu, //parent
-		                                rows, cols,
-		                                3, 3,  //initX, initY
-		                                3, 3); //xPad, yPad
+
+		// Lay out the panel.
+		SpringUtilities.makeCompactGrid(columnSelectorMenu, // parent
+				rows, cols,
+				3, 3, // initX, initY
+				3, 3); // xPad, yPad
 	}
 
 	private void updateTableModel() {
 		isUpdating = true;
-		
+
 		int selectedRow = table.getSelectedRow();
-		
-		//rebuild the entire adapter, because there is no way to change the column names after initialization
-		//table.removeColumn and table.getColumnModel().removeColumn have no effect
-		table.setModel(new FileDisplayTableAdapter(selectionInList, getFileType()));										
-		for(DOTableColumnConfiguration cConf : FileDisplayTableAdapter.getColumnConfigurations(getFileType())){
+
+		// rebuild the entire adapter, because there is no way to change the column names after initialization
+		// table.removeColumn and table.getColumnModel().removeColumn have no effect
+		table.setModel(new FileDisplayTableAdapter(selectionInList, getFileType()));
+		for (DOTableColumnConfiguration cConf : FileDisplayTableAdapter.getColumnConfigurations(getFileType())) {
 			table.getColumn(cConf.toString()).setPreferredWidth(cConf.getWidth());
 		}
-		
+
 		// Restore the selected row after having lost it due to the update of the model
-		if(selectedRow > -1){
+		if (selectedRow > -1) {
 			table.setRowSelectionInterval(selectedRow, selectedRow);
 		}
-		
+
 		isUpdating = false;
 	}
 
 	private void showAllColumns() {
 		List<DOTableColumnConfiguration> configuredColumns = MediaLibraryStorage.getInstance().getTableColumnConfigurations(getFileType());
-		
-		for(ConditionType ct : ConditionType.values()){
-			//don't show an entry for the type unknown
-			if(ct == ConditionType.UNKNOWN){
+
+		for (ConditionType ct : ConditionType.values()) {
+			// don't show an entry for the type unknown
+			if (ct == ConditionType.UNKNOWN) {
 				continue;
 			}
-			
-			//only add entries for the current file type
-			if((getFileType() == FileType.FILE && ct.toString().startsWith("FILE"))
+
+			// only add entries for the current file type
+			if ((getFileType() == FileType.FILE && ct.toString().startsWith("FILE"))
 					|| (getFileType() == FileType.VIDEO && (ct.toString().startsWith("FILE") || ct.toString().startsWith("VIDEO")))
 					|| (getFileType() == FileType.AUDIO && (ct.toString().startsWith("FILE") || ct.toString().startsWith("AUDIO")))
 					|| (getFileType() == FileType.PICTURES && (ct.toString().startsWith("FILE") || ct.toString().startsWith("IMAGE")))) {
-				if(ct == ConditionType.FILE_CONTAINS_TAG) {
+				if (ct == ConditionType.FILE_CONTAINS_TAG) {
 					// Special case for tags
-					for(String tagName : FolderHelper.getInstance().getExistingTags(getFileType())) {
+					for (String tagName : FolderHelper.getInstance().getExistingTags(getFileType())) {
 						addColumnIfNotExist(configuredColumns, ct, tagName);
 					}
 				} else {
@@ -1172,29 +1181,29 @@ public class FileDisplayTable extends JPanel {
 				}
 			}
 		}
-		
+
 		refreshColumnSelectorMenu();
 		updateTableModel();
 	}
-	
+
 	private void addColumnIfNotExist(List<DOTableColumnConfiguration> configuredColumns, ConditionType conditionType, String tagName) {
 		boolean alreadyConfigured = false;
-		
-		//only add columns which aren't displayed yet
-		for(DOTableColumnConfiguration cConf : configuredColumns){
-			if(cConf.getConditionType() == conditionType && (tagName == null || cConf.getTagName().equals(tagName))){
+
+		// only add columns which aren't displayed yet
+		for (DOTableColumnConfiguration cConf : configuredColumns) {
+			if (cConf.getConditionType() == conditionType && (tagName == null || cConf.getTagName().equals(tagName))) {
 				alreadyConfigured = true;
 				break;
 			}
 		}
-		
-		if(!alreadyConfigured) {
+
+		if (!alreadyConfigured) {
 			int columnWidth = DEFAULT_COLUMN_WIDTH;
 			int columnIndex = MediaLibraryStorage.getInstance().getTableConfigurationMaxColumnIndex(getFileType()) + 1;
 			MediaLibraryStorage.getInstance().insertTableColumnConfiguration(new DOTableColumnConfiguration(conditionType, tagName, columnIndex, columnWidth), getFileType());
 		}
 	}
-	
+
 	private void hideAllColumns() {
 		MediaLibraryStorage.getInstance().deleteAllTableColumnConfigurations(getFileType());
 		refreshColumnSelectorMenu();

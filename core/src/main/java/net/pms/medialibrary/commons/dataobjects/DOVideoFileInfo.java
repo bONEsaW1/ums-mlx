@@ -47,7 +47,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 	private String trailerUrl;
 	private List<String> genres = new ArrayList<String>();
 	private String director = "";
-	
+
 	private String aspectRatioDvdIso = "";
 	private int bitrate = 0;
 	private int bitsPerPixel = 0;
@@ -73,503 +73,603 @@ public class DOVideoFileInfo extends DOFileInfo {
 	private String stereoscopy;
 	private String matrixCoefficients;
 	private boolean embeddedFontExists;
-	
+
 	public DOVideoFileInfo() {
 		setType(FileType.VIDEO);
 	}
-	
-	public String getDisplayString(String displayNameMask){
+
+	public String getDisplayString(String displayNameMask) {
 		String retVal = super.getDisplayString(displayNameMask);
-		try { retVal = retVal.replace("%original_name", getOriginalName()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%name", getName()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%sort_name", getSortName()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%tmdb_id", Integer.toString(getTmdbId())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%imdb_id", getImdbId()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%overview", getOverview()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%rating_percent", Integer.toString(getRating().getRatingPercent())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%rating_voters", Integer.toString(getRating().getVotes())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%tagline", getTagLine()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%certification_reason", getAgeRating().getReason()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%certification", getAgeRating().getLevel()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%year", Integer.toString(getYear())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%budget", Integer.toString(getBudget())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%revenue", Integer.toString(getRevenue())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%homepage_url", getHomepageUrl()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%trailer_url", getTrailerUrl()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%director", getDirector()); } catch(Exception ex){ }		
-		try { retVal = retVal.replace("%bitrate", Integer.toString(getBitrate())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%video_codec", getCodecV()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%duration", Double.toString(getDurationSec())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%container", getContainer()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%frame_rate", getFrameRate()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%height", Integer.toString(getHeight())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%mime_type", getMimeType()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%muxable", Boolean.toString(isMuxable())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%width", Integer.toString(getWidth())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%muxing_mode", getMuxingMode()); } catch(Exception ex){ }
-		if(displayNameMask.contains("%genres")){
+		try {
+			retVal = retVal.replace("%original_name", getOriginalName());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%name", getName());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%sort_name", getSortName());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%tmdb_id", Integer.toString(getTmdbId()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%imdb_id", getImdbId());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%overview", getOverview());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%rating_percent", Integer.toString(getRating().getRatingPercent()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%rating_voters", Integer.toString(getRating().getVotes()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%tagline", getTagLine());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%certification_reason", getAgeRating().getReason());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%certification", getAgeRating().getLevel());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%year", Integer.toString(getYear()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%budget", Integer.toString(getBudget()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%revenue", Integer.toString(getRevenue()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%homepage_url", getHomepageUrl());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%trailer_url", getTrailerUrl());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%director", getDirector());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%bitrate", Integer.toString(getBitrate()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%video_codec", getCodecV());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%duration", Double.toString(getDurationSec()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%container", getContainer());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%frame_rate", getFrameRate());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%height", Integer.toString(getHeight()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%mime_type", getMimeType());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%muxable", Boolean.toString(isMuxable()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%width", Integer.toString(getWidth()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%muxing_mode", getMuxingMode());
+		} catch (Exception ex) {
+		}
+		if (displayNameMask.contains("%genres")) {
 			List<String> genres = getGenres();
 			Collections.sort(genres);
 
 			StringBuilder sb = new StringBuilder();
-			for(String genre : genres) {
+			for (String genre : genres) {
 				sb.append(genre);
 				sb.append(", ");
 			}
 			String genresString = sb.toString();
-			if(genresString.endsWith(", ")){
+			if (genresString.endsWith(", ")) {
 				genresString = genresString.substring(0, genresString.length() - 2);
 			}
 			retVal = retVal.replace("%genres", genresString);
 		}
-		if(displayNameMask.contains("%audio_languages")){
+		if (displayNameMask.contains("%audio_languages")) {
 			List<DLNAMediaAudio> audioCodes = getAudioCodes();
 			Collections.sort(audioCodes, new Comparator<DLNAMediaAudio>() {
-				
+
 				@Override
 				public int compare(DLNAMediaAudio o1, DLNAMediaAudio o2) {
-					if((o1 == null || o1.getLangFullName() == null) && (o2 == null || o2.getLangFullName() == null)) {
+					if ((o1 == null || o1.getLangFullName() == null) && (o2 == null || o2.getLangFullName() == null)) {
 						return 0;
 					}
-					
-					if(o1 == null || o1.getLangFullName() == null) {
+
+					if (o1 == null || o1.getLangFullName() == null) {
 						return 1;
 					}
-					
-					if(o2 == null || o2.getLangFullName() == null) {
+
+					if (o2 == null || o2.getLangFullName() == null) {
 						return -1;
 					}
-					
+
 					return o1.getLangFullName().compareTo(o2.getLangFullName());
 				}
 			});
 			StringBuilder sb = new StringBuilder();
-			for(DLNAMediaAudio audio : audioCodes){
+			for (DLNAMediaAudio audio : audioCodes) {
 				sb.append(String.format("%s (%s), ", audio.getLangFullName(), audio.getCodecA()));
 			}
 
 			String audiosString = sb.toString();
-			if(audiosString.endsWith(", ")){
+			if (audiosString.endsWith(", ")) {
 				audiosString = audiosString.substring(0, audiosString.length() - 2);
 			}
 			retVal = retVal.replace("%audio_languages", audiosString);
 		}
-		if(displayNameMask.contains("%subtitle_languages")){
+		if (displayNameMask.contains("%subtitle_languages")) {
 			List<DLNAMediaSubtitle> subtitlesCodes = getSubtitlesCodes();
 			Collections.sort(subtitlesCodes, new Comparator<DLNAMediaSubtitle>() {
 
 				@Override
 				public int compare(DLNAMediaSubtitle o1, DLNAMediaSubtitle o2) {
-					if((o1 == null || o1.getLangFullName() == null) && (o2 == null || o2.getLangFullName() == null)) {
+					if ((o1 == null || o1.getLangFullName() == null) && (o2 == null || o2.getLangFullName() == null)) {
 						return 0;
 					}
-					
-					if(o1 == null || o1.getLangFullName() == null) {
+
+					if (o1 == null || o1.getLangFullName() == null) {
 						return 1;
 					}
-					
-					if(o2 == null || o2.getLangFullName() == null) {
+
+					if (o2 == null || o2.getLangFullName() == null) {
 						return -1;
 					}
-					
+
 					return o1.getLangFullName().compareTo(o2.getLangFullName());
 				}
 			});
 			StringBuilder sb = new StringBuilder();
-			for(DLNAMediaSubtitle subtitle : subtitlesCodes){
+			for (DLNAMediaSubtitle subtitle : subtitlesCodes) {
 				sb.append(subtitle.getLangFullName());
 				sb.append(", ");
 			}
 			String subtitlesString = sb.toString();
-			if(subtitlesString.endsWith(", ")){
+			if (subtitlesString.endsWith(", ")) {
 				subtitlesString = subtitlesString.substring(0, subtitlesString.length() - 2);
 			}
 			retVal = retVal.replace("%subtitle_languages", subtitlesString);
 		}
-		
+
 		return retVal;
 	}
-	
-	
 
 	public void setAgeRating(DOCertification ageRating) {
-		if(!getAgeRating().equals(ageRating)) {
-		    this.ageRating = ageRating;
-		    firepropertyChangedEvent(ConditionType.VIDEO_CERTIFICATION);
-	    }
-    }
+		if (!getAgeRating().equals(ageRating)) {
+			this.ageRating = ageRating;
+			firepropertyChangedEvent(ConditionType.VIDEO_CERTIFICATION);
+		}
+	}
 
 	public DOCertification getAgeRating() {
-		if(ageRating == null) ageRating = new DOCertification();
-	    return ageRating;
-    }
+		if (ageRating == null)
+			ageRating = new DOCertification();
+		return ageRating;
+	}
 
 	public void setRating(DORating rating) {
-		if(!getRating().equals(rating)) {
-		    this.rating = rating;
-		    firepropertyChangedEvent(ConditionType.VIDEO_RATINGPERCENT);
-	    }
-    }
+		if (!getRating().equals(rating)) {
+			this.rating = rating;
+			firepropertyChangedEvent(ConditionType.VIDEO_RATINGPERCENT);
+		}
+	}
 
 	public DORating getRating() {
-		if(rating == null) rating = new DORating();
-	    return rating;
-    }
+		if (rating == null)
+			rating = new DORating();
+		return rating;
+	}
 
 	public void setDirector(String director) {
-		if(!getDirector().equals(director)) {
-		    this.director = director;
-		    firepropertyChangedEvent(ConditionType.VIDEO_DIRECTOR);
-	    }
-    }
+		if (!getDirector().equals(director)) {
+			this.director = director;
+			firepropertyChangedEvent(ConditionType.VIDEO_DIRECTOR);
+		}
+	}
 
 	public String getDirector() {
-		if(director == null) director = "";
-	    return director;
-    }
+		if (director == null)
+			director = "";
+		return director;
+	}
 
 	public void setGenres(List<String> genres) {
-		if(!getGenres().equals(genres)) {
-		    this.genres = genres;
-		    firepropertyChangedEvent(ConditionType.VIDEO_CONTAINS_GENRE);
-	    }
-    }
+		if (!getGenres().equals(genres)) {
+			this.genres = genres;
+			firepropertyChangedEvent(ConditionType.VIDEO_CONTAINS_GENRE);
+		}
+	}
 
 	public List<String> getGenres() {
-		if(genres == null) genres = new ArrayList<String>();
-	    return genres;
-    }
+		if (genres == null)
+			genres = new ArrayList<String>();
+		return genres;
+	}
 
 	public void setOverview(String overview) {
-		if(!getOverview().equals(overview)) {
-		    this.overview = overview;
-		    firepropertyChangedEvent(ConditionType.VIDEO_OVERVIEW);
-	    }
-    }
+		if (!getOverview().equals(overview)) {
+			this.overview = overview;
+			firepropertyChangedEvent(ConditionType.VIDEO_OVERVIEW);
+		}
+	}
 
 	public String getOverview() {
-		if(overview == null) overview = "";
-	    return overview;
-    }
+		if (overview == null)
+			overview = "";
+		return overview;
+	}
 
 	public void setTagLine(String tagLine) {
-		if(!getTagLine().equals(tagLine)) {
-		    this.tagLine = tagLine;
-		    firepropertyChangedEvent(ConditionType.VIDEO_TAGLINE);
-	    }
-    }
+		if (!getTagLine().equals(tagLine)) {
+			this.tagLine = tagLine;
+			firepropertyChangedEvent(ConditionType.VIDEO_TAGLINE);
+		}
+	}
 
 	public String getTagLine() {
-		if(tagLine == null) tagLine = "";
-	    return tagLine;
-    }
+		if (tagLine == null)
+			tagLine = "";
+		return tagLine;
+	}
 
 	public void setName(String name) {
-		if(!getName().equals(name)) {
-		    this.name = name;
-		    firepropertyChangedEvent(ConditionType.VIDEO_NAME);
-	    }
-    }
+		if (!getName().equals(name)) {
+			this.name = name;
+			firepropertyChangedEvent(ConditionType.VIDEO_NAME);
+		}
+	}
 
 	public String getName() {
-		if(name == null) name = "";
-	    return name;
-    }
+		if (name == null)
+			name = "";
+		return name;
+	}
 
 	public void setSortName(String sortName) {
-		if(!getSortName().equals(sortName)) {
+		if (!getSortName().equals(sortName)) {
 			this.sortName = sortName;
-		    firepropertyChangedEvent(ConditionType.VIDEO_SORTNAME);
+			firepropertyChangedEvent(ConditionType.VIDEO_SORTNAME);
 		}
 	}
 
 	public String getSortName() {
-		if(sortName == null) sortName = "";
+		if (sortName == null)
+			sortName = "";
 		return sortName;
 	}
 
 	public void setTrailerUrl(String trailerUrl) {
-		if(!getTrailerUrl().equals(trailerUrl)) {
-		    this.trailerUrl = trailerUrl;
-		    firepropertyChangedEvent(ConditionType.VIDEO_TRAILERURL);
-	    }
-    }
+		if (!getTrailerUrl().equals(trailerUrl)) {
+			this.trailerUrl = trailerUrl;
+			firepropertyChangedEvent(ConditionType.VIDEO_TRAILERURL);
+		}
+	}
 
 	public String getTrailerUrl() {
-		if(trailerUrl == null) trailerUrl = "";
-	    return trailerUrl;
-    }
+		if (trailerUrl == null)
+			trailerUrl = "";
+		return trailerUrl;
+	}
 
 	public void setOriginalName(String originalName) {
-		if(!getOriginalName().equals(originalName)) {
-		    this.originalName = originalName;
-		    firepropertyChangedEvent(ConditionType.VIDEO_ORIGINALNAME);
-	    }
-    }
+		if (!getOriginalName().equals(originalName)) {
+			this.originalName = originalName;
+			firepropertyChangedEvent(ConditionType.VIDEO_ORIGINALNAME);
+		}
+	}
 
 	public String getOriginalName() {
-		if(originalName == null) originalName = "";
-	    return originalName;
-    }
+		if (originalName == null)
+			originalName = "";
+		return originalName;
+	}
 
 	public void setTmdbId(int tmdbId) {
-		if(getTmdbId() != tmdbId) {
-		    this.tmdbId = tmdbId;
-		    firepropertyChangedEvent(ConditionType.VIDEO_TMDBID);
-	    }
-    }
+		if (getTmdbId() != tmdbId) {
+			this.tmdbId = tmdbId;
+			firepropertyChangedEvent(ConditionType.VIDEO_TMDBID);
+		}
+	}
 
 	public int getTmdbId() {
-	    return tmdbId;
-    }
+		return tmdbId;
+	}
 
 	public void setImdbId(String imdbId) {
-		if(!getImdbId().equals(imdbId)) {
-		    this.imdbId = imdbId;
-		    firepropertyChangedEvent(ConditionType.VIDEO_IMDBID);
-	    }
-    }
+		if (!getImdbId().equals(imdbId)) {
+			this.imdbId = imdbId;
+			firepropertyChangedEvent(ConditionType.VIDEO_IMDBID);
+		}
+	}
 
 	public String getImdbId() {
-		if(imdbId == null) imdbId = "";
-	    return imdbId;
-    }
+		if (imdbId == null)
+			imdbId = "";
+		return imdbId;
+	}
 
 	public void setRevenue(int revenue) {
-		if(getRevenue() != revenue) {
-		    this.revenue = revenue;
-		    firepropertyChangedEvent(ConditionType.VIDEO_REVENUE);
-	    }
-    }
+		if (getRevenue() != revenue) {
+			this.revenue = revenue;
+			firepropertyChangedEvent(ConditionType.VIDEO_REVENUE);
+		}
+	}
 
 	public int getRevenue() {
-	    return revenue;
-    }
+		return revenue;
+	}
 
 	public void setBudget(int budget) {
-		if(getBudget() != budget) {
-		    this.budget = budget;
-		    firepropertyChangedEvent(ConditionType.VIDEO_BUDGET);
-	    }
-    }
+		if (getBudget() != budget) {
+			this.budget = budget;
+			firepropertyChangedEvent(ConditionType.VIDEO_BUDGET);
+		}
+	}
 
 	public int getBudget() {
-	    return budget;
-    }
+		return budget;
+	}
 
 	public void setHomepageUrl(String homepageUrl) {
-		if(!getHomepageUrl().equals(homepageUrl)) {
-		    this.homepageUrl = homepageUrl;
-		    firepropertyChangedEvent(ConditionType.VIDEO_HOMEPAGEURL);
-	    }
-    }
+		if (!getHomepageUrl().equals(homepageUrl)) {
+			this.homepageUrl = homepageUrl;
+			firepropertyChangedEvent(ConditionType.VIDEO_HOMEPAGEURL);
+		}
+	}
 
 	public String getHomepageUrl() {
-		if(homepageUrl == null) homepageUrl = "";
-	    return homepageUrl;
-    }
+		if (homepageUrl == null)
+			homepageUrl = "";
+		return homepageUrl;
+	}
 
 	public void setAspectRatioDvdIso(String aspectRatio) {
-		if(!getAspectRatioDvdIso().equals(aspectRatio)) {
-		    this.aspectRatioDvdIso = aspectRatio;
-		    firepropertyChangedEvent(ConditionType.VIDEO_ASPECTRATIO);
-	    }
-    }
+		if (!getAspectRatioDvdIso().equals(aspectRatio)) {
+			this.aspectRatioDvdIso = aspectRatio;
+			firepropertyChangedEvent(ConditionType.VIDEO_ASPECTRATIO);
+		}
+	}
 
 	public String getAspectRatioDvdIso() {
-		if(aspectRatioDvdIso == null) aspectRatioDvdIso ="";
-	    return aspectRatioDvdIso;
-    }
+		if (aspectRatioDvdIso == null)
+			aspectRatioDvdIso = "";
+		return aspectRatioDvdIso;
+	}
 
 	public void setBitrate(int bitrate) {
-		if(getBitrate() != bitrate) {
-		    this.bitrate = bitrate;
-		    firepropertyChangedEvent(ConditionType.VIDEO_BITRATE);
-	    }
-    }
+		if (getBitrate() != bitrate) {
+			this.bitrate = bitrate;
+			firepropertyChangedEvent(ConditionType.VIDEO_BITRATE);
+		}
+	}
 
 	public int getBitrate() {
-	    return bitrate;
-    }
+		return bitrate;
+	}
 
 	public void setBitsPerPixel(int bitsPerPixel) {
-		if(getBitsPerPixel() != bitsPerPixel) {
-		    this.bitsPerPixel = bitsPerPixel;
-		    firepropertyChangedEvent(ConditionType.VIDEO_BITSPERPIXEL);
-	    }
-    }
+		if (getBitsPerPixel() != bitsPerPixel) {
+			this.bitsPerPixel = bitsPerPixel;
+			firepropertyChangedEvent(ConditionType.VIDEO_BITSPERPIXEL);
+		}
+	}
 
 	public int getBitsPerPixel() {
-	    return bitsPerPixel;
-    }
+		return bitsPerPixel;
+	}
 
 	public void setCodecV(String codecV) {
-		if(!getCodecV().equals(codecV)) {
-		    this.codecV = codecV;
-		    firepropertyChangedEvent(ConditionType.VIDEO_CODECV);
-	    }
-    }
+		if (!getCodecV().equals(codecV)) {
+			this.codecV = codecV;
+			firepropertyChangedEvent(ConditionType.VIDEO_CODECV);
+		}
+	}
 
 	public String getCodecV() {
-		if(codecV == null) codecV ="";
-	    return codecV;
-    }
+		if (codecV == null)
+			codecV = "";
+		return codecV;
+	}
 
 	public void setDurationSec(double durationSec) {
-		if(getDurationSec() != durationSec) {
-		    this.durationSec = durationSec;
-		    firepropertyChangedEvent(ConditionType.VIDEO_DURATIONSEC);
-	    }
-    }
+		if (getDurationSec() != durationSec) {
+			this.durationSec = durationSec;
+			firepropertyChangedEvent(ConditionType.VIDEO_DURATIONSEC);
+		}
+	}
 
 	public double getDurationSec() {
-	    return durationSec;
-    }
+		return durationSec;
+	}
 
 	public void setContainer(String container) {
-		if(!getContainer().equals(container)) {
-		    this.container = container;
-		    firepropertyChangedEvent(ConditionType.VIDEO_CONTAINER);
-	    }
-    }
+		if (!getContainer().equals(container)) {
+			this.container = container;
+			firepropertyChangedEvent(ConditionType.VIDEO_CONTAINER);
+		}
+	}
 
 	public String getContainer() {
-		if(container == null) container ="";
-	    return container;
-    }
+		if (container == null)
+			container = "";
+		return container;
+	}
 
 	public void setDvdtrack(int dvdtrack) {
-		if(getDvdtrack() != dvdtrack) {
-		    this.dvdtrack = dvdtrack;
-		    firepropertyChangedEvent(ConditionType.VIDEO_DVDTRACK);
-	    }
-    }
+		if (getDvdtrack() != dvdtrack) {
+			this.dvdtrack = dvdtrack;
+			firepropertyChangedEvent(ConditionType.VIDEO_DVDTRACK);
+		}
+	}
 
 	public int getDvdtrack() {
-	    return dvdtrack;
-    }
+		return dvdtrack;
+	}
 
 	public void setFrameRate(String frameRate) {
-		if(!getFrameRate().equals(frameRate)) {
-		    this.frameRate = frameRate;
-		    firepropertyChangedEvent(ConditionType.VIDEO_FRAMERATE);
-	    }
-    }
+		if (!getFrameRate().equals(frameRate)) {
+			this.frameRate = frameRate;
+			firepropertyChangedEvent(ConditionType.VIDEO_FRAMERATE);
+		}
+	}
 
 	public String getFrameRate() {
-		if(frameRate == null) frameRate ="";
-	    return frameRate;
-    }
+		if (frameRate == null)
+			frameRate = "";
+		return frameRate;
+	}
 
 	public void setH264_annexB(byte[] h264_annexB) {
-	    this.h264_annexB = h264_annexB;
-    }
+		this.h264_annexB = h264_annexB;
+	}
 
 	public byte[] getH264_annexB() {
-	    return h264_annexB;
-    }
+		return h264_annexB;
+	}
 
 	public void setHeight(int height) {
-		if(getHeight() != height) {
-		    this.height = height;
-		    firepropertyChangedEvent(ConditionType.VIDEO_HEIGHT);
-	    }
-    }
+		if (getHeight() != height) {
+			this.height = height;
+			firepropertyChangedEvent(ConditionType.VIDEO_HEIGHT);
+		}
+	}
 
 	public int getHeight() {
-	    return height;
-    }
+		return height;
+	}
 
 	public void setMimeType(String mimeType) {
-		if(!getMimeType().equals(mimeType)) {
-		    this.mimeType = mimeType;
-		    firepropertyChangedEvent(ConditionType.VIDEO_MIMETYPE);
-	    }
-    }
+		if (!getMimeType().equals(mimeType)) {
+			this.mimeType = mimeType;
+			firepropertyChangedEvent(ConditionType.VIDEO_MIMETYPE);
+		}
+	}
 
 	public String getMimeType() {
-		if(mimeType == null) mimeType = "";
-	    return mimeType;
-    }
+		if (mimeType == null)
+			mimeType = "";
+		return mimeType;
+	}
 
 	public void setModel(String model) {
-		if(!getModel().equals(model)) {
-		    this.model = model;
-		    firepropertyChangedEvent(ConditionType.VIDEO_MODEL);
-	    }
-    }
+		if (!getModel().equals(model)) {
+			this.model = model;
+			firepropertyChangedEvent(ConditionType.VIDEO_MODEL);
+		}
+	}
 
 	public String getModel() {
-		if(model == null) model = "";
-	    return model;
-    }
+		if (model == null)
+			model = "";
+		return model;
+	}
 
 	public void setMuxable(boolean muxable) {
-		if(isMuxable() != muxable) {
-		    this.muxable = muxable;
-		    firepropertyChangedEvent(ConditionType.VIDEO_MUXABLE);
-	    }
-    }
+		if (isMuxable() != muxable) {
+			this.muxable = muxable;
+			firepropertyChangedEvent(ConditionType.VIDEO_MUXABLE);
+		}
+	}
 
 	public boolean isMuxable() {
-	    return muxable;
-    }
+		return muxable;
+	}
 
 	public void setWidth(int width) {
-		if(getWidth() != width) {
-		    this.width = width;
-		    firepropertyChangedEvent(ConditionType.VIDEO_WIDTH);
-	    }
-    }
+		if (getWidth() != width) {
+			this.width = width;
+			firepropertyChangedEvent(ConditionType.VIDEO_WIDTH);
+		}
+	}
 
 	public int getWidth() {
-	    return width;
-    }
+		return width;
+	}
 
 	public void setYear(int year) {
-		if(getYear() != year) {
-		    this.year = year;
-		    firepropertyChangedEvent(ConditionType.VIDEO_YEAR);
-	    }
-    }
+		if (getYear() != year) {
+			this.year = year;
+			firepropertyChangedEvent(ConditionType.VIDEO_YEAR);
+		}
+	}
 
 	public int getYear() {
-	    return year;
-    }
+		return year;
+	}
 
 	public void setAudioCodes(List<DLNAMediaAudio> audioCodes) {
-		if(!getAudioCodes().equals(audioCodes)) {
-		    this.audioCodes = audioCodes;
-		    firepropertyChangedEvent(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO);
-	    }
-    }
+		if (!getAudioCodes().equals(audioCodes)) {
+			this.audioCodes = audioCodes;
+			firepropertyChangedEvent(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO);
+		}
+	}
 
 	public List<DLNAMediaAudio> getAudioCodes() {
-		if(audioCodes == null) audioCodes = new ArrayList<DLNAMediaAudio>();
-	    return audioCodes;
-    }
+		if (audioCodes == null)
+			audioCodes = new ArrayList<DLNAMediaAudio>();
+		return audioCodes;
+	}
 
 	public void setSubtitlesCodes(List<DLNAMediaSubtitle> subtitlesCodes) {
-		if(!getSubtitlesCodes().equals(subtitlesCodes)) {
-		    this.subtitlesCodes = subtitlesCodes;
-		    firepropertyChangedEvent(ConditionType.VIDEO_CONTAINS_SUBTITLES);
-	    }
-    }
+		if (!getSubtitlesCodes().equals(subtitlesCodes)) {
+			this.subtitlesCodes = subtitlesCodes;
+			firepropertyChangedEvent(ConditionType.VIDEO_CONTAINS_SUBTITLES);
+		}
+	}
 
 	public List<DLNAMediaSubtitle> getSubtitlesCodes() {
-		if(subtitlesCodes == null) subtitlesCodes = new ArrayList<DLNAMediaSubtitle>();
-	    return subtitlesCodes;
-    }
+		if (subtitlesCodes == null)
+			subtitlesCodes = new ArrayList<DLNAMediaSubtitle>();
+		return subtitlesCodes;
+	}
 
 	public void setMuxingMode(String muxingMode) {
-		if(getMuxingMode() != muxingMode) {
+		if (getMuxingMode() != muxingMode) {
 			this.muxingMode = muxingMode;
-		    firepropertyChangedEvent(ConditionType.VIDEO_MUXINGMODE);
+			firepropertyChangedEvent(ConditionType.VIDEO_MUXINGMODE);
 		}
 	}
 
 	public String getMuxingMode() {
-		if(muxingMode == null) muxingMode = "";
+		if (muxingMode == null)
+			muxingMode = "";
 		return muxingMode;
 	}
 
@@ -578,7 +678,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 	}
 
 	public String getFrameRateMode() {
-		if(frameRateMode == null) frameRateMode = "";
+		if (frameRateMode == null)
+			frameRateMode = "";
 		return frameRateMode;
 	}
 
@@ -587,7 +688,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 	}
 
 	public String getAspectRatioContainer() {
-		if(aspectRatioContainer == null) aspectRatioContainer = "";
+		if (aspectRatioContainer == null)
+			aspectRatioContainer = "";
 		return aspectRatioContainer;
 	}
 
@@ -596,7 +698,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 	}
 
 	public String getAspectRatioVideoTrack() {
-		if(aspectRatioVideoTrack == null) aspectRatioVideoTrack = "";
+		if (aspectRatioVideoTrack == null)
+			aspectRatioVideoTrack = "";
 		return aspectRatioVideoTrack;
 	}
 
@@ -609,7 +712,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 	}
 
 	public String getAvcLevel() {
-		if(avcLevel == null) avcLevel = "";
+		if (avcLevel == null)
+			avcLevel = "";
 		return avcLevel;
 	}
 
@@ -618,7 +722,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 	}
 
 	public String getStereoscopy() {
-		if(stereoscopy == null) stereoscopy = "";
+		if (stereoscopy == null)
+			stereoscopy = "";
 		return stereoscopy;
 	}
 
@@ -627,7 +732,8 @@ public class DOVideoFileInfo extends DOFileInfo {
 	}
 
 	public String getMatrixCoefficients() {
-		if(matrixCoefficients == null) matrixCoefficients = "";
+		if (matrixCoefficients == null)
+			matrixCoefficients = "";
 		return matrixCoefficients;
 	}
 
@@ -643,165 +749,173 @@ public class DOVideoFileInfo extends DOFileInfo {
 		this.embeddedFontExists = embeddedFontExists;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetConfigurablePropertiesFrom(net.pms.medialibrary.commons.dataobjects.DOFileInfo)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetConfigurablePropertiesFrom(net.pms.medialibrary.commons
+	 * .dataobjects.DOFileInfo)
 	 */
 	@Override
 	public void copySetConfigurablePropertiesFrom(DOFileInfo fileInfo) {
 		super.copySetConfigurablePropertiesFrom(fileInfo);
-		
-		if(!(fileInfo instanceof DOVideoFileInfo)) {
+
+		if (!(fileInfo instanceof DOVideoFileInfo)) {
 			return;
 		}
-		
+
 		DOVideoFileInfo videoFileInfo = (DOVideoFileInfo) fileInfo;
-		
-		if(!videoFileInfo.getName().equals("")) {
+
+		if (!videoFileInfo.getName().equals("")) {
 			setName(videoFileInfo.getName());
 		}
-		if(!videoFileInfo.getOriginalName().equals("")) {
+		if (!videoFileInfo.getOriginalName().equals("")) {
 			setOriginalName(videoFileInfo.getOriginalName());
 		}
-		if(!videoFileInfo.getSortName().equals("")) {
+		if (!videoFileInfo.getSortName().equals("")) {
 			setSortName(videoFileInfo.getSortName());
 		}
-		if(videoFileInfo.getYear() > 0) {
+		if (videoFileInfo.getYear() > 0) {
 			setYear(videoFileInfo.getYear());
 		}
-		if(!videoFileInfo.getDirector().equals("")) {
+		if (!videoFileInfo.getDirector().equals("")) {
 			setDirector(videoFileInfo.getDirector());
 		}
-		if(!videoFileInfo.getImdbId().equals("")) {
+		if (!videoFileInfo.getImdbId().equals("")) {
 			setImdbId(videoFileInfo.getImdbId());
 		}
-		if(!videoFileInfo.getHomepageUrl().equals("")) {
+		if (!videoFileInfo.getHomepageUrl().equals("")) {
 			setHomepageUrl(videoFileInfo.getHomepageUrl());
 		}
-		if(!videoFileInfo.getTrailerUrl().equals("")) {
+		if (!videoFileInfo.getTrailerUrl().equals("")) {
 			setTrailerUrl(videoFileInfo.getTrailerUrl());
 		}
-		if(videoFileInfo.getTmdbId() > 0) {
+		if (videoFileInfo.getTmdbId() > 0) {
 			setTmdbId(videoFileInfo.getTmdbId());
 		}
-		if(videoFileInfo.getRating().getRatingPercent() > 0) {
+		if (videoFileInfo.getRating().getRatingPercent() > 0) {
 			getRating().setRatingPercent(videoFileInfo.getRating().getRatingPercent());
 		}
-		if(videoFileInfo.getRating().getVotes() > 0) {
+		if (videoFileInfo.getRating().getVotes() > 0) {
 			getRating().setVotes(videoFileInfo.getRating().getVotes());
 		}
-		if(!videoFileInfo.getAgeRating().getReason().equals("")) {
+		if (!videoFileInfo.getAgeRating().getReason().equals("")) {
 			getAgeRating().setReason(videoFileInfo.getAgeRating().getReason());
 		}
-		if(!videoFileInfo.getAgeRating().getLevel().equals("")) {
+		if (!videoFileInfo.getAgeRating().getLevel().equals("")) {
 			getAgeRating().setLevel(videoFileInfo.getAgeRating().getLevel());
 		}
-		if(!videoFileInfo.getTagLine().equals("")) {
+		if (!videoFileInfo.getTagLine().equals("")) {
 			setTagLine(videoFileInfo.getTagLine());
 		}
-		if(videoFileInfo.getBudget() > 0) {
+		if (videoFileInfo.getBudget() > 0) {
 			setBudget(videoFileInfo.getBudget());
 		}
-		if(!videoFileInfo.getOverview().equals("")) {
+		if (!videoFileInfo.getOverview().equals("")) {
 			setOverview(videoFileInfo.getOverview());
 		}
-		if(videoFileInfo.getRevenue() > 0) {
+		if (videoFileInfo.getRevenue() > 0) {
 			setRevenue(videoFileInfo.getRevenue());
 		}
-		
+
 		List<String> genres = getGenres();
-		for(String genre : videoFileInfo.getGenres()) {
-			if(!genres.contains(genre)) {
+		for (String genre : videoFileInfo.getGenres()) {
+			if (!genres.contains(genre)) {
 				genres.add(genre);
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetSystemPropertiesFrom(net.pms.medialibrary.commons.dataobjects.DOFileInfo)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetSystemPropertiesFrom(net.pms.medialibrary.commons.
+	 * dataobjects.DOFileInfo)
 	 */
 	@Override
 	public void copySetSystemPropertiesFrom(DOFileInfo fileInfo) {
 		super.copySetConfigurablePropertiesFrom(fileInfo);
-		
-		if(!(fileInfo instanceof DOVideoFileInfo)) {
+
+		if (!(fileInfo instanceof DOVideoFileInfo)) {
 			return;
 		}
-		
+
 		DOVideoFileInfo videoFileInfo = (DOVideoFileInfo) fileInfo;
-		if(!videoFileInfo.getAspectRatioDvdIso().equals("")) {
+		if (!videoFileInfo.getAspectRatioDvdIso().equals("")) {
 			setAspectRatioDvdIso(videoFileInfo.getAspectRatioDvdIso());
 		}
-		if(videoFileInfo.getBitrate() > 0) {
+		if (videoFileInfo.getBitrate() > 0) {
 			setBitrate(videoFileInfo.getBitrate());
 		}
-		if(videoFileInfo.getBitsPerPixel() > 0) {
+		if (videoFileInfo.getBitsPerPixel() > 0) {
 			setBitsPerPixel(videoFileInfo.getBitsPerPixel());
 		}
-		if(!videoFileInfo.getCodecV().equals("")) {
+		if (!videoFileInfo.getCodecV().equals("")) {
 			setCodecV(videoFileInfo.getCodecV());
 		}
-		if(videoFileInfo.getDurationSec() > 0) {
+		if (videoFileInfo.getDurationSec() > 0) {
 			setDurationSec(videoFileInfo.getDurationSec());
 		}
-		if(!videoFileInfo.getContainer().equals("")) {
+		if (!videoFileInfo.getContainer().equals("")) {
 			setContainer(videoFileInfo.getContainer());
 		}
-		if(videoFileInfo.getDvdtrack() > 0) {
+		if (videoFileInfo.getDvdtrack() > 0) {
 			setDvdtrack(videoFileInfo.getDvdtrack());
 		}
-		if(!videoFileInfo.getFrameRate().equals("")) {
+		if (!videoFileInfo.getFrameRate().equals("")) {
 			setFrameRate(videoFileInfo.getFrameRate());
 		}
-		if(videoFileInfo.getH264_annexB() != null && !ArrayUtils.isEquals(videoFileInfo.getH264_annexB(), new byte[0])) {
+		if (videoFileInfo.getH264_annexB() != null && !ArrayUtils.isEquals(videoFileInfo.getH264_annexB(), new byte[0])) {
 			setH264_annexB(videoFileInfo.getH264_annexB());
 		}
-		if(videoFileInfo.getHeight() > 0) {
+		if (videoFileInfo.getHeight() > 0) {
 			setHeight(videoFileInfo.getHeight());
 		}
-		if(videoFileInfo.getWidth() > 0) {
+		if (videoFileInfo.getWidth() > 0) {
 			setWidth(videoFileInfo.getWidth());
 		}
-		if(!videoFileInfo.getMimeType().equals("")) {
+		if (!videoFileInfo.getMimeType().equals("")) {
 			setMimeType(videoFileInfo.getMimeType());
 		}
-		if(!videoFileInfo.getModel().equals("")) {
+		if (!videoFileInfo.getModel().equals("")) {
 			setModel(videoFileInfo.getModel());
 		}
-		if(!videoFileInfo.getMuxingMode().equals("")) {
+		if (!videoFileInfo.getMuxingMode().equals("")) {
 			setMuxingMode(videoFileInfo.getMuxingMode());
 		}
-		if(!videoFileInfo.getFrameRateMode().equals("")) {
+		if (!videoFileInfo.getFrameRateMode().equals("")) {
 			setFrameRateMode(videoFileInfo.getFrameRateMode());
 		}
-		if(!videoFileInfo.getAvcLevel().equals("")) {
+		if (!videoFileInfo.getAvcLevel().equals("")) {
 			setAvcLevel(videoFileInfo.getAvcLevel());
 		}
-		if(!videoFileInfo.getAspectRatioContainer().equals("")) {
+		if (!videoFileInfo.getAspectRatioContainer().equals("")) {
 			setAspectRatioContainer(videoFileInfo.getAspectRatioContainer());
 		}
-		if(!videoFileInfo.getAspectRatioVideoTrack().equals("")) {
+		if (!videoFileInfo.getAspectRatioVideoTrack().equals("")) {
 			setAspectRatioVideoTrack(videoFileInfo.getAspectRatioVideoTrack());
 		}
-		if(videoFileInfo.getReferenceFrameCount() > 0) {
+		if (videoFileInfo.getReferenceFrameCount() > 0) {
 			setReferenceFrameCount(videoFileInfo.getReferenceFrameCount());
 		}
-		if(!videoFileInfo.getStereoscopy().equals("")) {
+		if (!videoFileInfo.getStereoscopy().equals("")) {
 			setStereoscopy(videoFileInfo.getStereoscopy());
 		}
-		if(!videoFileInfo.getMatrixCoefficients().equals("")) {
+		if (!videoFileInfo.getMatrixCoefficients().equals("")) {
 			setMatrixCoefficients(videoFileInfo.getMatrixCoefficients());
 		}
-		
+
 		List<DLNAMediaAudio> audioCodes = getAudioCodes();
-		for(DLNAMediaAudio audioCode : videoFileInfo.getAudioCodes()) {
-			if(!audioCodes.contains(audioCode)) {
+		for (DLNAMediaAudio audioCode : videoFileInfo.getAudioCodes()) {
+			if (!audioCodes.contains(audioCode)) {
 				audioCodes.add(audioCode);
 			}
 		}
-		
+
 		List<DLNAMediaSubtitle> subtitleCodes = getSubtitlesCodes();
-		for(DLNAMediaSubtitle subtitleCode : videoFileInfo.getSubtitlesCodes()) {
-			if(!subtitleCodes.contains(subtitleCode)) {
+		for (DLNAMediaSubtitle subtitleCode : videoFileInfo.getSubtitlesCodes()) {
+			if (!subtitleCodes.contains(subtitleCode)) {
 				subtitleCodes.add(subtitleCode);
 			}
 		}
@@ -814,9 +928,9 @@ public class DOVideoFileInfo extends DOFileInfo {
 	public String toString() {
 		return getName();
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + super.hashCode();
 		hashCode *= 24 + getOriginalName().hashCode();
 		hashCode *= 24 + getName().hashCode();
@@ -859,24 +973,24 @@ public class DOVideoFileInfo extends DOFileInfo {
 		hashCode *= 24 + getStereoscopy().hashCode();
 		hashCode *= 24 + getMatrixCoefficients().hashCode();
 		hashCode *= 24 + (isEmbeddedFontExists() ? 3 : 4);
-		
+
 		return hashCode;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		// If the object type isn't the same, the objects are not equal
-		if(!(obj instanceof DOVideoFileInfo)){
+		if (!(obj instanceof DOVideoFileInfo)) {
 			return false;
 		}
 
 		// If the base class properties aren't the same, the objects aren't equal
-		if(!super.equals(obj)) {
+		if (!super.equals(obj)) {
 			return false;
 		}
-		
-		DOVideoFileInfo compObj = (DOVideoFileInfo)obj;
-		if(getOriginalName().equals(compObj.getOriginalName())
+
+		DOVideoFileInfo compObj = (DOVideoFileInfo) obj;
+		if (getOriginalName().equals(compObj.getOriginalName())
 				&& getName().equals(compObj.getName())
 				&& getSortName().equals(compObj.getSortName())
 				&& getTmdbId() == compObj.getTmdbId()
@@ -891,7 +1005,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 				&& getHomepageUrl().equals(compObj.getHomepageUrl())
 				&& getTrailerUrl().equals(compObj.getTrailerUrl())
 				&& getGenres().equals(compObj.getGenres())
-				&& getDirector().equals(compObj.getDirector())				
+				&& getDirector().equals(compObj.getDirector())
 				&& getAspectRatioDvdIso().equals(compObj.getAspectRatioDvdIso())
 				&& getBitrate() == compObj.getBitrate()
 				&& getBitsPerPixel() == compObj.getBitsPerPixel()
@@ -900,7 +1014,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 				&& getContainer().equals(compObj.getContainer())
 				&& getDvdtrack() == compObj.getDvdtrack()
 				&& getFrameRate().equals(compObj.getFrameRate())
-				//&& h264_annexB.equals(compObj.h264_annexB)
+				// && h264_annexB.equals(compObj.h264_annexB)
 				&& getHeight() == compObj.getHeight()
 				&& getMimeType().equals(compObj.getMimeType())
 				&& getModel().equals(compObj.getModel())
@@ -914,17 +1028,17 @@ public class DOVideoFileInfo extends DOFileInfo {
 				&& getAspectRatioVideoTrack().equals(compObj.getAspectRatioVideoTrack())
 				&& getStereoscopy().equals(compObj.getStereoscopy())
 				&& getMatrixCoefficients().equals(compObj.getMatrixCoefficients())
-				&& isEmbeddedFontExists() == compObj.isEmbeddedFontExists()){
-			
-				if(!getAudioCodes().equals(compObj.getAudioCodes())){
-					return false;
-				}
-				if(!getSubtitlesCodes().equals(compObj.getSubtitlesCodes())){
-					return false;
-				}
+				&& isEmbeddedFontExists() == compObj.isEmbeddedFontExists()) {
+
+			if (!getAudioCodes().equals(compObj.getAudioCodes())) {
+				return false;
+			}
+			if (!getSubtitlesCodes().equals(compObj.getSubtitlesCodes())) {
+				return false;
+			}
 			return true;
 		}
-		
+
 		return false;
 	}
 }

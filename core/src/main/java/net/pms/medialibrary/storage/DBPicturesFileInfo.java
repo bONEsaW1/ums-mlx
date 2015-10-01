@@ -29,17 +29,18 @@ import net.pms.medialibrary.commons.exceptions.StorageException;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 class DBPicturesFileInfo extends DBBase {
-	
+
 	DBPicturesFileInfo(JdbcConnectionPool cp) {
-	    super(cp);
-    }
-	
+		super(cp);
+	}
+
 	/*********************************************
 	 * 
 	 * Package Methods
-	 * @return 
 	 * 
-	 *********************************************/	
+	 * @return
+	 * 
+	 *********************************************/
 
 	int deletePicturesFileInfo() {
 		// TODO Auto-generated method stub
@@ -56,7 +57,7 @@ class DBPicturesFileInfo extends DBBase {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT Count(ID) FROM PICTURES");
 			rs = stmt.executeQuery();
-			if(rs.next()){
+			if (rs.next()) {
 				count = rs.getInt(1);
 			}
 		} catch (SQLException se) {
@@ -64,18 +65,17 @@ class DBPicturesFileInfo extends DBBase {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
-		return count;
-    }
 
+		return count;
+	}
 
 	void insertPicturesFileInfo(DOImageFileInfo fileInfo) {
-	    // TODO Auto-generated method stub
-	    
-    }
+		// TODO Auto-generated method stub
+
+	}
 
 	void updatePicturesFileInfo(DOImageFileInfo fileInfo) {
-	    // TODO Auto-generated method stub
-	    
-    }
+		// TODO Auto-generated method stub
+
+	}
 }

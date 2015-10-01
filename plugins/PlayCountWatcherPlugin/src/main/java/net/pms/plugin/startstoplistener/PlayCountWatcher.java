@@ -25,7 +25,7 @@ import net.pms.medialibrary.storage.MediaLibraryStorage;
 public class PlayCountWatcher implements StartStopListener {
 	private static final Logger logger = LoggerFactory.getLogger(PlayCountWatcher.class);
 	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.startstoplistener.pcw.lang.messages");
-	
+
 	private Queue<QueueItem> playCache = new LinkedList<QueueItem>();
 	private IMediaLibraryStorage storage;
 
@@ -38,7 +38,7 @@ public class PlayCountWatcher implements StartStopListener {
 			logger.error("Could not load playcountwatcherplugin.properties", e);
 		}
 	}
-	
+
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
 	static {
@@ -49,59 +49,66 @@ public class PlayCountWatcher implements StartStopListener {
 			logger.error("Failed to load global configuration", e);
 		}
 	}
-	
+
 	/** GUI */
 	private GlobalConfigurationPanel pGlobalConfiguration;
 
 	@Override
 	public void donePlaying(DLNAMediaInfo media, DLNAResource resource) {
-		if(logger.isDebugEnabled()) logger.debug("Done playing " + resource.getName());
-		
-		//lazy-load the storage
-		if(storage == null){
+		if (logger.isDebugEnabled())
+			logger.debug("Done playing " + resource.getName());
+
+		// lazy-load the storage
+		if (storage == null) {
 			storage = MediaLibraryStorage.getInstance();
-			if(storage == null) return;
+			if (storage == null)
+				return;
 		}
-		
-		//update the play count if 80% of the file has been played. remove it from the cache anyway as it finished playing
-		//TODO: try to improve this behavior when pausing a stream
+
+		// update the play count if 80% of the file has been played. remove it from the cache anyway as it finished
+		// playing
+		// TODO: try to improve this behavior when pausing a stream
 		int playLengthSec = 0;
-		while(true){
+		while (true) {
 			QueueItem item = playCache.poll();
-			if(item == null){
+			if (item == null) {
 				break;
 			}
 
-			if(item.resourcId.equals(resource.getInternalId())){
-				if(resource instanceof RealFile){
-					playLengthSec = (int)(new Date().getTime() - item.startDate.getTime()) / 1000;
+			if (item.resourcId.equals(resource.getInternalId())) {
+				if (resource instanceof RealFile) {
+					playLengthSec = (int) (new Date().getTime() - item.startDate.getTime()) / 1000;
 					break;
 				}
 			}
 		}
-		
-		if(playLengthSec > 0){
-			String filePath = ((RealFile)resource).getFile().getAbsolutePath();
+
+		if (playLengthSec > 0) {
+			String filePath = ((RealFile) resource).getFile().getAbsolutePath();
 			int fullLengthSec = (int) media.getDurationInSeconds();
 			int minPlayLogLength = (int) (fullLengthSec * ((double) globalConfig.getPercentPlayedRequired() / 100));
-			if(logger.isDebugEnabled()) logger.debug(String.format("Stopped playing %s (%s) after %s seconds. Min play length for loging %ss", resource.getName(), resource.getInternalId(), playLengthSec, minPlayLogLength));
-			if(playLengthSec > minPlayLogLength) {
-				//TODO: insert the file with basic info (mencoder/ffmpeg but no plugins) if it hasn't been previously inserted into the library
+			if (logger.isDebugEnabled())
+				logger.debug(String.format("Stopped playing %s (%s) after %s seconds. Min play length for loging %ss", resource.getName(), resource.getInternalId(), playLengthSec, minPlayLogLength));
+			if (playLengthSec > minPlayLogLength) {
+				// TODO: insert the file with basic info (mencoder/ffmpeg but no plugins) if it hasn't been previously
+				// inserted into the library
 				storage.updatePlayCount(filePath, playLengthSec, new Date());
-				if(logger.isInfoEnabled()) logger.info(String.format("Updated play count for %s (%s) after %s seconds. Min play length for loging %ss", resource.getName(), resource.getInternalId(), playLengthSec, minPlayLogLength));
+				if (logger.isInfoEnabled())
+					logger.info(String.format("Updated play count for %s (%s) after %s seconds. Min play length for loging %ss", resource.getName(), resource.getInternalId(), playLengthSec, minPlayLogLength));
 			}
 		}
 	}
 
 	@Override
 	public void nowPlaying(DLNAMediaInfo media, DLNAResource resource) {
-		if(logger.isDebugEnabled()) logger.debug(String.format("Started playing %s (%s)", resource.getName(), resource.getInternalId()));		
+		if (logger.isDebugEnabled())
+			logger.debug(String.format("Started playing %s (%s)", resource.getName(), resource.getInternalId()));
 		playCache.add(new QueueItem(resource.getInternalId(), new Date()));
 	}
 
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		if(pGlobalConfiguration == null ) {
+		if (pGlobalConfiguration == null) {
 			pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
 		}
 		pGlobalConfiguration.applyConfig();
@@ -118,9 +125,10 @@ public class PlayCountWatcher implements StartStopListener {
 		playCache.clear();
 	}
 
-	private class QueueItem{
+	private class QueueItem {
 		String resourcId;
 		Date startDate;
+
 		public QueueItem(String id, Date date) {
 			resourcId = id;
 			startDate = date;
@@ -159,12 +167,12 @@ public class PlayCountWatcher implements StartStopListener {
 
 	@Override
 	public void initialize() {
-		
+
 	}
 
 	@Override
 	public void saveConfiguration() {
-		if(pGlobalConfiguration != null) {
+		if (pGlobalConfiguration != null) {
 			pGlobalConfiguration.updateConfiguration(globalConfig);
 			try {
 				globalConfig.save();

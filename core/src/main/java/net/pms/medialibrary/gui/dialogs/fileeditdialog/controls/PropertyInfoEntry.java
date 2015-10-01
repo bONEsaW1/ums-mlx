@@ -35,24 +35,24 @@ public class PropertyInfoEntry extends JPanel {
 	private JHeader hTitle;
 	private JTextField tfValue;
 	private JComboBox cbValue;
-	
+
 	public PropertyInfoEntry(String value, ConditionType ct, boolean isConfirmEdit) {
 		setLayout(new BorderLayout(0, 1));
 
 		hTitle = new JHeader(ct, isConfirmEdit);
 		tfValue = new JTextField(value);
 		tfValue.getDocument().addDocumentListener(new DocumentListener() {
-			
+
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				hTitle.setSelected(true);
 			}
-			
+
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				hTitle.setSelected(true);
 			}
-			
+
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				hTitle.setSelected(true);
@@ -60,41 +60,41 @@ public class PropertyInfoEntry extends JPanel {
 		});
 		build();
 	}
-	
+
 	public String getText() {
 		String res;
-		if(cbValue != null) {
+		if (cbValue != null) {
 			res = cbValue.getSelectedItem().toString();
 		} else {
 			res = tfValue.getText();
 		}
 		return res;
 	}
-	
+
 	public boolean isSelected() {
 		return hTitle.isSelected();
 	}
-	
+
 	public void addValue(String value) {
-		if(cbValue == null) {
+		if (cbValue == null) {
 			cbValue = new JComboBox();
 			String val = tfValue.getText();
-			if(!val.equals("")) {
+			if (!val.equals("")) {
 				cbValue.addItem(val);
 				cbValue.setSelectedIndex(0);
 			}
 			build();
 		}
 	}
-	
+
 	private void build() {
 		removeAll();
-		
+
 		JPanel pTitle = new JPanel(new GridLayout());
 		pTitle.setAlignmentY(LEFT_ALIGNMENT);
 		pTitle.add(hTitle);
 		add(pTitle, BorderLayout.NORTH);
-		
+
 		add(tfValue, BorderLayout.CENTER);
 	}
 }

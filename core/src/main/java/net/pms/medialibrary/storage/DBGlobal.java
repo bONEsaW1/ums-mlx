@@ -29,27 +29,27 @@ import net.pms.medialibrary.commons.exceptions.StorageException;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 class DBGlobal extends DBBase {
-	
-	DBGlobal(JdbcConnectionPool cp){
+
+	DBGlobal(JdbcConnectionPool cp) {
 		super(cp);
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Package Methods
 	 * 
 	 *********************************************/
-	
-	String getDbVersion() throws StorageException{
+
+	String getDbVersion() throws StorageException {
 		return getMetaDataValue(MetaDataKeys.VERSION.toString());
 	}
-		
-	String getMetaDataValue(String key) throws StorageException{
+
+	String getMetaDataValue(String key) throws StorageException {
 		String retVal = null;
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT VALUE FROM METADATA WHERE KEY = ?");
@@ -63,24 +63,24 @@ class DBGlobal extends DBBase {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		return retVal;
 	}
-		
-	void setMetaDataValue(String key, String value) throws StorageException{
+
+	void setMetaDataValue(String key, String value) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("DELETE FROM METADATA WHERE KEY = ?");
 			stmt.setObject(1, key);
 			stmt.executeUpdate();
-			
+
 			stmt = conn.prepareStatement("INSERT INTO METADATA (KEY, VALUE) VALUES (?, ?)");
-        	stmt.setString(1, key);
-        	stmt.setString(2, value);
-        	stmt.executeUpdate();
+			stmt.setString(1, key);
+			stmt.setString(2, value);
+			stmt.executeUpdate();
 		} catch (SQLException se) {
 			throw new StorageException(String.format("Failed to set metadata value=%s for key=%s", value, key), se);
 		} finally {

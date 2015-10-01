@@ -26,8 +26,8 @@ public class DOTableColumnConfiguration {
 	private String tagName;
 	private int columnIndex;
 	private int width;
-	
-	public DOTableColumnConfiguration(){
+
+	public DOTableColumnConfiguration() {
 		this(ConditionType.UNKNOWN, null, 0, 75);
 	}
 
@@ -56,7 +56,8 @@ public class DOTableColumnConfiguration {
 	}
 
 	public String getTagName() {
-		if(tagName == null) tagName = "";
+		if (tagName == null)
+			tagName = "";
 		return tagName;
 	}
 
@@ -74,33 +75,33 @@ public class DOTableColumnConfiguration {
 
 	@Override
 	public String toString() {
-		return (getTagName() == "") ? 
+		return (getTagName() == "") ?
 				Messages.getString("ML.Condition.Header.Type." + conditionType.toString()) :
 				String.format("%s (%s)", getTagName(), Messages.getString("ML.Condition.Header.TagSuffix"));
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof DOTableColumnConfiguration)){
+		if (!(obj instanceof DOTableColumnConfiguration)) {
 			return false;
 		}
-		
-		DOTableColumnConfiguration compObj = (DOTableColumnConfiguration)obj;
-		if(getColumnIndex() == compObj.getColumnIndex()
-			&& getConditionType() == compObj.getConditionType()
-			&& getTagName().equals(compObj.getTagName())){
+
+		DOTableColumnConfiguration compObj = (DOTableColumnConfiguration) obj;
+		if (getColumnIndex() == compObj.getColumnIndex()
+				&& getConditionType() == compObj.getConditionType()
+				&& getTagName().equals(compObj.getTagName())) {
 			return true;
 		}
-		
+
 		return super.equals(obj);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int res = 65 * getColumnIndex();
 		res += 65 * getConditionType().hashCode();
 		res += 65 * getTagName().hashCode();
-		
+
 		return res;
 	}
 }

@@ -21,7 +21,7 @@ package net.pms.medialibrary.commons.enumarations;
 public enum FileProperty {
 	UNKNOWN,
 
-	//Video
+	// Video
 	VIDEO_ORIGINALNAME,
 	VIDEO_NAME,
 	VIDEO_SORTNAME,
@@ -41,16 +41,16 @@ public enum FileProperty {
 	VIDEO_RATINGVOTERS,
 	VIDEO_COVERURL,
 	VIDEO_GENRES,
-	
-	//Audio
+
+	// Audio
 	AUDIO_SONGNAME,
 	AUDIO_ARTIST,
 	AUDIO_ALBUM,
 	AUDIO_GENRE,
 	AUDIO_YEAR,
 	AUDIO_COVERPATH,
-	
-	//Pictures
+
+	// Pictures
 	PICTURES_WIDTH,
 	PICTURES_HEIGHT
 }

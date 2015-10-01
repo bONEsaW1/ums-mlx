@@ -39,7 +39,7 @@ public class InstanceConfiguration extends BaseConfiguration {
 	public void setFilePath(String filePath) {
 		properties.put(KEY_filePath, filePath);
 	}
-	
+
 	/**
 	 * Gets the file path.
 	 *
@@ -47,7 +47,7 @@ public class InstanceConfiguration extends BaseConfiguration {
 	 */
 	public String getFilePath() {
 		Object res = properties.get(KEY_filePath);
-		if(res == null) {
+		if (res == null) {
 			res = PMS.getConfiguration().getProfileDirectory() + File.separatorChar + "WEB.conf";
 		}
 		return res.toString();

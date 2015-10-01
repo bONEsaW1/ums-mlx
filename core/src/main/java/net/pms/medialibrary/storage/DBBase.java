@@ -56,7 +56,7 @@ abstract class DBBase {
 				stmt = null;
 			}
 		}
-		
+
 		if (conn != null) {
 			if (savePoint != null) {
 				try {
@@ -83,19 +83,18 @@ abstract class DBBase {
 		close(conn, stmt, null, savePoint);
 	}
 
-
 	void close(Connection conn, Statement stmt, ResultSet rs) {
 		close(conn, stmt, rs, null);
 	}
-	
+
 	void close(Connection conn, Statement stmt) {
 		close(conn, stmt, null, null);
 	}
-	
+
 	void close(ResultSet rs) {
 		close(null, null, rs, null);
 	}
-	
+
 	void close(Statement stmt, ResultSet rs) {
 		close(null, stmt, rs);
 	}

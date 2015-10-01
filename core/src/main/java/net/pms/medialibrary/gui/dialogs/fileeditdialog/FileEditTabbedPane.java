@@ -46,8 +46,8 @@ import net.pms.medialibrary.gui.dialogs.fileeditdialog.panels.VideoFilePropertie
 import net.pms.medialibrary.gui.dialogs.fileeditdialog.transferhandlers.FileCoverTransferHandler;
 
 /**
- * Groups the info, properties and tags panels in a tabbed pane. Different
- * panels will be created depending on the file type of the file info
+ * Groups the info, properties and tags panels in a tabbed pane. Different panels will be created depending on the file
+ * type of the file info
  * 
  * @author pw
  * 

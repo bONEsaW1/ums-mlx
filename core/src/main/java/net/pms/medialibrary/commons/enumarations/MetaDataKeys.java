@@ -21,7 +21,7 @@ package net.pms.medialibrary.commons.enumarations;
 public enum MetaDataKeys {
 	MAX_LINE_LENGTH,
 	MEDIA_LIBRARY_ENABLE,
-	PICTURE_SAVE_FOLDER_PATH, 
+	PICTURE_SAVE_FOLDER_PATH,
 	VERSION,
 	OMIT_SORT,
 	OMIT_FILTER,

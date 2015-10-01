@@ -22,13 +22,13 @@ public class WebServicePlugin implements Plugin {
 	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.webservice.lang.messages");
 	private static Object initializationLocker = new Object();
 	private static Thread thRegister;
-	
+
 	private static ConfigurationWebService configurationWs;
 	private String configurationWsName = "PmsConfiguration";
-	
+
 	private static LibraryWebService libraryWs;
 	private String libraryWsName = "PmsLibrary";
-	
+
 	private String hostName;
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
@@ -40,7 +40,7 @@ public class WebServicePlugin implements Plugin {
 			logger.error("Could not load webserviceplugin.properties", e);
 		}
 	}
-	
+
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
 	static {
@@ -51,13 +51,13 @@ public class WebServicePlugin implements Plugin {
 			logger.error("Failed to load global configuration", e);
 		}
 	}
-	
+
 	/** GUI */
 	private GlobalConfigurationPanel pGlobalConfiguration;
 
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		if(pGlobalConfiguration == null ) {
+		if (pGlobalConfiguration == null) {
 			pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
 		}
 		pGlobalConfiguration.applyConfig();
@@ -71,15 +71,15 @@ public class WebServicePlugin implements Plugin {
 
 	@Override
 	public void shutdown() {
-		if(configurationWs != null) {
+		if (configurationWs != null) {
 			configurationWs.shutdown();
 			configurationWs = null;
 		}
-		if(libraryWs != null) {
+		if (libraryWs != null) {
 			libraryWs.shutdown();
 			libraryWs = null;
 		}
-		
+
 		thRegister = null;
 	}
 
@@ -103,7 +103,7 @@ public class WebServicePlugin implements Plugin {
 		String libraryEndPoint = "http://" + hostName + ":" + globalConfig.getPort() + "/" + libraryWsName + "?wsdl";
 		String configEndPoint = "http://" + hostName + ":" + globalConfig.getPort() + "/" + configurationWsName + "?wsdl";
 
-		return messages.getString("WebServicePlugin.LongDescription") 
+		return messages.getString("WebServicePlugin.LongDescription")
 				+ "<br><br>" + libraryEndPoint + "<br>" + configEndPoint;
 	}
 
@@ -119,26 +119,26 @@ public class WebServicePlugin implements Plugin {
 
 	@Override
 	public void initialize() {
-		//try to get the host name asynchronously as the server might not be ready when initializing
+		// try to get the host name asynchronously as the server might not be ready when initializing
 		synchronized (initializationLocker) {
-			if(thRegister == null) {
+			if (thRegister == null) {
 				thRegister = new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
-						while(hostName == null) {
-							if(PMS.get().getServer() != null) {
-								hostName = PMS.get().getServer().getHost();			
+						while (hostName == null) {
+							if (PMS.get().getServer() != null) {
+								hostName = PMS.get().getServer().getHost();
 							}
 							try {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
-								//do nothing;
+								// do nothing;
 							}
 						}
 						configurationWs = new ConfigurationWebService();
 						configurationWs.bind(hostName, globalConfig.getPort(), configurationWsName);
-						
+
 						libraryWs = new LibraryWebService();
 						libraryWs.bind(hostName, globalConfig.getPort(), libraryWsName);
 					}
@@ -150,7 +150,7 @@ public class WebServicePlugin implements Plugin {
 
 	@Override
 	public void saveConfiguration() {
-		if(pGlobalConfiguration != null) {
+		if (pGlobalConfiguration != null) {
 			pGlobalConfiguration.updateConfiguration(globalConfig);
 			try {
 				globalConfig.save();

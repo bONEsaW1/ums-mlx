@@ -74,33 +74,33 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class GeneralOptionsView extends JPanel {
 	private static final Logger log = LoggerFactory.getLogger(GeneralOptionsView.class);
-	private static final long         serialVersionUID = -3580997978960568334L;
+	private static final long serialVersionUID = -3580997978960568334L;
 
-	private LibraryManager            libraryManager;
+	private LibraryManager libraryManager;
 	private MediaLibraryConfiguration libConfig;
-	private ScanState                 scanState;
-	private JLabel                    lVideoCount;
-	private JButton                   bClearVideo;
-	private JButton                   bRefreshVideo;
-	private JLabel                    lRefreshVideo;
-	private JLabel                    lAudioCount;
-	private JButton                   bClearAudio;
-	private JLabel                    lPicturesCount;
-	private JButton                   bClearPictures;
-	private JLabel                    lScanState;
-	private JButton                   bStartPauseScan;
-	private JButton                   bStopScan;
-	private JButton                   bScanFolder;
-	private JTextField                tfPictureFolderPathValue;
-	private JCheckBox                 cbEnableMediaLibrary;
-	private JLabel                    lOmitPrefix;
-	private JTextField                tfOmitPrefix;
-	private JCheckBox                 cbOmitFiltering;
-	private JCheckBox                 cbOmitSorting;
-	private ManagedFoldersPanel       pManagedFolders;
+	private ScanState scanState;
+	private JLabel lVideoCount;
+	private JButton bClearVideo;
+	private JButton bRefreshVideo;
+	private JLabel lRefreshVideo;
+	private JLabel lAudioCount;
+	private JButton bClearAudio;
+	private JLabel lPicturesCount;
+	private JButton bClearPictures;
+	private JLabel lScanState;
+	private JButton bStartPauseScan;
+	private JButton bStopScan;
+	private JButton bScanFolder;
+	private JTextField tfPictureFolderPathValue;
+	private JCheckBox cbEnableMediaLibrary;
+	private JLabel lOmitPrefix;
+	private JTextField tfOmitPrefix;
+	private JCheckBox cbOmitFiltering;
+	private JCheckBox cbOmitSorting;
+	private ManagedFoldersPanel pManagedFolders;
 
-	private JComponent                pOptions;
-	
+	private JComponent pOptions;
+
 	public GeneralOptionsView() {
 		libConfig = MediaLibraryConfiguration.getInstance();
 
@@ -115,13 +115,13 @@ public class GeneralOptionsView extends JPanel {
 		add(buildUseMediaLibrary(), BorderLayout.NORTH);
 		pOptions = build();
 		add(pOptions, BorderLayout.CENTER);
-		
+
 		refreshVideoFields();
 
 		this.scanState = libraryManager.getScanState().getScanState();
 		updateScanState();
 		pOptions.setVisible(cbEnableMediaLibrary.isSelected());
-		
+
 		registerNotifications();
 	}
 
@@ -130,7 +130,7 @@ public class GeneralOptionsView extends JPanel {
 	 *
 	 * @return the managed folders
 	 */
-	public List<DOManagedFile> getManagedFolders(){
+	public List<DOManagedFile> getManagedFolders() {
 		pManagedFolders.cleanManagedFolders();
 		return pManagedFolders.getManagedFolders();
 	}
@@ -173,7 +173,7 @@ public class GeneralOptionsView extends JPanel {
 		builder.add(buildLibrary(), cc.xy(2, 4));
 		builder.add(buildScanner(), cc.xy(2, 6));
 		builder.add(buildFolderManager(), cc.xy(2, 8));
-		
+
 		JScrollPane sp = new JScrollPane(builder.getPanel());
 		sp.setBorder(BorderFactory.createEmptyBorder());
 
@@ -219,14 +219,16 @@ public class GeneralOptionsView extends JPanel {
 						libraryManager.pauseScan();
 						bStartPauseScan.setText(Messages.getString("ML.GeneralOptionsView.bResume"));
 					} catch (ScanStateException ex) {
-						if(log.isInfoEnabled()) log.info("Unable to pause scan when its state is " + ex.getCurrentState() + ". It can only be used when in state " + ex.getExpectedState());
+						if (log.isInfoEnabled())
+							log.info("Unable to pause scan when its state is " + ex.getCurrentState() + ". It can only be used when in state " + ex.getExpectedState());
 					}
 				} else if (scanState == ScanState.PAUSED) {
 					try {
 						libraryManager.unPauseScan();
 						bStartPauseScan.setText(Messages.getString("ML.GeneralOptionsView.bPause"));
 					} catch (ScanStateException ex) {
-						if(log.isInfoEnabled()) log.info("Unable to pause scan when its state is " + ex.getCurrentState() + ". It can only be used when in state " + ex.getExpectedState());
+						if (log.isInfoEnabled())
+							log.info("Unable to pause scan when its state is " + ex.getCurrentState() + ". It can only be used when in state " + ex.getExpectedState());
 					}
 				}
 			}
@@ -271,17 +273,17 @@ public class GeneralOptionsView extends JPanel {
 	}
 
 	private Component buildGeneral() {
-		FormLayout layout = new FormLayout("r:p, 3px, fill:10:grow, 3px, p, 3px, p, 3px, p, 3px, p", 
+		FormLayout layout = new FormLayout("r:p, 3px, fill:10:grow, 3px, p, 3px, p, 3px, p, 3px, p",
 				"p, 3px, p, 3px, p");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 		CellConstraints cc = new CellConstraints();
 
-		//header
+		// header
 		JLabel lPictureFolderPathTitle = new JLabel(Messages.getString("ML.GeneralOptionsView.lPictureFolderPathTitle"));
 		builder.add(lPictureFolderPathTitle, cc.xy(1, 1));
 
-		//picture save folder path
+		// picture save folder path
 		tfPictureFolderPathValue = new JTextField();
 		tfPictureFolderPathValue.setEditable(false);
 		builder.add(tfPictureFolderPathValue, cc.xyw(3, 1, 7));
@@ -304,7 +306,7 @@ public class GeneralOptionsView extends JPanel {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					String folderPath = chooser.getSelectedFile().getAbsolutePath();
 					tfPictureFolderPathValue.setText(folderPath);
-					
+
 					// Save the configuration
 					libConfig.setPictureSaveFolderPath(tfPictureFolderPathValue.getText());
 				}
@@ -312,7 +314,7 @@ public class GeneralOptionsView extends JPanel {
 		});
 		builder.add(bBrowsePictureFolderPath, cc.xy(11, 1));
 
-		//prefixes to ignore
+		// prefixes to ignore
 		lOmitPrefix = new JLabel(Messages.getString("ML.General.OmitPrefixes.Heading"));
 		builder.add(lOmitPrefix, cc.xy(1, 3));
 
@@ -329,7 +331,7 @@ public class GeneralOptionsView extends JPanel {
 
 		cbOmitSorting = new JCheckBox(Messages.getString("ML.General.OmitPrefixes.Sort"));
 		cbOmitSorting.addItemListener(new ItemListener() {
-			
+
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 				saveOmitPrefixesConfiguration();
@@ -339,7 +341,7 @@ public class GeneralOptionsView extends JPanel {
 
 		cbOmitFiltering = new JCheckBox(Messages.getString("ML.General.OmitPrefixes.Filter"));
 		cbOmitFiltering.addItemListener(new ItemListener() {
-			
+
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 				saveOmitPrefixesConfiguration();
@@ -347,7 +349,7 @@ public class GeneralOptionsView extends JPanel {
 		});
 		builder.add(cbOmitFiltering, cc.xy(11, 3));
 
-		//set initial values
+		// set initial values
 		tfPictureFolderPathValue.setText(libConfig.getPictureSaveFolderPath());
 
 		OmitPrefixesConfiguration omitCfg = libConfig.getOmitPrefixesConfiguration();
@@ -365,7 +367,7 @@ public class GeneralOptionsView extends JPanel {
 	}
 
 	private JComponent buildLibrary() {
-		FormLayout layout = new FormLayout("p, right:p, 5px, 40px, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:0:grow, p", 
+		FormLayout layout = new FormLayout("p, right:p, 5px, 40px, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:0:grow, p",
 				"p, p, p, p");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
@@ -383,15 +385,15 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				switch (JOptionPane.showConfirmDialog(bClearVideo.getTopLevelAncestor(), Messages.getString("ML.GeneralOptionsView.DeleteAllVideosMsg"))) {
-					case JOptionPane.YES_OPTION:
-						libraryManager.clearVideo();
-						break;
+				case JOptionPane.YES_OPTION:
+					libraryManager.clearVideo();
+					break;
 				}
 			}
 
 		});
 		builder.add(this.bClearVideo, cc.xy(6, 2));
-		
+
 		this.bRefreshVideo = new JButton(Messages.getString("ML.GeneralOptionsView.bRefresh"));
 		this.bRefreshVideo.addMouseListener(new MouseAdapter() {
 			@Override
@@ -401,7 +403,7 @@ public class GeneralOptionsView extends JPanel {
 
 		});
 		builder.add(this.bRefreshVideo, cc.xy(8, 2));
-		
+
 		this.lRefreshVideo = new JLabel();
 		builder.add(this.lRefreshVideo, cc.xy(10, 2));
 
@@ -410,16 +412,16 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (JOptionPane.showConfirmDialog(bClearVideo.getTopLevelAncestor(), String.format(Messages.getString("ML.GeneralOptionsView.ResetDBMsg"), System
-				        .getProperty("line.separator"))) == JOptionPane.YES_OPTION) {
-					try {						
+						.getProperty("line.separator"))) == JOptionPane.YES_OPTION) {
+					try {
 						// reset the storage
 						libraryManager.resetStorage();
-						
+
 						// update the configuration fields that have to be
 						MediaLibraryConfiguration config = MediaLibraryConfiguration.getInstance();
 						cbEnableMediaLibrary.setSelected(config.isMediaLibraryEnabled());
 						tfPictureFolderPathValue.setText(config.getPictureSaveFolderPath());
-						
+
 						OmitPrefixesConfiguration omitCfg = libConfig.getOmitPrefixesConfiguration();
 						String prefixes = "";
 						for (String k : omitCfg.getPrefixes()) {
@@ -429,7 +431,7 @@ public class GeneralOptionsView extends JPanel {
 						tfOmitPrefix.setText(prefixes);
 						cbOmitFiltering.setSelected(omitCfg.isFiltering());
 						cbOmitSorting.setSelected(omitCfg.isSorting());
-						
+
 						// Show message in the pms status bar
 						net.pms.PMS.get().getFrame().setStatusLine(Messages.getString("ML.GeneralOptionsView.ResetDBDoneMsg"));
 					} catch (Exception ex) {
@@ -449,9 +451,9 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				switch (JOptionPane.showConfirmDialog(bClearAudio.getTopLevelAncestor(), Messages.getString("ML.GeneralOptionsView.DeleteAllTracksMsg"))) {
-					case JOptionPane.YES_OPTION:
-						libraryManager.clearAudio();
-						break;
+				case JOptionPane.YES_OPTION:
+					libraryManager.clearAudio();
+					break;
 				}
 			}
 
@@ -463,7 +465,7 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (JOptionPane.showConfirmDialog(bClearVideo.getTopLevelAncestor(), String.format(Messages.getString("ML.GeneralOptionsView.CleanDBMsg"), System
-				        .getProperty("line.separator"))) == JOptionPane.YES_OPTION) {
+						.getProperty("line.separator"))) == JOptionPane.YES_OPTION) {
 					try {
 						// clean the storage
 						libraryManager.cleanStorage();
@@ -483,9 +485,9 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				switch (JOptionPane.showConfirmDialog(bClearPictures.getTopLevelAncestor(), Messages.getString("ML.GeneralOptionsView.DeleteAllPicturesMsg"))) {
-					case JOptionPane.YES_OPTION:
-						libraryManager.clearPictures();
-						break;
+				case JOptionPane.YES_OPTION:
+					libraryManager.clearPictures();
+					break;
 				}
 			}
 
@@ -494,13 +496,13 @@ public class GeneralOptionsView extends JPanel {
 
 		return builder.getPanel();
 	}
-	
+
 	private void registerNotifications() {
 		NotificationCenter.getInstance(DBEvent.class).subscribe(new NotificationSubscriber<DBEvent>() {
-			
+
 			@Override
 			public void onMessage(DBEvent obj) {
-				switch(obj.getType()) {
+				switch (obj.getType()) {
 				case VideoInserted:
 				case VideoUpdated:
 				case VideoDeleted:
@@ -512,7 +514,7 @@ public class GeneralOptionsView extends JPanel {
 				}
 			}
 		});
-		
+
 		this.libraryManager.addFileScannerEventListener(new IFileScannerEventListener() {
 
 			@Override
@@ -524,15 +526,15 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void itemInserted(FileType type) {
 				// Don't do anything as those notifications are being handled through the notification center
-			}			
+			}
 		});
 	}
-	
+
 	private void refreshVideoFields() {
 		this.lVideoCount.setText(String.valueOf(this.libraryManager.getVideoCount()));
 
 		int nbItemsRequiringUpdate = MediaLibraryStorage.getInstance().getFileCountRequiringUpdate(FileType.VIDEO, VersionConstants.VIDEO_FILE_VERSION);
-		if(nbItemsRequiringUpdate > 0) {
+		if (nbItemsRequiringUpdate > 0) {
 			this.lRefreshVideo.setText(String.format(Messages.getString("ML.GeneralOptionsView.lRefresh"), nbItemsRequiringUpdate));
 		}
 		this.bRefreshVideo.setVisible(nbItemsRequiringUpdate > 0);
@@ -567,7 +569,7 @@ public class GeneralOptionsView extends JPanel {
 		omitCfg.setFiltering(cbOmitFiltering.isSelected());
 		omitCfg.setSorting(cbOmitSorting.isSelected());
 		omitCfg.setPrefixes(Arrays.asList(tfOmitPrefix.getText().trim().split(" ")));
-		
+
 		// Save the configuration
 		libConfig.setOmitPrefixesConfiguration(omitCfg);
 	}

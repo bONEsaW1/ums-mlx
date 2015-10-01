@@ -68,7 +68,7 @@ public class ReorderableJList extends JList implements DragSourceListener,
 	DropTarget dropTarget;
 	Object dropTargetCell;
 	int draggedIndex = -1;
-	
+
 	private static ReorderableJList startDragInstance;
 
 	public ReorderableJList() {
@@ -82,18 +82,18 @@ public class ReorderableJList extends JList implements DragSourceListener,
 
 	// DragGestureListener
 	public void dragGestureRecognized(DragGestureEvent dge) {
-		if(!isEnabled()) {
+		if (!isEnabled()) {
 			return;
 		}
-		
+
 		// find object at this x,y
 		Point clickPoint = dge.getDragOrigin();
 		int index = locationToIndex(clickPoint);
-		
+
 		if (index == -1) {
 			return;
 		}
-		
+
 		Object target = getModel().getElementAt(index);
 		Transferable trans = new RJLTransferable(target);
 		draggedIndex = index;
@@ -103,10 +103,10 @@ public class ReorderableJList extends JList implements DragSourceListener,
 
 	// DragSourceListener events
 	public void dragDropEnd(DragSourceDropEvent dsde) {
-		if(!isEnabled()) {
+		if (!isEnabled()) {
 			return;
 		}
-		
+
 		dropTargetCell = null;
 		draggedIndex = -1;
 		repaint();
@@ -126,11 +126,11 @@ public class ReorderableJList extends JList implements DragSourceListener,
 
 	// DropTargetListener events
 	public void dragEnter(DropTargetDragEvent dtde) {
-		if(!isEnabled()) {
+		if (!isEnabled()) {
 			return;
 		}
-		
-		if (dtde.getSource() != dropTarget || !((DropTarget)dtde.getSource()).getComponent().equals(this)) {
+
+		if (dtde.getSource() != dropTarget || !((DropTarget) dtde.getSource()).getComponent().equals(this)) {
 			dtde.rejectDrag();
 		}
 		else {
@@ -142,10 +142,10 @@ public class ReorderableJList extends JList implements DragSourceListener,
 	}
 
 	public void dragOver(DropTargetDragEvent dtde) {
-		if(!isEnabled()) {
+		if (!isEnabled()) {
 			return;
 		}
-		
+
 		// figure out which cell it's over, no drag to self
 		if (dtde.getSource() != dropTarget) {
 			dtde.rejectDrag();
@@ -162,15 +162,15 @@ public class ReorderableJList extends JList implements DragSourceListener,
 	}
 
 	public void drop(DropTargetDropEvent dtde) {
-		if(!isEnabled()) {
+		if (!isEnabled()) {
 			return;
 		}
-		
+
 		if (draggedIndex < 0 || dtde.getSource() != dropTarget) {
 			dtde.rejectDrop();
 			return;
 		}
-		
+
 		Point dropPoint = dtde.getLocation();
 		int index = locationToIndex(dropPoint);
 		boolean dropped = false;
@@ -246,7 +246,7 @@ public class ReorderableJList extends JList implements DragSourceListener,
 				g.drawLine(0, 0, getSize().width, 0);
 			}
 		}
-		
+
 		@Override
 		public Border getBorder() {
 			return BorderFactory.createEmptyBorder();

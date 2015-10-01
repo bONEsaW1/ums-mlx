@@ -101,7 +101,7 @@ public class WebFolderResource extends VirtualFolder {
 				try {
 					fr = new FileReader(webConf);
 					lnr = new LineNumberReader(fr);
-					
+
 					String line = null;
 					while ((line = lnr.readLine()) != null) {
 						line = line.trim();
@@ -223,10 +223,8 @@ public class WebFolderResource extends VirtualFolder {
 	 * http://examples.javacodegeeks.com/core-java/security/messagedigest/generate-a-file-checksum-value-in-java/
 	 * 
 	 * @return the web config filehash
-	 * @throws NoSuchAlgorithmException
-	 *             the no such algorithm exception
-	 * @throws IOException
-	 *             the IO exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws IOException the IO exception
 	 */
 	private String getWebConfigFilehash() {
 		MessageDigest messageDigest;

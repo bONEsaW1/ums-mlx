@@ -41,12 +41,12 @@ import net.pms.medialibrary.commons.interfaces.IFileScannerEventListener;
 import net.pms.medialibrary.commons.interfaces.IMediaLibraryStorage;
 import net.pms.medialibrary.storage.MediaLibraryStorage;
 
-public class FileScanner implements Runnable{
+public class FileScanner implements Runnable {
 	private static FileScanner instance;
 
 	private static final Logger log = LoggerFactory.getLogger(FileScanner.class);
 	private static int nbScans = 0;
-	
+
 	private Queue<FileImportConfiguration> directoryPaths;
 	private Thread scanThread;
 	private ScanState scanState = ScanState.IDLE;
@@ -56,9 +56,9 @@ public class FileScanner implements Runnable{
 	private IMediaLibraryStorage mediaLibraryStorage;
 	private Object scanThreadPause;
 	private List<IFileScannerEventListener> fileScannerEventListeners;
-	
+
 	public int updateIntervalDays = 5000;
-	
+
 	private FileScanner() {
 		directoryPaths = new ConcurrentLinkedQueue<FileImportConfiguration>();
 		scanThread = new Thread(this);
@@ -69,23 +69,23 @@ public class FileScanner implements Runnable{
 		fileScannerEventListeners = new ArrayList<IFileScannerEventListener>();
 		scanThreadPause = new Object();
 	}
-	
-	private synchronized void enqueueManagedFile(FileImportConfiguration mf){
+
+	private synchronized void enqueueManagedFile(FileImportConfiguration mf) {
 		directoryPaths.add(mf);
 	}
-	
-	private synchronized FileImportConfiguration dequeueImportFile(){
+
+	private synchronized FileImportConfiguration dequeueImportFile() {
 		return directoryPaths.poll();
 	}
 
 	public static synchronized FileScanner getInstance() {
-	    if(instance == null){
-	    	instance = new FileScanner();
-	    }
-	    return instance;
-    }
-	
-	public DOScanReport getScanState(){
+		if (instance == null) {
+			instance = new FileScanner();
+		}
+		return instance;
+	}
+
+	public DOScanReport getScanState() {
 		return new DOScanReport(scanState, nbScannedItems, nbItemsToScan);
 	}
 
@@ -95,15 +95,15 @@ public class FileScanner implements Runnable{
 			net.pms.PMS.get().getFrame().setStatusLine(String.format(Messages.getString("ML.FileScanner.ScanFolder"), folderToScan.getAbsoluteFile()));
 
 			File[] childPaths = folderToScan.listFiles();
-			if(childPaths != null) {
+			if (childPaths != null) {
 				for (int i = 0; i < childPaths.length; i++) {
-					
+
 					File currentFile = childPaths[i];
-					
-					if(currentFile.isHidden()) {
+
+					if (currentFile.isHidden()) {
 						continue;
 					}
-					
+
 					if (currentFile.isFile()) {
 						// Enqueue the file
 						FileImportConfiguration fileImportConfiguration = new FileImportConfiguration(currentFile.getAbsolutePath(), mFolder.getFileImportTemplate(), false, true,
@@ -112,7 +112,7 @@ public class FileScanner implements Runnable{
 						startScan();
 					} else if (currentFile.isDirectory() && mFolder.isSubFoldersEnabled()) {
 						// Scan sub-folders
-						DOManagedFile tmpFile = new DOManagedFile(mFolder.isWatchEnabled(), currentFile.toString(), 
+						DOManagedFile tmpFile = new DOManagedFile(mFolder.isWatchEnabled(), currentFile.toString(),
 								mFolder.isVideoEnabled(), mFolder.isAudioEnabled(), mFolder.isPicturesEnabled(),
 								mFolder.isSubFoldersEnabled(), mFolder.isPluginImportEnabled(), mFolder.getFileImportTemplate());
 						scanFolder(tmpFile);
@@ -123,7 +123,7 @@ public class FileScanner implements Runnable{
 			}
 		}
 	}
-	
+
 	public FileImportResult scanFile(FileImportConfiguration importFile) {
 		FileImportResult fileImportResult = FileImportResult.Unknown;
 
@@ -144,12 +144,12 @@ public class FileScanner implements Runnable{
 
 				// insert file info if we were able to retrieve it
 				if (fileInfo != null) {
-					if(mediaLibraryStorage.isFileImported(fileInfo.getFilePath())) {
+					if (mediaLibraryStorage.isFileImported(fileInfo.getFilePath())) {
 						// The file has been previously imported.
 						// Get the existing file and set the new properties
 						DOFileInfo currentFileInfo = mediaLibraryStorage.getFileInfo(fileInfo.getFilePath());
 						currentFileInfo.copySetSystemPropertiesFrom(fileInfo);
-						
+
 						mediaLibraryStorage.updateFileInfo(currentFileInfo);
 						fileImportResult = FileImportResult.Updated;
 					} else {
@@ -169,11 +169,11 @@ public class FileScanner implements Runnable{
 
 		return fileImportResult;
 	}
-	
+
 	public void updateFilesRequiringFileUpdate(List<FileType> fileTypesToUpdate) {
 		List<String> filePaths = mediaLibraryStorage.getFilePathsRequiringUpdate(fileTypesToUpdate);
-		for(String filePath : filePaths) {
-			
+		for (String filePath : filePaths) {
+
 			File f = new File(filePath);
 			if (!f.isFile()) {
 				log.warn(String.format("File '%s' won't be updated because it couldn't be found", filePath));
@@ -182,48 +182,55 @@ public class FileScanner implements Runnable{
 				enqueueManagedFile(fileImportConfiguration);
 			}
 		}
-		
+
 		startScan();
 	}
-	
-	public void pause() throws ScanStateException{	
-		if(log.isDebugEnabled()) log.debug("pause() called.");
-		if(scanState != ScanState.RUNNING){
+
+	public void pause() throws ScanStateException {
+		if (log.isDebugEnabled())
+			log.debug("pause() called.");
+		if (scanState != ScanState.RUNNING) {
 			throw new ScanStateException(ScanState.RUNNING, scanState, "The pause() method can only be called when the ScanState==RUNNING. current state="
-					+ scanState); 
+					+ scanState);
 		}
 		changeScanState(ScanState.PAUSING);
-		if(log.isDebugEnabled()) log.debug("Pausing set. Waiting for scan thread to pause.");
+		if (log.isDebugEnabled())
+			log.debug("Pausing set. Waiting for scan thread to pause.");
 	}
-	
-	public void unPause() throws ScanStateException{	
-		if(log.isDebugEnabled()) log.debug("pause() called.");
-		if(scanState != ScanState.PAUSED){
+
+	public void unPause() throws ScanStateException {
+		if (log.isDebugEnabled())
+			log.debug("pause() called.");
+		if (scanState != ScanState.PAUSED) {
 			throw new ScanStateException(ScanState.PAUSED, scanState, "The pause() method can only be called when the ScanState==PAUSED. current state="
-					+ scanState); 
+					+ scanState);
 		}
 		synchronized (scanThreadPause) {
 			scanThreadPause.notify();
-        }
-		if(log.isDebugEnabled()) log.debug("Pausing set. Waiting for scan thread to pause.");
+		}
+		if (log.isDebugEnabled())
+			log.debug("Pausing set. Waiting for scan thread to pause.");
 	}
-	
-	
-	public void stop(){	
-		if(log.isDebugEnabled()) log.debug("stop() called.");
+
+	public void stop() {
+		if (log.isDebugEnabled())
+			log.debug("stop() called.");
 		changeScanState(ScanState.STOPPING);
-		if(log.isDebugEnabled()) log.debug("Stopping set. Waiting for scan thread to terminate.");
+		if (log.isDebugEnabled())
+			log.debug("Stopping set. Waiting for scan thread to terminate.");
 		synchronized (scanThreadPause) {
 			scanThreadPause.notifyAll();
-        }
-		try{
+		}
+		try {
 			scanThread.join();
-			if(log.isDebugEnabled()) log.debug("Stopped! Scan thread terminated properly.");		
-		}catch(InterruptedException ex){
-			if(log.isDebugEnabled()) log.debug("Stopped! Terminated by a InterruptedException.");								
+			if (log.isDebugEnabled())
+				log.debug("Stopped! Scan thread terminated properly.");
+		} catch (InterruptedException ex) {
+			if (log.isDebugEnabled())
+				log.debug("Stopped! Terminated by a InterruptedException.");
 		}
 	}
-	
+
 	@Override
 	public void run() {
 		changeScanState(ScanState.RUNNING);
@@ -231,24 +238,26 @@ public class FileScanner implements Runnable{
 		FileImportConfiguration importFile;
 		int nbFilesAdded = 0;
 		int nbFilesUpdated = 0;
-		//Calendar lastGetDate = Calendar.getInstance();
+		// Calendar lastGetDate = Calendar.getInstance();
 		while ((importFile = dequeueImportFile()) != null) {
 			// check if we have to pause or stop the thread
 			if (scanState == ScanState.PAUSING) {
 				try {
-					if(log.isInfoEnabled()) log.info("Scan paused");
+					if (log.isInfoEnabled())
+						log.info("Scan paused");
 					net.pms.PMS.get().getFrame().setStatusLine("Scan paused");
 					changeScanState(ScanState.PAUSED);
 					synchronized (scanThreadPause) {
 						scanThreadPause.wait();
 					}
 					net.pms.PMS.get().getFrame().setStatusLine("Restarted scan");
-					
+
 					if (scanState == ScanState.STOPPING) {
 						break;
 					} else {
 						changeScanState(ScanState.RUNNING);
-						if(log.isInfoEnabled()) log.info("Scan started after pause");
+						if (log.isInfoEnabled())
+							log.info("Scan started after pause");
 					}
 				} catch (InterruptedException ex) {
 					log.error("Scan stopped because pause has been interrupted by a Interrupt.", ex);
@@ -257,9 +266,9 @@ public class FileScanner implements Runnable{
 			} else if (scanState == ScanState.STOPPING) {
 				break;
 			}
-			
+
 			// Scan the file
-			switch(scanFile(importFile)) {
+			switch (scanFile(importFile)) {
 			case Imported:
 				nbFilesAdded++;
 				break;
@@ -280,17 +289,17 @@ public class FileScanner implements Runnable{
 
 	public void addFileScannerEventListener(IFileScannerEventListener listener) {
 		fileScannerEventListeners.add(listener);
-    }
-	
-	private void changeScanState(ScanState state){
+	}
+
+	private void changeScanState(ScanState state) {
 		synchronized (scanState) {
 			scanState = state;
-			for(IFileScannerEventListener l : fileScannerEventListeners) {
+			for (IFileScannerEventListener l : fileScannerEventListeners) {
 				l.scanStateChanged(scanState);
 			}
 		}
 	}
-	
+
 	private void startScan() {
 		synchronized (scanState) {
 			if (scanState != ScanState.STARTING && scanState != ScanState.RUNNING) {
@@ -299,6 +308,6 @@ public class FileScanner implements Runnable{
 				scanThread.setName("scan" + nbScans++);
 				scanThread.start();
 			}
-		}		
+		}
 	}
 }

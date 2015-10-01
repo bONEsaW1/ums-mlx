@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 class DBInitializer extends DBBase {
 	private static final Logger log = LoggerFactory.getLogger(DBInitializer.class);
-	
+
 	private String name;
 	private IMediaLibraryStorage storage;
 
@@ -53,7 +53,8 @@ class DBInitializer extends DBBase {
 		this.name = name;
 		this.storage = storage;
 		cp = getConnectionPool();
-		if(log.isInfoEnabled()) log.info("DBInitializer initialized");
+		if (log.isInfoEnabled())
+			log.info("DBInitializer initialized");
 	}
 
 	/*********************************************
@@ -61,68 +62,73 @@ class DBInitializer extends DBBase {
 	 * Package Methods
 	 * 
 	 *********************************************/
-	
-	JdbcConnectionPool getConnectionPool(){
-		if(cp != null){
+
+	JdbcConnectionPool getConnectionPool() {
+		if (cp != null) {
 			return cp;
 		} else {
-			String dbPath = ConfigurationHelper.getDbDir() +  name;
-	    	if(log.isInfoEnabled()) log.info("Medialibrary database location = '" + dbPath + "'");
-	    	String url = "jdbc:h2:" + dbPath;
-	
-	    	String driverName = "org.h2.Driver";
-	    	try {
-	    		Class.forName(driverName);
-	    		if(log.isDebugEnabled()) log.debug("Loaded driver '" + driverName + "'");
-	    	} catch (ClassNotFoundException e) {
-	    		log.error("Failed to load database driver named '" + driverName + "'", e);
-	    		return null;
-	    	}
-	
-	    	JdbcDataSource ds = new JdbcDataSource();
-	    	ds.setURL(url);
-	    	ds.setUser("sa");
-	    	ds.setPassword("");
-	    	return(JdbcConnectionPool.create(ds));
+			String dbPath = ConfigurationHelper.getDbDir() + name;
+			if (log.isInfoEnabled())
+				log.info("Medialibrary database location = '" + dbPath + "'");
+			String url = "jdbc:h2:" + dbPath;
+
+			String driverName = "org.h2.Driver";
+			try {
+				Class.forName(driverName);
+				if (log.isDebugEnabled())
+					log.debug("Loaded driver '" + driverName + "'");
+			} catch (ClassNotFoundException e) {
+				log.error("Failed to load database driver named '" + driverName + "'", e);
+				return null;
+			}
+
+			JdbcDataSource ds = new JdbcDataSource();
+			ds.setURL(url);
+			ds.setUser("sa");
+			ds.setPassword("");
+			return (JdbcConnectionPool.create(ds));
 		}
 	}
 
 	void configureDb() {
 		String realStorageVersion = storage.getStorageVersion();
-		if(realStorageVersion == null){
-			if(log.isInfoEnabled()) log.info("Reinitializing DB because the version number could not be found. Create DB version " + VersionConstants.DB_VERSION);
-			initDb();			
+		if (realStorageVersion == null) {
+			if (log.isInfoEnabled())
+				log.info("Reinitializing DB because the version number could not be found. Create DB version " + VersionConstants.DB_VERSION);
+			initDb();
 		}
-		else if(VersionConstants.DB_VERSION.equals(realStorageVersion)){
-			if(log.isInfoEnabled()) log.info(String.format("Database version %s is up and running", VersionConstants.DB_VERSION));
+		else if (VersionConstants.DB_VERSION.equals(realStorageVersion)) {
+			if (log.isInfoEnabled())
+				log.info(String.format("Database version %s is up and running", VersionConstants.DB_VERSION));
 		} else {
 			double newestDbVersion;
 			double runningDbVersion;
 			try {
 				newestDbVersion = Double.parseDouble(VersionConstants.DB_VERSION);
 				runningDbVersion = Double.parseDouble(realStorageVersion);
-				if(!(newestDbVersion > runningDbVersion)){
+				if (!(newestDbVersion > runningDbVersion)) {
 					log.info(String.format("Don't update DB. newestDbVersion='%s' or runningDbVersion='%s'", VersionConstants.DB_VERSION, realStorageVersion));
 				}
-			} catch(Exception ex){
+			} catch (Exception ex) {
 				log.error(String.format("Failed to parse newestDbVersion='%s' or runningDbVersion='%s'", VersionConstants.DB_VERSION, realStorageVersion));
 			}
-			
-			if(log.isInfoEnabled()) log.info(String.format("Updating DB from version %s to %s", realStorageVersion, VersionConstants.DB_VERSION));
+
+			if (log.isInfoEnabled())
+				log.info(String.format("Updating DB from version %s to %s", realStorageVersion, VersionConstants.DB_VERSION));
 			updateDb(realStorageVersion);
 		}
-    }
+	}
 
-	void resetDb(){
+	void resetDb() {
 		initDb();
 	}
-	
-	boolean isConnected(){
+
+	boolean isConnected() {
 		boolean res = false;
 
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
 			res = !conn.isClosed();
@@ -130,81 +136,158 @@ class DBInitializer extends DBBase {
 			res = false;
 		} finally {
 			close(conn, stmt);
-    	}
-    	
-    	return res;
+		}
+
+		return res;
 	}
-	
-	boolean isInitialized(){		
+
+	boolean isInitialized() {
 		boolean res = false;
 
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT VALUE FROM METADATA");
 			stmt.executeQuery();
 			res = true;
 		} catch (SQLException se) {
-			//do nothing
+			// do nothing
 		} finally {
 			close(conn, stmt);
-    	}
-    	
-    	return res;		
+		}
+
+		return res;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Private Methods
 	 * 
 	 *********************************************/
-	
+
 	private void initDb() {
-		if(log.isInfoEnabled()) log.info("Start initializing the database");
+		if (log.isInfoEnabled())
+			log.info("Start initializing the database");
 		Connection conn = null;
 		Statement stmt = null;
-		
-		try { 
-			conn = cp.getConnection(); 
+
+		try {
+			conn = cp.getConnection();
 			stmt = conn.createStatement();
 		} catch (SQLException se) {
 			log.error("Failed to initialize DB because no DB connection could be made", se);
 			return;
-		}		
-		
-		//Try to delete all the tables
-		//If they don't exist (or another problem occurs..) the exception is caught and nothing done with it
-		try { stmt.executeUpdate("DROP TABLE FILE"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE VIDEO"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE VIDEOAUDIO"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE AUDIO"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE PICTURES"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILEPLAYS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE SUBTITLES"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE METADATA"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FOLDERS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE MEDIALIBRARYFOLDERS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE SPECIALFOLDERS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE CONDITIONS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE THUMBNAILPRIORITIES"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FOLDERTHUMBNAILPRIORITIES"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILEENTRYTHUMBNAILPRIORITIES"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILETAGS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE TEMPLATE"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE TEMPLATEENTRY"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE MANAGEDFOLDERS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE TABLECOLUMNCONFIGURATION"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATE"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATEENTRY"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATEACTIVEENGINE"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATETAGS"); } catch (SQLException se) {}
-		try { stmt.executeUpdate("DROP TABLE QUICKTAG"); } catch (SQLException se) {}
-		if(log.isInfoEnabled()) log.info("All database tables dropped");
-				
+		}
+
+		// Try to delete all the tables
+		// If they don't exist (or another problem occurs..) the exception is caught and nothing done with it
 		try {
-			//Create table FILE
+			stmt.executeUpdate("DROP TABLE FILE");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE VIDEO");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE VIDEOAUDIO");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE AUDIO");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE PICTURES");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILEPLAYS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE SUBTITLES");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE METADATA");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FOLDERS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE MEDIALIBRARYFOLDERS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE SPECIALFOLDERS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE CONDITIONS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE THUMBNAILPRIORITIES");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FOLDERTHUMBNAILPRIORITIES");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILEENTRYTHUMBNAILPRIORITIES");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILETAGS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE TEMPLATE");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE TEMPLATEENTRY");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE MANAGEDFOLDERS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE TABLECOLUMNCONFIGURATION");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATE");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATEENTRY");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATEACTIVEENGINE");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE FILEIMPORTTEMPLATETAGS");
+		} catch (SQLException se) {
+		}
+		try {
+			stmt.executeUpdate("DROP TABLE QUICKTAG");
+		} catch (SQLException se) {
+		}
+		if (log.isInfoEnabled())
+			log.info("All database tables dropped");
+
+		try {
+			// Create table FILE
 			StringBuffer sb = new StringBuffer();
 			sb.append("CREATE TABLE FILE (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -226,9 +309,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate("CREATE INDEX IDX_FILE_SIZE ON FILE (SIZEBYTE desc);");
 			stmt.executeUpdate("CREATE INDEX IDX_FILE_TYPE ON FILE (TYPE asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_FILE_PLAYCOUNT ON FILE (PLAYCOUNT asc);");
-			if(log.isDebugEnabled()) log.debug("Table FILE created");
+			if (log.isDebugEnabled())
+				log.debug("Table FILE created");
 
-			//Create table VIDEO
+			// Create table VIDEO
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE VIDEO (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -278,9 +362,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEO_NAME ON VIDEO (NAME asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEO_ORIGINALNAME ON VIDEO (ORIGINALNAME asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEO_YEAR ON VIDEO (YEAR asc);");
-			if(log.isDebugEnabled()) log.debug("Table VIDEO created");
-			
-			//Create table PICTURES
+			if (log.isDebugEnabled())
+				log.debug("Table VIDEO created");
+
+			// Create table PICTURES
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE PICTURES (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -294,9 +379,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_PICTURES_WIDTH ON PICTURES (WIDTH asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_PICTURES_HEIGHT ON PICTURES (HEIGHT asc);");
-			if(log.isDebugEnabled()) log.debug("Table PICTURES created");
-			
-			//Create table AUDIO
+			if (log.isDebugEnabled())
+				log.debug("Table PICTURES created");
+
+			// Create table AUDIO
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE AUDIO (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -320,9 +406,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate("CREATE INDEX IDX_AUDIO_ALBUM ON AUDIO (ALBUM asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_AUDIO_GENRE ON AUDIO (GENRE asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_AUDIO_YEAR ON AUDIO (YEAR asc);");
-			if(log.isDebugEnabled()) log.debug("Table AUDIO created");
-			
-			//Create table VIDEOAUDIO
+			if (log.isDebugEnabled())
+				log.debug("Table AUDIO created");
+
+			// Create table VIDEOAUDIO
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE VIDEOAUDIO (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -339,9 +426,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEOAUDIO_FILEID ON VIDEOAUDIO (FILEID asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEOAUDIO_LANG ON VIDEOAUDIO (LANG asc);");
-			if(log.isDebugEnabled()) log.debug("Table VIDEOAUDIO created");
-			
-			//Create table SUBTITLES (that will reference a file that is a video)
+			if (log.isDebugEnabled())
+				log.debug("Table VIDEOAUDIO created");
+
+			// Create table SUBTITLES (that will reference a file that is a video)
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE SUBTITLES (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -353,9 +441,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_SUBTITLES_LANG ON SUBTITLES (LANG asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_SUBTITLES_FILEID ON SUBTITLES (FILEID asc);");
-			if(log.isDebugEnabled()) log.debug("Table SUBTITLES created");
-			
-			//Create table FILEPLAYS
+			if (log.isDebugEnabled())
+				log.debug("Table SUBTITLES created");
+
+			// Create table FILEPLAYS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEPLAYS (");
 			sb.append("  FILEID            BIGINT REFERENCES FILE(ID)");
@@ -363,9 +452,10 @@ class DBInitializer extends DBBase {
 			sb.append(", DATEPLAYEND       TIMESTAMP");
 			sb.append(", CONSTRAINT PK_FILEPLAYS PRIMARY KEY (FILEID, DATEPLAYEND))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table FILEPLAYS created");
-			
-			//Create table TEMPLATE
+			if (log.isDebugEnabled())
+				log.debug("Table FILEPLAYS created");
+
+			// Create table TEMPLATE
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE TEMPLATE (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -373,9 +463,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_TEMPLATE PRIMARY KEY (ID))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_TEMPLATE_NAME ON TEMPLATE (NAME asc);");
-			if(log.isDebugEnabled()) log.debug("Table TEMPLATE created");
-			
-			//Create table TEMPLATEENTRY
+			if (log.isDebugEnabled())
+				log.debug("Table TEMPLATE created");
+
+			// Create table TEMPLATEENTRY
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE TEMPLATEENTRY (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -390,9 +481,10 @@ class DBInitializer extends DBBase {
 			sb.append(", PLUGINCONFIG      VARCHAR(2048)");
 			sb.append(", CONSTRAINT PK_TEMPLATEENTRY PRIMARY KEY (TEMPLATEID, PARENTID, POSITIONINPARENT))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table TEMPLATEENTRY created");
-			
-			//Create table FOLDERS
+			if (log.isDebugEnabled())
+				log.debug("Table TEMPLATEENTRY created");
+
+			// Create table FOLDERS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FOLDERS (");
 			sb.append("  ID                BIGINT AUTO_INCREMENT");
@@ -403,9 +495,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_FOLDERS PRIMARY KEY (ID))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_FOLDERS_PARENTID ON FOLDERS (PARENTID asc);");
-			if(log.isDebugEnabled()) log.debug("Table FOLDERS created");
-			
-			//Create table MEDIALIBRARYFOLDERS
+			if (log.isDebugEnabled())
+				log.debug("Table FOLDERS created");
+
+			// Create table MEDIALIBRARYFOLDERS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE MEDIALIBRARYFOLDERS (");
 			sb.append("  FOLDERID          BIGINT REFERENCES FOLDERS(ID)");
@@ -424,9 +517,10 @@ class DBInitializer extends DBBase {
 			sb.append(", MAXFILES          INT DEFAULT 0");
 			sb.append(", CONSTRAINT PK_MEDIALIBRARYFOLDERS PRIMARY KEY (FOLDERID))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table MEDIALIBRARYFOLDERS created");
-			
-			//Create table SPECIALFOLDERS
+			if (log.isDebugEnabled())
+				log.debug("Table MEDIALIBRARYFOLDERS created");
+
+			// Create table SPECIALFOLDERS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE SPECIALFOLDERS (");
 			sb.append("  FOLDERID          BIGINT REFERENCES FOLDERS(ID)");
@@ -435,9 +529,10 @@ class DBInitializer extends DBBase {
 			sb.append(", SAVEFILEPATH      VARCHAR_IGNORECASE(1024)");
 			sb.append(", CONSTRAINT PK_SPECIALFOLDERS PRIMARY KEY (FOLDERID))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table SPECIALFOLDERS created");
-			
-			//Create table CONDITIONS
+			if (log.isDebugEnabled())
+				log.debug("Table SPECIALFOLDERS created");
+
+			// Create table CONDITIONS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE CONDITIONS (");
 			sb.append("  FOLDERID          BIGINT REFERENCES MEDIALIBRARYFOLDERS(FOLDERID)");
@@ -451,9 +546,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_CONDITIONS PRIMARY KEY (FOLDERID, TYPE, OPERATOR, CONDITION))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_CONDITIONS_FOLDERID ON CONDITIONS (FOLDERID asc);");
-			if(log.isDebugEnabled()) log.debug("Table CONDITIONS created");
-			
-			//Create table FILETAGS
+			if (log.isDebugEnabled())
+				log.debug("Table CONDITIONS created");
+
+			// Create table FILETAGS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILETAGS (");
 			sb.append("  FILEID            BIGINT REFERENCES FILE(ID)");
@@ -463,9 +559,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_FILETAGS_FILEID ON FILETAGS (FILEID asc);");
 			stmt.executeUpdate("CREATE INDEX IDX_FILETAGS_KEY ON FILETAGS (KEY asc);");
-			if(log.isDebugEnabled()) log.debug("Table FILETAGS created");
-			
-			//Create table THUMBNAILPRIORITIES
+			if (log.isDebugEnabled())
+				log.debug("Table FILETAGS created");
+
+			// Create table THUMBNAILPRIORITIES
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE THUMBNAILPRIORITIES (");
 			sb.append("  ID		           BIGINT AUTO_INCREMENT PRIMARY KEY");
@@ -475,9 +572,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_THUMBNAILPRIORITIES PRIMARY KEY (ID)");
 			sb.append(", CONSTRAINT UC_THUMBNAILPRIORITIES UNIQUE (THUMBNAILPRIORITYTYPE, SEEKSEC, PICTUREPATH))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table THUMBNAILPRIORITIES created");
-			
-			//Create table FOLDERTHUMBNAILPRIORITIES
+			if (log.isDebugEnabled())
+				log.debug("Table THUMBNAILPRIORITIES created");
+
+			// Create table FOLDERTHUMBNAILPRIORITIES
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FOLDERTHUMBNAILPRIORITIES (");
 			sb.append("  FOLDERID          BIGINT REFERENCES MEDIALIBRARYFOLDERS(FOLDERID)");
@@ -485,9 +583,10 @@ class DBInitializer extends DBBase {
 			sb.append(", PRIORITYINDEX     INT");
 			sb.append(", CONSTRAINT PK_FILETHUMBNAILPRIORITIES PRIMARY KEY (FOLDERID, PRIORITYINDEX, THUMBNAILPRIORITIESID))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table FOLDERTHUMBNAILPRIORITIES created");
-			
-			//Create table FILEENTRYTHUMBNAILPRIORITIES
+			if (log.isDebugEnabled())
+				log.debug("Table FOLDERTHUMBNAILPRIORITIES created");
+
+			// Create table FILEENTRYTHUMBNAILPRIORITIES
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEENTRYTHUMBNAILPRIORITIES (");
 			sb.append("  FOLDERID          BIGINT REFERENCES TEMPLATEENTRY(ID)");
@@ -496,18 +595,20 @@ class DBInitializer extends DBBase {
 			sb.append(", PRIORITYINDEX     INT");
 			sb.append(", CONSTRAINT PK_FILEENTRYTHUMBNAILPRIORITIES PRIMARY KEY (FOLDERID, THUMBNAILPRIORITIESID))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table FILEENTRYTHUMBNAILPRIORITIES created");
-			
-			//Create table FILEIMPORTTEMPLATE
+			if (log.isDebugEnabled())
+				log.debug("Table FILEENTRYTHUMBNAILPRIORITIES created");
+
+			// Create table FILEIMPORTTEMPLATE
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATE (");
 			sb.append("  ID             INT AUTO_INCREMENT");
 			sb.append(", NAME		 	VARCHAR(64)");
 			sb.append(", CONSTRAINT PK_FILEIMPORTTEMPLATE PRIMARY KEY (ID))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATE created");
-			
-			//Create table FILEIMPORTTEMPLATEENTRY
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATE created");
+
+			// Create table FILEIMPORTTEMPLATEENTRY
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATEENTRY (");
 			sb.append("  TEMPLATEID     INT REFERENCES FILEIMPORTTEMPLATE(ID)");
@@ -518,9 +619,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_FILEIMPORTTEMPLATEENTRY PRIMARY KEY (TEMPLATEID, FILEPROPERTY, ENGINENAME))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_FILEIMPORTTEMPLATEENTRY_TEMPLATEID ON FILEIMPORTTEMPLATEENTRY (TEMPLATEID asc);");
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATEENTRY created");
-			
-			//Create table FILEIMPORTTEMPLATEACTIVEENGINE
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATEENTRY created");
+
+			// Create table FILEIMPORTTEMPLATEACTIVEENGINE
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATEACTIVEENGINE (");
 			sb.append("  TEMPLATEID     INT REFERENCES FILEIMPORTTEMPLATE(ID)");
@@ -529,9 +631,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_FILEIMPORTTEMPLATEACTIVEENGINE PRIMARY KEY (TEMPLATEID, FILETYPE, ENGINENAME))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_FILEIMPORTTEMPLATEACTIVEENGINE_TEMPLATEID ON FILEIMPORTTEMPLATEACTIVEENGINE (TEMPLATEID asc);");
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATEACTIVEENGINE created");
-			
-			//Create table FILEIMPORTTEMPLATETAGS
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATEACTIVEENGINE created");
+
+			// Create table FILEIMPORTTEMPLATETAGS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATETAGS (");
 			sb.append("  TEMPLATEID     INT REFERENCES FILEIMPORTTEMPLATE(ID)");
@@ -541,9 +644,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_FILEIMPORTTEMPLATETAGS PRIMARY KEY (TEMPLATEID, FILETYPE, ENGINENAME, TAGNAME))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_FILEIMPORTTEMPLATETAGS_TEMPLATEID ON FILEIMPORTTEMPLATETAGS (TEMPLATEID asc);");
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATETAGS created");
-			
-			//Create table MANAGEDFOLDERS
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATETAGS created");
+
+			// Create table MANAGEDFOLDERS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE MANAGEDFOLDERS (");
 			sb.append("  WATCH          BIT");
@@ -556,9 +660,10 @@ class DBInitializer extends DBBase {
 			sb.append(", SUBFOLDERS		BIT");
 			sb.append(", CONSTRAINT PK_MANAGEDFOLDERS PRIMARY KEY (WATCH, FOLDERPATH, VIDEO, AUDIO, PICTURES, SUBFOLDERS))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table MANAGEDFOLDERS created");
+			if (log.isDebugEnabled())
+				log.debug("Table MANAGEDFOLDERS created");
 
-			//Create table TABLECOLUMNCONFIGURATION
+			// Create table TABLECOLUMNCONFIGURATION
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE TABLECOLUMNCONFIGURATION (");
 			sb.append("  FILETYPE       VARCHAR(256)");
@@ -569,9 +674,10 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT UC_TABLECOLUMNCONFIGURATION UNIQUE (FILETYPE, COLUMNINDEX)");
 			sb.append(", CONSTRAINT PK_TABLECOLUMNCONFIGURATION PRIMARY KEY (FILETYPE, CONDITIONTYPE, TAGNAME))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table TABLECOLUMNCONFIGURATION created");
+			if (log.isDebugEnabled())
+				log.debug("Table TABLECOLUMNCONFIGURATION created");
 
-			//Create table QUICKTAG
+			// Create table QUICKTAG
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE QUICKTAG (");
 			sb.append("  NAME           VARCHAR(256)");
@@ -580,29 +686,33 @@ class DBInitializer extends DBBase {
 			sb.append(", VIRTUALKEY     INT");
 			sb.append(", KEYCOMBINATION VARCHAR(128))");
 			stmt.executeUpdate(sb.toString());
-			if(log.isDebugEnabled()) log.debug("Table QUICKTAG created");
-			
-			//Create and populate table METADATA
+			if (log.isDebugEnabled())
+				log.debug("Table QUICKTAG created");
+
+			// Create and populate table METADATA
 			stmt.executeUpdate("CREATE TABLE METADATA (KEY VARCHAR2(255) NOT NULL, VALUE VARCHAR2(255) NOT NULL, CONSTRAINT PK_METADATA PRIMARY KEY (KEY, VALUE))");
 			stmt.executeUpdate("CREATE INDEX IDX_METADATA_KEY ON METADATA (KEY asc);");
-			if(log.isDebugEnabled()) log.debug("Table METADATA created");
-			if(log.isInfoEnabled()) log.info("All database tables created");
-			
+			if (log.isDebugEnabled())
+				log.debug("Table METADATA created");
+			if (log.isInfoEnabled())
+				log.info("All database tables created");
+
 			insertDefaultValues(stmt, conn);
-				
-			if(log.isInfoEnabled()) log.info("Media Library Database initialized");
+
+			if (log.isInfoEnabled())
+				log.info("Media Library Database initialized");
 		} catch (SQLException se) {
 			log.error("Failed ti initialize database ", se);
 		} finally {
 			close(conn, stmt);
 		}
 	}
-	
-	private void insertDefaultValues(Statement stmt, Connection conn) throws SQLException{
+
+	private void insertDefaultValues(Statement stmt, Connection conn) throws SQLException {
 		// METADATA
 		String pictureSaveFilePath = PMS.getConfiguration().getProfileDirectory() + File.separatorChar + "pictures";
 		File dir = new File(pictureSaveFilePath);
-		if(!dir.isDirectory()){
+		if (!dir.isDirectory()) {
 			dir.mkdirs();
 		}
 		stmt.executeUpdate("INSERT INTO METADATA VALUES ('" + MetaDataKeys.PICTURE_SAVE_FOLDER_PATH + "', '" + pictureSaveFilePath + "')");
@@ -612,10 +722,11 @@ class DBInitializer extends DBBase {
 		stmt.executeUpdate("INSERT INTO METADATA (KEY, VALUE) VALUES ('" + MetaDataKeys.OMIT_PREFIXES + "', 'the le la les')");
 		stmt.executeUpdate("INSERT INTO METADATA (KEY, VALUE) VALUES ('" + MetaDataKeys.OMIT_SORT + "', 'TRUE')");
 		stmt.executeUpdate("INSERT INTO METADATA (KEY, VALUE) VALUES ('" + MetaDataKeys.OMIT_FILTER + "', 'TRUE')");
-		if(log.isInfoEnabled()) log.info("Default metadata values inserted into database");
-		
-		//create default import template
-		//it won't have any active plugins defined, it's up to the user to configure it for first time use
+		if (log.isInfoEnabled())
+			log.info("Default metadata values inserted into database");
+
+		// create default import template
+		// it won't have any active plugins defined, it's up to the user to configure it for first time use
 		DOFileImportTemplate template = new DOFileImportTemplate(-1, Messages.getString("ML.FileImportTemplate.DefaultTemplateName"), null, null, null);
 		try {
 			new DBFileImport(cp).insertTemplate(template);
@@ -623,15 +734,15 @@ class DBInitializer extends DBBase {
 			log.error("Failed to insert default file import template", e);
 		}
 
-		//Create default table columns
+		// Create default table columns
 		insertDefaultLibraryViewColumns();
-		
-		//insert default folder structure for the tree view
-		AutoFolderCreator.addInitialFolderStructure(storage);		
+
+		// insert default folder structure for the tree view
+		AutoFolderCreator.addInitialFolderStructure(storage);
 	}
-	
-	private void insertDefaultLibraryViewColumns(){
-		//video
+
+	private void insertDefaultLibraryViewColumns() {
+		// video
 		insertTableColumnConfiguration(new DOTableColumnConfiguration(ConditionType.FILE_ISACTIF, null, 0, 36), FileType.VIDEO);
 		insertTableColumnConfiguration(new DOTableColumnConfiguration(ConditionType.FILE_FOLDERPATH, null, 1, 245), FileType.VIDEO);
 		insertTableColumnConfiguration(new DOTableColumnConfiguration(ConditionType.FILE_FILENAME, null, 2, 160), FileType.VIDEO);
@@ -641,64 +752,65 @@ class DBInitializer extends DBBase {
 		insertTableColumnConfiguration(new DOTableColumnConfiguration(ConditionType.VIDEO_DURATIONSEC, null, 6, 57), FileType.VIDEO);
 		insertTableColumnConfiguration(new DOTableColumnConfiguration(ConditionType.FILE_DATEINSERTEDDB, null, 7, 164), FileType.VIDEO);
 		insertTableColumnConfiguration(new DOTableColumnConfiguration(ConditionType.FILE_PLAYCOUNT, null, 8, 49), FileType.VIDEO);
-		
-		if(log.isInfoEnabled()) log.info("Default library view columns inserted");
+
+		if (log.isInfoEnabled())
+			log.info("Default library view columns inserted");
 	}
-	
+
 	private void updateDb(String realStorageVersion) {
-		if(realStorageVersion.equals("0.1")){
+		if (realStorageVersion.equals("0.1")) {
 			updateDb01_02();
 			realStorageVersion = "0.2";
 		}
-		if(realStorageVersion.equals("0.2")){
+		if (realStorageVersion.equals("0.2")) {
 			updateDb02_03();
 			realStorageVersion = "0.3";
 		}
-		if(realStorageVersion.equals("0.3")){
+		if (realStorageVersion.equals("0.3")) {
 			updateDb03_04();
 			realStorageVersion = "0.4";
 		}
-		if(realStorageVersion.equals("0.4")){
+		if (realStorageVersion.equals("0.4")) {
 			updateDb04_05();
 			realStorageVersion = "0.5";
 		}
-		if(realStorageVersion.equals("0.5")){
+		if (realStorageVersion.equals("0.5")) {
 			updateDb05_06();
 			realStorageVersion = "0.6";
 		}
-		if(realStorageVersion.equals("0.6")){
+		if (realStorageVersion.equals("0.6")) {
 			updateDb06_07();
 			realStorageVersion = "0.7";
 		}
-		if(realStorageVersion.equals("0.7")){
+		if (realStorageVersion.equals("0.7")) {
 			updateDb07_08();
 			realStorageVersion = "0.8";
 		}
-		if(realStorageVersion.equals("0.8")){
+		if (realStorageVersion.equals("0.8")) {
 			updateDb08_09();
 			realStorageVersion = "0.9";
 		}
-		if(realStorageVersion.equals("0.9")){
+		if (realStorageVersion.equals("0.9")) {
 			updateDb09_10();
 			realStorageVersion = "1.0";
 		}
-		if(realStorageVersion.equals("1.0")){
+		if (realStorageVersion.equals("1.0")) {
 			updateDb10_11();
 			realStorageVersion = "1.1";
 		}
-		if(realStorageVersion.equals("1.1")){
+		if (realStorageVersion.equals("1.1")) {
 			updateDb11_12();
 			realStorageVersion = "1.2";
 		}
-		if(realStorageVersion.equals("1.2")){
+		if (realStorageVersion.equals("1.2")) {
 			updateDb12_13();
 			realStorageVersion = "1.3";
 		}
-		if(realStorageVersion.equals("1.3")){
+		if (realStorageVersion.equals("1.3")) {
 			updateDb13_14();
 			realStorageVersion = "1.4";
 		}
-		if(realStorageVersion.equals("1.4")){
+		if (realStorageVersion.equals("1.4")) {
 			updateDb14_15();
 			realStorageVersion = "1.5";
 		}
@@ -707,32 +819,33 @@ class DBInitializer extends DBBase {
 	private void updateDb01_02() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE MEDIALIBRARYFOLDERS ADD MAXFILES INT DEFAULT 0");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.2");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.1 to 0.2");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.1 to 0.2");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.1 to 0.2", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb02_03() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 
-			//Create table MANAGEDFOLDERS
+			// Create table MANAGEDFOLDERS
 			StringBuffer sb = new StringBuffer();
 			sb.append("CREATE TABLE TABLECOLUMNCONFIGURATION (");
 			sb.append("  FILETYPE       VARCHAR(256)");
@@ -743,62 +856,65 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_TABLECOLUMNCONFIGURATION PRIMARY KEY (FILETYPE, CONDITIONTYPE))");
 			stmt = conn.prepareStatement(sb.toString());
 			stmt.executeUpdate();
-			if(log.isDebugEnabled()) log.debug("Table TABLECOLUMNCONFIGURATION created");
-			
-			//set all files to enabled
+			if (log.isDebugEnabled())
+				log.debug("Table TABLECOLUMNCONFIGURATION created");
+
+			// set all files to enabled
 			stmt = conn.prepareStatement("UPDATE FILE SET ENABLED = 1");
-			stmt.executeUpdate();	
-			
+			stmt.executeUpdate();
+
 			insertDefaultLibraryViewColumns();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.3");
-			
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.2 to 0.3");
+
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.2 to 0.3");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.2 to 0.3", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb03_04() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE MEDIALIBRARYFOLDERS ADD SORTOPTION VARCHAR_IGNORECASE(64)");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("UPDATE MEDIALIBRARYFOLDERS SET SORTOPTION = 'FileProperty'");
 			stmt.executeUpdate();
-			
+
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD MUXINGMODE VARCHAR(32)");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE VIDEOAUDIO ADD MUXINGMODE VARCHAR(32)");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE AUDIO ADD MUXINGMODE VARCHAR(32)");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.4");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.3 to 0.4");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.3 to 0.4");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.3 to 0.4", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb04_05() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//create table FILEIMPORTTEMPLATE
+
+			// create table FILEIMPORTTEMPLATE
 			StringBuffer sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATE (");
 			sb.append("  ID             INT AUTO_INCREMENT");
@@ -806,8 +922,8 @@ class DBInitializer extends DBBase {
 			sb.append(", CONSTRAINT PK_FILEIMPORTTEMPLATE PRIMARY KEY (ID))");
 			stmt = conn.prepareStatement(sb.toString());
 			stmt.executeUpdate();
-			
-			//Create table FILEIMPORTTEMPLATEENTRY
+
+			// Create table FILEIMPORTTEMPLATEENTRY
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATEENTRY (");
 			sb.append("  TEMPLATEID     INT REFERENCES FILEIMPORTTEMPLATE(ID)");
@@ -819,9 +935,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("CREATE INDEX IDX_FILEIMPORTTEMPLATEENTRY_TEMPLATEID ON FILEIMPORTTEMPLATEENTRY (TEMPLATEID asc);");
 			stmt.executeUpdate();
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATEENTRY created");
-			
-			//Create table FILEIMPORTTEMPLATEACTIVEENGINE
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATEENTRY created");
+
+			// Create table FILEIMPORTTEMPLATEACTIVEENGINE
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATEACTIVEENGINE (");
 			sb.append("  TEMPLATEID     INT REFERENCES FILEIMPORTTEMPLATE(ID)");
@@ -832,9 +949,10 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("CREATE INDEX IDX_FILEIMPORTTEMPLATEACTIVEENGINE_TEMPLATEID ON FILEIMPORTTEMPLATEACTIVEENGINE (TEMPLATEID asc);");
 			stmt.executeUpdate();
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATEACTIVEENGINE created");
-			
-			//Create table FILEIMPORTTEMPLATETAGS
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATEACTIVEENGINE created");
+
+			// Create table FILEIMPORTTEMPLATETAGS
 			sb = new StringBuffer();
 			sb.append("CREATE TABLE FILEIMPORTTEMPLATETAGS (");
 			sb.append("  TEMPLATEID     INT REFERENCES FILEIMPORTTEMPLATE(ID)");
@@ -846,25 +964,26 @@ class DBInitializer extends DBBase {
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("CREATE INDEX IDX_FILEIMPORTTEMPLATETAGS_TEMPLATEID ON FILEIMPORTTEMPLATETAGS (TEMPLATEID asc);");
 			stmt.executeUpdate();
-			if(log.isDebugEnabled()) log.debug("Table FILEIMPORTTEMPLATETAGS created");
-			
-			//add new colums to MANAGEDFOLDERS
+			if (log.isDebugEnabled())
+				log.debug("Table FILEIMPORTTEMPLATETAGS created");
+
+			// add new colums to MANAGEDFOLDERS
 			stmt = conn.prepareStatement("ALTER TABLE MANAGEDFOLDERS ADD COLUMN FILEIMPORTTEMPLATEID INT");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE MANAGEDFOLDERS ADD FOREIGN KEY (FILEIMPORTTEMPLATEID) REFERENCES FILEIMPORTTEMPLATE(ID)");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE MANAGEDFOLDERS ADD COLUMN ISFILEIMPORTENABLED BIT");
 			stmt.executeUpdate();
-			
-			//create default import template
+
+			// create default import template
 			DOFileImportTemplate template = new DOFileImportTemplate(-1, Messages.getString("ML.FileImportTemplate.DefaultTemplateName"), null, null, null);
 			try {
 				new DBFileImport(cp).insertTemplate(template);
 			} catch (StorageException e) {
 				log.error("Failed to insert default file import template", e);
 			}
-			
-			//set the import template for the managed folders having the tmdb option enabled
+
+			// set the import template for the managed folders having the tmdb option enabled
 			stmt = conn.prepareStatement("UPDATE MANAGEDFOLDERS"
 					+ " SET ISFILEIMPORTENABLED = ?, FILEIMPORTTEMPLATEID = ?"
 					+ " WHERE TMDB = ?");
@@ -872,8 +991,8 @@ class DBInitializer extends DBBase {
 			stmt.setInt(2, 1);
 			stmt.setBoolean(3, true);
 			stmt.executeUpdate();
-			
-			//disable it for the others
+
+			// disable it for the others
 			stmt = conn.prepareStatement("UPDATE MANAGEDFOLDERS"
 					+ " SET ISFILEIMPORTENABLED = ?, FILEIMPORTTEMPLATEID = ?"
 					+ " WHERE TMDB = ?");
@@ -882,17 +1001,17 @@ class DBInitializer extends DBBase {
 			stmt.setBoolean(3, false);
 			stmt.executeUpdate();
 
-			//change PK constraints for MANAGEDFOLDERS
+			// change PK constraints for MANAGEDFOLDERS
 			stmt = conn.prepareStatement("ALTER TABLE MANAGEDFOLDERS DROP CONSTRAINT PK_MANAGEDFOLDERS");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE MANAGEDFOLDERS ADD CONSTRAINT PK_MANAGEDFOLDERS PRIMARY KEY (WATCH, FOLDERPATH, VIDEO, AUDIO, PICTURES, SUBFOLDERS)");
 			stmt.executeUpdate();
-			
-			//remove the TMDB column from MANAGEDFOLDERS
+
+			// remove the TMDB column from MANAGEDFOLDERS
 			stmt = conn.prepareStatement("ALTER TABLE MANAGEDFOLDERS DROP COLUMN TMDB");
 			stmt.executeUpdate();
-			
-			//update class names for plugins having changed
+
+			// update class names for plugins having changed
 			stmt = conn.prepareStatement("UPDATE SPECIALFOLDERS SET CLASSNAME = ? WHERE CLASSNAME = ?");
 			stmt.setString(1, "net.pms.plugin.dlnatreefolder.FileSystemFolderPlugin");
 			stmt.setString(2, "net.pms.medialibrary.specialfolder.AutoDiscoverSpecialFolder");
@@ -917,152 +1036,159 @@ class DBInitializer extends DBBase {
 			stmt.setString(1, "net.pms.plugin.dlnatreefolder.iTunesFolderPlugin");
 			stmt.setString(2, "net.pms.medialibrary.specialfolder.iTunesSpecialFolder");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.5");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.4 to 0.5");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.4 to 0.5");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.4 to 0.5", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb05_06() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE CONDITIONS ADD TAGNAME VARCHAR_IGNORECASE(512)");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.6");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.5 to 0.6");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.5 to 0.6");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.5 to 0.6", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb06_07() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE FILEIMPORTTEMPLATEENTRY ADD ISENABLED BIT DEFAULT 1");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.7");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.6 to 0.7");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.6 to 0.7");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.6 to 0.7", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb07_08() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("CREATE TABLE QUICKTAG (NAME VARCHAR(256), TAGNAME VARCHAR(1024), TAGVALUE VARCHAR(1024), VIRTUALKEY INT, KEYCOMBINATION VARCHAR(128))");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.8");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.7 to 0.8");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.7 to 0.8");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.7 to 0.8", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb08_09() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD FRAMERATEMODE VARCHAR2(16)");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "0.9");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.8 to 0.9");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.8 to 0.9");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.8 to 0.9", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb09_10() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			//do updates
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE VIDEOAUDIO ADD BITRATE INT");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.0");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 0.9 to 1.0");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 0.9 to 1.0");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 0.9 to 1.0", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb10_11() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//do updates			
+
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE TABLECOLUMNCONFIGURATION ADD TAGNAME VARCHAR_IGNORECASE(512) NOT NULL DEFAULT ''");
 			stmt.executeUpdate();
 
 			stmt = conn.prepareStatement("ALTER TABLE TABLECOLUMNCONFIGURATION DROP CONSTRAINT PK_TABLECOLUMNCONFIGURATION");
 			stmt.executeUpdate();
-			
+
 			stmt = conn.prepareStatement("ALTER TABLE TABLECOLUMNCONFIGURATION add CONSTRAINT PK_TABLECOLUMNCONFIGURATION PRIMARY KEY (FILETYPE, CONDITIONTYPE, TAGNAME)");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.1");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 1.0 to 1.1");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.0 to 1.1");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.0 to 1.1", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb11_12() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//do updates			
+
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD ASPECTRATIOCONTAINER VARCHAR2(6)");
 			stmt.executeUpdate();
 
@@ -1074,88 +1200,92 @@ class DBInitializer extends DBBase {
 
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD AVCLEVEL VARCHAR2(3)");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.2");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 1.1 to 1.2");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.1 to 1.2");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.1 to 1.2", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb12_13() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//do updates
+
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE FILE ADD FILEIMPORTVERSION TINYINT NOT NULL DEFAULT 0");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.3");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 1.2 to 1.3");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.2 to 1.3");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.2 to 1.3", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb13_14() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//do updates
+
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD STEREOSCOPY VARCHAR2(255)");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD MATRIXCOEFFICIENTS VARCHAR2(16)");
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement("ALTER TABLE VIDEO ADD EMBEDDEDFONTEXISTS BIT NOT NULL DEFAULT 0");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.4");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 1.3 to 1.4");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.3 to 1.4");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.3 to 1.4", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
 
 	private void updateDb14_15() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-			
-			//do updates
+
+			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE SPECIALFOLDERS ADD EXTERNALLISTENERCLASSNAME VARCHAR(512)");
 			stmt.executeUpdate();
-			
-			//update db version
+
+			// update db version
 			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.5");
-			if(log.isInfoEnabled()) log.info("Updated DB from version 1.4 to 1.5");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.4 to 1.5");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.4 to 1.5", se);
 		} finally {
 			close(conn, stmt);
-    	}
+		}
 	}
-	
+
 	private void insertTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-			
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("INSERT INTO TABLECOLUMNCONFIGURATION (COLUMNINDEX, WIDTH, FILETYPE, CONDITIONTYPE, TAGNAME) VALUES (?, ?, ?, ?, ?)");
@@ -1167,7 +1297,7 @@ class DBInitializer extends DBBase {
 			stmt.setString(5, c.getTagName());
 			stmt.executeUpdate();
 		} catch (SQLException se) {
-			log.error(String.format("Failed to insert TABLECOLUMNCONFIGURATION for columnIndex=%s, width=%s, fileType=%s, conditionType=%s, tagName=%s", 
+			log.error(String.format("Failed to insert TABLECOLUMNCONFIGURATION for columnIndex=%s, width=%s, fileType=%s, conditionType=%s, tagName=%s",
 					c.getColumnIndex(), c.getWidth(), fileType, c.getConditionType(), c.getTagName()), se);
 		} finally {
 			close(conn, stmt);

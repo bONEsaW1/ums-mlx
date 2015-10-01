@@ -44,17 +44,17 @@ import net.pms.medialibrary.commons.enumarations.ThumbnailPrioType;
 
 public class ThumbnailPrioChooser {
 	private static final Logger log = LoggerFactory.getLogger(ThumbnailPrioChooser.class);
-	public JComboBox            cbPrioType;
-	public JTextField           tfPicturePath;
-	public JTextField           tfSeekPointSec;
-	public JButton              bBrowsePicturePath;
-	public JLabel               lUnitSec;
-	public JLabel               lTitle;
-	public JButton              bAdd;
-	public JButton              bRemove;
-	public JButton              bMoveUp;
-	public JButton              bMoveDown;
-	
+	public JComboBox cbPrioType;
+	public JTextField tfPicturePath;
+	public JTextField tfSeekPointSec;
+	public JButton bBrowsePicturePath;
+	public JLabel lUnitSec;
+	public JLabel lTitle;
+	public JButton bAdd;
+	public JButton bRemove;
+	public JButton bMoveUp;
+	public JButton bMoveDown;
+
 	public enum ActionType {
 		Add,
 		Remove,
@@ -62,7 +62,7 @@ public class ThumbnailPrioChooser {
 		MoveDown
 	}
 
-	public List<ActionListener> actionListeners  = new ArrayList<ActionListener>();
+	public List<ActionListener> actionListeners = new ArrayList<ActionListener>();
 	private DOThumbnailPriority currentPrio;
 
 	public ThumbnailPrioChooser(String title, DOThumbnailPriority thumbPrio, List<ThumbnailPrioType> priorityTypes) {
@@ -128,32 +128,32 @@ public class ThumbnailPrioChooser {
 				if (cbPrioType.getSelectedItem() instanceof TumbnailPrioCBItem) {
 					TumbnailPrioCBItem item = (TumbnailPrioCBItem) cbPrioType.getSelectedItem();
 					switch (item.getThumbnailPrioType()) {
-						case GENERATED:
-							tfPicturePath.setVisible(false);
-							bBrowsePicturePath.setVisible(false);
-							tfSeekPointSec.setVisible(true);
-							lUnitSec.setVisible(true);
-							break;
-						case PICTURE:
-							tfPicturePath.setVisible(true);
-							bBrowsePicturePath.setVisible(true);
-							tfSeekPointSec.setVisible(false);
-							lUnitSec.setVisible(false);
-							break;
-						case THUMBNAIL:
-							tfPicturePath.setVisible(false);
-							bBrowsePicturePath.setVisible(false);
-							tfSeekPointSec.setVisible(false);
-							lUnitSec.setVisible(false);
-							break;
-						default:
-							log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", item.getThumbnailPrioType()));
-							break;
+					case GENERATED:
+						tfPicturePath.setVisible(false);
+						bBrowsePicturePath.setVisible(false);
+						tfSeekPointSec.setVisible(true);
+						lUnitSec.setVisible(true);
+						break;
+					case PICTURE:
+						tfPicturePath.setVisible(true);
+						bBrowsePicturePath.setVisible(true);
+						tfSeekPointSec.setVisible(false);
+						lUnitSec.setVisible(false);
+						break;
+					case THUMBNAIL:
+						tfPicturePath.setVisible(false);
+						bBrowsePicturePath.setVisible(false);
+						tfSeekPointSec.setVisible(false);
+						lUnitSec.setVisible(false);
+						break;
+					default:
+						log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", item.getThumbnailPrioType()));
+						break;
 					}
 				}
 			}
 		});
-		
+
 		bAdd.setPreferredSize(new Dimension(bAdd.getPreferredSize().width, cbPrioType.getPreferredSize().height));
 		bRemove.setPreferredSize(new Dimension(bRemove.getPreferredSize().width, cbPrioType.getPreferredSize().height));
 		bMoveUp.setPreferredSize(new Dimension(bMoveUp.getPreferredSize().width, cbPrioType.getPreferredSize().height));
@@ -175,20 +175,20 @@ public class ThumbnailPrioChooser {
 		ThumbnailPrioType prioType = getTumbnailPrioType();
 		prio.setThumbnailPriorityType(prioType);
 		switch (prioType) {
-			case THUMBNAIL:
-				// do nothing more
-				break;
-			case GENERATED:
-				try {
-					prio.setSeekPosition(Integer.valueOf(tfSeekPointSec.getText()));
-				} catch (Exception ex) {
-					prio.setSeekPosition(30);
-					tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
-				}
-				break;
-			case PICTURE:
-				prio.setPicturePath(tfPicturePath.getText());
-				break;
+		case THUMBNAIL:
+			// do nothing more
+			break;
+		case GENERATED:
+			try {
+				prio.setSeekPosition(Integer.valueOf(tfSeekPointSec.getText()));
+			} catch (Exception ex) {
+				prio.setSeekPosition(30);
+				tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
+			}
+			break;
+		case PICTURE:
+			prio.setPicturePath(tfPicturePath.getText());
+			break;
 		default:
 			log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", prioType));
 			break;
@@ -199,21 +199,21 @@ public class ThumbnailPrioChooser {
 	public void setTumbnailPrio(DOThumbnailPriority prio) {
 		currentPrio = prio;
 		cbPrioType.setSelectedItem(null);
-		
-		if(prio != null){
-    		cbPrioType.setSelectedItem(prio);
-    		switch (prio.getThumbnailPriorityType()) {
-    			case GENERATED:
-    				tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
-    				break;
-    			case PICTURE:
-    				tfPicturePath.setText(prio.getPicturePath());
-    				break;
+
+		if (prio != null) {
+			cbPrioType.setSelectedItem(prio);
+			switch (prio.getThumbnailPriorityType()) {
+			case GENERATED:
+				tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
+				break;
+			case PICTURE:
+				tfPicturePath.setText(prio.getPicturePath());
+				break;
 			default:
 				break;
-    		}
-    		cbPrioType.setSelectedItem(new TumbnailPrioCBItem(prio.getThumbnailPriorityType(), Messages.getString("ML.ThumbnailPrioType."
-    		        + prio.getThumbnailPriorityType().toString())));
+			}
+			cbPrioType.setSelectedItem(new TumbnailPrioCBItem(prio.getThumbnailPriorityType(), Messages.getString("ML.ThumbnailPrioType."
+					+ prio.getThumbnailPriorityType().toString())));
 		} else {
 			cbPrioType.setSelectedIndex(0);
 		}
@@ -229,7 +229,7 @@ public class ThumbnailPrioChooser {
 		tfSeekPointSec.setEnabled(enabled);
 		lUnitSec.setEnabled(enabled);
 		lTitle.setEnabled(enabled);
-		
+
 		bAdd.setVisible(enabled);
 		bRemove.setVisible(enabled);
 		bMoveUp.setVisible(enabled);
@@ -259,9 +259,9 @@ public class ThumbnailPrioChooser {
 			setTumbnailPrio(currentPrio);
 		}
 	}
-	
-	private void fireActionPerformed(String actionCommand, int prioIndex){
-		for(ActionListener l : actionListeners){
+
+	private void fireActionPerformed(String actionCommand, int prioIndex) {
+		for (ActionListener l : actionListeners) {
 			l.actionPerformed(new ActionEvent(this, 1, actionCommand, prioIndex));
 		}
 	}

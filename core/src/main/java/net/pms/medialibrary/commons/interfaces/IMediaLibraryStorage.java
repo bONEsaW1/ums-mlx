@@ -39,96 +39,151 @@ import net.pms.medialibrary.commons.enumarations.SortOption;
 
 public interface IMediaLibraryStorage {
 
-	//Global
+	// Global
 	void reset();
+
 	void cleanStorage();
+
 	String getStorageVersion();
+
 	String getMetaDataValue(String key);
+
 	void setMetaDataValue(String key, String value);
+
 	boolean isFunctional();
-	
-	//Table column configurations
+
+	// Table column configurations
 	List<DOTableColumnConfiguration> getTableColumnConfigurations(FileType fileType);
+
 	DOTableColumnConfiguration getTableColumnConfiguration(FileType fileType, ConditionType ct);
+
 	DOTableColumnConfiguration getTableColumnConfiguration(FileType fileType, ConditionType ct, String tagName);
+
 	DOTableColumnConfiguration getTableColumnConfiguration(FileType fileType, int columnIndex);
+
 	int getTableConfigurationMaxColumnIndex(FileType fileType);
+
 	void insertTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType);
+
 	void updateTableColumnConfiguration(DOTableColumnConfiguration c, FileType fileType);
+
 	void updateTableColumnWidth(ConditionType ct, String tagName, int width, FileType fileType);
+
 	void moveTableColumnConfiguration(int fromIndex, int toIndex, FileType fileType);
+
 	void clearTableColumnConfigurations(FileType fileType);
+
 	void deleteTableColumnConfiguration(DOTableColumnConfiguration doTableColumnConfiguration, FileType fileType);
+
 	void deleteAllTableColumnConfigurations(FileType fileType);
-	
-	//FileInfo (global for video, audio and pictures)
-	void deleteAllFileInfo();	
+
+	// FileInfo (global for video, audio and pictures)
+	void deleteAllFileInfo();
+
 	void insertFileInfo(DOFileInfo fileInfo);
+
 	void updateFileInfo(DOFileInfo fileInfo);
+
 	void insertOrUpdateFileInfo(DOFileInfo fileInfo);
+
 	void deleteFileInfoByFilePath(String filePath);
+
 	Date getFileInfoLastUpdated(String fileName);
+
 	long getRootFolderId();
+
 	void updatePlayCount(long fileId, int playTimeSec, Date datePlayEnd);
+
 	void updatePlayCount(String filePath, int playTimeSec, Date datePlayEnd);
+
 	DOFileInfo getFileInfo(String filePath);
+
 	List<DOFileInfo> getFileInfo(DOFilter filter, boolean sortAscending, ConditionType sortField, int maxResults, SortOption sortOption);
+
 	List<String> getExistingTags(FileType fileType);
+
 	List<String> getTagValues(String tagName, boolean isAscending, int minOccurences);
+
 	void updateFilePath(String folderPath, String oldFileName, String newFileName);
+
 	boolean isFileImported(String filePath);
-	
+
 	HashMap<FileType, Integer> getFileCountRequiringUpdate();
+
 	int getFileCountRequiringUpdate(FileType fileType, int currentFileVersion);
+
 	List<String> getFilePathsRequiringUpdate(List<FileType> fileTypesToUpdate);
-	
-	//VideoFileInfo
+
+	// VideoFileInfo
 	void deleteAllVideos();
+
 	List<DOVideoFileInfo> getVideoFileInfo(DOFilter filter, boolean sortAscending, ConditionType sortField, int maxResults, SortOption sortOption, boolean onlyActive);
+
 	List<String> getVideoProperties(ConditionType conditionType, boolean isAscending, int minOccurences);
+
 	int getFilteredVideoCount(DOFilter filter);
-	int getVideoCount();	
+
+	int getVideoCount();
+
 	void deleteVideo(long fileId);
-	
-	//AudioFileInfo
+
+	// AudioFileInfo
 	void deleteAudioFileInfo();
+
 	int getAudioCount();
-	
-	//PicturesFileInfo
+
+	// PicturesFileInfo
 	void deletePicturesFileInfo();
+
 	int getPicturesCount();
-	
-	//MediaLibraryFolders
+
+	// MediaLibraryFolders
 	void insertFolder(DOFolder child);
+
 	void updateFolder(DOFolder f);
+
 	void updateMediaLibraryFolderLocation(long id, long parentId, int locationInParent);
+
 	void deleteFolder(long id);
+
 	DOMediaLibraryFolder getMediaLibraryFolder(long initialFolderId, int depth);
+
 	void updateFolderDisplayName(long folderId, String displayName);
-	
-	//Templates
+
+	// Templates
 	void insertTemplate(DOTemplate template, DOFileEntryFolder fileFolder);
+
 	void updateTemplate(DOTemplate template, DOFileEntryFolder fileFolder);
+
 	void deleteTemplate(long id);
-	List<DOTemplate> getAllTemplates();	
+
+	List<DOTemplate> getAllTemplates();
+
 	boolean isTemplateIdInUse(long templateId);
-	
-	//FileFolder
+
+	// FileFolder
 	DOFileEntryFolder getFileFolder(long templateId);
-	
-	//Managed Folders
+
+	// Managed Folders
 	List<DOManagedFile> getManagedFolders();
+
 	void setManagedFolders(List<DOManagedFile> managedFolders);
-	
-	//File import
+
+	// File import
 	List<DOFileImportTemplate> getFileImportTemplates();
+
 	void insertFileImportTemplate(DOFileImportTemplate template);
+
 	void updateFileImportTemplate(DOFileImportTemplate template);
+
 	DOFileImportTemplate getFileImportTemplate(int templateId);
+
 	void deleteFileImportTemplate(int templateId);
+
 	boolean isFileImportTemplateInUse(int templateId);
-	
-	//Quick Tags
+
+	// Quick Tags
 	void setQuickTagEntries(List<DOQuickTagEntry> quickTagEntries);
+
 	List<DOQuickTagEntry> getQuickTagEntries();
 }

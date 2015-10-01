@@ -54,14 +54,15 @@ public class FileHelper {
 			}
 			in.close();
 			out.close();
-			if (log.isDebugEnabled()) log.debug(String.format("Copied file %s to %s", srFile, dtFile));
+			if (log.isDebugEnabled())
+				log.debug(String.format("Copied file %s to %s", srFile, dtFile));
 		} catch (FileNotFoundException ex) {
 			log.error(String.format("Failed to copy file %s to %s", srFile, dtFile), ex);
 		} catch (IOException e) {
 			log.error(String.format("Failed to copy file %s to %s", srFile, dtFile), e);
 		}
 	}
-	
+
 	/**
 	 * Combines the two paths
 	 *
@@ -69,10 +70,10 @@ public class FileHelper {
 	 * @param path2 the path 2
 	 * @return the combined path
 	 */
-	public static String combine (String path1, String path2)
+	public static String combine(String path1, String path2)
 	{
-	    File file1 = new File(path1);
-	    File file2 = new File(file1, path2);
-	    return file2.getPath();
+		File file1 = new File(path1);
+		File file2 = new File(file1, path2);
+		return file2.getPath();
 	}
 }

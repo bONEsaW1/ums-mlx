@@ -58,11 +58,11 @@ public class FileCoverPanel extends JPanel implements IFilePropertiesEditor {
 	private String coverPath;
 	private ImageIcon coverImage;
 	private FileCoverTransferHandler transferHandler;
-	
+
 	public FileCoverPanel(String coverSavePath) {
 		this(coverSavePath, null);
 	}
-	
+
 	public FileCoverPanel(String coverSavePath, ImageIcon image) {
 		setLayout(new BorderLayout());
 		setCoverPath(coverSavePath);
@@ -72,25 +72,25 @@ public class FileCoverPanel extends JPanel implements IFilePropertiesEditor {
 	}
 
 	private void initialize() {
-		//check box
+		// check box
 		cbCoverEnabled = new JCheckBox(Messages.getString("ML.FileEditTabbedPane.tCover"));
 		cbCoverEnabled.setFont(cbCoverEnabled.getFont().deriveFont(Font.BOLD));
-		
-		//cover panel
+
+		// cover panel
 		lCover = new JLabel();
-		if(coverImage == null) {
+		if (coverImage == null) {
 			try {
 				coverImage = new ImageIcon(ImageIO.read(getClass().getResource("/resources/images/cover_no_image.png")));
 			} catch (IOException e) {
 				log.error("Failed to load default cover", e);
 			}
 		}
-		lCover.setIcon(coverImage);		
+		lCover.setIcon(coverImage);
 		lCover.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		
+
 		transferHandler = new FileCoverTransferHandler();
 		transferHandler.addCoverChangedListeners(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -101,36 +101,36 @@ public class FileCoverPanel extends JPanel implements IFilePropertiesEditor {
 				cbCoverEnabled.setSelected(true);
 				resizeCover();
 			}
-		});		
+		});
 		lCover.setTransferHandler(transferHandler);
-		
+
 		lCover.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getButton() == MouseEvent.BUTTON1) {
-					//show full size image in modal dialog on left mouse click
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					// show full size image in modal dialog on left mouse click
 					ImageViewer iv = new ImageViewer((ImageIcon) lCover.getIcon(), Messages.getString("ML.FileEditTabbedPane.tCover"));
 					iv.setModal(true);
 					iv.setLocation(GUIHelper.getCenterDialogOnParentLocation(iv.getSize(), lCover));
 					iv.setVisible(true);
-				} else if(e.getButton() == MouseEvent.BUTTON3) {
-					//TODO: show context menu on right mouse click
+				} else if (e.getButton() == MouseEvent.BUTTON3) {
+					// TODO: show context menu on right mouse click
 				}
 			}
 		});
 		addComponentListener(new ComponentAdapter() {
-			
+
 			@Override
 			public void componentShown(ComponentEvent arg0) {
 				resizeCover(lCover.getHeight());
 			}
-			
+
 			@Override
 			public void componentResized(ComponentEvent e) {
 				resizeCover(lCover.getHeight());
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -140,21 +140,23 @@ public class FileCoverPanel extends JPanel implements IFilePropertiesEditor {
 		add(pHeader, BorderLayout.NORTH);
 		add(lCover, BorderLayout.CENTER);
 	}
-	
+
 	/**
 	 * Resizes the image to the current height of the cover label and sets the with to respect the images aspect ratio
+	 * 
 	 * @param height the height to set for the image
 	 */
 	public void resizeCover() {
 		resizeCover(lCover.getHeight());
 	}
-	
+
 	/**
 	 * Resizes the image to the given height and sets the with to respect the images aspect ratio
+	 * 
 	 * @param height the height to set for the image
 	 */
 	public void resizeCover(int height) {
-		if(height > 0) {
+		if (height > 0) {
 			lCover.setIcon(GUIHelper.getScaledImage(coverImage, height, Integer.MAX_VALUE));
 		}
 	}
@@ -175,7 +177,7 @@ public class FileCoverPanel extends JPanel implements IFilePropertiesEditor {
 	@Override
 	public List<ConditionType> getPropertiesToUpdate() {
 		ArrayList<ConditionType> res = new ArrayList<ConditionType>();
-		if(cbCoverEnabled.isSelected()) {
+		if (cbCoverEnabled.isSelected()) {
 			res.add(ConditionType.FILE_THUMBNAILPATH);
 		}
 		return res;

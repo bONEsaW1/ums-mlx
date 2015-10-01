@@ -9,7 +9,7 @@ import net.pms.plugins.StartStopListener;
  */
 @SuppressWarnings("deprecation")
 public class StartStopListenerWrapper extends BaseWrapper implements StartStopListener {
-	
+
 	/** The listener. */
 	private net.pms.external.StartStopListener listener;
 
@@ -23,7 +23,9 @@ public class StartStopListenerWrapper extends BaseWrapper implements StartStopLi
 		this.listener = listener;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.StartStopListener#nowPlaying(net.pms.dlna.DLNAMediaInfo, net.pms.dlna.DLNAResource)
 	 */
 	@Override
@@ -31,7 +33,9 @@ public class StartStopListenerWrapper extends BaseWrapper implements StartStopLi
 		listener.nowPlaying(media, resource);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.StartStopListener#donePlaying(net.pms.dlna.DLNAMediaInfo, net.pms.dlna.DLNAResource)
 	 */
 	@Override

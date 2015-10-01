@@ -23,5 +23,6 @@ import net.pms.medialibrary.commons.enumarations.ScanState;
 
 public interface IFileScannerEventListener {
 	void scanStateChanged(ScanState state);
+
 	void itemInserted(FileType type);
 }

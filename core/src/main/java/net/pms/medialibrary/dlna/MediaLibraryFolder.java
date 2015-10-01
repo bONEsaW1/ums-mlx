@@ -62,16 +62,20 @@ public class MediaLibraryFolder extends VirtualFolder {
 
 		setFolder(folder);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#isRefreshNeeded()
 	 */
 	@Override
 	public boolean isRefreshNeeded() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#isTranscodeFolderAvailable()
 	 */
 	@Override
@@ -79,7 +83,9 @@ public class MediaLibraryFolder extends VirtualFolder {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#isFolder()
 	 */
 	@Override
@@ -87,7 +93,9 @@ public class MediaLibraryFolder extends VirtualFolder {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#discoverChildren()
 	 */
 	@Override
@@ -108,15 +116,19 @@ public class MediaLibraryFolder extends VirtualFolder {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#refreshChildren()
 	 */
 	@Override
 	public boolean refreshChildren() {
-		if (isUpdating) return false;
+		if (isUpdating)
+			return false;
 		isUpdating = true;
-		
-		if(log.isDebugEnabled()) log.debug(String.format("Start refreshing children for folder '%s' (%s)", getName(), getId()));
+
+		if (log.isDebugEnabled())
+			log.debug(String.format("Start refreshing children for folder '%s' (%s)", getName(), getId()));
 
 		updateFolder();
 
@@ -172,26 +184,26 @@ public class MediaLibraryFolder extends VirtualFolder {
 		}
 
 		List<DOFileInfo> files = new ArrayList<DOFileInfo>();
-		if(getFolder().isDisplayItems() && getFolder().getFileType() == FileType.VIDEO){
+		if (getFolder().isDisplayItems() && getFolder().getFileType() == FileType.VIDEO) {
 			List<DOVideoFileInfo> videoFiles = MediaLibraryStorage.getInstance().getVideoFileInfo(getFolder().getInheritedFilter(), fdp.isSortAscending(), fdp.getSortType(), folder.getMaxFiles(), fdp.getSortOption(), true);
 			files = Arrays.asList(videoFiles.toArray(new DOFileInfo[videoFiles.size()]));
 		}
-		
+
 		if (!add) {
 			// the folders haven't changed, check the files
 			for (DOFileInfo child : files) {
-				if (pos < getChildren().size()){
-					if(getChildren().get(pos) instanceof MediaLibraryRealFile) {
-    					MediaLibraryRealFile dlnaFile = (MediaLibraryRealFile) getChildren().get(pos);
-    					if (!dlnaFile.equals(new MediaLibraryRealFile(child, getFolder().getDisplayProperties(), getFolder().getFileType()))) {
-    						// a file has changed
-    						add = true;
-    						break;
-    					}
-    					fileIndex++;
+				if (pos < getChildren().size()) {
+					if (getChildren().get(pos) instanceof MediaLibraryRealFile) {
+						MediaLibraryRealFile dlnaFile = (MediaLibraryRealFile) getChildren().get(pos);
+						if (!dlnaFile.equals(new MediaLibraryRealFile(child, getFolder().getDisplayProperties(), getFolder().getFileType()))) {
+							// a file has changed
+							add = true;
+							break;
+						}
+						fileIndex++;
 					}
-				}else {
-					//there's a new file
+				} else {
+					// there's a new file
 					add = true;
 					break;
 				}
@@ -228,12 +240,13 @@ public class MediaLibraryFolder extends VirtualFolder {
 		}
 
 		isUpdating = false;
-		
-		if(log.isDebugEnabled()) log.debug(String.format("Finished refreshing children for folder '%s' (%s). Refreshed=%s", getName(), getId(), nodeRefreshed));
-	
+
+		if (log.isDebugEnabled())
+			log.debug(String.format("Finished refreshing children for folder '%s' (%s). Refreshed=%s", getName(), getId(), nodeRefreshed));
+
 		return nodeRefreshed;
 	}
-	
+
 	/**
 	 * This method decides if a zip, rar, iso, m3u or cue folder should be added
 	 *
@@ -243,10 +256,10 @@ public class MediaLibraryFolder extends VirtualFolder {
 		File f = new File(fileInfo.getFilePath());
 		if ((f.isFile() || f.isDirectory()) && !f.isHidden()) {
 			DLNAResource fileToAdd = new MediaLibraryRealFile(fileInfo, getFolder().getDisplayProperties(), getFolder().getFileType());
-			
-			if(getFolder().getDisplayProperties().getFileDisplayType() == FileDisplayType.FOLDER){
+
+			if (getFolder().getDisplayProperties().getFileDisplayType() == FileDisplayType.FOLDER) {
 				// add the child as a MediaLibraryRealFile anyway when it has to be displayed as a folder
-				addChild(fileToAdd);			
+				addChild(fileToAdd);
 			} else {
 				if (f.getName().toLowerCase().endsWith(".zip") || f.getName().toLowerCase().endsWith(".cbz")) {
 					addChild(new ZippedFile(f));
@@ -261,26 +274,24 @@ public class MediaLibraryFolder extends VirtualFolder {
 				} else {
 					addChild(fileToAdd);
 				}
-			}			
+			}
 		} else {
-			log.warn(String.format("Don't add file '%s' to folder '%s' because %s", 
+			log.warn(String.format("Don't add file '%s' to folder '%s' because %s",
 					f.getAbsolutePath(), getName(), f.isHidden() ? "it is hidden" : "it does not exist"));
 		}
 	}
 
 	/**
-	 * *
-	 * Updates the folder if the one retrieved from the DB is more recent then
-	 * the used one.
+	 * * Updates the folder if the one retrieved from the DB is more recent then the used one.
 	 *
 	 * @return true if the folder has been updated
 	 */
 	private void updateFolder() {
 		DOMediaLibraryFolder newFolder = MediaLibraryStorage.getInstance().getMediaLibraryFolder(getFolder().getId(), MediaLibraryStorage.ALL_CHILDREN);
-		if(getFolder().getParentFolder() != null
+		if (getFolder().getParentFolder() != null
 				&& getFolder().getParentFolder().getChildFolders() != null
-				&& getFolder().getParentFolder().getChildFolders().contains(getFolder())){
-			getFolder().getParentFolder().getChildFolders().remove(getFolder());				
+				&& getFolder().getParentFolder().getChildFolders().contains(getFolder())) {
+			getFolder().getParentFolder().getChildFolders().remove(getFolder());
 		}
 		newFolder.setParentFolder(getFolder().getParentFolder());
 		setFolder(newFolder);
@@ -305,15 +316,19 @@ public class MediaLibraryFolder extends VirtualFolder {
 		return folder;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#toString()
 	 */
 	@Override
 	public String toString() {
 		return getName();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

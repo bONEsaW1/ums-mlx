@@ -32,6 +32,6 @@ public enum ConditionUnit {
 	FILESIZE_MEGABYTE,
 	FILESIZE_GIGABYTE,
 	FILESIZE_TERABYTE,
-	
+
 	UNKNOWN
 }

@@ -32,18 +32,18 @@ import net.pms.medialibrary.scanner.FileImportConfiguration;
 import net.pms.medialibrary.scanner.FileScanner;
 import net.pms.medialibrary.storage.MediaLibraryStorage;
 
-
 /**
  * Private class handling file and directory change notifications
  */
 public class DirectoryChangeListener implements JNotifyListener {
 	private static final Logger logger = LoggerFactory.getLogger(MediaLibraryStorage.class);
-	
+
 	@Override
 	public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
-		if(logger.isDebugEnabled()) logger.debug(String.format("File renamed event receicved for directory='%s'. OldName='%s', NewName='%s'", rootPath, oldName, newName));
-		
-		if(!rootPath.endsWith(String.valueOf(File.separatorChar))) {
+		if (logger.isDebugEnabled())
+			logger.debug(String.format("File renamed event receicved for directory='%s'. OldName='%s', NewName='%s'", rootPath, oldName, newName));
+
+		if (!rootPath.endsWith(String.valueOf(File.separatorChar))) {
 			// Append a path separator as the paths are stored like this in the DB
 			rootPath += File.separatorChar;
 		}
@@ -55,16 +55,18 @@ public class DirectoryChangeListener implements JNotifyListener {
 	@Override
 	public void fileModified(int wd, String rootPath, String name) {
 		String filePath = FileHelper.combine(rootPath, name);
-		if(logger.isDebugEnabled()) logger.debug(String.format("File deleted event receicved for '%s' ", filePath));
-		
+		if (logger.isDebugEnabled())
+			logger.debug(String.format("File deleted event receicved for '%s' ", filePath));
+
 		// Do nothing (yet)
 	}
 
 	@Override
 	public void fileDeleted(int wd, String rootPath, String name) {
 		String filePath = FileHelper.combine(rootPath, name);
-		if(logger.isDebugEnabled()) logger.debug(String.format("File deleted event receicved for '%s' ", filePath));
-		
+		if (logger.isDebugEnabled())
+			logger.debug(String.format("File deleted event receicved for '%s' ", filePath));
+
 		// Delete the file
 		MediaLibraryStorage.getInstance().deleteFileInfoByFilePath(filePath);
 	}
@@ -72,24 +74,25 @@ public class DirectoryChangeListener implements JNotifyListener {
 	@Override
 	public void fileCreated(int wd, String rootPath, String name) {
 		String filePath = FileHelper.combine(rootPath, name);
-		if(logger.isDebugEnabled()) logger.debug(String.format("File created event receicved for '%s' ", filePath));
-		
+		if (logger.isDebugEnabled())
+			logger.debug(String.format("File created event receicved for '%s' ", filePath));
+
 		DOManagedFile managedFolder = getManagedFileByFolderPath(rootPath);
-		if(managedFolder == null) {
+		if (managedFolder == null) {
 			logger.warn("Failed to import file '%s' because its managed folder could not be found.");
-		}else {
+		} else {
 			// Create the managed file
-			FileImportConfiguration fileImportConfiguration = new FileImportConfiguration(filePath, managedFolder.getFileImportTemplate(), true, true, 
+			FileImportConfiguration fileImportConfiguration = new FileImportConfiguration(filePath, managedFolder.getFileImportTemplate(), true, true,
 					managedFolder.isPluginImportEnabled(), managedFolder.isVideoEnabled(), managedFolder.isAudioEnabled(), managedFolder.isPicturesEnabled());
-			
+
 			// Wait for the file to be fully written to disk
 			waitForFileBeingCreated(filePath);
-			
+
 			// Import the file
 			FileScanner.getInstance().scanFile(fileImportConfiguration);
 		}
 	}
-	
+
 	/**
 	 * Gets the managed file by folder path.
 	 *
@@ -97,15 +100,15 @@ public class DirectoryChangeListener implements JNotifyListener {
 	 * @return the managed file corresponding to the folder path
 	 */
 	private DOManagedFile getManagedFileByFolderPath(String folderPath) {
-		for(DOManagedFile managedFolder : MediaLibraryStorage.getInstance().getManagedFolders()){
-			if(managedFolder.getPath().equals(folderPath)) {
+		for (DOManagedFile managedFolder : MediaLibraryStorage.getInstance().getManagedFolders()) {
+			if (managedFolder.getPath().equals(folderPath)) {
 				return managedFolder;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	private void waitForFileBeingCreated(String filePath) {
 		File file = new File(filePath);
 		RandomAccessFile stream = null;

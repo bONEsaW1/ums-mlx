@@ -54,18 +54,18 @@ import net.pms.medialibrary.commons.exceptions.ConditionException;
 
 public class FilterEditor extends JPanel {
 	private static final long serialVersionUID = -4061458154905908214L;
-	private int                       lastConditionNumber = 0;
-	private JPanel                    pNoConditionsSet;
+	private int lastConditionNumber = 0;
+	private JPanel pNoConditionsSet;
 	private List<ConditionEntryPanel> conditionPanelsList;
-	private JLabel                    lEquation;
-	private JTextField                tfEquation;
-	private JPanel                    pNewCondition;
-	private JCheckBox                 cbEditEquation;
-	private JButton                   bNewCondition;
+	private JLabel lEquation;
+	private JTextField tfEquation;
+	private JPanel pNewCondition;
+	private JCheckBox cbEditEquation;
+	private JButton bNewCondition;
 	private JScrollPane spConditions;
 	private FileType fileType;
-	
-	public FilterEditor(DOFilter filter, FileType fileType){
+
+	public FilterEditor(DOFilter filter, FileType fileType) {
 		super(new GridLayout());
 		init();
 		setFileType(fileType);
@@ -82,7 +82,7 @@ public class FilterEditor extends JPanel {
 
 		return new DOFilter(equation, conditions);
 	}
-	
+
 	public void setFilter(DOFilter filter) {
 		tfEquation.setText(filter.getEquation());
 
@@ -91,7 +91,7 @@ public class FilterEditor extends JPanel {
 			lastConditionNumber = 0;
 			for (int i = 0; i < filter.getConditions().size() && i < 40; i++) {
 				DOCondition currCon = filter.getConditions().get(i);
-				if(currCon.getName().startsWith("c")){
+				if (currCon.getName().startsWith("c")) {
 					int currConditionNumber = Integer.parseInt(currCon.getName().substring(1, currCon.getName().length()));
 					if (currConditionNumber > lastConditionNumber) {
 						lastConditionNumber = currConditionNumber;
@@ -100,12 +100,12 @@ public class FilterEditor extends JPanel {
 				addCondition(currCon);
 			}
 		}
-		
+
 		refreshPanel();
 	}
 
 	public void setFileType(FileType fileType) {
-		if(conditionPanelsList != null){
+		if (conditionPanelsList != null) {
 			for (ConditionEntryPanel p : conditionPanelsList) {
 				p.setFileType(fileType);
 			}
@@ -117,8 +117,8 @@ public class FilterEditor extends JPanel {
 		return fileType;
 	}
 
-	private void init(){
-		
+	private void init() {
+
 		// Equation
 		lEquation = new JLabel(Messages.getString("ML.ConditionPanel.lEquation"));
 		tfEquation = new JTextField();
@@ -126,7 +126,7 @@ public class FilterEditor extends JPanel {
 		// Conditions
 		spConditions = new JScrollPane();
 		spConditions.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		// Create the panel that will be displayed if no conditions are set
 		pNoConditionsSet = new JPanel();
 		pNoConditionsSet.add(new JLabel(Messages.getString("ML.ConditionPanel.lNoConditionsSet")));
@@ -142,7 +142,7 @@ public class FilterEditor extends JPanel {
 			}
 		});
 		pNewCondition.add(bNewCondition);
-		
+
 		cbEditEquation = new JCheckBox(Messages.getString("ML.ConditionPanel.cbEditEquation"));
 		cbEditEquation.addActionListener(new ActionListener() {
 
@@ -157,16 +157,16 @@ public class FilterEditor extends JPanel {
 
 		updateEquationEnabled();
 	}
-	
-	private void addNewCondition(){
+
+	private void addNewCondition() {
 		// add a new condition
 		if (conditionPanelsList.size() < 40) {
-			if(conditionPanelsList.size() == 0){
+			if (conditionPanelsList.size() == 0) {
 				lastConditionNumber = 0;
 			}
 			String conName = "c" + (++lastConditionNumber);
 			DOCondition initialCondition = new DOCondition(ConditionType.FILE_DATEINSERTEDDB, ConditionOperator.IS, "", conName,
-			        ConditionValueType.DATETIME, ConditionUnit.UNKNOWN, "");
+					ConditionValueType.DATETIME, ConditionUnit.UNKNOWN, "");
 			addCondition(initialCondition);
 			// update the equation
 			String eq = tfEquation.getText();
@@ -176,30 +176,30 @@ public class FilterEditor extends JPanel {
 				tfEquation.setText(eq + " AND " + conName);
 			}
 			refreshPanel();
-			spConditions.scrollRectToVisible(new Rectangle(1, spConditions.getPreferredSize().height, 1, 1));			
+			spConditions.scrollRectToVisible(new Rectangle(1, spConditions.getPreferredSize().height, 1, 1));
 		} else {
 			JOptionPane.showMessageDialog(this, String.format(Messages.getString("ML.ConditionPanel.ReachedFolderLimitMsg"), 40));
 		}
 	}
-	
-	private void addCondition(DOCondition condition){
+
+	private void addCondition(DOCondition condition) {
 		ConditionEntryPanel cp = new ConditionEntryPanel(condition, getFileType());
 		cp.addConditionRemoveListener(new ConditionRemoveListener() {
-			
+
 			@Override
 			public void removeConditionReceived(ConditionRemoveEvent event) {
 				removeCondition((ConditionEntryPanel) event.getSource());
 			}
-		});		
+		});
 		conditionPanelsList.add(cp);
 	}
-	
-	private void removeCondition(ConditionEntryPanel entry){
+
+	private void removeCondition(ConditionEntryPanel entry) {
 		if (conditionPanelsList.contains(entry)) {
 			String conName = entry.getName();
 			String equation = tfEquation.getText();
 
-			if(conditionPanelsList.size() == 1) {
+			if (conditionPanelsList.size() == 1) {
 				equation = "";
 			} else {
 				equation = removeConditionFromEquation(conName, equation).trim();
@@ -241,16 +241,16 @@ public class FilterEditor extends JPanel {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, p, 3px, fill:50:grow, 3px, p, 3px", // columns
-		        "3px, fill:30:grow, 3px, p, p"); // rows
+				"3px, fill:30:grow, 3px, p, p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		PanelBuilder conBuilder;
 		FormLayout conLayout = new FormLayout("3px, r:p, 3px, p, 3px, fill:p, 3px, fill:10:grow, 3px, p, 3px", // columns
-		        "p, p, p, p, p, p, p, p, p, p, " +
-		        "p, p, p, p, p, p, p, p, p, p, " +
-		        "p, p, p, p, p, p, p, p, p, p, " +
-		        "p, p, p, p, p, p, p, p, p, p, fill:p:grow"); // rows
+				"p, p, p, p, p, p, p, p, p, p, " +
+						"p, p, p, p, p, p, p, p, p, p, " +
+						"p, p, p, p, p, p, p, p, p, p, " +
+						"p, p, p, p, p, p, p, p, p, p, fill:p:grow"); // rows
 		conBuilder = new PanelBuilder(conLayout);
 		conBuilder.opaque(true);
 
@@ -277,7 +277,7 @@ public class FilterEditor extends JPanel {
 		builder.add(pNewCondition, cc.xyw(2, 5, 5));
 
 		removeAll();
-		
+
 		add(builder.getPanel());
 		validate();
 	}
@@ -297,7 +297,7 @@ public class FilterEditor extends JPanel {
 	}
 
 	public boolean hasConditions() {
-	    return conditionPanelsList.size() > 0;
+		return conditionPanelsList.size() > 0;
 	}
 
 }

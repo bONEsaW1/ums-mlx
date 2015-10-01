@@ -23,17 +23,17 @@ package net.pms.notifications.types;
  */
 public class DBEvent {
 	private Type type;
-	
-	public DBEvent(Type type){
+
+	public DBEvent(Type type) {
 		this.type = type;
 	}
-	
+
 	/**
 	 * Gets the type of the DB event.
 	 *
 	 * @return the type
 	 */
-	public Type getType(){
+	public Type getType() {
 		return type;
 	}
 

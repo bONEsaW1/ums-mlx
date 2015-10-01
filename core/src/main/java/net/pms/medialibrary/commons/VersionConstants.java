@@ -22,16 +22,16 @@ package net.pms.medialibrary.commons;
  * This class holds constants for the media library
  */
 public class VersionConstants {
-	
+
 	/** Specifies the database version. */
 	public static final String DB_VERSION = "1.5";
-	
+
 	/** Specifies the version of imported data for video files. */
 	public static final int VIDEO_FILE_VERSION = 2;
-	
+
 	/** Specifies the version of imported data for audio files. */
 	public static final int AUDIO_FILE_VERSION = 0;
-	
+
 	/** Specifies the version of imported data for pictures. */
 	public static final int PICTURE_FILE_VERSION = 0;
 }

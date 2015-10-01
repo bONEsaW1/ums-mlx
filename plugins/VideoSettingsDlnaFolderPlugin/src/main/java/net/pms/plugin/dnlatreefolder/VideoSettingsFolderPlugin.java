@@ -44,7 +44,7 @@ public class VideoSettingsFolderPlugin implements DlnaTreeFolderPlugin {
 	@Override
 	public DLNAResource getDLNAResource() {
 		final PmsConfiguration configuration = PMS.getConfiguration();
-		
+
 		VirtualFolder vf = new VirtualFolder(rootFolderName, null);
 		VirtualFolder vfSub = new VirtualFolder(Messages.getString("PMS.8"), null);
 		vf.addChild(vfSub);
@@ -152,9 +152,9 @@ public class VideoSettingsFolderPlugin implements DlnaTreeFolderPlugin {
 	public String getName() {
 		return messages.getString("VideoSettingsFolderPlugin.Name");
 	}
-	
+
 	@Override
-	public void setDisplayName(String name){
+	public void setDisplayName(String name) {
 		rootFolderName = name;
 	}
 
@@ -172,9 +172,9 @@ public class VideoSettingsFolderPlugin implements DlnaTreeFolderPlugin {
 	}
 
 	@Override
-    public boolean isInstanceAvailable() {
-	    return true;
-    }
+	public boolean isInstanceAvailable() {
+		return true;
+	}
 
 	@Override
 	public String getVersion() {

@@ -36,61 +36,61 @@ import net.pms.medialibrary.commons.exceptions.StorageException;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 class DBTemplates extends DBBase {
-	
+
 	DBTemplates(JdbcConnectionPool cp) {
-	    super(cp);
-    }
-	
+		super(cp);
+	}
+
 	/*********************************************
 	 * 
 	 * Package Methods
 	 * 
 	 *********************************************/
-	
-    void insertTemplate(DOTemplate template, DOFileEntryFolder fileFolder) throws StorageException {    	
+
+	void insertTemplate(DOTemplate template, DOFileEntryFolder fileFolder) throws StorageException {
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
 		try {
 			conn = cp.getConnection();
-			stmt = conn.prepareStatement("INSERT INTO TEMPLATE (NAME) VALUES (?)");		
+			stmt = conn.prepareStatement("INSERT INTO TEMPLATE (NAME) VALUES (?)");
 			stmt.clearParameters();
 			stmt.setString(1, template.getName());
 			stmt.executeUpdate();
 
-			rs = stmt.getGeneratedKeys();	
-			if ( rs != null && rs.next() ) 
-			{ 
+			rs = stmt.getGeneratedKeys();
+			if (rs != null && rs.next())
+			{
 				template.setId(rs.getInt(1));
-			}	    	
-	    	insertTemplateEntry(template, fileFolder, conn, stmt);
-		} catch (SQLException ex) { 
+			}
+			insertTemplateEntry(template, fileFolder, conn, stmt);
+		} catch (SQLException ex) {
 			throw new StorageException(String.format("Failed to insert view with name for id=%s, name=%s", template.getId(), template.getName()), ex);
 		} finally {
-			close(conn, stmt, rs);		
-		}	
-    	
-    }
+			close(conn, stmt, rs);
+		}
 
-	void deleteTemplate(long templateId) throws StorageException{
-    	Connection conn = null;
+	}
+
+	void deleteTemplate(long templateId) throws StorageException {
+		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
 
-			//Delete thumbnail priorities
+			// Delete thumbnail priorities
 			stmt = conn.prepareStatement("DELETE FROM FILEENTRYTHUMBNAILPRIORITIES WHERE TEMPLATEID = ?");
 			stmt.setLong(1, templateId);
 			stmt.executeUpdate();
 
-			//Delete entries
+			// Delete entries
 			stmt = conn.prepareStatement("DELETE FROM TEMPLATEENTRY WHERE TEMPLATEID = ?");
 			stmt.setLong(1, templateId);
 			stmt.executeUpdate();
 
-			//Delete template
+			// Delete template
 			stmt = conn.prepareStatement("DELETE FROM TEMPLATE WHERE ID = ?");
 			stmt.setLong(1, templateId);
 			stmt.executeUpdate();
@@ -100,8 +100,8 @@ class DBTemplates extends DBBase {
 			close(conn, stmt);
 		}
 	}
-	
-    List<DOTemplate> getAllTemplates() throws StorageException {
+
+	List<DOTemplate> getAllTemplates() throws StorageException {
 		List<DOTemplate> retVal = new ArrayList<DOTemplate>();
 		Connection conn = null;
 		ResultSet rs = null;
@@ -117,78 +117,78 @@ class DBTemplates extends DBBase {
 
 		} catch (SQLException se) {
 			throw new StorageException("Failed to get all templates", se);
-		}  finally {
+		} finally {
 			close(conn, stmt, rs);
 		}
 
 		return retVal;
-    }
+	}
 
 	boolean isTemplateIdInUse(long templateId) throws StorageException {
 		boolean res = false;
-		
+
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
-    		stmt = conn.prepareStatement("SELECT COUNT(FOLDERID)" 
-    				+ " FROM MEDIALIBRARYFOLDERS"
-    		        + " WHERE TEMPLATEID = ?");
-    		stmt.clearParameters();
-    		stmt.setLong(1, templateId);
-    		
-    		rs = stmt.executeQuery();
-    		
-    		if(rs.next()){
-    			long nbUsed = rs.getLong(1);
-    			if(nbUsed > 0){
-    				res = true;
-    			}
-    		}
-		} catch(SQLException ex){
+			stmt = conn.prepareStatement("SELECT COUNT(FOLDERID)"
+					+ " FROM MEDIALIBRARYFOLDERS"
+					+ " WHERE TEMPLATEID = ?");
+			stmt.clearParameters();
+			stmt.setLong(1, templateId);
+
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				long nbUsed = rs.getLong(1);
+				if (nbUsed > 0) {
+					res = true;
+				}
+			}
+		} catch (SQLException ex) {
 			throw new StorageException("Failed to get used template", ex);
-		}  finally {
+		} finally {
 			close(conn, stmt, rs);
 		}
-		
-	    return res;
-    }
 
-    void updateTemplate(DOTemplate template, DOFileEntryFolder fileFolder) throws StorageException {
-    	Connection conn = null;
+		return res;
+	}
+
+	void updateTemplate(DOTemplate template, DOFileEntryFolder fileFolder) throws StorageException {
+		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
 
-			//Update template name
+			// Update template name
 			stmt = conn.prepareStatement("UPDATE TEMPLATE SET NAME = ? WHERE ID = ?");
 			stmt.setString(1, template.getName());
 			stmt.setLong(2, template.getId());
 			stmt.executeUpdate();
 
-			//Delete existing thumbnail priorities
+			// Delete existing thumbnail priorities
 			stmt = conn.prepareStatement("DELETE FROM FILEENTRYTHUMBNAILPRIORITIES" +
-			" WHERE TEMPLATEID = ?");
+					" WHERE TEMPLATEID = ?");
 			stmt.setLong(1, template.getId());
 			stmt.executeUpdate();
 
-			//Delete existing entries
+			// Delete existing entries
 			stmt = conn.prepareStatement("DELETE FROM TEMPLATEENTRY WHERE TEMPLATEID = ?");
 			stmt.setLong(1, template.getId());
 			stmt.executeUpdate();
-	
-			//do the insert after having cleaned
+
+			// do the insert after having cleaned
 			insertTemplateEntry(template, fileFolder, conn, stmt);
 		} catch (SQLException ex) {
 			throw new StorageException(String.format("Failed to updated template  with name='%s', id=%s", template.getName(), template.getId()), ex);
 		} finally {
-			close(conn, stmt);	
-		}    	
-    }
-	
+			close(conn, stmt);
+		}
+	}
+
 	/*********************************************
 	 * 
 	 * Private Methods
@@ -197,7 +197,7 @@ class DBTemplates extends DBBase {
 
 	private void insertTemplateEntry(DOTemplate template, DOFileEntryBase f, Connection conn, PreparedStatement stmt) throws SQLException {
 		ResultSet rs = null;
-		
+
 		try {
 			stmt = conn.prepareStatement("INSERT INTO TEMPLATEENTRY (PARENTID, TEMPLATEID, POSITIONINPARENT, DISPLAYNAMEMASK, ENTRYTYPE, FILEDISPLAYMODE, MAXLINELENGTH, PLUGIN, PLUGINCONFIG) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -258,7 +258,7 @@ class DBTemplates extends DBBase {
 				}
 			}
 		} finally {
-			close(rs);		
+			close(rs);
 		}
 
 		// Insert the child entries
@@ -272,7 +272,7 @@ class DBTemplates extends DBBase {
 	private void deleteFileEntryThumbnailPriorities(long fileEntryId) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("DELETE FROM FILEENTRYTHUMBNAILPRIORITIES WHERE FOLDERID = ?");
@@ -282,25 +282,25 @@ class DBTemplates extends DBBase {
 			close(conn, stmt);
 		}
 	}
-	
+
 	private boolean thumbnailPriorityExists(DOThumbnailPriority tp, Connection conn, PreparedStatement stmt, ResultSet rs) throws SQLException {
 		boolean found = false;
-			
+
 		String statement = "SELECT ID" +
-        			" FROM THUMBNAILPRIORITIES" +
-        			" WHERE PICTUREPATH=? AND THUMBNAILPRIORITYTYPE=? AND SEEKSEC=?";
+				" FROM THUMBNAILPRIORITIES" +
+				" WHERE PICTUREPATH=? AND THUMBNAILPRIORITYTYPE=? AND SEEKSEC=?";
 		stmt = conn.prepareStatement(statement);
 		stmt.clearParameters();
 		stmt.setString(1, tp.getPicturePath());
 		stmt.setString(2, tp.getThumbnailPriorityType().toString());
 		stmt.setInt(3, tp.getSeekPosition());
 		rs = stmt.executeQuery();
-			
-		if(rs.next()){
+
+		if (rs.next()) {
 			tp.setId(rs.getLong(1));
 			found = true;
 		}
-		
+
 		return found;
-    }
+	}
 }

@@ -37,7 +37,7 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 			log.error("Could not load tmdratingplugin.properties", e);
 		}
 	}
-	
+
 	/** The global configuration is shared amongst all plugin instances. */
 	public static final GlobalConfiguration globalConfig;
 	static {
@@ -50,78 +50,78 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 	}
 	/** GUI */
 	private GlobalConfigurationPanel pGlobalConfiguration;
-	
-	public TmdbRatingPlugin(){
-		if(ratingIcon == null){
+
+	public TmdbRatingPlugin() {
+		if (ratingIcon == null) {
 			URL icon = getClass().getResource("/resources/images/star-16.png");
-			if(icon != null) {
+			if (icon != null) {
 				ratingIcon = new ImageIcon(icon);
 			}
 		}
 	}
 
 	@Override
-    public boolean isFolder() {
-	    return true;
-    }
+	public boolean isFolder() {
+		return true;
+	}
 
 	@Override
-    public String getName() {
-	    return messages.getString("TmdbRatingPlugin.Name");
-    }
+	public String getName() {
+		return messages.getString("TmdbRatingPlugin.Name");
+	}
 
 	@Override
-    public Icon getTreeIcon() {
+	public Icon getTreeIcon() {
 		Icon res = null;
 		URL icon = getClass().getResource("/tmdb_rate-16.png");
-		if(icon != null) {
+		if (icon != null) {
 			res = new ImageIcon(icon);
 		}
 		return res;
-    }
+	}
 
 	@Override
-    public JPanel getConfigurationPanel() {
-	    return null;
-    }
+	public JPanel getConfigurationPanel() {
+		return null;
+	}
 
 	@Override
-    public void loadConfiguration(String saveFilePath) throws IOException {
-	    // do nothing
-	    
-    }
+	public void loadConfiguration(String saveFilePath) throws IOException {
+		// do nothing
+
+	}
 
 	@Override
-    public void saveConfiguration(String saveFilePath) throws IOException {
-	    // do nothing
-    }
+	public void saveConfiguration(String saveFilePath) throws IOException {
+		// do nothing
+	}
 
 	@Override
-    public DLNAResource getResource() {
-	    VirtualFolder vf = new VirtualFolder(displayName, null);
-	    for(int i = 20 ; i >= 0; i--){
-		    vf.addChild(new RatingResource(video, ((float)i) / 2));
-	    }
-	    return vf;
-    }
+	public DLNAResource getResource() {
+		VirtualFolder vf = new VirtualFolder(displayName, null);
+		for (int i = 20; i >= 0; i--) {
+			vf.addChild(new RatingResource(video, ((float) i) / 2));
+		}
+		return vf;
+	}
 
 	@Override
-    public void setVideo(DOVideoFileInfo video) {
-	    this.video = video;
-    }
+	public void setVideo(DOVideoFileInfo video) {
+		this.video = video;
+	}
 
 	@Override
-    public void setDisplayName(String displayName) {
-	    this.displayName = displayName;
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
 	@Override
-    public boolean isInstanceAvailable() {
-	    if(TmdbHelper.getSession() != null){
-	    	return true;
-	    }
-	    return false;
-    }
+	public boolean isInstanceAvailable() {
+		if (TmdbHelper.getSession() != null) {
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public String getVersion() {
@@ -145,7 +145,7 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		if(pGlobalConfiguration == null ) {
+		if (pGlobalConfiguration == null) {
 			pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
 		}
 		pGlobalConfiguration.applyConfig();
@@ -173,7 +173,7 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 
 	@Override
 	public void saveConfiguration() {
-		if(pGlobalConfiguration != null) {
+		if (pGlobalConfiguration != null) {
 			pGlobalConfiguration.updateConfiguration(globalConfig);
 			try {
 				globalConfig.save();

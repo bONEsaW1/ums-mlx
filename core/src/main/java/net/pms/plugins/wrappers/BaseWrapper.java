@@ -25,7 +25,8 @@ public abstract class BaseWrapper implements PluginBase {
 	/**
 	 * Instantiates a new base wrapper.
 	 */
-	public BaseWrapper() { }
+	public BaseWrapper() {
+	}
 
 	/**
 	 * Gets the external listener.
@@ -35,7 +36,7 @@ public abstract class BaseWrapper implements PluginBase {
 	public ExternalListener getExternalListener() {
 		return externalListener;
 	}
-	
+
 	/**
 	 * Sets the external listener.
 	 *
@@ -45,7 +46,9 @@ public abstract class BaseWrapper implements PluginBase {
 		this.externalListener = externalListener;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getName()
 	 */
 	@Override
@@ -53,7 +56,9 @@ public abstract class BaseWrapper implements PluginBase {
 		return externalListener.name();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getVersion()
 	 */
 	@Override
@@ -61,7 +66,9 @@ public abstract class BaseWrapper implements PluginBase {
 		return "0";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getPluginIcon()
 	 */
 	@Override
@@ -69,7 +76,9 @@ public abstract class BaseWrapper implements PluginBase {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getShortDescription()
 	 */
 	@Override
@@ -77,7 +86,9 @@ public abstract class BaseWrapper implements PluginBase {
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getLongDescription()
 	 */
 	@Override
@@ -85,7 +96,9 @@ public abstract class BaseWrapper implements PluginBase {
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getUpdateUrl()
 	 */
 	@Override
@@ -93,7 +106,9 @@ public abstract class BaseWrapper implements PluginBase {
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getWebSiteUrl()
 	 */
 	@Override
@@ -101,14 +116,18 @@ public abstract class BaseWrapper implements PluginBase {
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#initialize()
 	 */
 	@Override
 	public void initialize() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#shutdown()
 	 */
 	@Override
@@ -116,7 +135,9 @@ public abstract class BaseWrapper implements PluginBase {
 		externalListener.shutdown();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getGlobalConfigurationPanel()
 	 */
 	@Override
@@ -124,14 +145,18 @@ public abstract class BaseWrapper implements PluginBase {
 		return externalListener.config();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#saveConfiguration()
 	 */
 	@Override
 	public void saveConfiguration() {
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#isPluginAvailable()
 	 */
 	@Override

@@ -38,34 +38,34 @@ public class ImageViewer extends JDialog {
 		((java.awt.Frame) getOwner()).setIconImage(new ImageIcon(getClass().getResource("/resources/images/icon-16.png")).getImage());
 		setLayout(new GridLayout());
 		setTitle(title);
-		
+
 		lImage = new JLabel(image);
 		sp = new JScrollPane(lImage);
 		sp.setPreferredSize(lImage.getPreferredSize());
 		getContentPane().add(sp);
-		
+
 		sp.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				checkScrollBars();
 			}
 		});
-		
+
 		pack();
 		checkScrollBars();
 	}
-	
+
 	private void checkScrollBars() {
-		if(sp.getWidth() < lImage.getPreferredSize().getWidth()) {
+		if (sp.getWidth() < lImage.getPreferredSize().getWidth()) {
 			sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		} else {
-			sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);					
+			sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		}
-		
-		if(sp.getHeight() < lImage.getPreferredSize().getHeight()) {
+
+		if (sp.getHeight() < lImage.getPreferredSize().getHeight()) {
 			sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		} else {
-			sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);				
+			sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		}
 	}
 }

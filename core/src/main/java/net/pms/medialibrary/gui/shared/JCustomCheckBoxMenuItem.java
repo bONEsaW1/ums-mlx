@@ -24,7 +24,7 @@ public class JCustomCheckBoxMenuItem extends JCheckBoxMenuItem {
 	private static final long serialVersionUID = 7347159126521278081L;
 	private Object userObject;
 
-	public JCustomCheckBoxMenuItem(Object userObject, boolean isSelected){
+	public JCustomCheckBoxMenuItem(Object userObject, boolean isSelected) {
 		super(userObject.toString(), isSelected);
 		setUserObject(userObject);
 	}

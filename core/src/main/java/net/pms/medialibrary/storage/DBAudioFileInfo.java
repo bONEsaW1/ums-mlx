@@ -32,11 +32,11 @@ import org.h2.jdbcx.JdbcConnectionPool;
  * Package class used to structure code for MediaLibraryStorage
  */
 class DBAudioFileInfo extends DBFileInfo {
-	
+
 	DBAudioFileInfo(JdbcConnectionPool cp) {
 		super(cp);
-    }
-	
+	}
+
 	/*********************************************
 	 * 
 	 * Package Methods
@@ -44,11 +44,11 @@ class DBAudioFileInfo extends DBFileInfo {
 	 *********************************************/
 
 	int deleteAudioFileInfo() {
-	    // TODO Auto-generated method stub
-	    return 0;
-    }
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-    int getAudioCount() throws StorageException {
+	int getAudioCount() throws StorageException {
 		int count = 0;
 
 		Connection conn = null;
@@ -58,7 +58,7 @@ class DBAudioFileInfo extends DBFileInfo {
 			conn = cp.getConnection();
 			stmt = conn.prepareStatement("SELECT Count(ID) FROM AUDIO");
 			rs = stmt.executeQuery();
-			if(rs.next()){
+			if (rs.next()) {
 				count = rs.getInt(1);
 			}
 		} catch (SQLException se) {
@@ -66,9 +66,9 @@ class DBAudioFileInfo extends DBFileInfo {
 		} finally {
 			close(conn, stmt, rs);
 		}
-		
+
 		return count;
-    }
+	}
 
 	void insertAudioFileInfo(DOAudioFileInfo fileInfo) throws StorageException {
 		super.insertFileInfo(fileInfo);
@@ -81,7 +81,7 @@ class DBAudioFileInfo extends DBFileInfo {
 
 			DOAudioFileInfo tmpFileInfo = (DOAudioFileInfo) fileInfo;
 			stmt = conn.prepareStatement("INSERT INTO AUDIO (FILEID, LANG, NRAUDIOCHANNELS, SAMPLEFREQ, CODECA, BITSPERSAMPLE"
-			        + ", ALBUM, ARTIST, SONGNAME, GENRE, YEAR, TRACK, DELAYMS, DURATIONSEC, COVERPATH) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ ", ALBUM, ARTIST, SONGNAME, GENRE, YEAR, TRACK, DELAYMS, DURATIONSEC, COVERPATH) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.clearParameters();
 			stmt.setInt(1, fileInfo.getId());
 			stmt.setString(2, tmpFileInfo.getLang());
@@ -107,7 +107,7 @@ class DBAudioFileInfo extends DBFileInfo {
 	}
 
 	void updateAudioFileInfo(DOAudioFileInfo fileInfo) {
-	    // TODO Auto-generated method stub
-	    
-    }
+		// TODO Auto-generated method stub
+
+	}
 }

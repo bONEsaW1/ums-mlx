@@ -22,8 +22,8 @@ import java.util.EventObject;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class NodeMovedActionEvent extends EventObject{
-    private static final long serialVersionUID = 469170664615867584L;
+public class NodeMovedActionEvent extends EventObject {
+	private static final long serialVersionUID = 469170664615867584L;
 	private DefaultMutableTreeNode[] nodesToRefresh;
 	private DefaultMutableTreeNode moveNode;
 

@@ -42,7 +42,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class InstanceConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = -2950360909291954353L;
 	private List<FolderEntryPanel> sharedFolders = new ArrayList<FolderEntryPanel>();
-	
+
 	private JButton bAddFolder;
 	private JPanel pNoSharedFoldersSet;
 
@@ -144,7 +144,7 @@ public class InstanceConfigurationPanel extends JPanel {
 
 		PanelBuilder conBuilder;
 		FormLayout conLayout = new FormLayout("fill:10:grow", // columns
-		        "p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, fill:10:grow"); // rows
+				"p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, fill:10:grow"); // rows
 		conBuilder = new PanelBuilder(conLayout);
 		conBuilder.opaque(true);
 
@@ -160,7 +160,7 @@ public class InstanceConfigurationPanel extends JPanel {
 		}
 
 		FormLayout layout = new FormLayout("fill:10:grow", // columns
-		        "fill:10:grow, 3px, p"); // raws
+				"fill:10:grow, 3px, p"); // raws
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 		JScrollPane spConditions = new JScrollPane(conBuilder.getPanel());

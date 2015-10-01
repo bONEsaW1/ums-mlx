@@ -23,12 +23,12 @@ import net.pms.medialibrary.commons.enumarations.ConditionUnit;
 public class ConditionUnitCBItem implements Comparable<ConditionUnitCBItem> {
 	private ConditionUnit conditionUnit;
 	private String displayName;
-	
-	public ConditionUnitCBItem(){
+
+	public ConditionUnitCBItem() {
 		this(ConditionUnit.UNKNOWN, "");
 	}
-	
-	public ConditionUnitCBItem(ConditionUnit conditionUnit, String displayName){
+
+	public ConditionUnitCBItem(ConditionUnit conditionUnit, String displayName) {
 		this.setConditionUnit(conditionUnit);
 		this.setDisplayName(displayName);
 	}
@@ -48,35 +48,35 @@ public class ConditionUnitCBItem implements Comparable<ConditionUnitCBItem> {
 	public String getDisplayName() {
 		return displayName;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDisplayName();
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(!(o instanceof ConditionUnitCBItem)){
+	public boolean equals(Object o) {
+		if (!(o instanceof ConditionUnitCBItem)) {
 			return false;
 		}
 
-		ConditionUnitCBItem compObj = (ConditionUnitCBItem)o;
-		if(getDisplayName() == compObj.getDisplayName()
-			&& getConditionUnit() == compObj.getConditionUnit()){
+		ConditionUnitCBItem compObj = (ConditionUnitCBItem) o;
+		if (getDisplayName() == compObj.getDisplayName()
+				&& getConditionUnit() == compObj.getConditionUnit()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + getDisplayName().hashCode();
 		hashCode *= 24 + getConditionUnit().hashCode();
 		return hashCode;
 	}
 
 	@Override
-    public int compareTo(ConditionUnitCBItem o) {
-	    return getDisplayName().compareTo(o.getDisplayName());
-    }
+	public int compareTo(ConditionUnitCBItem o) {
+		return getDisplayName().compareTo(o.getDisplayName());
+	}
 }

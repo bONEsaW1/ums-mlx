@@ -34,7 +34,7 @@ import net.pms.medialibrary.commons.interfaces.IMediaLibraryStorage;
 import net.pms.medialibrary.storage.MediaLibraryStorage;
 
 public class FolderPropsTabbedPane extends JTabbedPane {
-	private static final long    serialVersionUID       = -6327372841599772080L;
+	private static final long serialVersionUID = -6327372841599772080L;
 
 	private DOMediaLibraryFolder folder;
 	private IMediaLibraryStorage storage;
@@ -48,7 +48,7 @@ public class FolderPropsTabbedPane extends JTabbedPane {
 		storage = MediaLibraryStorage.getInstance();
 		conditionsPanel = new ConditionPanel(folder);
 		displayPanel = new DisplayPanel(folder, storage, folderDialogActionListeners);
-		
+
 		updateInheritance();
 
 		addTab(Messages.getString("ML.FolderPropsTabbedPane.pDisplay"), displayPanel);
@@ -70,9 +70,9 @@ public class FolderPropsTabbedPane extends JTabbedPane {
 	private void updateInheritance() {
 		// check if the folder type is the same as the one of its parent
 		boolean isValid = false;
-		if (this.folder.getParentFolder() != null 
+		if (this.folder.getParentFolder() != null
 				&& (this.folder.getParentFolder().getFileType() == this.folder.getFileType()
-						|| this.folder.getParentFolder().getFileType() == FileType.FILE)) {
+				|| this.folder.getParentFolder().getFileType() == FileType.FILE)) {
 			isValid = true;
 		}
 
@@ -128,12 +128,12 @@ public class FolderPropsTabbedPane extends JTabbedPane {
 	protected ConditionType getSortType() {
 		return displayPanel.getSortType();
 	}
-	
-	protected int getMaxFiles(){
+
+	protected int getMaxFiles() {
 		return displayPanel.getMaxFiles();
 	}
 
 	public boolean hasConditions() {
-	    return conditionsPanel.hasConditions();
-    }
+		return conditionsPanel.hasConditions();
+	}
 }

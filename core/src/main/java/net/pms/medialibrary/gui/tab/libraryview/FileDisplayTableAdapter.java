@@ -60,19 +60,19 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		DOFileInfo fileInfo = (DOFileInfo)getRow(rowIndex);
+		DOFileInfo fileInfo = (DOFileInfo) getRow(rowIndex);
 		DOTableColumnConfiguration[] cConfs = getColumnConfigurations(getFileType());
-		
-		DOTableColumnConfiguration cd = cConfs[columnIndex];	
-		
+
+		DOTableColumnConfiguration cd = cConfs[columnIndex];
+
 		Object res = null;
-		if(fileInfo instanceof DOVideoFileInfo){
-			res = getVideoFileValue((DOVideoFileInfo)fileInfo, cd);
-		} else if(fileInfo instanceof DOAudioFileInfo){
-			res = getAudioFileValue((DOAudioFileInfo)fileInfo, cd);
-		} else if(fileInfo instanceof DOImageFileInfo){
-			res = getPictureFileValue((DOImageFileInfo)fileInfo, cd);
-		} else{
+		if (fileInfo instanceof DOVideoFileInfo) {
+			res = getVideoFileValue((DOVideoFileInfo) fileInfo, cd);
+		} else if (fileInfo instanceof DOAudioFileInfo) {
+			res = getAudioFileValue((DOAudioFileInfo) fileInfo, cd);
+		} else if (fileInfo instanceof DOImageFileInfo) {
+			res = getPictureFileValue((DOImageFileInfo) fileInfo, cd);
+		} else {
 			res = getFileValue(fileInfo, cd);
 		}
 		return res;
@@ -80,235 +80,235 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 
 	private Object getFileValue(DOFileInfo file, DOTableColumnConfiguration cd) {
 		Object res = null;
-		
-		if(res == null){
-			switch(cd.getConditionType()){
-				case FILE_CONTAINS_TAG:
-					List<String> tagValues = file.getTags().get(cd.getTagName());
-					if(tagValues != null) {
-						Collections.sort(tagValues);
-						res = StringUtils.join(tagValues, ", ");
-					}
-					break;
-				case FILE_DATEINSERTEDDB:
-					res = file.getDateInsertedDb();
-					break;
-				case FILE_DATELASTUPDATEDDB:
-					res = file.getDateLastUpdatedDb();
-					break;
-				case FILE_DATEMODIFIEDOS:
-					res = file.getDateModifiedOs();
-					break;
-				case FILE_FILENAME:
-					res = file.getFileName();
-					break;
-				case FILE_FOLDERPATH:
-					res = file.getFolderPath();
-					break;
-				case FILE_ISACTIF:
-					res = file.isActive();
-					break;
-				case FILE_PLAYCOUNT:
-					res = file.getPlayCount();
-					break;
-				case FILE_SIZEBYTE:
-					res = file.getSize() / 1024 / 1024;
-					break;
-				case FILE_TYPE:
-					res = Messages.getString("ML.FileType." + file.getType());
-					break;
-				case FILEPLAYS_DATEPLAYEND:
-					res = file.getPlayHistory().size() > 0 ? file.getPlayHistory().get(0) : null;
-					break;
-				case FILE_THUMBNAILPATH:
-					res = file.getThumbnailPath();
-					break;
+
+		if (res == null) {
+			switch (cd.getConditionType()) {
+			case FILE_CONTAINS_TAG:
+				List<String> tagValues = file.getTags().get(cd.getTagName());
+				if (tagValues != null) {
+					Collections.sort(tagValues);
+					res = StringUtils.join(tagValues, ", ");
+				}
+				break;
+			case FILE_DATEINSERTEDDB:
+				res = file.getDateInsertedDb();
+				break;
+			case FILE_DATELASTUPDATEDDB:
+				res = file.getDateLastUpdatedDb();
+				break;
+			case FILE_DATEMODIFIEDOS:
+				res = file.getDateModifiedOs();
+				break;
+			case FILE_FILENAME:
+				res = file.getFileName();
+				break;
+			case FILE_FOLDERPATH:
+				res = file.getFolderPath();
+				break;
+			case FILE_ISACTIF:
+				res = file.isActive();
+				break;
+			case FILE_PLAYCOUNT:
+				res = file.getPlayCount();
+				break;
+			case FILE_SIZEBYTE:
+				res = file.getSize() / 1024 / 1024;
+				break;
+			case FILE_TYPE:
+				res = Messages.getString("ML.FileType." + file.getType());
+				break;
+			case FILEPLAYS_DATEPLAYEND:
+				res = file.getPlayHistory().size() > 0 ? file.getPlayHistory().get(0) : null;
+				break;
+			case FILE_THUMBNAILPATH:
+				res = file.getThumbnailPath();
+				break;
 			default:
 				break;
 			}
-		}		
-		return res;		
-	}
-	
-	private Object getVideoFileValue(DOVideoFileInfo video, DOTableColumnConfiguration cd) {
-		Object res = getFileValue(video, cd);
-		
-		if(res == null){
-			StringBuilder sb;
-			switch(cd.getConditionType()){
-				case VIDEO_CERTIFICATION:
-					res = video.getAgeRating().getLevel();
-					break;
-				case VIDEO_CERTIFICATIONREASON:
-					res = video.getAgeRating().getReason();
-					break;
-				case VIDEO_ASPECTRATIO:
-					res = video.getAspectRatioDvdIso();
-					break;
-				case VIDEO_BITRATE:
-					res = video.getBitrate();
-					break;
-				case VIDEO_BITSPERPIXEL:
-					res = video.getBitsPerPixel();
-					break;
-				case VIDEO_BUDGET:
-					res = video.getBudget();
-					break;
-				case VIDEO_CODECV:
-					res = video.getCodecV();
-					break;
-				case VIDEO_CONTAINER:
-					res = video.getContainer();
-					break;
-				case VIDEO_CONTAINS_GENRE:
-					List<String> genres = video.getGenres();
-					Collections.sort(genres);
-					sb = new StringBuilder();
-					for(String genre : genres){
-						sb.append(genre);
-						sb.append(", ");
-					}
-					String tmpRes = sb.toString();
-					if(tmpRes.length() > 0){
-						tmpRes = tmpRes.substring(0, tmpRes.length() - 2);
-					}
-					res = tmpRes;
-					break;
-				case VIDEO_CONTAINS_SUBTITLES:
-					List<DLNAMediaSubtitle> subtitlesCodes = video.getSubtitlesCodes();
-					Collections.sort(subtitlesCodes, new Comparator<DLNAMediaSubtitle>() {
-
-						@Override
-						public int compare(DLNAMediaSubtitle o1, DLNAMediaSubtitle o2) {
-							return o1.getLangFullName().compareTo(o2.getLangFullName());
-						}
-					});
-					sb = new StringBuilder();
-					for(DLNAMediaSubtitle sub : subtitlesCodes){
-						sb.append(sub.getLangFullName());
-						sb.append(", ");
-					}
-					tmpRes = sb.toString();
-					if(tmpRes.length() > 0){
-						tmpRes = tmpRes.substring(0, tmpRes.length() - 2);
-					}
-					res = tmpRes;
-					break;
-				case VIDEO_CONTAINS_VIDEOAUDIO:
-					List<DLNAMediaAudio> audioCodes = video.getAudioCodes();
-					Collections.sort(audioCodes, new Comparator<DLNAMediaAudio>() {
-	
-						@Override
-						public int compare(DLNAMediaAudio o1, DLNAMediaAudio o2) {
-							return o1.getLangFullName().compareTo(o2.getLangFullName());
-						}
-					});
-					sb = new StringBuilder();
-					for (DLNAMediaAudio audio : audioCodes) {
-						sb.append(audio.getLangFullName());
-						sb.append(" (");
-						sb.append(audio.getAudioCodec());
-						sb.append("), ");
-					}
-					tmpRes = sb.toString();
-					if (tmpRes.length() > 0) {
-						tmpRes = tmpRes.substring(0, tmpRes.length() - 2);
-					}
-					res = tmpRes;
-					break;
-				case VIDEO_DIRECTOR:
-					res = video.getDirector();
-					break;
-				case VIDEO_DURATIONSEC:
-					res = DLNAHelper.formatSecToHHMMSS((int)video.getDurationSec());
-					break;
-				case VIDEO_DVDTRACK:
-					res = video.getDvdtrack();
-					break;
-				case VIDEO_FRAMERATE:
-					res = video.getFrameRate();
-					break;
-				case VIDEO_HEIGHT:
-					res = video.getHeight();
-					break;
-				case VIDEO_HOMEPAGEURL:
-					res = video.getHomepageUrl();
-					break;
-				case VIDEO_IMDBID:
-					res = video.getImdbId();
-					break;
-				case VIDEO_MIMETYPE:
-					res = video.getMimeType();
-					break;
-				case VIDEO_MODEL:
-					res = video.getModel();
-					break;
-				case VIDEO_MUXABLE:
-					res = video.isMuxable();
-					break;
-				case VIDEO_NAME:
-					res = video.getName();
-					break;
-				case VIDEO_ORIGINALNAME:
-					res = video.getOriginalName();
-					break;
-				case VIDEO_OVERVIEW:
-					res = video.getOverview();
-					break;
-				case VIDEO_RATINGPERCENT:
-					res = video.getRating().getRatingPercent();
-					break;
-				case VIDEO_RATINGVOTERS:
-					res = video.getRating().getVotes();
-					break;
-				case VIDEO_REVENUE:
-					res = video.getRevenue();
-					break;
-				case VIDEO_SORTNAME:
-					res = video.getSortName();
-					break;
-				case VIDEO_TAGLINE:
-					res = video.getTagLine();
-					break;
-				case VIDEO_TMDBID:
-					res = video.getTmdbId();
-					break;
-				case VIDEO_TRAILERURL:
-					res = video.getTrailerUrl();
-					break;
-				case VIDEO_WIDTH:
-					res = video.getWidth();
-					break;
-				case VIDEO_YEAR:
-					res = video.getYear();
-					break;
-				case VIDEO_AVCLEVEL:
-					res = video.getAvcLevel();
-					break;
-				case VIDEO_REFERENCEFRAMECOUNT:
-					res = video.getReferenceFrameCount();
-					break;
-				case VIDEO_STEREOSCOPY:
-					res = video.getStereoscopy();
-					break;
-				default:
-					break;
-			}
 		}
-		
 		return res;
 	}
-	
+
+	private Object getVideoFileValue(DOVideoFileInfo video, DOTableColumnConfiguration cd) {
+		Object res = getFileValue(video, cd);
+
+		if (res == null) {
+			StringBuilder sb;
+			switch (cd.getConditionType()) {
+			case VIDEO_CERTIFICATION:
+				res = video.getAgeRating().getLevel();
+				break;
+			case VIDEO_CERTIFICATIONREASON:
+				res = video.getAgeRating().getReason();
+				break;
+			case VIDEO_ASPECTRATIO:
+				res = video.getAspectRatioDvdIso();
+				break;
+			case VIDEO_BITRATE:
+				res = video.getBitrate();
+				break;
+			case VIDEO_BITSPERPIXEL:
+				res = video.getBitsPerPixel();
+				break;
+			case VIDEO_BUDGET:
+				res = video.getBudget();
+				break;
+			case VIDEO_CODECV:
+				res = video.getCodecV();
+				break;
+			case VIDEO_CONTAINER:
+				res = video.getContainer();
+				break;
+			case VIDEO_CONTAINS_GENRE:
+				List<String> genres = video.getGenres();
+				Collections.sort(genres);
+				sb = new StringBuilder();
+				for (String genre : genres) {
+					sb.append(genre);
+					sb.append(", ");
+				}
+				String tmpRes = sb.toString();
+				if (tmpRes.length() > 0) {
+					tmpRes = tmpRes.substring(0, tmpRes.length() - 2);
+				}
+				res = tmpRes;
+				break;
+			case VIDEO_CONTAINS_SUBTITLES:
+				List<DLNAMediaSubtitle> subtitlesCodes = video.getSubtitlesCodes();
+				Collections.sort(subtitlesCodes, new Comparator<DLNAMediaSubtitle>() {
+
+					@Override
+					public int compare(DLNAMediaSubtitle o1, DLNAMediaSubtitle o2) {
+						return o1.getLangFullName().compareTo(o2.getLangFullName());
+					}
+				});
+				sb = new StringBuilder();
+				for (DLNAMediaSubtitle sub : subtitlesCodes) {
+					sb.append(sub.getLangFullName());
+					sb.append(", ");
+				}
+				tmpRes = sb.toString();
+				if (tmpRes.length() > 0) {
+					tmpRes = tmpRes.substring(0, tmpRes.length() - 2);
+				}
+				res = tmpRes;
+				break;
+			case VIDEO_CONTAINS_VIDEOAUDIO:
+				List<DLNAMediaAudio> audioCodes = video.getAudioCodes();
+				Collections.sort(audioCodes, new Comparator<DLNAMediaAudio>() {
+
+					@Override
+					public int compare(DLNAMediaAudio o1, DLNAMediaAudio o2) {
+						return o1.getLangFullName().compareTo(o2.getLangFullName());
+					}
+				});
+				sb = new StringBuilder();
+				for (DLNAMediaAudio audio : audioCodes) {
+					sb.append(audio.getLangFullName());
+					sb.append(" (");
+					sb.append(audio.getAudioCodec());
+					sb.append("), ");
+				}
+				tmpRes = sb.toString();
+				if (tmpRes.length() > 0) {
+					tmpRes = tmpRes.substring(0, tmpRes.length() - 2);
+				}
+				res = tmpRes;
+				break;
+			case VIDEO_DIRECTOR:
+				res = video.getDirector();
+				break;
+			case VIDEO_DURATIONSEC:
+				res = DLNAHelper.formatSecToHHMMSS((int) video.getDurationSec());
+				break;
+			case VIDEO_DVDTRACK:
+				res = video.getDvdtrack();
+				break;
+			case VIDEO_FRAMERATE:
+				res = video.getFrameRate();
+				break;
+			case VIDEO_HEIGHT:
+				res = video.getHeight();
+				break;
+			case VIDEO_HOMEPAGEURL:
+				res = video.getHomepageUrl();
+				break;
+			case VIDEO_IMDBID:
+				res = video.getImdbId();
+				break;
+			case VIDEO_MIMETYPE:
+				res = video.getMimeType();
+				break;
+			case VIDEO_MODEL:
+				res = video.getModel();
+				break;
+			case VIDEO_MUXABLE:
+				res = video.isMuxable();
+				break;
+			case VIDEO_NAME:
+				res = video.getName();
+				break;
+			case VIDEO_ORIGINALNAME:
+				res = video.getOriginalName();
+				break;
+			case VIDEO_OVERVIEW:
+				res = video.getOverview();
+				break;
+			case VIDEO_RATINGPERCENT:
+				res = video.getRating().getRatingPercent();
+				break;
+			case VIDEO_RATINGVOTERS:
+				res = video.getRating().getVotes();
+				break;
+			case VIDEO_REVENUE:
+				res = video.getRevenue();
+				break;
+			case VIDEO_SORTNAME:
+				res = video.getSortName();
+				break;
+			case VIDEO_TAGLINE:
+				res = video.getTagLine();
+				break;
+			case VIDEO_TMDBID:
+				res = video.getTmdbId();
+				break;
+			case VIDEO_TRAILERURL:
+				res = video.getTrailerUrl();
+				break;
+			case VIDEO_WIDTH:
+				res = video.getWidth();
+				break;
+			case VIDEO_YEAR:
+				res = video.getYear();
+				break;
+			case VIDEO_AVCLEVEL:
+				res = video.getAvcLevel();
+				break;
+			case VIDEO_REFERENCEFRAMECOUNT:
+				res = video.getReferenceFrameCount();
+				break;
+			case VIDEO_STEREOSCOPY:
+				res = video.getStereoscopy();
+				break;
+			default:
+				break;
+			}
+		}
+
+		return res;
+	}
+
 	public ConditionType getColumnConditionType(int columnIndex) {
-		DOTableColumnConfiguration[] cConfs = getColumnConfigurations(getFileType());		
+		DOTableColumnConfiguration[] cConfs = getColumnConfigurations(getFileType());
 		DOTableColumnConfiguration cd = cConfs[columnIndex];
 		return cd.getConditionType();
 	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		boolean res = false;		
-		switch(getColumnConditionType(columnIndex)) {
+		boolean res = false;
+		switch (getColumnConditionType(columnIndex)) {
 		case VIDEO_NAME:
 		case VIDEO_ORIGINALNAME:
 		case VIDEO_YEAR:
@@ -336,11 +336,11 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 	}
 
 	@Override
-    public Class<?> getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		ConditionValueType vt = FolderHelper.getInstance().getConditionValueType(getColumnConditionType(c), ConditionOperator.IS);
-		
+
 		Class<?> res = null;
-		switch(vt){
+		switch (vt) {
 		case BOOLEAN:
 			res = Boolean.class;
 			break;
@@ -366,12 +366,12 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 			res = String.class;
 			break;
 		}
-        return res;
-    }
-	
+		return res;
+	}
+
 	private Object getAudioFileValue(DOAudioFileInfo audio, DOTableColumnConfiguration cd) {
 		Object res = getFileValue(audio, cd);
-		
+
 		switch (cd.getConditionType()) {
 		case AUDIO_ALBUM:
 			res = audio.getAlbum();
@@ -420,10 +420,10 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 		}
 		return res;
 	}
-	
+
 	private Object getPictureFileValue(DOImageFileInfo pic, DOTableColumnConfiguration cd) {
 		Object res = getFileValue(pic, cd);
-		
+
 		switch (cd.getConditionType()) {
 		case IMAGE_HEIGHT:
 			break;
@@ -434,7 +434,7 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public int getColumnCount() {
 		return getColumnConfigurations(getFileType()).length;
@@ -447,52 +447,52 @@ public class FileDisplayTableAdapter extends AbstractTableAdapter<DOFileInfo> {
 	public FileType getFileType() {
 		return fileType;
 	}
-	
-	public static String[] getColumnNames(FileType fileType){
+
+	public static String[] getColumnNames(FileType fileType) {
 		ArrayList<String> columnNames = new ArrayList<String>();
-		for(DOTableColumnConfiguration c : getColumnConfigurations(fileType)){
+		for (DOTableColumnConfiguration c : getColumnConfigurations(fileType)) {
 			columnNames.add(c.toString());
-		}		
+		}
 		return columnNames.toArray(new String[columnNames.size()]);
 	}
-	
+
 	public static DOTableColumnConfiguration[] getColumnConfigurations(FileType fileType) {
-		if(!columnConfigurations.containsKey(fileType)) {
+		if (!columnConfigurations.containsKey(fileType)) {
 			List<DOTableColumnConfiguration> columnConfigsList = MediaLibraryStorage.getInstance().getTableColumnConfigurations(fileType);
 			columnConfigurations.put(fileType, columnConfigsList.toArray(new DOTableColumnConfiguration[columnConfigsList.size()]));
 		}
 		return columnConfigurations.get(fileType);
 	}
-	
+
 	public void refreshColumnConfigurations() {
-		if(columnConfigurations.containsKey(fileType)) {
+		if (columnConfigurations.containsKey(fileType)) {
 			columnConfigurations.remove(fileType);
-			
+
 			List<DOTableColumnConfiguration> columnConfigsList = MediaLibraryStorage.getInstance().getTableColumnConfigurations(fileType);
-			
+
 			// Remove tag columns for which no tag exists anymore
 			List<String> existingTags = FolderHelper.getInstance().getExistingTags(fileType);
 			List<DOTableColumnConfiguration> columnConfigsToRemove = new ArrayList<DOTableColumnConfiguration>();
-			for(DOTableColumnConfiguration columnConfiguration : columnConfigsList) {
-				if(columnConfiguration.getConditionType() == ConditionType.FILE_CONTAINS_TAG) {
-					if(!existingTags.contains(columnConfiguration.getTagName())) {
+			for (DOTableColumnConfiguration columnConfiguration : columnConfigsList) {
+				if (columnConfiguration.getConditionType() == ConditionType.FILE_CONTAINS_TAG) {
+					if (!existingTags.contains(columnConfiguration.getTagName())) {
 						columnConfigsToRemove.add(columnConfiguration);
 					}
 				}
 			}
-			
+
 			// Delete tag columns for which no configured tag exists anymore
-			for(DOTableColumnConfiguration columnConfiguration : columnConfigsToRemove) {
+			for (DOTableColumnConfiguration columnConfiguration : columnConfigsToRemove) {
 				MediaLibraryStorage.getInstance().deleteTableColumnConfiguration(columnConfiguration, fileType);
 				columnConfigsList.remove(columnConfiguration);
 			}
-			
+
 			columnConfigurations.put(fileType, columnConfigsList.toArray(new DOTableColumnConfiguration[columnConfigsList.size()]));
 		}
 	}
 
 	private static String[] getColumnNames(FileType fileType, boolean reinit) {
-		if(reinit) {
+		if (reinit) {
 			columnConfigurations.remove(fileType);
 		}
 		return getColumnNames(fileType);

@@ -54,11 +54,10 @@ public class GlobalConfigurationPanel extends JPanel {
 		init();
 		build();
 	}
-	
+
 	/**
 	 * Updates all graphical components to show the global configuration.<br>
-	 * This is being used to roll back changes after editing properties and
-	 * canceling the dialog.
+	 * This is being used to roll back changes after editing properties and canceling the dialog.
 	 */
 	public void applyConfig() {
 		tfPercentPlayRequired.setText(String.valueOf(globalConfig.getPercentPlayedRequired()));
@@ -77,16 +76,16 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	private void build() {
 		// Set basic layout
-		FormLayout layout = new FormLayout("5px, p, 5px, 50, f:5px:g", //columns
-				"5px, p, f:5px:g"); //rows
+		FormLayout layout = new FormLayout("5px, p, 5px, 50, f:5px:g", // columns
+				"5px, p, f:5px:g"); // rows
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.add(lHeader, cc.xy(2, 2));
 		builder.add(tfPercentPlayRequired, cc.xy(4, 2));
-		
+
 		removeAll();
 		add(builder.getPanel());
 	}
@@ -101,7 +100,7 @@ public class GlobalConfigurationPanel extends JPanel {
 		try {
 			int newVal = Integer.parseInt(valStr);
 			gc.setPercentPlayedRequired(newVal);
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			log.error(String.format("'%s' could not be parsed as an int", valStr));
 		}
 	}

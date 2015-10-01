@@ -58,15 +58,15 @@ import com.jgoodies.forms.layout.FormLayout;
 public class FolderDialog extends JDialog {
 	private static final Logger log = LoggerFactory.getLogger(FolderDialog.class);
 	private static final long serialVersionUID = 1L;
-	
+
 	private final int MIN_BUTTON_WIDTH = 60;
-	
+
 	private DOMediaLibraryFolder folder;
 	private List<FolderDialogActionListener> folderDialogActionListeners = new ArrayList<FolderDialogActionListener>();
 	private boolean isNewFolder;
 	private FileTypeCBItem selectedFileType = new FileTypeCBItem();
 	private boolean isInitializing = false;
-	
+
 	private JTextField tfName;
 	private JLabel lName;
 	private JPanel pButtons;
@@ -75,68 +75,70 @@ public class FolderDialog extends JDialog {
 	private FolderPropsTabbedPane tabs;
 
 	private boolean isMediaLibraryFolderEnabled;
-	
-	public FolderDialog(DOMediaLibraryFolder folder, boolean isNewFilter, boolean isMediaLibraryFolderEnabled){
+
+	public FolderDialog(DOMediaLibraryFolder folder, boolean isNewFilter, boolean isMediaLibraryFolderEnabled) {
 		this.folder = folder.clone();
 		setTitle(String.format(Messages.getString("ML.FolderDialog.Title"), getMediaLibraryFolder().getName()));
 		this.isNewFolder = isNewFilter;
-		
+
 		setMinimumSize(new Dimension(810, 100));
-		
-		((java.awt.Frame)getOwner()).setIconImage(new ImageIcon(FolderDialog.class.getResource("/resources/images/icon-16.png")).getImage());
-		
+
+		((java.awt.Frame) getOwner()).setIconImage(new ImageIcon(FolderDialog.class.getResource("/resources/images/icon-16.png")).getImage());
+
 		isInitializing = true;
 		init();
 		setMediaLibraryFolderEnabled(isMediaLibraryFolderEnabled);
 		isInitializing = false;
 	}
-	
-	public void addFolderDialogActionListener(FolderDialogActionListener l){
-		if(!folderDialogActionListeners.contains(l)){
+
+	public void addFolderDialogActionListener(FolderDialogActionListener l) {
+		if (!folderDialogActionListeners.contains(l)) {
 			folderDialogActionListeners.add(l);
 		}
 	}
-	
-	public DOMediaLibraryFolder getMediaLibraryFolder(){
+
+	public DOMediaLibraryFolder getMediaLibraryFolder() {
 		return folder;
 	}
-	
-	public void setMediaLibraryFolderEnabled(boolean enabled){
+
+	public void setMediaLibraryFolderEnabled(boolean enabled) {
 		isMediaLibraryFolderEnabled = enabled;
 		cbFileType.setEnabled(enabled);
 	}
-	
-	public boolean getMediaLibraryFolderEnabled(){
+
+	public boolean getMediaLibraryFolderEnabled() {
 		return isMediaLibraryFolderEnabled;
 	}
-	
+
 	/*****************
 	 * 
 	 * Private Methods
 	 * 
 	 *****************/
-	
-	private void notifyFolderDialogAction(DOMediaLibraryFolder folder, DialogActionType actionType, boolean isNewFolder){
-		for(FolderDialogActionListener l:folderDialogActionListeners){
+
+	private void notifyFolderDialogAction(DOMediaLibraryFolder folder, DialogActionType actionType, boolean isNewFolder) {
+		for (FolderDialogActionListener l : folderDialogActionListeners) {
 			l.folderDialogActionReceived(new FolderDialogFolderUpdateEvent(this, getMediaLibraryFolder(), actionType, isNewFolder));
 		}
 	}
 
 	private void init() {
-		
-		//Name
+
+		// Name
 		lName = new JLabel(Messages.getString("ML.FolderDialog.Name"));
 		tfName = new JTextField();
 		tfName.setPreferredSize(new Dimension(200, tfName.getPreferredSize().height));
 		tfName.setText(folder.getName());
 
-		//Folder Type		
+		// Folder Type
 		cbFileType = new JComboBox(FolderHelper.getInstance().getAllFileTypeCBItems());
 
 		cbFileType.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (isInitializing) { return; }
+				if (isInitializing) {
+					return;
+				}
 
 				FileType ft = ((FileTypeCBItem) cbFileType.getSelectedItem()).getFileType();
 				if (tabs.hasConditions()) {
@@ -156,15 +158,16 @@ public class FolderDialog extends JDialog {
 			}
 		});
 		lFolderType = new JLabel(Messages.getString("ML.FolderDialog.FolderType"));
-		
+
 		tabs = new FolderPropsTabbedPane(folder, folderDialogActionListeners);
 
-		//Buttons		
+		// Buttons
 		JButton buttonOk = new JButton(Messages.getString("ML.FolderDialog.bOk"));
 		buttonOk.setName("buttonOk");
-		if(buttonOk.getPreferredSize().width < MIN_BUTTON_WIDTH) buttonOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, buttonOk.getPreferredSize().height));
+		if (buttonOk.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			buttonOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, buttonOk.getPreferredSize().height));
 		buttonOk.addMouseListener(new MouseAdapter() {
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
@@ -176,13 +179,14 @@ public class FolderDialog extends JDialog {
 				} catch (Exception e2) {
 					log.error("Save error: " + e2.getMessage(), e2);
 					JOptionPane.showMessageDialog(tabs.getTopLevelAncestor(), e2.getMessage(), Messages.getString("ML.FolderDialog.SaveErrorHeader"), JOptionPane.WARNING_MESSAGE);
-				}	
+				}
 			}
-		});		
-		
+		});
+
 		JButton buttonApply = new JButton(Messages.getString("ML.FolderDialog.bApply"));
 		buttonApply.setName("buttonApply");
-		if(buttonApply.getPreferredSize().width < MIN_BUTTON_WIDTH) buttonApply.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, buttonApply.getPreferredSize().height));
+		if (buttonApply.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			buttonApply.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, buttonApply.getPreferredSize().height));
 		buttonApply.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -196,43 +200,44 @@ public class FolderDialog extends JDialog {
 				} catch (Exception e2) {
 					log.error("Save error: " + e2.getMessage(), e2);
 					JOptionPane.showMessageDialog(tabs.getTopLevelAncestor(), e2.getMessage(), Messages.getString("ML.FolderDialog.SaveErrorHeader"), JOptionPane.WARNING_MESSAGE);
-				}	
+				}
 			}
 		});
-		
+
 		JButton buttonCancel = new JButton(Messages.getString("ML.FolderDialog.bCancel"));
 		buttonCancel.setName("buttonCancel");
-		if(buttonCancel.getPreferredSize().width < MIN_BUTTON_WIDTH) buttonCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, buttonCancel.getPreferredSize().height));
+		if (buttonCancel.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			buttonCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, buttonCancel.getPreferredSize().height));
 		buttonCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				notifyFolderDialogAction(getMediaLibraryFolder(), DialogActionType.CANCEL, isNewFolder);
 			}
 		});
-		
+
 		pButtons = new JPanel();
 		pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
 		pButtons.add(buttonOk);
 		pButtons.add(buttonApply);
 		pButtons.add(buttonCancel);
-		
+
 		selectedFileType = FolderHelper.getInstance().getFileTypeCBItem(folder.getFileType());
 		cbFileType.setSelectedItem(selectedFileType);
-		
+
 		rebuildPanel();
 		pack();
 	}
-	
-	private void rebuildPanel(){
+
+	private void rebuildPanel() {
 		PanelBuilder builder;
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, p, 3px, p, p:grow, p, 3px, p, 3px, p, 3px", // columns
-			"10px, p, 10px, fill:p:grow, p, 3px"); // raws
+				"10px, p, 10px, fill:p:grow, p, 3px"); // raws
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
-		//Name & Filter Type
+		// Name & Filter Type
 		builder.add(lName, cc.xy(2, 2));
 		builder.add(tfName, cc.xy(4, 2));
 		builder.add(lFolderType, cc.xy(6, 2));
@@ -251,18 +256,18 @@ public class FolderDialog extends JDialog {
 		tmpFolder.setName(tfName.getText().trim());
 		tmpFolder.setFileType(((FileTypeCBItem) cbFileType.getSelectedItem()).getFileType());
 		tmpFolder.setInheritsConditions(tabs.getInheritsConditions());
-	    tmpFolder.setFilter(tabs.getFilter());
+		tmpFolder.setFilter(tabs.getFilter());
 		tmpFolder.setDisplayProperties(tabs.getDisplayProperties());
 		tmpFolder.setInheritSort(tabs.isInheritSort());
 		tmpFolder.setInheritDisplayFileAs(tabs.isInheritDisplayFileAs());
 		tmpFolder.setDisplayItems(tabs.isDisplayItems());
 		tmpFolder.setMaxFiles(tabs.getMaxFiles());
-		
+
 		return tmpFolder;
 	}
-	
+
 	@Override
-	public void pack(){
+	public void pack() {
 		super.pack();
 		setMinimumSize(getSize());
 	}

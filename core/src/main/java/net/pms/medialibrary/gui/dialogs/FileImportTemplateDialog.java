@@ -45,50 +45,50 @@ import net.pms.medialibrary.storage.MediaLibraryStorage;
 public class FileImportTemplateDialog extends JDialog {
 	private static final long serialVersionUID = 1590810981218310481L;
 	private final int MIN_BUTTON_WIDTH = 60;
-	
+
 	private JButton bOk;
 	private JButton bSave;
-	private JButton bCancel;	
+	private JButton bCancel;
 	private FileImportTemplatePanel pTemplateFileProperties;
-	
+
 	private List<FileImportDialogListener> fileImportDialogListeners = new ArrayList<FileImportDialogListener>();
-	
+
 	private boolean save;
 
-	public FileImportTemplateDialog(Window owner, int fileImportTemplateId){
+	public FileImportTemplateDialog(Window owner, int fileImportTemplateId) {
 		super(owner);
 		initComponents(fileImportTemplateId);
 		placeComponents();
 	}
 
-	public FileImportTemplateDialog(JDialog owner, int fileImportTemplateId){
+	public FileImportTemplateDialog(JDialog owner, int fileImportTemplateId) {
 		super(owner);
 		initComponents(fileImportTemplateId);
 		placeComponents();
 	}
-	
+
 	public int getTemplateId() {
 		return pTemplateFileProperties.getFileImportTemplateId();
 	}
-	
+
 	public DOFileImportTemplate getTemplate() {
 		return pTemplateFileProperties.getDisplayedTemplate();
 	}
-	
+
 	public void addFileImportDialogListener(FileImportDialogListener listener) {
-		if(!fileImportDialogListeners.contains(listener)) {
+		if (!fileImportDialogListeners.contains(listener)) {
 			fileImportDialogListeners.add(listener);
 		}
 	}
-	
+
 	private void initComponents(int fileImportTemplateId) {
-		
+
 		setIconImage(new ImageIcon(FileImportTemplateDialog.class.getResource("/resources/images/icon-32.png")).getImage());
 		setTitle(Messages.getString("ML.FileImportConfigurationDialog.title"));
-		
+
 		pTemplateFileProperties = new FileImportTemplatePanel(fileImportTemplateId);
 		pTemplateFileProperties.addRepaintListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				pack();
@@ -96,32 +96,35 @@ public class FileImportTemplateDialog extends JDialog {
 		});
 
 		bOk = new JButton(Messages.getString("ML.FileImportConfigurationDialog.bOk"));
-		if(bOk.getPreferredSize().width < MIN_BUTTON_WIDTH) bOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bOk.getPreferredSize().height));
+		if (bOk.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bOk.getPreferredSize().height));
 		bOk.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DOFileImportTemplate template = saveConfiguration();
-				if(template != null) {
+				if (template != null) {
 					setVisible(false);
 				}
 			}
 		});
-		
+
 		bSave = new JButton(Messages.getString("ML.FileImportConfigurationDialog.bSave"));
-		if(bSave.getPreferredSize().width < MIN_BUTTON_WIDTH) bSave.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bSave.getPreferredSize().height));
+		if (bSave.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bSave.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bSave.getPreferredSize().height));
 		bSave.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveConfiguration();
 			}
 		});
-		
+
 		bCancel = new JButton(Messages.getString("ML.FileImportConfigurationDialog.bCancel"));
-		if(bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH) bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
+		if (bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
 		bCancel.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
@@ -131,34 +134,34 @@ public class FileImportTemplateDialog extends JDialog {
 
 	private void placeComponents() {
 		FormLayout layout = new FormLayout("3px, f:p:g, 3px",
-		        "3px, f:p:g, p");
+				"3px, f:p:g, p");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.add(pTemplateFileProperties, cc.xy(2, 2));
-		
-		//add buttons
+
+		// add buttons
 		JPanel bPanel = new JPanel();
 		bPanel.setAlignmentX(CENTER_ALIGNMENT);
 		bPanel.add(bOk);
 		bPanel.add(bSave);
 		bPanel.add(bCancel);
 		builder.add(bPanel, cc.xy(2, 3));
-		
-		//build the dialog
+
+		// build the dialog
 		setLayout(new GridLayout());
 		setContentPane(builder.getPanel());
 	}
-	
+
 	private DOFileImportTemplate saveConfiguration() {
 		DOFileImportTemplate template = pTemplateFileProperties.getDisplayedTemplate();
-		if(template.getName() == null || template.getName().equals("")) {
+		if (template.getName() == null || template.getName().equals("")) {
 			JOptionPane.showMessageDialog(this, Messages.getString("ML.FileImportConfigurationPanel.Msg.EnterTemplateName"));
 			return null;
 		}
-		
+
 		// insert or update into db. A new template has the ID=0
 		if (template.getId() > 0) {
 			MediaLibraryStorage.getInstance().updateFileImportTemplate(template);
@@ -167,13 +170,13 @@ public class FileImportTemplateDialog extends JDialog {
 		}
 
 		save = true;
-		
-		for(FileImportDialogListener l : fileImportDialogListeners) {
+
+		for (FileImportDialogListener l : fileImportDialogListeners) {
 			l.templateSaved(template);
 		}
 
 		pTemplateFileProperties.templateSaved(template);
-		
+
 		return template;
 	}
 

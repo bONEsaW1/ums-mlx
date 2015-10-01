@@ -46,8 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class takes care of registering plugins. Plugin jars are loaded,
- * instantiated and stored for later retrieval.
+ * This class takes care of registering plugins. Plugin jars are loaded, instantiated and stored for later retrieval.
  */
 @SuppressWarnings("deprecation")
 public class PluginsFactory {
@@ -57,23 +56,21 @@ public class PluginsFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PluginsFactory.class);
 
 	/**
-	 * The name of the file containing the package and class name
-	 * for which pms will instantiate the plugin. This file has to 
-	 * be contained at the root of the jar
+	 * The name of the file containing the package and class name for which pms will instantiate the plugin. This file
+	 * has to be contained at the root of the jar
 	 */
 	private static final String DESCRIPTOR_FILE_NAME = "plugin";
 
 	/**
-	 * The class loader will be lazy initialized the first time it's 
-	 * being used
+	 * The class loader will be lazy initialized the first time it's being used
 	 */
 	private static ClassLoader classLoader;
-	
+
 	/**
 	 * All registered plugins
 	 */
 	private static final List<PluginBase> plugins = new ArrayList<PluginBase>();
-	
+
 	/**
 	 * All registered external listeners
 	 */
@@ -114,7 +111,7 @@ public class PluginsFactory {
 	public static List<FileImportPlugin> getFileImportPlugins() {
 		return getPlugins(FileImportPlugin.class);
 	}
-	
+
 	/**
 	 * Gets all registered finalize transcoder args listeners.
 	 *
@@ -140,7 +137,7 @@ public class PluginsFactory {
 	 */
 	public static List<AdditionalFolderAtRoot> getAdditionalFolderAtRootList() {
 		List<AdditionalFolderAtRoot> res = new ArrayList<AdditionalFolderAtRoot>();
-		for(AdditionalFolderAtRootWrapper wp : getPlugins(AdditionalFolderAtRootWrapper.class)) {
+		for (AdditionalFolderAtRootWrapper wp : getPlugins(AdditionalFolderAtRootWrapper.class)) {
 			res.add(wp.getAdditionalFolderAtRoot());
 		}
 		return res;
@@ -153,11 +150,12 @@ public class PluginsFactory {
 	 */
 	public static List<AdditionalFoldersAtRoot> getAdditionalFoldersAtRootList() {
 		List<AdditionalFoldersAtRoot> res = new ArrayList<AdditionalFoldersAtRoot>();
-		for(AdditionalFoldersAtRootWrapper wp : getPlugins(AdditionalFoldersAtRootWrapper.class)) {
+		for (AdditionalFoldersAtRootWrapper wp : getPlugins(AdditionalFoldersAtRootWrapper.class)) {
 			res.add(wp.getAdditionalFoldersAtRoot());
 		}
 		return res;
 	}
+
 	/**
 	 * Gets a dlna tree folder plugin by name.
 	 *
@@ -165,7 +163,7 @@ public class PluginsFactory {
 	 * @return the dlna tree folder plugin resolved by name. Null if it couldn't be resolved
 	 */
 	public static DlnaTreeFolderPlugin getDlnaTreeFolderPluginByName(String className) {
-		DlnaTreeFolderPlugin plugin =  getPluginByName(DlnaTreeFolderPlugin.class, className);
+		DlnaTreeFolderPlugin plugin = getPluginByName(DlnaTreeFolderPlugin.class, className);
 		return plugin;
 	}
 
@@ -176,7 +174,7 @@ public class PluginsFactory {
 	 * @return the file detail plugin resolved by name. Null if it couldn't be resolved
 	 */
 	public static FileDetailPlugin getFileDetailPluginByName(String className) {
-		FileDetailPlugin plugin =  getPluginByName(FileDetailPlugin.class, className);
+		FileDetailPlugin plugin = getPluginByName(FileDetailPlugin.class, className);
 		return plugin;
 	}
 
@@ -187,7 +185,7 @@ public class PluginsFactory {
 	 * @return the file import plugin resolved by name. Null if it couldn't be resolved
 	 */
 	public static FileImportPlugin getFileImportPluginByName(String className) {
-		FileImportPlugin plugin =  getPluginByName(FileImportPlugin.class, className);
+		FileImportPlugin plugin = getPluginByName(FileImportPlugin.class, className);
 		return plugin;
 	}
 
@@ -198,8 +196,8 @@ public class PluginsFactory {
 	 * @return the external listener by class name
 	 */
 	public static ExternalListener getExternalListenerByClassName(String externalListenerClassName) {
-		for(ExternalListener externalListener : externalListeners) {
-			if(externalListener.getClass().getName().equals(externalListenerClassName)) {
+		for (ExternalListener externalListener : externalListeners) {
+			if (externalListener.getClass().getName().equals(externalListenerClassName)) {
 				return externalListener;
 			}
 		}
@@ -207,8 +205,8 @@ public class PluginsFactory {
 	}
 
 	/**
-	 * Stores the instance of an external listener in a list for later
-	 * retrieval. The same instance will only be stored once.
+	 * Stores the instance of an external listener in a list for later retrieval. The same instance will only be stored
+	 * once.
 	 *
 	 * @param listener The instance to store.
 	 */
@@ -234,8 +232,8 @@ public class PluginsFactory {
 				add = false;
 			}
 		}
-		
-		if(pluginToRemove != null) {
+
+		if (pluginToRemove != null) {
 			plugins.remove(pluginToRemove);
 		}
 
@@ -245,11 +243,9 @@ public class PluginsFactory {
 	}
 
 	/**
-	 * This method scans the plugins directory for ".jar" files and processes
-	 * each file that is found. First, a resource named "plugin" is extracted
-	 * from the jar file. Its contents determine the name of the main plugin
-	 * class. This main plugin class is then loaded and an instance is created
-	 * and registered for later use.
+	 * This method scans the plugins directory for ".jar" files and processes each file that is found. First, a resource
+	 * named "plugin" is extracted from the jar file. Its contents determine the name of the main plugin class. This
+	 * main plugin class is then loaded and an instance is created and registered for later use.
 	 */
 	public static void lookup() {
 		File pluginDirectory = new File(PMS.getConfiguration().getPluginDirectory());
@@ -265,15 +261,15 @@ public class PluginsFactory {
 		}
 
 		LOGGER.info("Searching for plugins in " + pluginDirectory.getAbsolutePath());
-		
+
 		// Filter all .jar files from the plugin directory
 		File[] jarFiles = pluginDirectory.listFiles(
-			new FileFilter() {
-				public boolean accept(File file) {
-					return file.isFile() && file.getName().toLowerCase().endsWith(".jar");
+				new FileFilter() {
+					public boolean accept(File file) {
+						return file.isFile() && file.getName().toLowerCase().endsWith(".jar");
+					}
 				}
-			}
-		);
+				);
 
 		int nJars = jarFiles.length;
 
@@ -296,7 +292,7 @@ public class PluginsFactory {
 		URL[] jarURLs = new URL[jarURLList.size()];
 		jarURLList.toArray(jarURLs);
 
-		if(classLoader == null) {
+		if (classLoader == null) {
 			// specify the parent classloader being PMS to include the required plugin interface definitions
 			// for the classloader. If this isn't being set, a ClassNotFoundException might be raised
 			// because the interface implemented by the plugin can't be resolved.
@@ -362,12 +358,12 @@ public class PluginsFactory {
 		}
 		NotificationCenter.getInstance(PluginEvent.class).post(new PluginEvent(Event.PluginsLoaded));
 	}
-	
+
 	/**
 	 * Shut down all registered plugins.
 	 */
 	public static void shutdownPlugins() {
-		for(PluginBase p : plugins) {
+		for (PluginBase p : plugins) {
 			try {
 				p.shutdown();
 			} catch (Throwable t) {
@@ -376,44 +372,42 @@ public class PluginsFactory {
 			}
 		}
 	}
-	
+
 	/**
-	 * Registers an old style plugin inside a wrapper, to make the
-	 * transition to the new plugin system smooth
+	 * Registers an old style plugin inside a wrapper, to make the transition to the new plugin system smooth
+	 * 
 	 * @param externalListener
 	 */
 	private static void registerExternalListenerPlugin(ExternalListener externalListener) {
 		BaseWrapper wp = null;
-		if(externalListener instanceof AdditionalFolderAtRoot) {
+		if (externalListener instanceof AdditionalFolderAtRoot) {
 			wp = new AdditionalFolderAtRootWrapper((AdditionalFolderAtRoot) externalListener);
-		} else if(externalListener instanceof AdditionalFolderAtRoot) {
+		} else if (externalListener instanceof AdditionalFolderAtRoot) {
 			wp = new AdditionalFoldersAtRootWrapper((AdditionalFoldersAtRoot) externalListener);
-		} else if(externalListener instanceof FinalizeTranscoderArgsListener) {
+		} else if (externalListener instanceof FinalizeTranscoderArgsListener) {
 			wp = new FinalizeTranscoderArgsListenerWrapper((net.pms.external.FinalizeTranscoderArgsListener) externalListener);
-		} else if(externalListener instanceof StartStopListener) {
+		} else if (externalListener instanceof StartStopListener) {
 			wp = new StartStopListenerWrapper((net.pms.external.StartStopListener) externalListener);
-		} else if(externalListener != null) {
+		} else if (externalListener != null) {
 			wp = new ExternalListenerWrapper(externalListener);
 		}
-		
-		if(wp != null) {
+
+		if (wp != null) {
 			registerPlugin(wp);
 		}
-		
-		if(!externalListeners.contains(externalListener)) {
+
+		if (!externalListeners.contains(externalListener)) {
 			externalListeners.add(externalListener);
 		}
 	}
 
 	/**
-	 * Compare two version strings and return the result. E.g.
-	 * <code>compareVersion("1.6.1", "1.12-SNAPSHOT")</code> returns a number
-	 * less than 0. 
+	 * Compare two version strings and return the result. E.g. <code>compareVersion("1.6.1", "1.12-SNAPSHOT")</code>
+	 * returns a number less than 0.
 	 *
 	 * @param version1 First version string to compare.
 	 * @param version2 Seconds version string to compare.
-	 * @return A number less than 0, equal to 0 or greater than 0, depending on
-	 * 		the comparison outcome.
+	 * @return A number less than 0, equal to 0 or greater than 0, depending on the comparison outcome.
 	 */
 	private static int compareVersion(String version1, String version2) {
 		DefaultArtifactVersion v1 = new DefaultArtifactVersion(version1);
@@ -423,8 +417,8 @@ public class PluginsFactory {
 	}
 
 	/**
-	 * Gets the list of registered plugins of the
-	 * generic type T specified by the class parameter
+	 * Gets the list of registered plugins of the generic type T specified by the class parameter
+	 * 
 	 * @param c specifies the type of the returned list
 	 * @return a list containing all registered plugins for the specified type (0-n).
 	 */
@@ -441,9 +435,9 @@ public class PluginsFactory {
 
 	/**
 	 * Returns a plugin instance for the given class name
+	 * 
 	 * @param c specifies the type of the returned list
-	 * @param className a string with the complete package + class name of the
-	 * class to load
+	 * @param className a string with the complete package + class name of the class to load
 	 * @return a plugin instance of the specified type or null if none can be found
 	 */
 	@SuppressWarnings("unchecked")

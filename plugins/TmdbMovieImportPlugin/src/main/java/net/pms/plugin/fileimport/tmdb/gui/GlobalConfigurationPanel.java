@@ -23,7 +23,7 @@ import net.pms.util.KeyedComboBoxModel;
 public class GlobalConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = -8887582272369330180L;
 	private final GlobalConfiguration globalConfig;
-	
+
 	private JComboBox cbImportLanguage;
 
 	/**
@@ -44,7 +44,7 @@ public class GlobalConfigurationPanel extends JPanel {
 	private void init() {
 		Map<String, String> languages = PmsConfiguration.getSupportedLanguages();
 		final KeyedComboBoxModel kcbm = new KeyedComboBoxModel(
-				languages.keySet().toArray(new String[languages.size()]), 
+				languages.keySet().toArray(new String[languages.size()]),
 				languages.values().toArray(new String[languages.size()]));
 		cbImportLanguage = new JComboBox(kcbm);
 	}
@@ -54,30 +54,29 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	private void build() {
 		// Set basic layout
-		FormLayout layout = new FormLayout("5px, p, 5px, f:p:g, 5px", //columns
-				"5px, p, 5px"); //rows
+		FormLayout layout = new FormLayout("5px, p, 5px, f:p:g, 5px", // columns
+				"5px, p, 5px"); // rows
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.addLabel(TmdbMovieImportPlugin.messages.getString("GlobalConfigurationPanel.LanguageCombobox"), cc.xy(2, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 		builder.add(cbImportLanguage, cc.xy(4, 2));
 
 		JScrollPane sp = new JScrollPane(builder.getPanel());
 		sp.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		add(sp);
 	}
-	
+
 	/**
 	 * Updates all graphical components to show the global configuration.<br>
-	 * This is being used to roll back changes after editing properties and
-	 * canceling the dialog.
+	 * This is being used to roll back changes after editing properties and canceling the dialog.
 	 */
 	public void applyConfig() {
 		String importLanguage = globalConfig.getImportLanguage();
-		if(importLanguage != null && !importLanguage.equals("")) {
+		if (importLanguage != null && !importLanguage.equals("")) {
 			((KeyedComboBoxModel) cbImportLanguage.getModel()).setSelectedKey(importLanguage);
 		}
 	}

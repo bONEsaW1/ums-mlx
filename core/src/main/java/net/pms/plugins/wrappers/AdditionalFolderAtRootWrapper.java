@@ -30,11 +30,12 @@ public class AdditionalFolderAtRootWrapper extends BaseWrapper implements Plugin
 		super(additionalFolderAtRoot);
 		setAdditionalFolderAtRoot(additionalFolderAtRoot);
 	}
-	
+
 	/**
 	 * The Constructor.
 	 */
-	public AdditionalFolderAtRootWrapper() { }
+	public AdditionalFolderAtRootWrapper() {
+	}
 
 	/**
 	 * Gets the folder.
@@ -73,26 +74,28 @@ public class AdditionalFolderAtRootWrapper extends BaseWrapper implements Plugin
 	@Override
 	public DLNAResource getDLNAResource() {
 		AdditionalFolderAtRoot additionalFolderAtRoot = getAdditionalFolderAtRoot();
-		if(dlnaResource == null && additionalFolderAtRoot != null) {
+		if (dlnaResource == null && additionalFolderAtRoot != null) {
 			// lazy-initialize the DLNA resource
-			
+
 			// 1) Create a new VirtualFolder in order to set the specified name for it
 			dlnaResource = new VirtualFolder(displayName, null);
-			
+
 			// 2) Add all children of the plugin
-			for(DLNAResource childResource : additionalFolderAtRoot.getChild().getChildren()) {
+			for (DLNAResource childResource : additionalFolderAtRoot.getChild().getChildren()) {
 				dlnaResource.addChild(childResource);
 			}
 		}
-		
+
 		return dlnaResource;
 	}
 
 	@Override
-	public void saveInstanceConfiguration(String saveFilePath) throws IOException { }
+	public void saveInstanceConfiguration(String saveFilePath) throws IOException {
+	}
 
 	@Override
-	public void loadInstanceConfiguration(String saveFilePath) throws IOException { }
+	public void loadInstanceConfiguration(String saveFilePath) throws IOException {
+	}
 
 	@Override
 	public boolean isInstanceAvailable() {

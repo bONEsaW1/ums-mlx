@@ -23,8 +23,8 @@ import java.io.File;
 import net.pms.PMS;
 
 public class ConfigurationHelper {
-	
-	public static String getApplicationRootPath(){
+
+	public static String getApplicationRootPath() {
 		return System.getProperty("user.dir") + File.separator;
 	}
 

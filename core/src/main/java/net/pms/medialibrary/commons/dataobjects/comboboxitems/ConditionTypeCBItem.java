@@ -23,12 +23,12 @@ import net.pms.medialibrary.commons.enumarations.ConditionType;
 public class ConditionTypeCBItem implements Comparable<ConditionTypeCBItem> {
 	private ConditionType conditionType;
 	private String displayName;
-	
-	public ConditionTypeCBItem(){
+
+	public ConditionTypeCBItem() {
 		this(ConditionType.UNKNOWN, "");
 	}
-	
-	public ConditionTypeCBItem(ConditionType conditionType, String displayName){
+
+	public ConditionTypeCBItem(ConditionType conditionType, String displayName) {
 		this.setConditionType(conditionType);
 		this.setDisplayName(displayName);
 	}
@@ -48,35 +48,35 @@ public class ConditionTypeCBItem implements Comparable<ConditionTypeCBItem> {
 	public String getDisplayName() {
 		return displayName;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDisplayName();
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(!(o instanceof ConditionTypeCBItem)){
+	public boolean equals(Object o) {
+		if (!(o instanceof ConditionTypeCBItem)) {
 			return false;
 		}
 
-		ConditionTypeCBItem compObj = (ConditionTypeCBItem)o;
-		if(getDisplayName().equals(compObj.getDisplayName())
-			&& getConditionType() == compObj.getConditionType()){
+		ConditionTypeCBItem compObj = (ConditionTypeCBItem) o;
+		if (getDisplayName().equals(compObj.getDisplayName())
+				&& getConditionType() == compObj.getConditionType()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + getDisplayName().hashCode();
 		hashCode *= 24 + getConditionType().hashCode();
 		return hashCode;
 	}
 
 	@Override
-    public int compareTo(ConditionTypeCBItem o) {
-	    return this.displayName.compareTo(o.displayName);
-    }
+	public int compareTo(ConditionTypeCBItem o) {
+		return this.displayName.compareTo(o.displayName);
+	}
 }

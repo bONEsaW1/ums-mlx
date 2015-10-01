@@ -25,13 +25,13 @@ import net.pms.configuration.BaseConfiguration;
  * Holds the global configuration for the plugin.
  */
 public class GlobalConfiguration extends BaseConfiguration {
-	
+
 	/** The Constant KEY_percentPlayedRequired. */
 	private static final String KEY_percentPlayedRequired = "percentPlayedRequired";
-	
+
 	/** The properties file path. */
 	private String propertiesFilePath;
-	
+
 	/**
 	 * Instantiates a new global configuration.
 	 */
@@ -45,7 +45,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save() throws IOException {
-			save(propertiesFilePath);
+		save(propertiesFilePath);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @param percentPlayedRequired the new percent played required
 	 */
 	public void setPercentPlayedRequired(int percentPlayedRequired) {
-		if(percentPlayedRequired > 0 && percentPlayedRequired < 101) {
+		if (percentPlayedRequired > 0 && percentPlayedRequired < 101) {
 			setValue(KEY_percentPlayedRequired, percentPlayedRequired);
 		}
 	}

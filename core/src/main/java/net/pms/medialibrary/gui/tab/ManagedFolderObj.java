@@ -47,22 +47,22 @@ import net.pms.medialibrary.library.LibraryManager;
 public class ManagedFolderObj {
 	private List<ActionListener> removeListeners = new ArrayList<ActionListener>();
 	private List<ActionListener> propertyChangedListeners = new ArrayList<ActionListener>();
-	
-	private JCheckBox            cbWatch;
-	private JTextField           tfFolderPath;
-	private JCheckBox            cbVideo;
-	private JCheckBox            cbAudio;
-	private JCheckBox            cbPictures;
-	private JButton              bBrowse;
-	private JButton              bScan;
-	private JButton              bDelete;
-	private JCheckBox            cbSubFolders;
-	private EButton            	 bConfigureFileImportTemplate;
-	private int                  index;
-	private JCheckBox 			 cbEnablePlugins;
+
+	private JCheckBox cbWatch;
+	private JTextField tfFolderPath;
+	private JCheckBox cbVideo;
+	private JCheckBox cbAudio;
+	private JCheckBox cbPictures;
+	private JButton bBrowse;
+	private JButton bScan;
+	private JButton bDelete;
+	private JCheckBox cbSubFolders;
+	private EButton bConfigureFileImportTemplate;
+	private int index;
+	private JCheckBox cbEnablePlugins;
 
 	public ManagedFolderObj(JCheckBox cbWatch, JTextField tfFolderPath, JCheckBox cbVideo, EButton bConfigureFileImportTemplate, JCheckBox cbAudio, JCheckBox cbPictures, JButton bBrowse, JButton bScan,
-	        JButton bDelete, JCheckBox cbSubFolders, JCheckBox cbEnablePlugins, int index) {
+			JButton bDelete, JCheckBox cbSubFolders, JCheckBox cbEnablePlugins, int index) {
 		setCbWatch(cbWatch);
 		setTextFieldFolderPath(tfFolderPath);
 		setCheckBoxVideo(cbVideo);
@@ -80,14 +80,14 @@ public class ManagedFolderObj {
 	@Override
 	public String toString() {
 		return String.format("File=%s, Watch=%s, Subfolders=%s, Video=%s, Audio=%s, Pictures=%s", tfFolderPath.getText(), cbWatch.isSelected(), cbSubFolders
-		        .isSelected(), cbVideo.isSelected(), cbAudio.isSelected(), cbPictures.isSelected());
+				.isSelected(), cbVideo.isSelected(), cbAudio.isSelected(), cbPictures.isSelected());
 	}
 
 	public void setCbWatch(JCheckBox cbWatch) {
 		this.cbWatch = cbWatch;
-		
+
 		cbWatch.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				firePropertyChanged();
@@ -101,7 +101,7 @@ public class ManagedFolderObj {
 
 	public void setTextFieldFolderPath(JTextField folderPath) {
 		this.tfFolderPath = folderPath;
-		
+
 		tfFolderPath.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
@@ -119,7 +119,7 @@ public class ManagedFolderObj {
 				firePropertyChanged();
 			}
 		});
-		
+
 		if (folderPath != null) {
 			folderPath.addCaretListener(new CaretListener() {
 
@@ -139,7 +139,7 @@ public class ManagedFolderObj {
 
 	public DOManagedFile getManagedFolder() {
 		return new DOManagedFile(cbWatch.isSelected(), tfFolderPath.getText(), cbVideo.isSelected(), cbAudio.isSelected(), cbPictures.isSelected(),
-		        cbSubFolders.isSelected(), cbEnablePlugins.isSelected(), (DOFileImportTemplate) bConfigureFileImportTemplate.getUserObject());
+				cbSubFolders.isSelected(), cbEnablePlugins.isSelected(), (DOFileImportTemplate) bConfigureFileImportTemplate.getUserObject());
 	}
 
 	public JTextField getTextFieldFolderPath() {
@@ -150,7 +150,7 @@ public class ManagedFolderObj {
 		this.cbVideo = cbVideo;
 
 		cbVideo.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				firePropertyChanged();
@@ -166,7 +166,7 @@ public class ManagedFolderObj {
 		this.cbAudio = cbAudio;
 
 		cbAudio.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				firePropertyChanged();
@@ -182,7 +182,7 @@ public class ManagedFolderObj {
 		this.cbPictures = cbPictures;
 
 		cbPictures.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				firePropertyChanged();
@@ -197,26 +197,27 @@ public class ManagedFolderObj {
 	public void setButtonBrowse(JButton bBrowse) {
 		this.bBrowse = bBrowse;
 
-		if (bBrowse != null) bBrowse.addActionListener(new ActionListener() {
+		if (bBrowse != null)
+			bBrowse.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = null;
-				File f = new File(tfFolderPath.getText());
-				if (f.isDirectory()) {
-					chooser = new JFileChooser(f.getAbsoluteFile());
-				} else {
-					chooser = new JFileChooser();
-				}
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser chooser = null;
+					File f = new File(tfFolderPath.getText());
+					if (f.isDirectory()) {
+						chooser = new JFileChooser(f.getAbsoluteFile());
+					} else {
+						chooser = new JFileChooser();
+					}
 
-				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int returnVal = chooser.showDialog((Component) e.getSource(), Messages.getString("FoldTab.28"));
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					String folderPath = chooser.getSelectedFile().getAbsolutePath();
-					tfFolderPath.setText(folderPath);
+					chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					int returnVal = chooser.showDialog((Component) e.getSource(), Messages.getString("FoldTab.28"));
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						String folderPath = chooser.getSelectedFile().getAbsolutePath();
+						tfFolderPath.setText(folderPath);
+					}
 				}
-			}
-		});
+			});
 	}
 
 	public JButton getButtonBrowse() {
@@ -275,7 +276,7 @@ public class ManagedFolderObj {
 		this.cbSubFolders = cbSubFolders;
 
 		cbSubFolders.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				firePropertyChanged();
@@ -304,7 +305,7 @@ public class ManagedFolderObj {
 	}
 
 	public DOFileImportTemplate getFileImportTemplate() {
-		return bConfigureFileImportTemplate.getUserObject() instanceof DOFileImportTemplate ? (DOFileImportTemplate)bConfigureFileImportTemplate.getUserObject() : null;
+		return bConfigureFileImportTemplate.getUserObject() instanceof DOFileImportTemplate ? (DOFileImportTemplate) bConfigureFileImportTemplate.getUserObject() : null;
 	}
 
 	public JCheckBox getCheckBoxEnablePlugins() {
@@ -314,10 +315,10 @@ public class ManagedFolderObj {
 	public void setCheckBoxEnablePlugins(JCheckBox cbEnablePlugins) {
 		this.cbEnablePlugins = cbEnablePlugins;
 		cbEnablePlugins.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(((JCheckBox)e.getSource()).isSelected()) {
+				if (((JCheckBox) e.getSource()).isSelected()) {
 					bConfigureFileImportTemplate.setEnabled(true);
 				} else {
 					bConfigureFileImportTemplate.setEnabled(false);
@@ -337,7 +338,7 @@ public class ManagedFolderObj {
 	}
 
 	public void addRemoveListener(ActionListener removeListener) {
-		if(!removeListeners.contains(removeListener)) {
+		if (!removeListeners.contains(removeListener)) {
 			removeListeners.add(removeListener);
 		}
 	}
@@ -349,7 +350,7 @@ public class ManagedFolderObj {
 	}
 
 	public void addPropertyChangedListener(ActionListener propertyChangedListener) {
-		if(!propertyChangedListeners.contains(propertyChangedListener)) {
+		if (!propertyChangedListeners.contains(propertyChangedListener)) {
 			propertyChangedListeners.add(propertyChangedListener);
 		}
 	}

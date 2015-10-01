@@ -26,16 +26,16 @@ import net.pms.configuration.BaseConfiguration;
  * Holds the global configuration for the plugin.
  */
 public class GlobalConfiguration extends BaseConfiguration {
-	
+
 	/** The Constant KEY_username. */
 	private static final String KEY_username = "userName";
-	
+
 	/** The Constant KEY_session. */
 	private static final String KEY_session = "session";
-	
+
 	/** The properties file path. */
 	private String propertiesFilePath;
-	
+
 	/**
 	 * Instantiates a new global configuration.
 	 */
@@ -49,7 +49,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save() throws IOException {
-			save(propertiesFilePath);
+		save(propertiesFilePath);
 	}
 
 	/**

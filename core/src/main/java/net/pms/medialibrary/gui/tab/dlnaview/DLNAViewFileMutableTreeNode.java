@@ -27,12 +27,12 @@ public class DLNAViewFileMutableTreeNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 1L;
 	private DOFileInfo fileInfo;
 	private FileDisplayProperties displayProperties;
-	
-	public DLNAViewFileMutableTreeNode(){
+
+	public DLNAViewFileMutableTreeNode() {
 		this(new DOFileInfo(), new FileDisplayProperties());
 	}
-	
-	public DLNAViewFileMutableTreeNode(DOFileInfo fileInfo, FileDisplayProperties displayProperties){
+
+	public DLNAViewFileMutableTreeNode(DOFileInfo fileInfo, FileDisplayProperties displayProperties) {
 		super(fileInfo.getDisplayString(displayProperties.getDisplayNameMask()), true);
 		setFileInfo(fileInfo);
 		setDisplayProperties(displayProperties);

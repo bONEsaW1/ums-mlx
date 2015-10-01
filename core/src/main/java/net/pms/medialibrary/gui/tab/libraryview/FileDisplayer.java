@@ -58,46 +58,46 @@ public class FileDisplayer extends JPanel {
 	private ImageIcon iDown = new ImageIcon(getClass().getResource("/resources/images/downarrow-16.png"));
 	private int filterHeight = 132;
 	private int dividerWidth;
-	
+
 	private FileType fileType = FileType.UNKNOWN;
 	private JLabel lExpandFilter;
 	private JPanel pFilter;
 	private JSplitPane sp;
 	private FilterEditor filterEditor;
 	private FileDisplayTable tFiles;
-	
+
 	private boolean isFilterApplied;
-	
+
 	public FileDisplayer(FileType fileType) {
 		super(new GridLayout(1, 1));
 		this.fileType = fileType;
 		init();
-		
+
 		// Subscribe to DB reset events in order to update the displayed files
 		NotificationCenter.getInstance(DBEvent.class).subscribe(new NotificationSubscriber<DBEvent>() {
-			
+
 			@Override
 			public void onMessage(DBEvent obj) {
-				if(isFilterApplied) {
+				if (isFilterApplied) {
 					applyFilter();
 				}
 			}
 		});
 	}
-	
-	private void init(){
+
+	private void init() {
 		lExpandFilter = new JLabel(iDown);
 		lExpandFilter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(lExpandFilter.getIcon().equals(iUp)){
+				if (lExpandFilter.getIcon().equals(iUp)) {
 					lExpandFilter.setIcon(iDown);
-					//TODO: here's a bug with the filter height becoming smaller
+					// TODO: here's a bug with the filter height becoming smaller
 					pFilter.setSize(pFilter.getWidth(), filterHeight);
 					pFilter.getComponent(1).setVisible(true);
 					pFilter.getComponent(2).setVisible(true);
 					sp.setDividerSize(dividerWidth);
-				}else {
+				} else {
 					lExpandFilter.setIcon(iUp);
 					filterHeight = pFilter.getHeight();
 					pFilter.setSize(pFilter.getWidth(), 30);
@@ -108,9 +108,9 @@ public class FileDisplayer extends JPanel {
 				sp.setDividerLocation(pFilter.getSize().height);
 			}
 		});
-		
+
 		pFilter = new JPanel(new BorderLayout());
-		pFilter.addComponentListener(new ComponentAdapter() {			
+		pFilter.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				repositionExpandFilterLabel();
@@ -118,29 +118,29 @@ public class FileDisplayer extends JPanel {
 		});
 		pFilter.setBorder(BorderFactory.createTitledBorder(Messages.getString("ML.FileDisplayer.FilterHeader")));
 		pFilter.add(lExpandFilter);
-		
+
 		filterEditor = new FilterEditor(new DOFilter(), fileType);
 		pFilter.add(filterEditor, BorderLayout.CENTER);
-		
+
 		JButton bApply = new JButton(Messages.getString("ML.FileDisplayer.bApply"));
 		bApply.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				applyFilter();
 			}
 		});
-		if(bApply.getPreferredSize().width < 60){
+		if (bApply.getPreferredSize().width < 60) {
 			bApply.setPreferredSize(new Dimension(60, bApply.getPreferredSize().height));
 		}
 		pFilter.add(bApply, BorderLayout.EAST);
-		
+
 		tFiles = new FileDisplayTable(fileType);
 		sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pFilter, tFiles);
 		dividerWidth = sp.getDividerSize();
 		add(sp);
 		sp.setDividerLocation(filterHeight);
-		
+
 		repositionExpandFilterLabel();
 	}
 
@@ -154,32 +154,34 @@ public class FileDisplayer extends JPanel {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 			return;
 		}
-		
+
 		// Show a wait cursor as this can be a lengthy operation
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		
+
 		List<DOFileInfo> files = new ArrayList<DOFileInfo>();
-		if(fileType == FileType.VIDEO){
+		if (fileType == FileType.VIDEO) {
 			List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getVideoFileInfo(filter, true, ConditionType.VIDEO_NAME, 0, SortOption.FileProperty, false);
-			files = (List<DOFileInfo>)(List<?>)vFiles;
-		} else if(fileType == FileType.FILE){
+			files = (List<DOFileInfo>) (List<?>) vFiles;
+		} else if (fileType == FileType.FILE) {
 			files = MediaLibraryStorage.getInstance().getFileInfo(filter, true, ConditionType.FILE_FILENAME, 0, SortOption.FileProperty);
 		}
-//		else if(fileType == FileType.AUDIO){
-//			List<DOVideoFileInfo> aFiles = MediaLibraryStorage.getInstance().getAudioFileInfo(filter, true, ConditionType.VIDEO_NAME, 0);
-//			files = (List<DOFileInfo>)(List<?>)aFiles;
-//		} else if(fileType == FileType.PICTURES){
-//			List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getPicturesFileInfo(filter, true, ConditionType.VIDEO_NAME, 0);
-//			files = (List<DOFileInfo>)(List<?>)vFiles;
-//		}
+		// else if(fileType == FileType.AUDIO){
+		// List<DOVideoFileInfo> aFiles = MediaLibraryStorage.getInstance().getAudioFileInfo(filter, true,
+		// ConditionType.VIDEO_NAME, 0);
+		// files = (List<DOFileInfo>)(List<?>)aFiles;
+		// } else if(fileType == FileType.PICTURES){
+		// List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getPicturesFileInfo(filter, true,
+		// ConditionType.VIDEO_NAME, 0);
+		// files = (List<DOFileInfo>)(List<?>)vFiles;
+		// }
 		tFiles.setContent(files);
 
 		isFilterApplied = true;
-		
+
 		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
-	
-	private void repositionExpandFilterLabel(){
+
+	private void repositionExpandFilterLabel() {
 		lExpandFilter.setBounds(pFilter.getWidth() - lExpandFilter.getWidth() - 7, 2, lExpandFilter.getPreferredSize().width, lExpandFilter.getPreferredSize().height);
 	}
 

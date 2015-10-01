@@ -39,17 +39,23 @@ public class LibraryViewPanel extends JPanel {
 	private FileDisplayer picturesDisplayer;
 	private FileDisplayer fileDisplayer;
 
-	public LibraryViewPanel(){
+	public LibraryViewPanel() {
 		super(new GridLayout(1, 1));
-		
+
 		JTabbedPane tp = new JTabbedPane();
 		tp.addTab(Messages.getString("ML.FileType.VIDEO"), new ImageIcon(getClass().getResource("/resources/images/videofolder-16.png")), videoFileDisplayer = new FileDisplayer(FileType.VIDEO));
 
 		// TODO: uncomment once pictures and audio have been integrated
-		// tp.addTab(Messages.getString("ML.FileType.AUDIO"), new ImageIcon(getClass().getResource("/resources/images/audiofolder-16.png")), audioFileDisplayer = new FileDisplayer(FileType.AUDIO));
-		// tp.addTab(Messages.getString("ML.FileType.PICTURES"), new ImageIcon(getClass().getResource("/resources/images/picturesfolder-16.png")), picturesDisplayer = new FileDisplayer(FileType.PICTURES));
-		// tp.addTab(Messages.getString("ML.FileType.FILE"), new ImageIcon(getClass().getResource("/resources/images/nofilefilter_folder-16.png")), fileDisplayer = new FileDisplayer(FileType.FILE));
-		
+		// tp.addTab(Messages.getString("ML.FileType.AUDIO"), new
+		// ImageIcon(getClass().getResource("/resources/images/audiofolder-16.png")), audioFileDisplayer = new
+		// FileDisplayer(FileType.AUDIO));
+		// tp.addTab(Messages.getString("ML.FileType.PICTURES"), new
+		// ImageIcon(getClass().getResource("/resources/images/picturesfolder-16.png")), picturesDisplayer = new
+		// FileDisplayer(FileType.PICTURES));
+		// tp.addTab(Messages.getString("ML.FileType.FILE"), new
+		// ImageIcon(getClass().getResource("/resources/images/nofilefilter_folder-16.png")), fileDisplayer = new
+		// FileDisplayer(FileType.FILE));
+
 		add(tp);
 	}
 

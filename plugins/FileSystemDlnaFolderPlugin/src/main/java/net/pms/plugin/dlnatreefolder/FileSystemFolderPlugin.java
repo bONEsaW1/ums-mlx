@@ -39,15 +39,14 @@ import net.pms.plugins.DlnaTreeFolderPlugin;
 import net.pms.util.PmsProperties;
 
 /**
- * This plugin for the ps3 media server lets configure 0-n folders 
- * from the file system to be shared in a folder
+ * This plugin for the ps3 media server lets configure 0-n folders from the file system to be shared in a folder
  */
 public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 	private static final Logger logger = LoggerFactory.getLogger(FileSystemFolderPlugin.class);
-	
+
 	/** Resource used for localization */
 	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.dlnatreefolder.fsfp.lang.messages");
-	
+
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
 	static {
@@ -57,7 +56,7 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 			logger.error("Could not load filesystemfolderplugin.properties", e);
 		}
 	}
-	
+
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
 	static {
@@ -68,18 +67,20 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 			logger.error("Failed to load global configuration", e);
 		}
 	}
-	
+
 	/** The instance configuration is per instance */
 	private InstanceConfiguration instanceConfig;
-	
+
 	private String rootFolderName = "root";
 	private FileSystemResource fileSystemResource;
-	
+
 	/** GUI */
 	private InstanceConfigurationPanel pInstanceConfiguration;
 	private GlobalConfigurationPanel pGlobalConfiguration;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#getInstanceConfigurationPanel()
 	 */
 	@Override
@@ -87,35 +88,43 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return pInstanceConfiguration;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#getDLNAResource()
 	 */
 	@Override
 	public DLNAResource getDLNAResource() {
-		if(fileSystemResource == null){
+		if (fileSystemResource == null) {
 			fileSystemResource = new FileSystemResource(rootFolderName, instanceConfig.getFolderPaths());
 		}
-		
+
 		return fileSystemResource;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getName()
 	 */
 	@Override
 	public String getName() {
 		return messages.getString("FileSystemFolderPlugin.Name");
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#setDisplayName(java.lang.String)
 	 */
 	@Override
-	public void setDisplayName(String name){
+	public void setDisplayName(String name) {
 		rootFolderName = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#loadInstanceConfiguration(java.lang.String)
 	 */
 	@Override
@@ -124,7 +133,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		pInstanceConfiguration.setFolders(instanceConfig.getFolderPaths());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#saveInstanceConfiguration(java.lang.String)
 	 */
 	@Override
@@ -133,7 +144,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		instanceConfig.save(configFilePath);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -141,23 +154,29 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return getName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#isPluginAvailable()
 	 */
 	@Override
-    public boolean isPluginAvailable() {
-	    return true;
+	public boolean isPluginAvailable() {
+		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#isInstanceAvailable()
 	 */
 	@Override
 	public boolean isInstanceAvailable() {
-	    return true;
+		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getVersion()
 	 */
 	@Override
@@ -165,7 +184,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return properties.get("project.version");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getShortDescription()
 	 */
 	@Override
@@ -173,7 +194,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return messages.getString("FileSystemFolderPlugin.ShortDescription");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getLongDescription()
 	 */
 	@Override
@@ -181,7 +204,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return messages.getString("FileSystemFolderPlugin.LongDescription");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#shutdown()
 	 */
 	@Override
@@ -189,19 +214,23 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getGlobalConfigurationPanel()
 	 */
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
-		if(pGlobalConfiguration == null ) {
+		if (pGlobalConfiguration == null) {
 			pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
 		}
 		pGlobalConfiguration.applyConfig();
 		return pGlobalConfiguration;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getPluginIcon()
 	 */
 	@Override
@@ -209,7 +238,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return new ImageIcon(getClass().getResource("/FileSystemFolder_icon-32.png"));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getUpdateUrl()
 	 */
 	@Override
@@ -217,7 +248,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#getWebSiteUrl()
 	 */
 	@Override
@@ -225,7 +258,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		return "http://www.ps3mediaserver.org/";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#initialize()
 	 */
 	@Override
@@ -234,12 +269,14 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		pInstanceConfiguration = new InstanceConfigurationPanel();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.PluginBase#saveConfiguration()
 	 */
 	@Override
 	public void saveConfiguration() {
-		if(pGlobalConfiguration != null) {
+		if (pGlobalConfiguration != null) {
 			pGlobalConfiguration.updateConfiguration(globalConfig);
 			try {
 				globalConfig.save();
@@ -249,7 +286,9 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.plugins.DlnaTreeFolderPlugin#getTreeNodeIcon()
 	 */
 	@Override

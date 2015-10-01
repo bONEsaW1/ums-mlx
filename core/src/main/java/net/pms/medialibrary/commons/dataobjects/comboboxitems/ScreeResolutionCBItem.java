@@ -20,11 +20,11 @@ package net.pms.medialibrary.commons.dataobjects.comboboxitems;
 
 import net.pms.medialibrary.commons.enumarations.ScreenResolution;
 
-public class ScreeResolutionCBItem implements Comparable<ScreeResolutionCBItem>{
+public class ScreeResolutionCBItem implements Comparable<ScreeResolutionCBItem> {
 	private ScreenResolution screenResolution;
 	private String displayName;
-	
-	public ScreeResolutionCBItem(ScreenResolution autoFolderProperty, String displayName){
+
+	public ScreeResolutionCBItem(ScreenResolution autoFolderProperty, String displayName) {
 		this.setScreenResolution(autoFolderProperty);
 		this.setDisplayName(displayName);
 	}
@@ -44,35 +44,35 @@ public class ScreeResolutionCBItem implements Comparable<ScreeResolutionCBItem>{
 	public ScreenResolution getScreenResolution() {
 		return screenResolution;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDisplayName();
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(!(o instanceof ScreeResolutionCBItem)){
+	public boolean equals(Object o) {
+		if (!(o instanceof ScreeResolutionCBItem)) {
 			return false;
 		}
 
-		ScreeResolutionCBItem compObj = (ScreeResolutionCBItem)o;
-		if(getDisplayName() == compObj.getDisplayName()
-			&& getScreenResolution() == compObj.getScreenResolution()){
+		ScreeResolutionCBItem compObj = (ScreeResolutionCBItem) o;
+		if (getDisplayName() == compObj.getDisplayName()
+				&& getScreenResolution() == compObj.getScreenResolution()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + getDisplayName().hashCode();
 		hashCode *= 24 + getScreenResolution().hashCode();
 		return hashCode;
 	}
 
 	@Override
-    public int compareTo(ScreeResolutionCBItem o) {
-	    return getDisplayName().compareTo(o.getDisplayName());
-    }
+	public int compareTo(ScreeResolutionCBItem o) {
+		return getDisplayName().compareTo(o.getDisplayName());
+	}
 }

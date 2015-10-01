@@ -47,50 +47,50 @@ import org.slf4j.LoggerFactory;
  */
 class DBFileFolder extends DBBase {
 	private static final Logger log = LoggerFactory.getLogger(DBFileFolder.class);
-	
+
 	DBFileFolder(JdbcConnectionPool cp) {
-	    super(cp);
-    }
-	
+		super(cp);
+	}
+
 	/*********************************************
 	 * 
 	 * Package Methods
 	 * 
 	 *********************************************/
 
-    DOFileEntryFolder getFileFolder(long templateId) throws StorageException {
+	DOFileEntryFolder getFileFolder(long templateId) throws StorageException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		DOFileEntryFolder root = null;
 		try {
 			conn = cp.getConnection();
-			root = getFileFolder(templateId, null, conn, stmt);    
+			root = getFileFolder(templateId, null, conn, stmt);
 		} catch (SQLException se) {
 			throw new StorageException(String.format("Failed to retrieve file folder for template with id=%s", templateId), se);
 		} finally {
 			close(conn, stmt);
 		}
-		
+
 		return root;
 	}
-	
+
 	/*********************************************
 	 * 
 	 * Private Methods
 	 * 
 	 *********************************************/
-	
+
 	private DOFileEntryFolder getFileFolder(long templateId, DOFileEntryFolder baseFolder, Connection conn, PreparedStatement stmt) throws SQLException {
 		long parentId = -1;
 		if (baseFolder != null) {
 			parentId = baseFolder.getId();
 		}
 
-		stmt = conn.prepareStatement("SELECT ID, POSITIONINPARENT, DISPLAYNAMEMASK, ENTRYTYPE, FILEDISPLAYMODE, MAXLINELENGTH, PLUGIN, PLUGINCONFIG" 
+		stmt = conn.prepareStatement("SELECT ID, POSITIONINPARENT, DISPLAYNAMEMASK, ENTRYTYPE, FILEDISPLAYMODE, MAXLINELENGTH, PLUGIN, PLUGINCONFIG"
 				+ " FROM TEMPLATEENTRY"
-		        + " WHERE TEMPLATEID = ? AND PARENTID = ?" 
-		        + " ORDER BY POSITIONINPARENT ASC");
+				+ " WHERE TEMPLATEID = ? AND PARENTID = ?"
+				+ " ORDER BY POSITIONINPARENT ASC");
 		stmt.clearParameters();
 		stmt.setLong(1, templateId);
 		stmt.setLong(2, parentId);
@@ -110,34 +110,34 @@ class DBFileFolder extends DBBase {
 				String pluginConfigFilePath = rs.getString(8);
 
 				switch (displayType) {
-					case FILE:
-						FileDisplayMode fileDisplayMode = FileDisplayMode.valueOf(FileDisplayMode.class, rs.getString(5));
-						DOFileEntryFile fef = new DOFileEntryFile(fileDisplayMode, id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
-						baseFolder.getChildren().add(fef);
-						break;
-					case INFO:
-						DOFileEntryInfo fei = new DOFileEntryInfo(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
-						baseFolder.getChildren().add(fei);
-						break;
-					case FOLDER:
-						DOFileEntryFolder feff = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
-						if (baseFolder == null) {
-							baseFolder = feff;
-							baseFolder = getFileFolder(templateId, baseFolder, conn, stmt);
-						} else {
-							feff = getFileFolder(templateId, feff, conn, stmt);
-							baseFolder.getChildren().add(feff);
-						}
-						break;
-					case PLUGIN:
-		    			try {
-		    				FileDetailPlugin plugin = PluginsFactory.getFileDetailPluginByName(pluginName);
-							DOFileEntryPlugin fep = new DOFileEntryPlugin(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength, plugin, pluginConfigFilePath);
-							baseFolder.getChildren().add(fep);
-		    			} catch(Exception ex) {
-		    				log.error(String.format("Failed to load plugin %s", pluginName), ex);
-		    			}
-						break;
+				case FILE:
+					FileDisplayMode fileDisplayMode = FileDisplayMode.valueOf(FileDisplayMode.class, rs.getString(5));
+					DOFileEntryFile fef = new DOFileEntryFile(fileDisplayMode, id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
+					baseFolder.getChildren().add(fef);
+					break;
+				case INFO:
+					DOFileEntryInfo fei = new DOFileEntryInfo(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
+					baseFolder.getChildren().add(fei);
+					break;
+				case FOLDER:
+					DOFileEntryFolder feff = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
+					if (baseFolder == null) {
+						baseFolder = feff;
+						baseFolder = getFileFolder(templateId, baseFolder, conn, stmt);
+					} else {
+						feff = getFileFolder(templateId, feff, conn, stmt);
+						baseFolder.getChildren().add(feff);
+					}
+					break;
+				case PLUGIN:
+					try {
+						FileDetailPlugin plugin = PluginsFactory.getFileDetailPluginByName(pluginName);
+						DOFileEntryPlugin fep = new DOFileEntryPlugin(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength, plugin, pluginConfigFilePath);
+						baseFolder.getChildren().add(fep);
+					} catch (Exception ex) {
+						log.error(String.format("Failed to load plugin %s", pluginName), ex);
+					}
+					break;
 				default:
 					log.warn(String.format("Unhandled display type received (%s). This should never happen!", displayType));
 					break;
@@ -153,11 +153,11 @@ class DBFileFolder extends DBBase {
 	private List<DOThumbnailPriority> getFileEntryThumbnailPriorities(long id, Connection conn, PreparedStatement stmt) throws SQLException {
 		ResultSet rs = null;
 		List<DOThumbnailPriority> props = new ArrayList<DOThumbnailPriority>();
-		
+
 		try {
 			stmt = conn.prepareStatement("SELECT PICTUREPATH, THUMBNAILPRIORITYTYPE, PRIORITYINDEX, SEEKSEC, ID" +
-											" FROM FILEENTRYTHUMBNAILPRIORITIES, THUMBNAILPRIORITIES" +
-											" WHERE FOLDERID = ? AND THUMBNAILPRIORITIESID = ID");
+					" FROM FILEENTRYTHUMBNAILPRIORITIES, THUMBNAILPRIORITIES" +
+					" WHERE FOLDERID = ? AND THUMBNAILPRIORITIESID = ID");
 			stmt.clearParameters();
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery();
@@ -168,13 +168,13 @@ class DBFileFolder extends DBBase {
 				prio.setPriorityIndex(rs.getInt(3));
 				prio.setSeekPosition(rs.getInt(4));
 				prio.setId(rs.getLong(5));
-				
+
 				props.add(prio);
-			}	    
+			}
 		} finally {
 			close(rs);
 		}
 
-	    return props;
-    }
+		return props;
+	}
 }

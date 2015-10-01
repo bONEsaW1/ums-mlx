@@ -16,58 +16,75 @@ public class MediaLibraryFolderDto extends FolderDto {
 	private boolean inheritDisplayFileAs;
 	private boolean displayItems;
 	private int maxFiles;
-	
+
 	public void setFilter(DOFilter filter) {
 		this.filter = filter;
 	}
+
 	public DOFilter getFilter() {
 		return filter;
 	}
+
 	public void setInheritsConditions(boolean inheritsConditions) {
 		this.inheritsConditions = inheritsConditions;
 	}
+
 	public boolean isInheritsConditions() {
 		return inheritsConditions;
 	}
+
 	public void setChildFolders(List<FolderDto> childFolders) {
 		this.childFolders = childFolders;
 	}
+
 	public List<FolderDto> getChildFolders() {
 		return childFolders;
 	}
+
 	public void setFileType(FileType fileType) {
 		this.fileType = fileType;
 	}
+
 	public FileType getFileType() {
 		return fileType;
 	}
+
 	public void setInheritSort(boolean inheritSort) {
 		this.inheritSort = inheritSort;
 	}
+
 	public boolean isInheritSort() {
 		return inheritSort;
 	}
+
 	public void setDisplayProperties(FileDisplayProperties displayProperties) {
 		this.displayProperties = displayProperties;
 	}
+
 	public FileDisplayProperties getDisplayProperties() {
 		return displayProperties;
 	}
+
 	public void setInheritDisplayFileAs(boolean inheritDisplayFileAs) {
 		this.inheritDisplayFileAs = inheritDisplayFileAs;
 	}
+
 	public boolean isInheritDisplayFileAs() {
 		return inheritDisplayFileAs;
 	}
+
 	public void setDisplayItems(boolean displayItems) {
 		this.displayItems = displayItems;
 	}
+
 	public boolean isDisplayItems() {
 		return displayItems;
 	}
+
 	public void setMaxFiles(int maxFiles) {
 		this.maxFiles = maxFiles;
 	}
+
 	public int getMaxFiles() {
 		return maxFiles;
 	}

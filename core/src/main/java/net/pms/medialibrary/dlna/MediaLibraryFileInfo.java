@@ -38,10 +38,8 @@ import net.pms.io.OutputParams;
 import net.pms.io.ProcessWrapperImpl;
 
 /**
- * If showing a file as a folder, this class can be added
- * to have an entry with an icon and a name. When played,
- * the thumbnail will be converted to a video to be shown
- * full screen
+ * If showing a file as a folder, this class can be added to have an entry with an icon and a name. When played, the
+ * thumbnail will be converted to a video to be shown full screen
  */
 public class MediaLibraryFileInfo extends VirtualFolder {
 	private static final Logger log = LoggerFactory.getLogger(MediaLibraryFileInfo.class);
@@ -56,8 +54,10 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 	public MediaLibraryFileInfo(String displayName, String thumbnailIcon) {
 		super(displayName, thumbnailIcon);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#isTranscodeFolderAvailable()
 	 */
 	@Override
@@ -65,14 +65,18 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#isFolder()
 	 */
 	public boolean isFolder() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#getThumbnailInputStream()
 	 */
 	@Override
@@ -86,7 +90,9 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		return res;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#getName()
 	 */
 	@Override
@@ -94,7 +100,9 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		return name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#length()
 	 */
 	@Override
@@ -102,41 +110,44 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#lastModified()
 	 */
 	public long lastModified() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#getSystemName()
 	 */
 	@Override
 	public String getSystemName() {
 		return getName();
 	}
-	
+
 	/**
-	 * Creates a short video showing the thumbnail.
-	 * This allows to view the cover full screen when browsing on the ps3
+	 * Creates a short video showing the thumbnail. This allows to view the cover full screen when browsing on the ps3
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	private void createVideo() throws IOException {
 		String picFolderPath = PMS.getConfiguration().getTempFolder().getAbsolutePath() + File.separator + "thumb_video_pics" + File.separator;
-		if(!new File(picFolderPath).isDirectory()){
+		if (!new File(picFolderPath).isDirectory()) {
 			new File(picFolderPath).mkdirs();
 		}
-		//delete all files in pic temp folder
+		// delete all files in pic temp folder
 		File picDir = new File(picFolderPath);
-		if(picDir.isDirectory() && picDir.listFiles() != null){
-			for(File file : picDir.listFiles()){
+		if (picDir.isDirectory() && picDir.listFiles() != null) {
+			for (File file : picDir.listFiles()) {
 				file.delete();
 			}
 		}
 
-		//save images
+		// save images
 		File f = new File(picFolderPath + "01.jpg");
 		saveThumbnail(f.getAbsolutePath());
 
@@ -149,13 +160,14 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 			copy(f.getPath(), picFolderPath + tmp + ".jpg");
 		}
 
-		//delete previous video if it exists
-		f = new File(PMS.getConfiguration().getTempFolder().getAbsolutePath()+ File.separator + GEN_MOVIE_NAME);
-		if (f.exists()) f.delete();
-		
-		//create video
+		// delete previous video if it exists
+		f = new File(PMS.getConfiguration().getTempFolder().getAbsolutePath() + File.separator + GEN_MOVIE_NAME);
+		if (f.exists())
+			f.delete();
+
+		// create video
 		List<String> args = new ArrayList<String>();
-		
+
 		args.add(PMS.getConfiguration().getFfmpegPath());
 		args.add("-f");
 		args.add("image2");
@@ -167,8 +179,8 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		args.add("24");
 		args.add("-s");
 		args.add("600x800");
-		args.add(PMS.getConfiguration().getTempFolder().getAbsolutePath()+ File.separator + GEN_MOVIE_NAME);
-		
+		args.add(PMS.getConfiguration().getTempFolder().getAbsolutePath() + File.separator + GEN_MOVIE_NAME);
+
 		OutputParams params = new OutputParams(PMS.getConfiguration());
 		params.workDir = PMS.getConfiguration().getTempFolder();
 		params.maxBufferSize = 1;
@@ -179,7 +191,8 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 			public void run() {
 				try {
 					Thread.sleep(10000);
-				} catch (InterruptedException e) { }
+				} catch (InterruptedException e) {
+				}
 				pw.stopProcess();
 			}
 		};
@@ -187,7 +200,7 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		failsafe.start();
 		pw.run();
 	}
-	
+
 	/**
 	 * Saves the thumbnail.
 	 *
@@ -196,12 +209,12 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 	 */
 	private void saveThumbnail(String saveFilePath) throws IOException {
 		File thumbFile = new File(saveFilePath);
-		if(thumbFile.exists()){
+		if (thumbFile.exists()) {
 			thumbFile.delete();
 		}
-		
+
 		InputStream thumb = getThumbnailInputStream();
-		
+
 		// Save InputStream to the file.
 		BufferedOutputStream fOut = null;
 		try {
@@ -218,28 +231,30 @@ public class MediaLibraryFileInfo extends VirtualFolder {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#getInputStream()
 	 */
 	public InputStream getInputStream() throws IOException {
-		
+
 		createVideo();
-		
-		File f = new File(PMS.getConfiguration().getTempFolder().getAbsolutePath()+ File.separator + GEN_MOVIE_NAME);
+
+		File f = new File(PMS.getConfiguration().getTempFolder().getAbsolutePath() + File.separator + GEN_MOVIE_NAME);
 		InputStream is = null;
 		try {
-			if (f.exists()){
+			if (f.exists()) {
 				is = new FileInputStream(new File(f.getPath()));
 			}
 		} catch (FileNotFoundException e) {
 			log.error("Failed to getInputStream", e);
 		}
-		
+
 		return is;
 	}
 
-	static final int    BUFF_SIZE = 100000;
-	static final byte[] buffer    = new byte[BUFF_SIZE];
+	static final int BUFF_SIZE = 100000;
+	static final byte[] buffer = new byte[BUFF_SIZE];
 
 	/**
 	 * Copies a file

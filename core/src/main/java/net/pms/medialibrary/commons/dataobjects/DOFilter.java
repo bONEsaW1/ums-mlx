@@ -29,7 +29,7 @@ import net.pms.medialibrary.commons.exceptions.FilterFormatException;
 
 public class DOFilter implements Cloneable {
 	private List<DOCondition> conditions;
-	private String            equation;
+	private String equation;
 
 	/**
 	 * Builds a DOFilter with empty equation and no conditions
@@ -54,7 +54,8 @@ public class DOFilter implements Cloneable {
 	}
 
 	public List<DOCondition> getConditions() {
-		if(conditions == null) conditions = new ArrayList<DOCondition>();
+		if (conditions == null)
+			conditions = new ArrayList<DOCondition>();
 		return conditions;
 	}
 
@@ -63,17 +64,16 @@ public class DOFilter implements Cloneable {
 	}
 
 	public String getEquation() {
-		if(equation == null) equation = "";
+		if (equation == null)
+			equation = "";
 		return equation;
 	}
 
 	/**
 	 * if the filter is valid, nothing happens
 	 * 
-	 * @throws ParseException
-	 *             thrown when an error occurs while validating the equation
-	 * @throws FilterFormatException
-	 *             thrown when errors occur while validating conditions
+	 * @throws ParseException thrown when an error occurs while validating the equation
+	 * @throws FilterFormatException thrown when errors occur while validating conditions
 	 */
 	public void validate() throws ParseException, FilterFormatException {
 		Queue<Character> parenthesis = new LinkedList<Character>();
@@ -81,7 +81,9 @@ public class DOFilter implements Cloneable {
 		boolean expectOperator = false;
 		equation = equation.trim();
 
-		if (equation.equals("")) { return; }
+		if (equation.equals("")) {
+			return;
+		}
 
 		// check that the equation is well formed in means of parenthesis and
 		// word order
@@ -90,16 +92,22 @@ public class DOFilter implements Cloneable {
 
 			// check parenthesis
 			if (c == '(') {
-				if (expectOperator) { throw new ParseException("No paranthesis allowed in front of an operator", i); }
+				if (expectOperator) {
+					throw new ParseException("No paranthesis allowed in front of an operator", i);
+				}
 				parenthesis.add('(');
 			} else if (c == ')') {
-				if (parenthesis.isEmpty() || !parenthesis.remove().equals('(')) { throw new ParseException("Error parsing equation. Brackets didn't match", i); }
+				if (parenthesis.isEmpty() || !parenthesis.remove().equals('(')) {
+					throw new ParseException("Error parsing equation. Brackets didn't match", i);
+				}
 			}
 
 			// check rest
 			currWord += c;
 			if (currWord.equals("AND") || currWord.equals("OR")) {
-				if (!expectOperator) { throw new ParseException("Error parsing equation because AND/OR was misplaced", i); }
+				if (!expectOperator) {
+					throw new ParseException("Error parsing equation because AND/OR was misplaced", i);
+				}
 				expectOperator = false;
 				currWord = "";
 				continue;
@@ -122,7 +130,9 @@ public class DOFilter implements Cloneable {
 			// verify that we've got the according condition in the list if a
 			// word end has been detected
 			if (wordComplete) {
-				if (expectOperator) { throw new ParseException(String.format("Error parsing equation because condition '%1$1s' was misplaced", currWord), i); }
+				if (expectOperator) {
+					throw new ParseException(String.format("Error parsing equation because condition '%1$1s' was misplaced", currWord), i);
+				}
 
 				boolean conditionNameExists = false;
 				for (DOCondition condition : this.getConditions()) {
@@ -132,8 +142,10 @@ public class DOFilter implements Cloneable {
 					}
 				}
 
-				if (!conditionNameExists) { throw new ParseException(String.format(
-				        "Error parsing equation  because condition '%1$1s' hasn't been found in the list of conditions", currWord), i); }
+				if (!conditionNameExists) {
+					throw new ParseException(String.format(
+							"Error parsing equation  because condition '%1$1s' hasn't been found in the list of conditions", currWord), i);
+				}
 
 				expectOperator = true;
 				currWord = "";
@@ -145,45 +157,49 @@ public class DOFilter implements Cloneable {
 		for (DOCondition con : this.conditions) {
 			if (uniqueCons.contains(con)) {
 				throw new FilterFormatException(String.format("You are not allowed to use the same contion twice for one folder" + System.getProperty("line.separator")
-				        + "%1$s and %2$s are the same", uniqueCons.get(uniqueCons.indexOf(con)).getName(), con.getName()));
+						+ "%1$s and %2$s are the same", uniqueCons.get(uniqueCons.indexOf(con)).getName(), con.getName()));
 			} else {
 				uniqueCons.add(con);
 			}
 		}
 
-		if (!expectOperator) { throw new ParseException("A parameter is expected after the last operator", equation.length()); }
-		if (parenthesis.size() > 0) { throw new ParseException("Error parsing equation. Brackets didn't match", equation.length()); }
+		if (!expectOperator) {
+			throw new ParseException("A parameter is expected after the last operator", equation.length());
+		}
+		if (parenthesis.size() > 0) {
+			throw new ParseException("Error parsing equation. Brackets didn't match", equation.length());
+		}
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof DOFilter)) { 
-			return false; 
+		if (!(obj instanceof DOFilter)) {
+			return false;
 		}
 
 		DOFilter compObj = (DOFilter) obj;
-		if (getEquation().equals(compObj.getEquation()) 
+		if (getEquation().equals(compObj.getEquation())
 				&& getConditions().size() == compObj.getConditions().size()) {
-			for(DOCondition c : getConditions()){
+			for (DOCondition c : getConditions()) {
 				boolean found = false;
-				for(DOCondition c2 : compObj.getConditions()){
-					if(c.equalCondition(c2)){
+				for (DOCondition c2 : compObj.getConditions()) {
+					if (c.equalCondition(c2)) {
 						found = true;
 						break;
-					}					
+					}
 				}
-				if(!found){
+				if (!found) {
 					return false;
-				}	
+				}
 			}
-			return true; 
+			return true;
 		}
 
 		return false;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + getEquation().hashCode();
 		hashCode *= 24 + getConditions().hashCode();
 		return hashCode;

@@ -68,7 +68,6 @@ public class ShutdownPlugin implements DlnaTreeFolderPlugin {
 		LOG.trace("Shutting down shutdown plugin");
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -88,12 +87,14 @@ public class ShutdownPlugin implements DlnaTreeFolderPlugin {
 
 	/**
 	 * Constructs and returns the virtual video action to power off the computer.
+	 * 
 	 * @return The virtual video action.
 	 */
 	private DLNAResource getPowerOffAction() {
 		DLNAResource action = new VirtualVideoAction(RESOURCE_BUNDLE.getString("shutdownplugin.menu.poweroff"), true) {
 			/**
 			 * This method is called when the user selects the menu item.
+			 * 
 			 * @return Always returns true.
 			 */
 			@Override
@@ -101,16 +102,16 @@ public class ShutdownPlugin implements DlnaTreeFolderPlugin {
 				ProcessBuilder pb;
 				CommandUtils utils;
 
-		    	LOG.trace("Attempting to shut down the computer.");
+				LOG.trace("Attempting to shut down the computer.");
 
-		        if (Platform.isWindows()) {
-		        	utils = new WindowsCommandUtils();
-		        } else {
-		        	utils = new LinuxCommandUtils();
-		        }
+				if (Platform.isWindows()) {
+					utils = new WindowsCommandUtils();
+				} else {
+					utils = new LinuxCommandUtils();
+				}
 
-		        pb = new ProcessBuilder(utils.getPowerOffCommand());
-		        pb.redirectErrorStream(true);
+				pb = new ProcessBuilder(utils.getPowerOffCommand());
+				pb.redirectErrorStream(true);
 
 				try {
 					// Start the command process
@@ -141,12 +142,14 @@ public class ShutdownPlugin implements DlnaTreeFolderPlugin {
 
 	/**
 	 * Constructs and returns the virtual video action to restart the computer.
+	 * 
 	 * @return The virtual video action.
 	 */
 	private DLNAResource getRestartAction() {
 		DLNAResource action = new VirtualVideoAction(RESOURCE_BUNDLE.getString("shutdownplugin.menu.restart"), true) {
 			/**
 			 * This method is called when the user selects the menu item.
+			 * 
 			 * @return Always returns true.
 			 */
 			@Override
@@ -154,15 +157,15 @@ public class ShutdownPlugin implements DlnaTreeFolderPlugin {
 				ProcessBuilder pb;
 				CommandUtils utils;
 
-		    	LOG.trace("Attempting to restart the computer.");
+				LOG.trace("Attempting to restart the computer.");
 
-		        if (Platform.isWindows()) {
-		        	utils = new WindowsCommandUtils();
-		        } else {
-		        	utils = new LinuxCommandUtils();
-		        }
+				if (Platform.isWindows()) {
+					utils = new WindowsCommandUtils();
+				} else {
+					utils = new LinuxCommandUtils();
+				}
 
-		        pb = new ProcessBuilder(utils.getRestartCommand());
+				pb = new ProcessBuilder(utils.getRestartCommand());
 				pb.redirectErrorStream(true);
 
 				try {

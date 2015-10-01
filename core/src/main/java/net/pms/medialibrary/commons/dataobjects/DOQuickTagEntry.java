@@ -24,29 +24,29 @@ import net.pms.medialibrary.commons.enumarations.KeyCombination;
  * The Class DOQuickTagEntry is being used to define a key combination to use to add a tag to files
  */
 public class DOQuickTagEntry {
-	
+
 	/** The name. */
 	private String name;
-	
+
 	/** The tag name. */
 	private String tagName;
-	
+
 	/** The tag value. */
 	private String tagValue;
-	
+
 	/** The virtual key . */
 	private int keyCode;
-	
+
 	/** The key combination. */
 	private KeyCombination keyCombination;
-	
+
 	/**
 	 * Instantiates a new quick tag entry with default parameters.
 	 */
 	public DOQuickTagEntry() {
 		this("", "", "", 0, KeyCombination.Unknown);
 	}
-	
+
 	/**
 	 * Instantiates a new quick tag entry.
 	 *
@@ -63,7 +63,7 @@ public class DOQuickTagEntry {
 		setKeyCode(keyCode);
 		setKeyCombination(keyCombination);
 	}
-	
+
 	/**
 	 * Gets the name.
 	 *
@@ -72,7 +72,7 @@ public class DOQuickTagEntry {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Sets the name.
 	 *
@@ -153,7 +153,7 @@ public class DOQuickTagEntry {
 	public void setKeyCombination(KeyCombination keyCombination) {
 		this.keyCombination = keyCombination;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();

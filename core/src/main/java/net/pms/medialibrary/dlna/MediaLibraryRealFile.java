@@ -48,15 +48,15 @@ import net.pms.medialibrary.storage.MediaLibraryStorage;
 import net.pms.plugins.FileDetailPlugin;
 
 /**
- * Use this class to show a file in the dlna tree. It will either show a 
- * single file or folder depending on the configuration
+ * Use this class to show a file in the dlna tree. It will either show a single file or folder depending on the
+ * configuration
  */
 public class MediaLibraryRealFile extends RealFile {
 	private static final Logger log = LoggerFactory.getLogger(MediaLibraryRealFile.class);
-	private DOFileInfo            fileInfo;
+	private DOFileInfo fileInfo;
 	private FileDisplayProperties displayProperties;
-	private FileType              fileType;
-	private DOFileEntryBase     fileBase;
+	private FileType fileType;
+	private DOFileEntryBase fileBase;
 	private RealFile originalFile;
 
 	/**
@@ -72,10 +72,10 @@ public class MediaLibraryRealFile extends RealFile {
 		setFileType(fileType);
 		setFileInfo(fileInfo);
 		setDisplayProperties(displayProperties);
-		
+
 		originalFile = this;
 
-		//set the base file if we are a folder
+		// set the base file if we are a folder
 		if (displayProperties.getFileDisplayType() == FileDisplayType.FOLDER) {
 			fileBase = MediaLibraryStorage.getInstance().getFileFolder(displayProperties.getTemplate().getId());
 			originalFile = new RealFile(new File(fileInfo.getFilePath()));
@@ -97,12 +97,14 @@ public class MediaLibraryRealFile extends RealFile {
 		setFileType(fileType);
 		setFileInfo(fileInfo);
 		setDisplayProperties(displayProperties);
-		
+
 		this.fileBase = fileBase;
 		this.originalFile = originalFile;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#isTranscodeFolderAvailable()
 	 */
 	@Override
@@ -111,8 +113,8 @@ public class MediaLibraryRealFile extends RealFile {
 	}
 
 	/**
-	 * This method will replace the configurable string values with their actual
-	 * value in all file entries and sub folders.
+	 * This method will replace the configurable string values with their actual value in all file entries and sub
+	 * folders.
 	 *
 	 * @param file the file
 	 */
@@ -125,7 +127,9 @@ public class MediaLibraryRealFile extends RealFile {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.RealFile#getName()
 	 */
 	@Override
@@ -133,7 +137,9 @@ public class MediaLibraryRealFile extends RealFile {
 		return fileBase == null ? fileInfo.getDisplayString(displayProperties.getDisplayNameMask()) : fileBase.getDisplayNameMask();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.RealFile#isFolder()
 	 */
 	@Override
@@ -141,7 +147,9 @@ public class MediaLibraryRealFile extends RealFile {
 		return fileBase == null ? displayProperties.getFileDisplayType() == FileDisplayType.FOLDER : fileBase.getFileEntryType() == FileDisplayType.FOLDER;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.RealFile#resolve()
 	 */
 	@Override
@@ -149,15 +157,15 @@ public class MediaLibraryRealFile extends RealFile {
 		if (displayProperties.getFileDisplayType() == FileDisplayType.FILE
 				|| fileBase instanceof DOFileEntryFile) {
 			switch (fileType) {
-				case AUDIO:
-					break;
-				case FILE:
-					break;
-				case PICTURES:
-					break;
-				case VIDEO:
-					setMedia(DLNAHelper.getMediaForVideo((DOVideoFileInfo) fileInfo));
-					break;
+			case AUDIO:
+				break;
+			case FILE:
+				break;
+			case PICTURES:
+				break;
+			case VIDEO:
+				setMedia(DLNAHelper.getMediaForVideo((DOVideoFileInfo) fileInfo));
+				break;
 			default:
 				log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileType));
 				break;
@@ -165,7 +173,9 @@ public class MediaLibraryRealFile extends RealFile {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.MapFile#analyzeChildren(int)
 	 */
 	@Override
@@ -173,42 +183,44 @@ public class MediaLibraryRealFile extends RealFile {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.MapFile#discoverChildren()
 	 */
 	@Override
 	public void discoverChildren() {
 		if (fileBase != null && fileBase instanceof DOFileEntryFolder) {
-			//show all children if we are a DOFileEntryFolder
+			// show all children if we are a DOFileEntryFolder
 			for (DOFileEntryBase entry : ((DOFileEntryFolder) fileBase).getChildren()) {
 				if (entry instanceof DOFileEntryFolder) {
-					//add a DOFileEntryFolder as child
+					// add a DOFileEntryFolder as child
 					addChild(new MediaLibraryRealFile(entry, getFileInfo(), getDisplayProperties(), getFileType(), originalFile));
 				} else if (entry instanceof DOFileEntryFile) {
-					//add a file (either as single entry or as a transcode file selection)
+					// add a file (either as single entry or as a transcode file selection)
 					DOFileEntryFile file = (DOFileEntryFile) entry;
 					MediaLibraryRealFile newChild = new MediaLibraryRealFile(entry, getFileInfo(), getDisplayProperties(), getFileType(), originalFile);
 					switch (file.getFileDisplayMode()) {
-						case MULTIPLE:
-							DLNAHelper.addMultipleFiles(this, newChild, originalFile);
-							break;
-						case SINGLE:
-							addChild(newChild);
-							break;
+					case MULTIPLE:
+						DLNAHelper.addMultipleFiles(this, newChild, originalFile);
+						break;
+					case SINGLE:
+						addChild(newChild);
+						break;
 					default:
 						log.warn(String.format("Unhandled file disply mode received (%s). This should never happen!", file.getFileDisplayMode()));
 						break;
 					}
 				} else if (entry instanceof DOFileEntryInfo) {
-					//add a DOFileEntryInfo
+					// add a DOFileEntryInfo
 					String[] filesToDisplay = DLNAHelper.getSplitLines(fileInfo.getDisplayString(entry.getDisplayNameMask()), entry.getMaxLineLength());
-					for(String f : filesToDisplay){
-						addChild(new MediaLibraryFileInfo(f, getCoverPath(entry.getThumbnailPriorities(), getFileInfo())));						
+					for (String f : filesToDisplay) {
+						addChild(new MediaLibraryFileInfo(f, getCoverPath(entry.getThumbnailPriorities(), getFileInfo())));
 					}
-				}else if (entry instanceof DOFileEntryPlugin && fileInfo instanceof DOVideoFileInfo) {
-					//add a FileDetailPlugin
+				} else if (entry instanceof DOFileEntryPlugin && fileInfo instanceof DOVideoFileInfo) {
+					// add a FileDetailPlugin
 					FileDetailPlugin pl = ((DOFileEntryPlugin) entry).getPlugin();
-					if(pl.isInstanceAvailable()){
+					if (pl.isInstanceAvailable()) {
 						pl.setVideo((DOVideoFileInfo) fileInfo);
 						pl.setDisplayName(fileInfo.getDisplayString(entry.getDisplayNameMask()));
 						addChild(pl.getResource());
@@ -218,29 +230,31 @@ public class MediaLibraryRealFile extends RealFile {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.RealFile#getThumbnailInputStream()
 	 */
 	@Override
 	public InputStream getThumbnailInputStream() throws IOException {
 		String thumbPath;
-		
-		//determine if the source is a file folder entry or an actual file
-		if(fileBase == null){
-			thumbPath= getCoverPath(displayProperties.getThumbnailPriorities(), getFileInfo()); 
-		}else{
+
+		// determine if the source is a file folder entry or an actual file
+		if (fileBase == null) {
+			thumbPath = getCoverPath(displayProperties.getThumbnailPriorities(), getFileInfo());
+		} else {
 			thumbPath = getCoverPath(fileBase.getThumbnailPriorities(), getFileInfo());
 		}
-		
-		//show the default icon if no thumbnail has been found
-		if(thumbPath == null){
+
+		// show the default icon if no thumbnail has been found
+		if (thumbPath == null) {
 			return getResourceInputStream("images/icon-256.png");
 		}
-		
-		//return the scaled input stream in order to reduce the memory footprint used by pms.
+
+		// return the scaled input stream in order to reduce the memory footprint used by pms.
 		return ImageHelper.getScaledInputStream(thumbPath, 320, 240);
 	}
-	
+
 	/**
 	 * Gets the cover path. Depending on the thumnail prios, either a thumbnail will be generated, or a picture used.
 	 *
@@ -254,13 +268,13 @@ public class MediaLibraryRealFile extends RealFile {
 			switch (prio.getThumbnailPriorityType()) {
 			case GENERATED:
 				String picFolderPath = MediaLibraryConfiguration.getInstance().getPictureSaveFolderPath();
-				if(!picFolderPath.endsWith(File.separator)){
+				if (!picFolderPath.endsWith(File.separator)) {
 					picFolderPath += File.separator;
 				}
 				picFolderPath += "generated" + File.separator;
 				String picName = fileInfo.getFileName() + "_" + prio.getSeekPosition() + ".cover.jpg";
 				File pic = new File(picFolderPath + picName);
-				if(pic.exists()){
+				if (pic.exists()) {
 					coverFile = pic;
 				} else {
 					InputFile inputFile = new InputFile();
@@ -269,7 +283,7 @@ public class MediaLibraryRealFile extends RealFile {
 					getMedia().generateThumbnail(inputFile, getFormat(), getType(), 0.0, false);
 					try {
 						File picFolder = new File(picFolderPath);
-						if(!picFolder.isDirectory()){
+						if (!picFolder.isDirectory()) {
 							picFolder.mkdirs();
 						}
 						pic.createNewFile();
@@ -281,22 +295,22 @@ public class MediaLibraryRealFile extends RealFile {
 							out.write(buf, 0, len);
 						out.close();
 						inputStream.close();
-						
+
 						coverFile = pic;
 					} catch (IOException e) {
 						log.error("Failed to save generated thumbnail to file", e);
-					}					
+					}
 				}
 				break;
 			case PICTURE:
 				File tmpf = new File(fileInfo.getDisplayString(prio.getPicturePath()));
-				if(tmpf.exists()){
+				if (tmpf.exists()) {
 					coverFile = tmpf;
 				}
 				break;
 			case THUMBNAIL:
 				tmpf = new File(fileInfo.getThumbnailPath());
-				if(tmpf.exists()){
+				if (tmpf.exists()) {
 					coverFile = tmpf;
 				}
 				break;
@@ -304,41 +318,45 @@ public class MediaLibraryRealFile extends RealFile {
 				log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", prio.getThumbnailPriorityType()));
 				break;
 			}
-			
+
 			if (coverFile != null) {
 				break;
 			}
 		}
-		
+
 		return coverFile == null ? null : coverFile.getAbsolutePath();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof MediaLibraryRealFile)) { 
-			return false; 
+		if (!(obj instanceof MediaLibraryRealFile)) {
+			return false;
 		}
 
 		MediaLibraryRealFile compObj = (MediaLibraryRealFile) obj;
-		if (getFileInfo().equals(compObj.getFileInfo()) 
-				&& getDisplayProperties().equals(compObj.getDisplayProperties()) 
-				&& getFileType().equals(compObj.fileType)) { 
-			return true; 
+		if (getFileInfo().equals(compObj.getFileInfo())
+				&& getDisplayProperties().equals(compObj.getDisplayProperties())
+				&& getFileType().equals(compObj.fileType)) {
+			return true;
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.MapFile#toString()
 	 */
 	@Override
 	public String toString() {
 		return getName();
 	}
-	
+
 	/**
 	 * Sets the file type.
 	 *

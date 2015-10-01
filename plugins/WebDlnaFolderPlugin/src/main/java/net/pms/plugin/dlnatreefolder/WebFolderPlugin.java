@@ -34,48 +34,48 @@ public class WebFolderPlugin implements DlnaTreeFolderPlugin {
 			log.error("Could not load itunesfolderplugin.properties", e);
 		}
 	}
-	
+
 	/** The instance configuration is shared amongst all plugin instances. */
 	private InstanceConfiguration instanceConfig;
 
 	/** GUI */
 	private InstanceConfigurationPanel pInstanceConfiguration;
-	
+
 	@Override
 	public JPanel getInstanceConfigurationPanel() {
-		//make sure the instance configuration has been initialized;
-		if(instanceConfig == null) {
+		// make sure the instance configuration has been initialized;
+		if (instanceConfig == null) {
 			instanceConfig = new InstanceConfiguration();
 		}
-		
-		//lazy initialize the configuration panel
-		if(pInstanceConfiguration == null ) {
-			if(instanceConfig.getFilePath() == null || !new File(instanceConfig.getFilePath()).exists()) {
+
+		// lazy initialize the configuration panel
+		if (pInstanceConfiguration == null) {
+			if (instanceConfig.getFilePath() == null || !new File(instanceConfig.getFilePath()).exists()) {
 				String profileDir = PMS.getConfiguration().getProfileDirectory();
 				String defaultWebConf = profileDir + File.separatorChar + "web.conf";
-				if(new File(defaultWebConf).exists()) {
+				if (new File(defaultWebConf).exists()) {
 					instanceConfig.setFilePath(defaultWebConf);
-				}			
+				}
 			}
-			
+
 			pInstanceConfiguration = new InstanceConfigurationPanel(instanceConfig.getFilePath());
 		}
 		pInstanceConfiguration.applyConfig();
-		
+
 		return pInstanceConfiguration;
 	}
 
 	@Override
 	public DLNAResource getDLNAResource() {
-		if( instanceConfig == null) {
+		if (instanceConfig == null) {
 			return null;
 		}
-		
-		if(resource == null){
+
+		if (resource == null) {
 			resource = new WebFolderResource(rootFolderName, instanceConfig.getFilePath());
 			resource.discoverChildren();
 		}
-		
+
 		return resource;
 	}
 
@@ -102,7 +102,7 @@ public class WebFolderPlugin implements DlnaTreeFolderPlugin {
 
 	@Override
 	public void saveInstanceConfiguration(String configFilePath) throws IOException {
-		if(pInstanceConfiguration != null) {
+		if (pInstanceConfiguration != null) {
 			pInstanceConfiguration.updateConfiguration(instanceConfig);
 			instanceConfig.save(configFilePath);
 		}
@@ -114,9 +114,9 @@ public class WebFolderPlugin implements DlnaTreeFolderPlugin {
 	}
 
 	@Override
-    public boolean isInstanceAvailable() {
-	    return true;
-    }
+	public boolean isInstanceAvailable() {
+		return true;
+	}
 
 	@Override
 	public String getVersion() {

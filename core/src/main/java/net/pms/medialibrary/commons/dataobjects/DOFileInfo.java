@@ -36,7 +36,7 @@ import net.pms.medialibrary.commons.enumarations.FileType;
  * The Class DOFileInfo.
  */
 public class DOFileInfo {
-	
+
 	private int id = -1;
 	private String folderPath = "";
 	private String fileName = "";
@@ -52,9 +52,9 @@ public class DOFileInfo {
 	private boolean actif;
 	private int fileImportVersion;
 	private List<ActionListener> propertyChangeListeners = new ArrayList<ActionListener>();
-	
+
 	protected final Date DEFAULT_DATE = new Date(0);
-	
+
 	/**
 	 * Gets the file name.
 	 *
@@ -63,17 +63,17 @@ public class DOFileInfo {
 	 */
 	public String getFileName(boolean withExtension) {
 		String retVal = fileName;
-		
-		if(!withExtension){
+
+		if (!withExtension) {
 			int extensionStart = retVal.lastIndexOf('.');
-			if(extensionStart > 0){
+			if (extensionStart > 0) {
 				retVal = retVal.substring(0, extensionStart);
 			}
 		}
-		
+
 		return retVal;
 	}
-	
+
 	/**
 	 * Adds the property change listener.
 	 *
@@ -91,62 +91,89 @@ public class DOFileInfo {
 	public void removePropertyChangeListener(ActionListener l) {
 		propertyChangeListeners.remove(l);
 	}
-	
+
 	/**
 	 * Gets the display string.
 	 *
 	 * @param displayNameMask the display name mask
 	 * @return the display string
 	 */
-	public String getDisplayString(String displayNameMask){
+	public String getDisplayString(String displayNameMask) {
 		String retVal = displayNameMask;
-		try { retVal = retVal.replace("%folder_path", getFolderPath()); } catch(Exception ex){ }		
-		try { retVal = retVal.replace("%file_name", getFileName()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%type", getType().toString()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%date_last_updated_db", getDateLastUpdatedDb().toString()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%date_inserted_db", getDateInsertedDb().toString()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%date_last_modified_os", getDateModifiedOs().toString()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%date_last_played", getPlayHistory().size() == 0 ? Messages.getString("ML.Condition.NeverPlayed") : getPlayHistory().get(getPlayHistory().size() - 1).toString()); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%play_count", String.valueOf(getPlayCount())); } catch(Exception ex){ }
-		try { retVal = retVal.replace("%is_actif", String.valueOf(isActive())); } catch(Exception ex){ }
-		
+		try {
+			retVal = retVal.replace("%folder_path", getFolderPath());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%file_name", getFileName());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%type", getType().toString());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%date_last_updated_db", getDateLastUpdatedDb().toString());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%date_inserted_db", getDateInsertedDb().toString());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%date_last_modified_os", getDateModifiedOs().toString());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%date_last_played", getPlayHistory().size() == 0 ? Messages.getString("ML.Condition.NeverPlayed") : getPlayHistory().get(getPlayHistory().size() - 1).toString());
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%play_count", String.valueOf(getPlayCount()));
+		} catch (Exception ex) {
+		}
+		try {
+			retVal = retVal.replace("%is_actif", String.valueOf(isActive()));
+		} catch (Exception ex) {
+		}
+
 		String tagPrefix = "%tag_";
 		Map<String, List<String>> allTags = getTags();
-		for(String tagName : allTags.keySet()) {
+		for (String tagName : allTags.keySet()) {
 			String replaceTagName = tagPrefix + tagName;
-			if(retVal.contains(replaceTagName)) {
+			if (retVal.contains(replaceTagName)) {
 				// Create the string which will be replaced
 				String tagsString = "";
 				StringBuilder sb = new StringBuilder();
 				List<String> tagValues = getTags().get(tagName);
 				Collections.sort(tagValues);
-				for(String tagValue : tagValues){
+				for (String tagValue : tagValues) {
 					sb.append(tagValue);
 					sb.append(", ");
 				}
 				tagsString = sb.toString();
-				if(tagsString.endsWith(", ")){
+				if (tagsString.endsWith(", ")) {
 					tagsString = tagsString.substring(0, tagsString.length() - 2);
 				}
-				
+
 				retVal = retVal.replace(replaceTagName, tagsString);
 			}
 		}
-		
+
 		return retVal;
 	}
-	
+
 	/**
 	 * Gets the file path.
 	 *
 	 * @return the file path
 	 */
-	public String getFilePath(){
+	public String getFilePath() {
 		String path = getFolderPath();
-		if(!path.endsWith(File.separator)){
+		if (!path.endsWith(File.separator)) {
 			path += File.separator;
 		}
-		return path + getFileName();	
+		return path + getFileName();
 	}
 
 	/**
@@ -155,8 +182,8 @@ public class DOFileInfo {
 	 * @param id the new id
 	 */
 	public void setId(int id) {
-	    this.id = id;
-    }
+		this.id = id;
+	}
 
 	/**
 	 * Gets the id.
@@ -164,8 +191,8 @@ public class DOFileInfo {
 	 * @return the id
 	 */
 	public int getId() {
-	    return id;
-    }
+		return id;
+	}
 
 	/**
 	 * Sets the folder path.
@@ -173,11 +200,11 @@ public class DOFileInfo {
 	 * @param folderPath the new folder path
 	 */
 	public void setFolderPath(String folderPath) {
-		if(!getFolderPath().equals(folderPath)) {
-		    this.folderPath = folderPath;
-		    firepropertyChangedEvent(ConditionType.FILE_FOLDERPATH);
-	    }
-    }
+		if (!getFolderPath().equals(folderPath)) {
+			this.folderPath = folderPath;
+			firepropertyChangedEvent(ConditionType.FILE_FOLDERPATH);
+		}
+	}
 
 	/**
 	 * Gets the folder path.
@@ -185,10 +212,12 @@ public class DOFileInfo {
 	 * @return the folder path
 	 */
 	public String getFolderPath() {
-		if(folderPath == null) folderPath = "";
-		if(!folderPath.endsWith(File.separator)) folderPath += File.separator;
-	    return folderPath;
-    }
+		if (folderPath == null)
+			folderPath = "";
+		if (!folderPath.endsWith(File.separator))
+			folderPath += File.separator;
+		return folderPath;
+	}
 
 	/**
 	 * Sets the file name.
@@ -196,11 +225,11 @@ public class DOFileInfo {
 	 * @param fileName the new file name
 	 */
 	public void setFileName(String fileName) {
-		if(!getFileName().equals(fileName)) {
-		    this.fileName = fileName;
-		    firepropertyChangedEvent(ConditionType.FILE_FILENAME);
-	    }
-    }
+		if (!getFileName().equals(fileName)) {
+			this.fileName = fileName;
+			firepropertyChangedEvent(ConditionType.FILE_FILENAME);
+		}
+	}
 
 	/**
 	 * Gets the file name.
@@ -208,9 +237,10 @@ public class DOFileInfo {
 	 * @return the file name
 	 */
 	public String getFileName() {
-		if(fileName == null) fileName = "";
-	    return fileName;
-    }
+		if (fileName == null)
+			fileName = "";
+		return fileName;
+	}
 
 	/**
 	 * Sets the type.
@@ -218,8 +248,8 @@ public class DOFileInfo {
 	 * @param type the new type
 	 */
 	public void setType(FileType type) {
-	    this.type = type;
-    }
+		this.type = type;
+	}
 
 	/**
 	 * Gets the type.
@@ -227,9 +257,10 @@ public class DOFileInfo {
 	 * @return the type
 	 */
 	public FileType getType() {
-		if(type == null) type = FileType.UNKNOWN;
-	    return type;
-    }
+		if (type == null)
+			type = FileType.UNKNOWN;
+		return type;
+	}
 
 	/**
 	 * Sets the last updated date (DB).
@@ -237,11 +268,11 @@ public class DOFileInfo {
 	 * @param dateLastUpdatedDb the new date last updated db
 	 */
 	public void setDateLastUpdatedDb(Date dateLastUpdatedDb) {
-		if(!getDateLastUpdatedDb().equals(dateLastUpdatedDb)) {
-		    this.dateLastUpdatedDb = dateLastUpdatedDb;
-		    firepropertyChangedEvent(ConditionType.FILE_DATELASTUPDATEDDB);
-	    }
-    }
+		if (!getDateLastUpdatedDb().equals(dateLastUpdatedDb)) {
+			this.dateLastUpdatedDb = dateLastUpdatedDb;
+			firepropertyChangedEvent(ConditionType.FILE_DATELASTUPDATEDDB);
+		}
+	}
 
 	/**
 	 * Gets the last updated date (DB).
@@ -249,9 +280,10 @@ public class DOFileInfo {
 	 * @return the date last updated
 	 */
 	public Date getDateLastUpdatedDb() {
-		if(dateLastUpdatedDb == null) dateLastUpdatedDb = DEFAULT_DATE;
-	    return dateLastUpdatedDb;
-    }
+		if (dateLastUpdatedDb == null)
+			dateLastUpdatedDb = DEFAULT_DATE;
+		return dateLastUpdatedDb;
+	}
 
 	/**
 	 * Sets the date inserted (DB).
@@ -259,11 +291,11 @@ public class DOFileInfo {
 	 * @param dateInsertedDb the new date inserted
 	 */
 	public void setDateInsertedDb(Date dateInsertedDb) {
-		if(!getDateInsertedDb().equals(dateInsertedDb)) {
-		    this.dateInsertedDb = dateInsertedDb;
-		    firepropertyChangedEvent(ConditionType.FILE_DATEINSERTEDDB);
-	    }
-    }
+		if (!getDateInsertedDb().equals(dateInsertedDb)) {
+			this.dateInsertedDb = dateInsertedDb;
+			firepropertyChangedEvent(ConditionType.FILE_DATEINSERTEDDB);
+		}
+	}
 
 	/**
 	 * Gets the date inserted (DB).
@@ -271,9 +303,10 @@ public class DOFileInfo {
 	 * @return the date inserted
 	 */
 	public Date getDateInsertedDb() {
-		if(dateInsertedDb == null) dateInsertedDb = DEFAULT_DATE;
-	    return dateInsertedDb;
-    }
+		if (dateInsertedDb == null)
+			dateInsertedDb = DEFAULT_DATE;
+		return dateInsertedDb;
+	}
 
 	/**
 	 * Sets the date modified (OS).
@@ -281,11 +314,11 @@ public class DOFileInfo {
 	 * @param dateModifiedOs the new date modified os
 	 */
 	public void setDateModifiedOs(Date dateModifiedOs) {
-		if(!getDateModifiedOs().equals(dateModifiedOs)) {
-		    this.dateModifiedOs = dateModifiedOs;
-		    firepropertyChangedEvent(ConditionType.FILE_DATEMODIFIEDOS);
-	    }
-    }
+		if (!getDateModifiedOs().equals(dateModifiedOs)) {
+			this.dateModifiedOs = dateModifiedOs;
+			firepropertyChangedEvent(ConditionType.FILE_DATEMODIFIEDOS);
+		}
+	}
 
 	/**
 	 * Gets the date modified os.
@@ -293,9 +326,10 @@ public class DOFileInfo {
 	 * @return the date modified os
 	 */
 	public Date getDateModifiedOs() {
-		if(dateModifiedOs == null) dateModifiedOs = DEFAULT_DATE;
-	    return dateModifiedOs;
-    }
+		if (dateModifiedOs == null)
+			dateModifiedOs = DEFAULT_DATE;
+		return dateModifiedOs;
+	}
 
 	/**
 	 * Sets the tags.
@@ -303,11 +337,11 @@ public class DOFileInfo {
 	 * @param tags the tags
 	 */
 	public void setTags(Map<String, List<String>> tags) {
-		if(!getTags().equals(tags)) {
-		    this.tags = tags;
-		    firepropertyChangedEvent(ConditionType.FILE_CONTAINS_TAG);
-	    }
-    }
+		if (!getTags().equals(tags)) {
+			this.tags = tags;
+			firepropertyChangedEvent(ConditionType.FILE_CONTAINS_TAG);
+		}
+	}
 
 	/**
 	 * Gets the tags.
@@ -315,9 +349,10 @@ public class DOFileInfo {
 	 * @return the tags
 	 */
 	public Map<String, List<String>> getTags() {
-		if(tags == null) tags = new HashMap<String, List<String>>();
-	    return tags;
-    }
+		if (tags == null)
+			tags = new HashMap<String, List<String>>();
+		return tags;
+	}
 
 	/**
 	 * Sets the thumbnail path.
@@ -325,11 +360,11 @@ public class DOFileInfo {
 	 * @param thumbnailPath the new thumbnail path
 	 */
 	public void setThumbnailPath(String thumbnailPath) {
-		if(!getThumbnailPath().equals(thumbnailPath) && new File(thumbnailPath).exists()) {
-		    this.thumbnailPath = thumbnailPath;
-		    firepropertyChangedEvent(ConditionType.FILE_THUMBNAILPATH);
-	    }
-    }
+		if (!getThumbnailPath().equals(thumbnailPath) && new File(thumbnailPath).exists()) {
+			this.thumbnailPath = thumbnailPath;
+			firepropertyChangedEvent(ConditionType.FILE_THUMBNAILPATH);
+		}
+	}
 
 	/**
 	 * Gets the thumbnail path.
@@ -337,9 +372,10 @@ public class DOFileInfo {
 	 * @return the thumbnail path
 	 */
 	public String getThumbnailPath() {
-		if(thumbnailPath == null) thumbnailPath = "";
-	    return thumbnailPath;
-    }
+		if (thumbnailPath == null)
+			thumbnailPath = "";
+		return thumbnailPath;
+	}
 
 	/**
 	 * Sets the size.
@@ -347,11 +383,11 @@ public class DOFileInfo {
 	 * @param size the new size
 	 */
 	public void setSize(long size) {
-		if(getSize() != size) {
-		    this.size = size;
-		    firepropertyChangedEvent(ConditionType.FILE_SIZEBYTE);
-	    }
-    }
+		if (getSize() != size) {
+			this.size = size;
+			firepropertyChangedEvent(ConditionType.FILE_SIZEBYTE);
+		}
+	}
 
 	/**
 	 * Gets the size.
@@ -359,8 +395,8 @@ public class DOFileInfo {
 	 * @return the size
 	 */
 	public long getSize() {
-	    return size;
-    }
+		return size;
+	}
 
 	/**
 	 * Sets the play count.
@@ -368,11 +404,11 @@ public class DOFileInfo {
 	 * @param playCount the new play count
 	 */
 	public void setPlayCount(int playCount) {
-		if(getPlayCount() != playCount) {
-		    this.playCount = playCount;
-		    firepropertyChangedEvent(ConditionType.FILE_PLAYCOUNT);
-	    }
-    }
+		if (getPlayCount() != playCount) {
+			this.playCount = playCount;
+			firepropertyChangedEvent(ConditionType.FILE_PLAYCOUNT);
+		}
+	}
 
 	/**
 	 * Gets the play count.
@@ -380,8 +416,8 @@ public class DOFileInfo {
 	 * @return the play count
 	 */
 	public int getPlayCount() {
-	    return playCount;
-    }
+		return playCount;
+	}
 
 	/**
 	 * Adds the play to history.
@@ -389,9 +425,9 @@ public class DOFileInfo {
 	 * @param d the d
 	 */
 	public void addPlayToHistory(Date d) {
-		if(d != null && !getPlayHistory().contains(d)){
+		if (d != null && !getPlayHistory().contains(d)) {
 			getPlayHistory().add(d);
-		    firepropertyChangedEvent(ConditionType.FILEPLAYS_DATEPLAYEND);
+			firepropertyChangedEvent(ConditionType.FILEPLAYS_DATEPLAYEND);
 		}
 	}
 
@@ -401,7 +437,8 @@ public class DOFileInfo {
 	 * @return the play history
 	 */
 	public List<Date> getPlayHistory() {
-		if(playHistory == null) playHistory = new ArrayList<Date>();
+		if (playHistory == null)
+			playHistory = new ArrayList<Date>();
 		return playHistory;
 	}
 
@@ -411,9 +448,9 @@ public class DOFileInfo {
 	 * @param active true if it is active; otherwise false
 	 */
 	public void setActive(boolean active) {
-		if(isActive() != active){
+		if (isActive() != active) {
 			this.actif = active;
-		    firepropertyChangedEvent(ConditionType.FILE_ISACTIF);
+			firepropertyChangedEvent(ConditionType.FILE_ISACTIF);
 		}
 	}
 
@@ -443,7 +480,7 @@ public class DOFileInfo {
 	public void setFileImportVersion(int fileImportVersion) {
 		this.fileImportVersion = fileImportVersion;
 	}
-	
+
 	/**
 	 * Copies all properties having been set.
 	 *
@@ -460,22 +497,22 @@ public class DOFileInfo {
 	 * @param fileInfo the file info to copy properties from
 	 */
 	public void copySetConfigurablePropertiesFrom(DOFileInfo fileInfo) {
-		if(fileInfo == null) {
+		if (fileInfo == null) {
 			return;
 		}
-		
+
 		// Copy properties
-		if(!fileInfo.getThumbnailPath().equals("")) {
+		if (!fileInfo.getThumbnailPath().equals("")) {
 			setThumbnailPath(fileInfo.getThumbnailPath());
 		}
-		if(fileInfo.getFileImportVersion() > 0) {
+		if (fileInfo.getFileImportVersion() > 0) {
 			setFileImportVersion(fileInfo.getFileImportVersion());
 		}
-		
+
 		// Merge tags
 		Map<String, List<String>> allTags = getTags();
 		Map<String, List<String>> newTags = fileInfo.getTags();
-		
+
 		for (String tagName : newTags.keySet()) {
 			if (!allTags.containsKey(tagName)) {
 				allTags.put(tagName, new ArrayList<String>());
@@ -497,72 +534,76 @@ public class DOFileInfo {
 	 * @param fileInfo the file info to copy properties from
 	 */
 	public void copySetSystemPropertiesFrom(DOFileInfo fileInfo) {
-		if(fileInfo == null) {
+		if (fileInfo == null) {
 			return;
 		}
-		
+
 		// Copy properties
-		if(fileInfo.getId() > -1) {
+		if (fileInfo.getId() > -1) {
 			setId(fileInfo.getId());
 		}
-		if(!fileInfo.getFolderPath().equals("")) {
+		if (!fileInfo.getFolderPath().equals("")) {
 			setFolderPath(fileInfo.getFolderPath());
 		}
-		if(!fileInfo.getFileName().equals("")) {
+		if (!fileInfo.getFileName().equals("")) {
 			setFolderPath(fileInfo.getFileName());
 		}
-		if(!fileInfo.getFolderPath().equals("")) {
+		if (!fileInfo.getFolderPath().equals("")) {
 			setFileName(fileInfo.getFileName());
 		}
-		if(fileInfo.getType() != FileType.UNKNOWN) {
+		if (fileInfo.getType() != FileType.UNKNOWN) {
 			setType(fileInfo.getType());
 		}
-		if(!fileInfo.getDateLastUpdatedDb().equals(DEFAULT_DATE)) {
+		if (!fileInfo.getDateLastUpdatedDb().equals(DEFAULT_DATE)) {
 			setDateLastUpdatedDb(fileInfo.getDateLastUpdatedDb());
 		}
-		if(!fileInfo.getDateInsertedDb().equals(DEFAULT_DATE)) {
+		if (!fileInfo.getDateInsertedDb().equals(DEFAULT_DATE)) {
 			setDateInsertedDb(fileInfo.getDateInsertedDb());
 		}
-		if(!fileInfo.getDateModifiedOs().equals(DEFAULT_DATE)) {
+		if (!fileInfo.getDateModifiedOs().equals(DEFAULT_DATE)) {
 			setDateModifiedOs(fileInfo.getDateModifiedOs());
 		}
-		if(fileInfo.getSize() > 0) {
+		if (fileInfo.getSize() > 0) {
 			setSize(fileInfo.getSize());
 		}
-		if(fileInfo.getPlayCount() > 0) {
+		if (fileInfo.getPlayCount() > 0) {
 			setPlayCount(fileInfo.getPlayCount());
 		}
-		if(fileInfo.getFileImportVersion() > 0) {
+		if (fileInfo.getFileImportVersion() > 0) {
 			setFileImportVersion(fileInfo.getFileImportVersion());
 		}
-		
+
 		// Merge play dates
-		for(Date playDate : fileInfo.getPlayHistory()) {
-			if(!getPlayHistory().contains(playDate)) {
+		for (Date playDate : fileInfo.getPlayHistory()) {
+			if (!getPlayHistory().contains(playDate)) {
 				getPlayHistory().add(playDate);
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return getFilePath();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj){
-		if(!(obj instanceof DOFileInfo)){
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DOFileInfo)) {
 			return false;
 		}
-		
-		DOFileInfo compObj = (DOFileInfo)obj;
-		if(getId() == compObj.getId()
+
+		DOFileInfo compObj = (DOFileInfo) obj;
+		if (getId() == compObj.getId()
 				&& getFolderPath().equals(compObj.getFolderPath())
 				&& getFileName().equals(compObj.getFileName())
 				&& getType() == compObj.getType()
@@ -574,15 +615,17 @@ public class DOFileInfo {
 				&& getSize() == compObj.getSize()
 				&& getPlayCount() == compObj.getPlayCount()
 				&& getFileImportVersion() == compObj.getFileImportVersion()
-				//&& getDateLastPlayed().equals(compObj.getDateLastPlayed())
-				){
+		// && getDateLastPlayed().equals(compObj.getDateLastPlayed())
+		) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -600,19 +643,19 @@ public class DOFileInfo {
 		hashCode *= 24 + getPlayCount();
 		hashCode *= 24 + (isActive() ? 1 : 2);
 		hashCode *= 24 + getFileImportVersion();
-		//hashCode *= 24 + getDateLastPlayed().hashCode();
+		// hashCode *= 24 + getDateLastPlayed().hashCode();
 		return hashCode;
 	}
-	
-    /**
-     * Fires a property changed event.
-     *
-     * @param ct the condition type having changed
-     */
-    protected void firepropertyChangedEvent(ConditionType ct) {
-    	ActionEvent e = new ActionEvent(this, ct.hashCode(), ct.toString());
-    	for(ActionListener l : propertyChangeListeners) {
-    		l.actionPerformed(e);
-    	}
-    }	
+
+	/**
+	 * Fires a property changed event.
+	 *
+	 * @param ct the condition type having changed
+	 */
+	protected void firepropertyChangedEvent(ConditionType ct) {
+		ActionEvent e = new ActionEvent(this, ct.hashCode(), ct.toString());
+		for (ActionListener l : propertyChangeListeners) {
+			l.actionPerformed(e);
+		}
+	}
 }

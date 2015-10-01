@@ -197,7 +197,7 @@ public class ScanFolderDialog extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				save();
-				
+
 				File selectedFolder = new File(tfFolderPath.getText());
 				if (selectedFolder.isDirectory()) {
 					setDoImport(true);
@@ -246,11 +246,11 @@ public class ScanFolderDialog extends JDialog {
 
 	private DOFileImportTemplate save() {
 		DOFileImportTemplate template = pFileImport.getDisplayedTemplate();
-		if(template.getName() == null || template.getName().equals("")) {
+		if (template.getName() == null || template.getName().equals("")) {
 			JOptionPane.showMessageDialog(this, Messages.getString("ML.FileImportConfigurationPanel.Msg.EnterTemplateName"));
 			return null;
 		}
-		
+
 		// insert or update into db. A new template has the ID=0
 		if (template.getId() > 0) {
 			MediaLibraryStorage.getInstance().updateFileImportTemplate(template);
@@ -259,7 +259,7 @@ public class ScanFolderDialog extends JDialog {
 		}
 
 		pFileImport.templateSaved(template);
-		
+
 		return template;
 	}
 }

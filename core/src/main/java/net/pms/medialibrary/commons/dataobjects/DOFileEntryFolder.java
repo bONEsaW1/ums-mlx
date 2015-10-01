@@ -25,65 +25,66 @@ import net.pms.medialibrary.commons.enumarations.FileDisplayType;
 
 public class DOFileEntryFolder extends DOFileEntryBase {
 	private List<DOFileEntryBase> children;
-	
-	public DOFileEntryFolder(){
+
+	public DOFileEntryFolder() {
 		this(new ArrayList<DOFileEntryBase>(), -1, null, -1, "", null, 0);
 	}
-	
-	public DOFileEntryFolder(List<DOFileEntryBase> children, long id, DOFileEntryFolder parent, 
-			int positionInParent, String displayNameMask, List<DOThumbnailPriority> thumbnailPriorities, int maxLineLength){
+
+	public DOFileEntryFolder(List<DOFileEntryBase> children, long id, DOFileEntryFolder parent,
+			int positionInParent, String displayNameMask, List<DOThumbnailPriority> thumbnailPriorities, int maxLineLength) {
 		super(id, parent, positionInParent, displayNameMask, thumbnailPriorities, FileDisplayType.FOLDER, maxLineLength, null, null);
 		this.children = children;
 	}
 
-	public void addChild(DOFileEntryBase file) {	
+	public void addChild(DOFileEntryBase file) {
 		file.setParent(this);
 		this.children.add(file);
 	}
 
 	public List<DOFileEntryBase> getChildren() {
-		if(children == null) children = new ArrayList<DOFileEntryBase>();
+		if (children == null)
+			children = new ArrayList<DOFileEntryBase>();
 		return children;
 	}
 
 	@Override
-	public boolean equals(Object obj){
-		if(!(obj instanceof DOFileEntryFolder)){
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DOFileEntryFolder)) {
 			return false;
 		}
-		
-		DOFileEntryFolder compObj = (DOFileEntryFolder)obj;
-		if(super.equals(compObj)){
-			for(DOFileEntryBase c : getChildren()){
+
+		DOFileEntryFolder compObj = (DOFileEntryFolder) obj;
+		if (super.equals(compObj)) {
+			for (DOFileEntryBase c : getChildren()) {
 				boolean found = false;
-				for(DOFileEntryBase c2 : getChildren()){
-					if(c.getId() == c2.getId())	{
+				for (DOFileEntryBase c2 : getChildren()) {
+					if (c.getId() == c2.getId()) {
 						found = true;
 						break;
 					}
 				}
-				if(!found){
+				if (!found) {
 					return false;
 				}
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + super.hashCode();
-		for(DOFileEntryBase child : getChildren()){
-			hashCode *= 24 + child.getId();		
+		for (DOFileEntryBase child : getChildren()) {
+			hashCode *= 24 + child.getId();
 		}
 		return hashCode;
 	}
 
 	@Override
-	public DOFileEntryFolder clone(){
-		return new DOFileEntryFolder(getChildren(), getId(), getParent(), getPositionInParent(), 
+	public DOFileEntryFolder clone() {
+		return new DOFileEntryFolder(getChildren(), getId(), getParent(), getPositionInParent(),
 				getDisplayNameMask(), getThumbnailPriorities(), getMaxLineLength());
 	}
 }

@@ -52,13 +52,13 @@ import net.pms.medialibrary.gui.shared.FileDisplayPanel;
 
 public class ConfigureFileEntryDialog extends JDialog {
 	private static final Logger log = LoggerFactory.getLogger(ConfigureFileEntryDialog.class);
-	private static final long                 serialVersionUID          = 5418437600836118875L;
+	private static final long serialVersionUID = 5418437600836118875L;
 	private final int MIN_BUTTON_WIDTH = 60;
-	private FileDisplayPanel                  pFilterFile;
-	private JPanel                            pButtons;
+	private FileDisplayPanel pFilterFile;
+	private JPanel pButtons;
 	private List<ConfigureFileDialogListener> filterFileDialogListeners = new ArrayList<ConfigureFileDialogListener>();
-	private FileDisplayType                   fileEntryType;
-	private DOFileEntryFolder                 parent;
+	private FileDisplayType fileEntryType;
+	private DOFileEntryFolder parent;
 
 	public ConfigureFileEntryDialog(DOFileEntryBase fileEntry, DOFileEntryFolder parent, FileType fileType) {
 		((java.awt.Frame) this.getOwner()).setIconImage(new ImageIcon(FolderDialog.class.getResource("/resources/images/icon-16.png")).getImage());
@@ -67,19 +67,19 @@ public class ConfigureFileEntryDialog extends JDialog {
 		fileEntryType = fileEntry.getFileEntryType();
 		this.parent = parent;
 		switch (fileEntryType) {
-			case INFO:
-				pFilterFile.setFileDisplayModeVisible(false);
-				break;
-			case FILE:
-				// do nothing
-				break;
-			case FOLDER:
-				pFilterFile.setFileDisplayModeVisible(false);
-				pFilterFile.setThumbnailPrioVisible(false);
-				break;
-			case UNKNOWN:
-				// do nothing
-				break;
+		case INFO:
+			pFilterFile.setFileDisplayModeVisible(false);
+			break;
+		case FILE:
+			// do nothing
+			break;
+		case FOLDER:
+			pFilterFile.setFileDisplayModeVisible(false);
+			pFilterFile.setThumbnailPrioVisible(false);
+			break;
+		case UNKNOWN:
+			// do nothing
+			break;
 		default:
 			log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
 			break;
@@ -87,7 +87,8 @@ public class ConfigureFileEntryDialog extends JDialog {
 		setTitle(Messages.getString("ML.ConfigureFileEntryDialog.Title." + fileEntryType));
 
 		JButton bOk = new JButton(Messages.getString("ML.ConfigureFileEntryDialog.bOk"));
-		if(bOk.getPreferredSize().width < MIN_BUTTON_WIDTH) bOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bOk.getPreferredSize().height));
+		if (bOk.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bOk.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bOk.getPreferredSize().height));
 		bOk.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -95,7 +96,8 @@ public class ConfigureFileEntryDialog extends JDialog {
 			}
 		});
 		JButton bCancel = new JButton(Messages.getString("ML.ConfigureFileEntryDialog.bCancel"));
-		if(bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH) bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
+		if (bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
 		bCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -118,20 +120,20 @@ public class ConfigureFileEntryDialog extends JDialog {
 	private void fireFilterFileDialogEvent(DialogActionType actionType) {
 		DOFileEntryBase fileEntry = null;
 		switch (fileEntryType) {
-			case FILE:
-				fileEntry = new DOFileEntryFile(pFilterFile.getFileDisplayMode(), -1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(),
-				        pFilterFile.getMaxLineLength());
-				break;
-			case INFO:
-				fileEntry = new DOFileEntryInfo(-1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
-				break;
-			case FOLDER:
-				fileEntry = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), -1, parent, 0, pFilterFile.getDisplaynameMask(),
-				        pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
-				break;
-			default:
-				log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
-				break;
+		case FILE:
+			fileEntry = new DOFileEntryFile(pFilterFile.getFileDisplayMode(), -1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(),
+					pFilterFile.getMaxLineLength());
+			break;
+		case INFO:
+			fileEntry = new DOFileEntryInfo(-1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
+			break;
+		case FOLDER:
+			fileEntry = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), -1, parent, 0, pFilterFile.getDisplaynameMask(),
+					pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
+			break;
+		default:
+			log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
+			break;
 		}
 
 		for (ConfigureFileDialogListener l : filterFileDialogListeners) {
@@ -144,7 +146,7 @@ public class ConfigureFileEntryDialog extends JDialog {
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("3px, fill:300:grow, 3px", // columns
-		        "3px, fill:p:grow, p, p"); // rows
+				"3px, fill:p:grow, p, p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
@@ -154,9 +156,9 @@ public class ConfigureFileEntryDialog extends JDialog {
 
 		add(builder.getPanel());
 	}
-	
+
 	@Override
-	public void pack(){
+	public void pack() {
 		super.pack();
 		setMinimumSize(getSize());
 	}

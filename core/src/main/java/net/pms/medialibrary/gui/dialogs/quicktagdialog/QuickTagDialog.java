@@ -43,39 +43,39 @@ public class QuickTagDialog extends JDialog {
 	private static final long serialVersionUID = 1623280241555707047L;
 
 	private final int MIN_BUTTON_WIDTH = 60;
-	
+
 	private JPanel pButtons;
 	private JPanel pTitle;
 	private QuickTagEntriesPanel pQuickTagEntries;
-	
+
 	private FileType fileType;
 
 	public QuickTagDialog(FileType fileType) {
-		((java.awt.Frame)getOwner()).setIconImage(new ImageIcon(getClass().getResource("/resources/images/icon-16.png")).getImage());
+		((java.awt.Frame) getOwner()).setIconImage(new ImageIcon(getClass().getResource("/resources/images/icon-16.png")).getImage());
 		setTitle(Messages.getString("ML.QuickTagDialog.Title"));
-		
+
 		List<DOQuickTagEntry> quickTagEntries = MediaLibraryStorage.getInstance().getQuickTagEntries();
 		this.fileType = fileType;
-		
+
 		init(quickTagEntries);
 		build();
 	}
 
 	private void init(List<DOQuickTagEntry> quickTagEntries) {
-		//title
+		// title
 		pTitle = new JPanel(new BorderLayout());
 		JLabel lTitle = new JLabel(Messages.getString("ML.QuickTagDialog.Header"));
 		lTitle.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 
-		lTitle.setFont(lTitle.getFont().deriveFont((float)lTitle.getFont().getSize() + 4));
+		lTitle.setFont(lTitle.getFont().deriveFont((float) lTitle.getFont().getSize() + 4));
 		lTitle.setFont(lTitle.getFont().deriveFont(Font.BOLD));
 		pTitle.add(lTitle, BorderLayout.LINE_START);
-		
+
 		JButton bAddQuickTag = new JButton();
 		bAddQuickTag.setIcon(new ImageIcon(getClass().getResource("/resources/images/tp_add.png")));
 		bAddQuickTag.setToolTipText(Messages.getString("ML.QuickTagDialog.bAddToolTip"));
 		bAddQuickTag.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				pQuickTagEntries.addQuickTagEntry(new DOQuickTagEntry());
@@ -83,13 +83,14 @@ public class QuickTagDialog extends JDialog {
 		});
 		pTitle.add(bAddQuickTag, BorderLayout.LINE_END);
 		pTitle.add(new JSeparator(), BorderLayout.SOUTH);
-		
-		//quick tags
+
+		// quick tags
 		pQuickTagEntries = new QuickTagEntriesPanel(quickTagEntries, fileType);
-		
-		//buttons
+
+		// buttons
 		JButton bSave = new JButton(Messages.getString("ML.QuickTagDialog.bOk"));
-		if(bSave.getPreferredSize().width < MIN_BUTTON_WIDTH) bSave.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bSave.getPreferredSize().height));
+		if (bSave.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bSave.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bSave.getPreferredSize().height));
 		bSave.addActionListener(new ActionListener() {
 
 			@Override
@@ -99,7 +100,8 @@ public class QuickTagDialog extends JDialog {
 		});
 
 		JButton bApply = new JButton(Messages.getString("ML.QuickTagDialog.bSave"));
-		if(bApply.getPreferredSize().width < MIN_BUTTON_WIDTH) bApply.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bApply.getPreferredSize().height));
+		if (bApply.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bApply.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bApply.getPreferredSize().height));
 		bApply.addActionListener(new ActionListener() {
 
 			@Override
@@ -109,7 +111,8 @@ public class QuickTagDialog extends JDialog {
 		});
 
 		JButton bCancel = new JButton(Messages.getString("ML.QuickTagDialog.bCancel"));
-		if(bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH) bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
+		if (bCancel.getPreferredSize().width < MIN_BUTTON_WIDTH)
+			bCancel.setPreferredSize(new Dimension(MIN_BUTTON_WIDTH, bCancel.getPreferredSize().height));
 		bCancel.addActionListener(new ActionListener() {
 
 			@Override
@@ -121,36 +124,36 @@ public class QuickTagDialog extends JDialog {
 		pButtons = new JPanel();
 		pButtons.add(bSave);
 		pButtons.add(bApply);
-		pButtons.add(bCancel);		
+		pButtons.add(bCancel);
 	}
-	
+
 	private void build() {
 		setLayout(new BorderLayout());
 		add(pTitle, BorderLayout.NORTH);
 		add(pQuickTagEntries, BorderLayout.CENTER);
 		add(pButtons, BorderLayout.SOUTH);
 	}
-	
+
 	private void close(boolean doSave) {
 		boolean doClose = true;
-		if(doSave) {
+		if (doSave) {
 			doClose = save();
 		}
-		
-		if(doClose) {
+
+		if (doClose) {
 			dispose();
 		}
 	}
-	
+
 	private boolean save() {
 		List<DOQuickTagEntry> quickTagEntries = pQuickTagEntries.getQuickTagEntries();
-		for(DOQuickTagEntry entry : quickTagEntries) {
-			if(entry.getName().equals("")) {
+		for (DOQuickTagEntry entry : quickTagEntries) {
+			if (entry.getName().equals("")) {
 				JOptionPane.showMessageDialog(this, Messages.getString("ML.QuickTagDialog.Message.NameEmpty"));
 				return false;
 			}
 		}
-		
+
 		MediaLibraryStorage.getInstance().setQuickTagEntries(quickTagEntries);
 		return true;
 	}

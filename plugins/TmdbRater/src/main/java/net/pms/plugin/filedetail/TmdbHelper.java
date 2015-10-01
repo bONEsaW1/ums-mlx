@@ -37,36 +37,39 @@ public class TmdbHelper {
 	private static final Logger log = LoggerFactory.getLogger(TmdbHelper.class);
 	private static Session session;
 	private static boolean isInitialized;
-	
-	public static void initialize(){
-		if(!isInitialized){
-		    GeneralSettings.setApiKey("4cdddc892213dd24e5011fd710f8abf0");
-		    Locale l = new Locale(net.pms.PMS.getConfiguration().getLanguage());
-		    GeneralSettings.setAPILocale(l);
-		    isInitialized = true;
+
+	public static void initialize() {
+		if (!isInitialized) {
+			GeneralSettings.setApiKey("4cdddc892213dd24e5011fd710f8abf0");
+			Locale l = new Locale(net.pms.PMS.getConfiguration().getLanguage());
+			GeneralSettings.setAPILocale(l);
+			isInitialized = true;
 		}
 	}
-	
-	public static Session getSession(){
-		if(!isInitialized) initialize();
-		if(session == null){
+
+	public static Session getSession() {
+		if (!isInitialized)
+			initialize();
+		if (session == null) {
 			String userName = TmdbRatingPlugin.globalConfig.getUserName();
 			String sessionStr = TmdbRatingPlugin.globalConfig.getSession();
-			
-			if(userName != null && sessionStr != null){
+
+			if (userName != null && sessionStr != null) {
 				session = new Session(userName, sessionStr);
-				if(log.isInfoEnabled()) log.info("Loaded session from store for user " + userName);
+				if (log.isInfoEnabled())
+					log.info("Loaded session from store for user " + userName);
 			}
-			
+
 		}
 		return session;
 	}
 
 	public static Session createSession(Component parentComponent) {
-		if(!isInitialized) initialize();
+		if (!isInitialized)
+			initialize();
 		try {
 			session = null;
-			
+
 			String token = Auth.getToken();
 			URL authUrl = Auth.authorizeToken(token);
 			java.awt.Desktop.getDesktop().browse(authUrl.toURI());
@@ -75,7 +78,8 @@ public class TmdbHelper {
 			Pair<Session, ServerResponse> resp = Auth.getSession(token);
 			if (resp.getSecond() == ServerResponse.SUCCESS) {
 				session = resp.getFirst();
-				if (log.isInfoEnabled()) log.info("Created new session for user " + session.getUserName());
+				if (log.isInfoEnabled())
+					log.info("Created new session for user " + session.getUserName());
 			} else {
 				log.warn(String.format("Failed to create session. Server response was %s", resp.getSecond()));
 			}

@@ -32,11 +32,11 @@ import net.pms.medialibrary.commons.dataobjects.DOFileEntryInfo;
 import net.pms.medialibrary.commons.dataobjects.DOFileEntryPlugin;
 
 public class TemplateTreeCellRenderer extends DefaultTreeCellRenderer {
-    private static final long serialVersionUID = -6938006991556561827L;
-	private ImageIcon         folderIcon;
-	private ImageIcon         folderEntryIcon;
-	private ImageIcon         fileFolderFileSingleIcon;
-	private ImageIcon         fileFolderFileMultipleIcon;
+	private static final long serialVersionUID = -6938006991556561827L;
+	private ImageIcon folderIcon;
+	private ImageIcon folderEntryIcon;
+	private ImageIcon fileFolderFileSingleIcon;
+	private ImageIcon fileFolderFileMultipleIcon;
 
 	public TemplateTreeCellRenderer() {
 		String iconsFolder = "/resources/images/";
@@ -62,23 +62,23 @@ public class TemplateTreeCellRenderer extends DefaultTreeCellRenderer {
 			} else if (userObject instanceof DOFileEntryInfo) {
 				icon = this.folderEntryIcon;
 			} else if (userObject instanceof DOFileEntryFile) {
-				DOFileEntryFile fef =(DOFileEntryFile)userObject;
-				switch(fef.getFileDisplayMode()){
-					case MULTIPLE:
-						icon = this.fileFolderFileMultipleIcon;
+				DOFileEntryFile fef = (DOFileEntryFile) userObject;
+				switch (fef.getFileDisplayMode()) {
+				case MULTIPLE:
+					icon = this.fileFolderFileMultipleIcon;
 					break;
-						default:
-							icon = this.fileFolderFileSingleIcon;
+				default:
+					icon = this.fileFolderFileSingleIcon;
 					break;
 				}
-			} else if (userObject instanceof DOFileEntryPlugin){
-				DOFileEntryPlugin entry = (DOFileEntryPlugin)userObject;
+			} else if (userObject instanceof DOFileEntryPlugin) {
+				DOFileEntryPlugin entry = (DOFileEntryPlugin) userObject;
 				icon = entry.getPlugin().getTreeIcon();
 			}
 		}
-		if(icon == null){
+		if (icon == null) {
 			icon = getIcon();
 		}
-	    return icon;
-    }
+		return icon;
+	}
 }

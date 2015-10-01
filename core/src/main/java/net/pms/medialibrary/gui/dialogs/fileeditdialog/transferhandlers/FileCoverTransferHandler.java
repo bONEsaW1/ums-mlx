@@ -38,11 +38,11 @@ import org.slf4j.LoggerFactory;
 import net.pms.PMS;
 import net.pms.medialibrary.commons.helpers.FileImportHelper;
 
-public class FileCoverTransferHandler  extends TransferHandler {
+public class FileCoverTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1874409559271363041L;
 	private static final Logger log = LoggerFactory.getLogger(FileCoverTransferHandler.class);
 
-	private static final DataFlavor flavors[] = { DataFlavor.javaFileListFlavor /*, DataFlavor.imageFlavor*/ };
+	private static final DataFlavor flavors[] = { DataFlavor.javaFileListFlavor /* , DataFlavor.imageFlavor */};
 	public static final String TMP_FILENAME = "tmp_cover.jpg";
 	protected List<String> supportedIconExtensions = Arrays.asList("png", "jpg", "jpeg", "bmp");
 	private boolean hasCoverChanged = false;
@@ -53,9 +53,9 @@ public class FileCoverTransferHandler  extends TransferHandler {
 	public void addCoverChangedListeners(ActionListener coverChangedListener) {
 		coverChangedListeners.add(coverChangedListener);
 	}
-	
+
 	protected void fireCoverChanged() {
-		for(ActionListener l : coverChangedListeners) {
+		for (ActionListener l : coverChangedListeners) {
 			l.actionPerformed(new ActionEvent(this, 9374, "CoverChanged"));
 		}
 	}
@@ -82,46 +82,47 @@ public class FileCoverTransferHandler  extends TransferHandler {
 
 	@Override
 	public boolean importData(JComponent comp, Transferable t) {
-			if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				try {
-					@SuppressWarnings("unchecked")
-					List<File> files = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
-					if (files.size() == 1) {
-						//get the paths
-						String sourceFileName = files.get(0).getAbsolutePath();
-						
-						//get the file extension
-						File f = new File(sourceFileName);
-						String name = f.getName();
-						int pos = name.lastIndexOf('.');
-						String ext = name.substring(pos + 1).toLowerCase();
+		if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+			try {
+				@SuppressWarnings("unchecked")
+				List<File> files = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+				if (files.size() == 1) {
+					// get the paths
+					String sourceFileName = files.get(0).getAbsolutePath();
 
-						//make sure an image has been dropped
-						if(!supportedIconExtensions.contains(ext)) {
-							return false;
-						}
-						
-						//copy the image
-						importCover(sourceFileName);
-						
-						hasCoverChanged = true;
-						fireCoverChanged();
+					// get the file extension
+					File f = new File(sourceFileName);
+					String name = f.getName();
+					int pos = name.lastIndexOf('.');
+					String ext = name.substring(pos + 1).toLowerCase();
+
+					// make sure an image has been dropped
+					if (!supportedIconExtensions.contains(ext)) {
+						return false;
 					}
-					return true;
-				} catch (Throwable th) {
-					log.error("Failed to accept dropped image", th);
+
+					// copy the image
+					importCover(sourceFileName);
+
+					hasCoverChanged = true;
+					fireCoverChanged();
 				}
+				return true;
+			} catch (Throwable th) {
+				log.error("Failed to accept dropped image", th);
 			}
+		}
 		return false;
 	}
-	
+
 	public void setCoverPath(String coverPath) {
 		this.coverPath = coverPath;
 		hasCoverBeenSet = true;
 	}
 
 	public String getCoverPath() {
-		if(coverPath == null) coverPath = getDropCoverPath();
+		if (coverPath == null)
+			coverPath = getDropCoverPath();
 		return coverPath;
 	}
 
@@ -132,7 +133,7 @@ public class FileCoverTransferHandler  extends TransferHandler {
 			return "";
 		}
 	}
-	
+
 	public void importCover(String coverPath) {
 		File coverToCopy = new File(coverPath);
 		try {
@@ -146,7 +147,7 @@ public class FileCoverTransferHandler  extends TransferHandler {
 			hasCoverBeenSet = false;
 		}
 	}
-	
+
 	public boolean hasCoverChanged() {
 		return hasCoverChanged;
 	}

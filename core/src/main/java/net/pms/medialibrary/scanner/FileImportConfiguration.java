@@ -11,10 +11,10 @@ public class FileImportConfiguration {
 	private boolean isVideoImportEnabled;
 	private boolean isAudioImportEnabled;
 	private boolean isPictureImportEnabled;
-	
+
 	public FileImportConfiguration() {
 	}
-	
+
 	public FileImportConfiguration(String path, DOFileImportTemplate fileImportPlugin, boolean isForceUpdate, boolean isFilePropertiesImportEnabled,
 			boolean isPluginImportEnabled, boolean isVideoImportEnabled, boolean isAudioImportEnabled, boolean isPictureImportEnabled) {
 		this.path = path;

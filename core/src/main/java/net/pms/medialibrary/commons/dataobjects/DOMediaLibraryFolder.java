@@ -24,15 +24,15 @@ import java.util.List;
 import net.pms.medialibrary.commons.enumarations.FileType;
 import net.pms.medialibrary.commons.enumarations.FolderType;
 
-public class DOMediaLibraryFolder extends DOFolder implements Cloneable {	
-	private DOFilter                   filter;
-	private boolean                    inheritsConditions;
-	private List<DOFolder> 			   childFolders = new ArrayList<DOFolder>();
-	private FileType                   fileType;
-	private FileDisplayProperties      displayProperties;
-	private boolean                    inheritSort;
-	private boolean                    inheritDisplayFileAs;
-	private boolean                    displayItems;
+public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
+	private DOFilter filter;
+	private boolean inheritsConditions;
+	private List<DOFolder> childFolders = new ArrayList<DOFolder>();
+	private FileType fileType;
+	private FileDisplayProperties displayProperties;
+	private boolean inheritSort;
+	private boolean inheritDisplayFileAs;
+	private boolean displayItems;
 	private int maxFiles;
 
 	public DOMediaLibraryFolder() {
@@ -48,14 +48,14 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 	}
 
 	public DOMediaLibraryFolder(long id, DOMediaLibraryFolder parentFolder, String displayName, String equation, List<DOCondition> conditions, boolean displayItems,
-	        boolean inheritsConditions, FileType fileType, int positionInParent, boolean inheritSort, boolean inheritDisplayFileAs) {
+			boolean inheritsConditions, FileType fileType, int positionInParent, boolean inheritSort, boolean inheritDisplayFileAs) {
 		this(id, parentFolder, displayName, equation, conditions, displayItems, inheritsConditions, fileType, positionInParent,
-		        new FileDisplayProperties(), inheritSort, inheritDisplayFileAs);
+				new FileDisplayProperties(), inheritSort, inheritDisplayFileAs);
 	}
 
 	public DOMediaLibraryFolder(long id, DOMediaLibraryFolder parentFolder, String displayName, String equation, List<DOCondition> conditions, boolean displayItems,
-	        boolean inheritsConditions, FileType fileType, int positionInParent, FileDisplayProperties displayProperties, boolean inheritSort,
-	        boolean inheritDisplayFileAs) {
+			boolean inheritsConditions, FileType fileType, int positionInParent, FileDisplayProperties displayProperties, boolean inheritSort,
+			boolean inheritDisplayFileAs) {
 		super(displayName, id, parentFolder == null ? -1 : parentFolder.getId(), positionInParent, FolderType.MEDIALIBRARY);
 		setParentFolder(parentFolder);
 		setFilter(new DOFilter(equation, conditions));
@@ -90,7 +90,7 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 				String[] elems = parentEquation.split(" ");
 				for (DOCondition condition : parent.getFilter().getConditions()) {
 					DOCondition newCon = new DOCondition(condition.getType(), condition.getOperator(), condition.getCondition(), parent.getId() + "_"
-					        + condition.getName(), condition.getValueType(), condition.getUnit(), condition.getTagName());
+							+ condition.getName(), condition.getValueType(), condition.getUnit(), condition.getTagName());
 					for (int i = 0; i < elems.length; i++) {
 						if (elems[i].equals(condition.getName())) {
 							elems[i] = newCon.getName();
@@ -139,9 +139,9 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 
 	public boolean isInheritSort() {
 		boolean retVal = inheritSort;
-		if(getParentFolder() != null 
-				&& getParentFolder().getFileType() != getFileType() 
-				&& getParentFolder().getFileType() != FileType.FILE){
+		if (getParentFolder() != null
+				&& getParentFolder().getFileType() != getFileType()
+				&& getParentFolder().getFileType() != FileType.FILE) {
 			retVal = false;
 		}
 		return retVal;
@@ -157,7 +157,7 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 
 	public boolean isInheritDisplayFileAs() {
 		boolean retVal = inheritDisplayFileAs;
-		if(getParentFolder() != null && getParentFolder().getFileType() != getFileType() && getParentFolder().getFileType() != FileType.FILE){
+		if (getParentFolder() != null && getParentFolder().getFileType() != getFileType() && getParentFolder().getFileType() != FileType.FILE) {
 			retVal = false;
 		}
 		return retVal;
@@ -177,7 +177,7 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 
 	public boolean isInheritsConditions() {
 		boolean retVal = inheritsConditions;
-		if(getParentFolder() != null && getParentFolder().getFileType() != getFileType() && getParentFolder().getFileType() != FileType.FILE){
+		if (getParentFolder() != null && getParentFolder().getFileType() != getFileType() && getParentFolder().getFileType() != FileType.FILE) {
 			retVal = false;
 		}
 		return retVal;
@@ -200,8 +200,8 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 	}
 
 	public FileDisplayProperties getDisplayProperties() {
-		if ((this.isInheritDisplayFileAs() || this.isInheritSort()) 
-				&& getParentFolder() != null 
+		if ((this.isInheritDisplayFileAs() || this.isInheritSort())
+				&& getParentFolder() != null
 				&& (getFileType() == getParentFolder().getFileType() || getParentFolder().getFileType() == FileType.FILE)) {
 			FileDisplayProperties props = getParentFolder().getDisplayProperties().clone();
 
@@ -241,7 +241,7 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 		clone.setParentId(getParentId());
 		clone.setPositionInParent(getPositionInParent());
 		clone.setFolderType(getFolderType());
-		
+
 		List<DOFolder> tmpChildren = new ArrayList<DOFolder>();
 		for (DOFolder child : getChildFolders()) {
 			tmpChildren.add(child);
@@ -264,67 +264,53 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof DOMediaLibraryFolder)) { 
-			return false; 
+		if (!(obj instanceof DOMediaLibraryFolder)) {
+			return false;
 		}
 
 		DOMediaLibraryFolder compObj = (DOMediaLibraryFolder) obj;
-		if (super.equals(compObj) 
-				&& isDisplayItems() == compObj.isDisplayItems() 
-				&& isInheritSort() == compObj.isInheritSort() 
+		if (super.equals(compObj)
+				&& isDisplayItems() == compObj.isDisplayItems()
+				&& isInheritSort() == compObj.isInheritSort()
 				&& isInheritsConditions() == compObj.isInheritsConditions()
 				&& isInheritDisplayFileAs() == compObj.isInheritDisplayFileAs()
-		        && getFileType().equals(compObj.getFileType()) 
-		        && getInheritedFilter().equals(compObj.getInheritedFilter())
-		        && getDisplayProperties().equals(compObj.getDisplayProperties())
-		        && getMaxFiles() == compObj.getMaxFiles()) { 
-			/*if(getChildFolders() == null && compObj.getChildFolders() == null){
-				return true;
-			} else if((getChildFolders() == null 	
-					|| compObj.getChildFolders() == null
-					|| getChildFolders().size() != compObj.getChildFolders().size())){
-				return false;
-			}  else {
-				for(DOFolder c1 : getChildFolders()){
-					boolean found = false;
-					for(DOFolder c2 : compObj.getChildFolders()){
-						if(c1.getId() == c2.getId()
-								&& c1.getName().equals(c2.getName())){
-							found = true;
-							break;
-						}						
-					}
-					if(!found){
-						return false;
-					}
-				}
-			}*/
-			return true; 
+				&& getFileType().equals(compObj.getFileType())
+				&& getInheritedFilter().equals(compObj.getInheritedFilter())
+				&& getDisplayProperties().equals(compObj.getDisplayProperties())
+				&& getMaxFiles() == compObj.getMaxFiles()) {
+			/*
+			 * if(getChildFolders() == null && compObj.getChildFolders() == null){ return true; } else
+			 * if((getChildFolders() == null || compObj.getChildFolders() == null || getChildFolders().size() !=
+			 * compObj.getChildFolders().size())){ return false; } else { for(DOFolder c1 : getChildFolders()){ boolean
+			 * found = false; for(DOFolder c2 : compObj.getChildFolders()){ if(c1.getId() == c2.getId() &&
+			 * c1.getName().equals(c2.getName())){ found = true; break; } } if(!found){ return false; } } }
+			 */
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		int hashCode =  24 + super.hashCode();
+		int hashCode = 24 + super.hashCode();
 		hashCode *= 24 + (isDisplayItems() ? 1 : 2);
 		hashCode *= 24 + (isInheritSort() ? 3 : 4);
 		hashCode *= 24 + (isInheritsConditions() ? 5 : 6);
-		hashCode *= 24 + (isInheritDisplayFileAs() ? 7 : 8);		
+		hashCode *= 24 + (isInheritDisplayFileAs() ? 7 : 8);
 		hashCode *= 24 + getFileType().hashCode();
-		hashCode *= 24 + getInheritedFilter().hashCode();	
+		hashCode *= 24 + getInheritedFilter().hashCode();
 		hashCode *= 24 + getDisplayProperties().hashCode();
 		hashCode *= 24 + getFolderType().hashCode();
 		hashCode *= 24 + getMaxFiles();
-		for(DOFolder c : getChildFolders()){
-			hashCode *= 24 + c.getId();			
-		}		
-		
+		for (DOFolder c : getChildFolders()) {
+			hashCode *= 24 + c.getId();
+		}
+
 		return hashCode;
-	}	
-	
+	}
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getName();
 	}
 }

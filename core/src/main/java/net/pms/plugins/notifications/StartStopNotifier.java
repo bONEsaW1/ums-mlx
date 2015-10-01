@@ -10,8 +10,8 @@ import net.pms.plugins.PluginsFactory;
 import net.pms.plugins.StartStopListener;
 
 /**
- * Listens to the {@link StartStopEvent} notification queue and notifies {@link StartStopListener} 
- * asynchronously when getting a notification
+ * Listens to the {@link StartStopEvent} notification queue and notifies {@link StartStopListener} asynchronously when
+ * getting a notification
  * 
  * @author pw
  *
@@ -19,12 +19,12 @@ import net.pms.plugins.StartStopListener;
 public class StartStopNotifier {
 	private static final Logger log = LoggerFactory.getLogger(StartStopNotifier.class);
 	private static int nbThreads = 0;
-	
+
 	/**
 	 * Starts listening for start stop notifications
 	 */
-	public static void initialize() {		
-		NotificationCenter.getInstance(StartStopEvent.class).subscribe(new NotificationSubscriber<StartStopEvent>() {			
+	public static void initialize() {
+		NotificationCenter.getInstance(StartStopEvent.class).subscribe(new NotificationSubscriber<StartStopEvent>() {
 			@Override
 			public void onMessage(final StartStopEvent obj) {
 				for (final StartStopListener plugin : PluginsFactory.getStartStopListeners()) {
@@ -32,7 +32,7 @@ public class StartStopNotifier {
 						@Override
 						public void run() {
 							try {
-								switch(obj.getEvent()) {
+								switch (obj.getEvent()) {
 								case Start:
 									plugin.nowPlaying(obj.getDlnaResource().getMedia(), obj.getDlnaResource());
 									break;

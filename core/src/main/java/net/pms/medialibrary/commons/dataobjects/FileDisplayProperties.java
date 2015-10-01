@@ -68,7 +68,8 @@ public class FileDisplayProperties implements Cloneable {
 	}
 
 	public String getDisplayNameMask() {
-		if(displayNameMask == null) displayNameMask = "";
+		if (displayNameMask == null)
+			displayNameMask = "";
 		return displayNameMask;
 	}
 
@@ -77,7 +78,8 @@ public class FileDisplayProperties implements Cloneable {
 	}
 
 	public FileDisplayType getFileDisplayType() {
-		if(fileDisplayType == null) fileDisplayType = FileDisplayType.UNKNOWN;
+		if (fileDisplayType == null)
+			fileDisplayType = FileDisplayType.UNKNOWN;
 		return fileDisplayType;
 	}
 
@@ -86,7 +88,8 @@ public class FileDisplayProperties implements Cloneable {
 	}
 
 	public ConditionType getSortType() {
-		if(sortType == null) sortType = ConditionType.UNKNOWN;
+		if (sortType == null)
+			sortType = ConditionType.UNKNOWN;
 		return sortType;
 	}
 
@@ -112,7 +115,8 @@ public class FileDisplayProperties implements Cloneable {
 	}
 
 	public List<DOThumbnailPriority> getThumbnailPriorities() {
-		if(thumbnailPriorities == null) thumbnailPriorities = new ArrayList<DOThumbnailPriority>();
+		if (thumbnailPriorities == null)
+			thumbnailPriorities = new ArrayList<DOThumbnailPriority>();
 		return thumbnailPriorities;
 	}
 
@@ -126,31 +130,31 @@ public class FileDisplayProperties implements Cloneable {
 
 	@Override
 	public String toString() {
-		return String.format("mask=%s, fileDisplayType=%s, sortType=%s, templateId=%s, thumbnailPrios=%s, sortAscending=%s, sortOption=%s", 
+		return String.format("mask=%s, fileDisplayType=%s, sortType=%s, templateId=%s, thumbnailPrios=%s, sortAscending=%s, sortOption=%s",
 				getDisplayNameMask(), getFileDisplayType(), getSortType(), getTemplate() == null ? "null" : getTemplate().getId(), getThumbnailPriorities().size(), isSortAscending(), getSortOption());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof FileDisplayProperties)) { 
-			return false; 
+		if (!(obj instanceof FileDisplayProperties)) {
+			return false;
 		}
 
 		FileDisplayProperties compObj = (FileDisplayProperties) obj;
-		if (getDisplayNameMask().equals(compObj.getDisplayNameMask()) 
+		if (getDisplayNameMask().equals(compObj.getDisplayNameMask())
 				&& getFileDisplayType() == compObj.getFileDisplayType()
 				&& getSortType() == compObj.getSortType()
 				&& isSortAscending() == compObj.isSortAscending()
 				&& getSortOption() == compObj.getSortOption()
-				&& ((getTemplate() == null && compObj.getTemplate() == null) 
-						|| (getTemplate() != null && compObj.getTemplate() != null && getTemplate().equals(compObj.getTemplate())))
+				&& ((getTemplate() == null && compObj.getTemplate() == null)
+				|| (getTemplate() != null && compObj.getTemplate() != null && getTemplate().equals(compObj.getTemplate())))
 				&& getThumbnailPriorities().size() == compObj.getThumbnailPriorities().size()) {
-			for(int i = 0; i < this.getThumbnailPriorities().size(); i++){
-				if(!this.getThumbnailPriorities().get(i).equals(compObj.getThumbnailPriorities().get(i))){
+			for (int i = 0; i < this.getThumbnailPriorities().size(); i++) {
+				if (!this.getThumbnailPriorities().get(i).equals(compObj.getThumbnailPriorities().get(i))) {
 					return false;
 				}
 			}
-			return true; 
+			return true;
 		}
 
 		return false;

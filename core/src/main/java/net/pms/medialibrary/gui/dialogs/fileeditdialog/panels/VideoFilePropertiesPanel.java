@@ -55,9 +55,9 @@ import net.pms.medialibrary.gui.shared.JHeader;
 
 public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesEditor {
 	private static final long serialVersionUID = -2983607076103804005L;
-	
+
 	private final String GENRES_NAME = Messages.getString("ML.Condition.Type.VIDEO_GENRES");
-	
+
 	private PropertyInfoEntry hName;
 	private PropertyInfoEntry hOriginalName;
 	private PropertyInfoEntry hSortName;
@@ -78,7 +78,7 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 	private JTextArea taOverview;
 	private JCheckBox cbActive;
 	private FileTagsPanel pGenres;
-	
+
 	private boolean isConfirmEdit;
 
 	public VideoFilePropertiesPanel(DOVideoFileInfo fileInfo, boolean isConfirmEdit) {
@@ -87,7 +87,7 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 		init(fileInfo);
 		build();
 	}
-	
+
 	public void init(DOVideoFileInfo fileInfo) {
 		hName = new PropertyInfoEntry(fileInfo.getName(), ConditionType.VIDEO_NAME, isConfirmEdit);
 		hOriginalName = new PropertyInfoEntry(fileInfo.getOriginalName(), ConditionType.VIDEO_ORIGINALNAME, isConfirmEdit);
@@ -104,24 +104,24 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 		hCertification = new PropertyInfoEntry(fileInfo.getAgeRating().getLevel(), ConditionType.VIDEO_CERTIFICATION, isConfirmEdit);
 		hTagLine = new PropertyInfoEntry(fileInfo.getTagLine(), ConditionType.VIDEO_TAGLINE, isConfirmEdit);
 		hBudget = new PropertyInfoEntry(String.valueOf(fileInfo.getBudget()), ConditionType.VIDEO_BUDGET, isConfirmEdit);
-		hRevenue  = new PropertyInfoEntry(String.valueOf(fileInfo.getRevenue()), ConditionType.VIDEO_REVENUE, isConfirmEdit);
-		
+		hRevenue = new PropertyInfoEntry(String.valueOf(fileInfo.getRevenue()), ConditionType.VIDEO_REVENUE, isConfirmEdit);
+
 		hOverview = new JHeader(ConditionType.VIDEO_OVERVIEW, isConfirmEdit);
 		taOverview = new JTextArea(String.valueOf(fileInfo.getOverview()));
 		taOverview.setLineWrap(true);
 		taOverview.setWrapStyleWord(true);
 		taOverview.getDocument().addDocumentListener(new DocumentListener() {
-			
+
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				hOverview.setSelected(true);
 			}
-			
+
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				hOverview.setSelected(true);
 			}
-			
+
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				hOverview.setSelected(true);
@@ -130,18 +130,18 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 
 		cbActive = new JCheckBox(Messages.getString("ML.Condition.Header.Type.FILE_ISACTIF"));
 		cbActive.setFont(cbActive.getFont().deriveFont(Font.BOLD));
-		cbActive.setSelected(fileInfo.isActive());		
-		if(isConfirmEdit) {
+		cbActive.setSelected(fileInfo.isActive());
+		if (isConfirmEdit) {
 			cbActive.setSelected(false);
 			cbActive.setEnabled(false);
 		}
-		
+
 		Map<String, List<String>> genresMap = new HashMap<String, List<String>>();
 		Collections.sort(fileInfo.getGenres());
 		genresMap.put(GENRES_NAME, fileInfo.getGenres());
 		pGenres = new FileTagsPanel(genresMap, false, false);
 		pGenres.addRepaintListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				validate();
@@ -151,121 +151,127 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 	}
 
 	public void build() {
-		//reset the sizes of all text fields to lay them out correctly when resizing
-		//otherwise, scroll bars will show up if the dialog size is being reduced
+		// reset the sizes of all text fields to lay them out correctly when resizing
+		// otherwise, scroll bars will show up if the dialog size is being reduced
 		taOverview.setSize(new Dimension(10, 10));
-		
-		//build the panel
+
+		// build the panel
 		PanelBuilder builder;
 		CellConstraints cc = new CellConstraints();
 
 		FormLayout layout = new FormLayout("5px, 20:grow, 10px, 20:grow, 10px, 20:grow, 10px, 20:grow, 10px, d, 5px", // columns
-		        "3px, d, 3px, d, 3px, d, 3px, d, 3px, d, 3px, d, 3px, d, 5px, d, 3px"); // rows
+				"3px, d, 3px, d, 3px, d, 3px, d, 3px, d, 3px, d, 3px, d, 5px, d, 3px"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
-		
-		//row 1
+
+		// row 1
 		builder.add(hName, cc.xyw(2, 2, 3));
 		builder.add(hOriginalName, cc.xyw(6, 2, 3));
 		builder.add(hYear, cc.xy(10, 2));
-		
-		//row 2
+
+		// row 2
 		builder.add(hSortName, cc.xyw(2, 4, 3));
 		builder.add(hDirector, cc.xyw(6, 4, 3));
 		builder.add(hImdbId, cc.xy(10, 4));
-		
-		//row 3
+
+		// row 3
 		builder.add(hHomePage, cc.xyw(2, 6, 3));
 		builder.add(hTrailer, cc.xyw(6, 6, 3));
 		builder.add(hTmdbId, cc.xy(10, 6));
-		
-		//row 4		
+
+		// row 4
 		builder.add(hRating, cc.xy(2, 8));
 		builder.add(hRatingVoters, cc.xy(4, 8));
 		builder.add(hCertificationReason, cc.xyw(6, 8, 3));
 		builder.add(hCertification, cc.xy(10, 8));
 
-		//row 5
+		// row 5
 		builder.add(hTagLine, cc.xyw(2, 10, 7));
 		builder.add(hBudget, cc.xy(10, 10));
 
-		//row 6+7
+		// row 6+7
 		JPanel pOverviewHeader = new JPanel(new GridLayout());
 		pOverviewHeader.setAlignmentY(LEFT_ALIGNMENT);
 		pOverviewHeader.add(hOverview);
-		
+
 		JScrollPane spOverview = new JScrollPane(taOverview);
 		spOverview.setBorder(new JTextField().getBorder());
 
 		JPanel pOverview = new JPanel(new BorderLayout(0, 1));
 		pOverview.add(pOverviewHeader, BorderLayout.NORTH);
 		pOverview.add(spOverview, BorderLayout.CENTER);
-		
+
 		builder.add(pOverview, cc.xywh(2, 12, 7, 3));
-		
+
 		builder.add(hRevenue, cc.xy(10, 12));
 		builder.add(cbActive, cc.xy(10, 14));
-		
-		//row 8
+
+		// row 8
 		builder.add(pGenres, cc.xyw(2, 16, 9));
 
 		JPanel p = builder.getPanel();
 		JScrollPane sp = new JScrollPane(p);
 		sp.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		removeAll();
 		add(sp);
 	}
 
 	@Override
 	public void updateFileInfo(DOFileInfo fileInfo) {
-		if(!(fileInfo instanceof DOVideoFileInfo)) {
+		if (!(fileInfo instanceof DOVideoFileInfo)) {
 			return;
 		}
-		
-		//try to parse all numerical values first to avoid modifying the fileinfo
-		//if a value can't be set
+
+		// try to parse all numerical values first to avoid modifying the fileinfo
+		// if a value can't be set
 		int year;
 		int tmdbId;
 		int budget;
 		int revenue;
 		int rating;
 		int voters;
-		
-		try { year = Integer.parseInt(hYear.getText().trim()); } 
-		catch(NumberFormatException ex) {
+
+		try {
+			year = Integer.parseInt(hYear.getText().trim());
+		} catch (NumberFormatException ex) {
 			year = 0;
 		}
-		try { tmdbId = Integer.parseInt(hTmdbId.getText().trim()); } 
-		catch(NumberFormatException ex) {
+		try {
+			tmdbId = Integer.parseInt(hTmdbId.getText().trim());
+		} catch (NumberFormatException ex) {
 			tmdbId = 0;
 		}
-		try { budget = Integer.parseInt(hBudget.getText().trim()); } 
-		catch(NumberFormatException ex) {
+		try {
+			budget = Integer.parseInt(hBudget.getText().trim());
+		} catch (NumberFormatException ex) {
 			budget = 0;
 		}
-		try { revenue = Integer.parseInt(hRevenue.getText().trim()); } 
-		catch(NumberFormatException ex) {
+		try {
+			revenue = Integer.parseInt(hRevenue.getText().trim());
+		} catch (NumberFormatException ex) {
 			revenue = 0;
 		}
-		try { rating = Integer.parseInt(hRating.getText().trim()); } 
-		catch(NumberFormatException ex) {
+		try {
+			rating = Integer.parseInt(hRating.getText().trim());
+		} catch (NumberFormatException ex) {
 			rating = 0;
 		}
-		try { voters = Integer.parseInt(hRatingVoters.getText().trim()); } 
-		catch(NumberFormatException ex) {
+		try {
+			voters = Integer.parseInt(hRatingVoters.getText().trim());
+		} catch (NumberFormatException ex) {
 			voters = 0;
 		}
 
 		DOVideoFileInfo fiVideo = (DOVideoFileInfo) fileInfo;
 		fiVideo.setActive(cbActive.isSelected());
-		
+
 		fiVideo.setYear(year);
 		fiVideo.setTmdbId(tmdbId);
 		fiVideo.setBudget(budget);
 		fiVideo.setRevenue(revenue);
-		fiVideo.setRating(new DORating(rating, voters));		
-		
+		fiVideo.setRating(new DORating(rating, voters));
+
 		fiVideo.setName(hName.getText().trim());
 		fiVideo.setOriginalName(hOriginalName.getText().trim());
 		fiVideo.setSortName(hSortName.getText().trim());
@@ -276,14 +282,14 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 		fiVideo.setAgeRating(new DOCertification(hCertification.getText().trim(), hCertificationReason.getText().trim()));
 		fiVideo.setTagLine(hTagLine.getText().trim());
 		fiVideo.setOverview(taOverview.getText().trim());
-		
+
 		Map<String, List<String>> tags = pGenres.getTags();
 		List<String> newGenres = new ArrayList<String>();
 		if (tags.keySet().contains(GENRES_NAME)) {
 			newGenres = tags.get(GENRES_NAME);
 		}
 		fiVideo.setGenres(newGenres);
-			
+
 	}
 
 	@Override
@@ -291,59 +297,59 @@ public class VideoFilePropertiesPanel extends JPanel implements IFilePropertiesE
 		List<ConditionType> res = new ArrayList<ConditionType>();
 		res.add(ConditionType.FILE_CONTAINS_TAG);
 		res.add(ConditionType.VIDEO_CONTAINS_GENRE);
-		
-		if(hName.isSelected()) {
+
+		if (hName.isSelected()) {
 			res.add(ConditionType.VIDEO_NAME);
 		}
-		if(hOriginalName.isSelected()) {
+		if (hOriginalName.isSelected()) {
 			res.add(ConditionType.VIDEO_ORIGINALNAME);
 		}
-		if(hSortName.isSelected()) {
+		if (hSortName.isSelected()) {
 			res.add(ConditionType.VIDEO_SORTNAME);
 		}
-		if(hDirector.isSelected()) {
+		if (hDirector.isSelected()) {
 			res.add(ConditionType.VIDEO_DIRECTOR);
 		}
-		if(hImdbId.isSelected()) {
+		if (hImdbId.isSelected()) {
 			res.add(ConditionType.VIDEO_IMDBID);
 		}
-		if(hTmdbId.isSelected()) {
+		if (hTmdbId.isSelected()) {
 			res.add(ConditionType.VIDEO_TMDBID);
 		}
-		if(hRating.isSelected()) {
+		if (hRating.isSelected()) {
 			res.add(ConditionType.VIDEO_RATINGPERCENT);
 		}
-		if(hRatingVoters.isSelected()) {
+		if (hRatingVoters.isSelected()) {
 			res.add(ConditionType.VIDEO_RATINGVOTERS);
 		}
-		if(hRevenue.isSelected()) {
+		if (hRevenue.isSelected()) {
 			res.add(ConditionType.VIDEO_REVENUE);
 		}
-		if(hYear.isSelected()) {
+		if (hYear.isSelected()) {
 			res.add(ConditionType.VIDEO_YEAR);
 		}
-		if(hBudget.isSelected()) {
+		if (hBudget.isSelected()) {
 			res.add(ConditionType.VIDEO_BUDGET);
 		}
-		if(hHomePage.isSelected()) {
+		if (hHomePage.isSelected()) {
 			res.add(ConditionType.VIDEO_HOMEPAGEURL);
 		}
-		if(hCertification.isSelected()) {
+		if (hCertification.isSelected()) {
 			res.add(ConditionType.VIDEO_CERTIFICATION);
 		}
-		if(hCertificationReason.isSelected()) {
+		if (hCertificationReason.isSelected()) {
 			res.add(ConditionType.VIDEO_CERTIFICATIONREASON);
 		}
-		if(hTrailer.isSelected()) {
+		if (hTrailer.isSelected()) {
 			res.add(ConditionType.VIDEO_TRAILERURL);
 		}
-		if(hTagLine.isSelected()) {
+		if (hTagLine.isSelected()) {
 			res.add(ConditionType.VIDEO_TAGLINE);
 		}
-		if(hOverview.isSelected()) {
+		if (hOverview.isSelected()) {
 			res.add(ConditionType.VIDEO_OVERVIEW);
 		}
-		
+
 		return res;
 	}
 }

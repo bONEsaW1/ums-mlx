@@ -51,13 +51,13 @@ public class GlobalConfigurationPanel extends JPanel {
 	private void init() {
 		tfCoverWidth = new JTextField();
 		tfReceiveTimeout = new JTextField();
-		
+
 		cbUseRottenTomatoes = new JCheckBox(ImdbMovieImportPlugin.messages.getString("GlobalConfigurationPanel.1"));
 
 		@SuppressWarnings("unchecked")
-		ComboBoxItem<PlotType>[] cbItems = new ComboBoxItem[PlotType.values().length];		
+		ComboBoxItem<PlotType>[] cbItems = new ComboBoxItem[PlotType.values().length];
 		int i = 0;
-		for(PlotType plotType : PlotType.values()) {
+		for (PlotType plotType : PlotType.values()) {
 			cbItems[i++] = new ComboBoxItem<PlotType>(ImdbMovieImportPlugin.messages.getString("PlotType." + plotType), plotType);
 		}
 		cbPlotType = new JComboBox(cbItems);
@@ -68,13 +68,13 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	private void build() {
 		// Set basic layout
-		FormLayout layout = new FormLayout("5px, p, 5px, f:p:g, 5px", //columns
-				"5px, p, 5px, p, 5px, p, 5px, p, 5px"); //rows
+		FormLayout layout = new FormLayout("5px, p, 5px, f:p:g, 5px", // columns
+				"5px, p, 5px, p, 5px, p, 5px, p, 5px"); // rows
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.addLabel(ImdbMovieImportPlugin.messages.getString("GlobalConfigurationPanel.2"), cc.xy(2, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 		builder.add(tfCoverWidth, cc.xy(4, 2));
 
@@ -88,14 +88,13 @@ public class GlobalConfigurationPanel extends JPanel {
 
 		JScrollPane sp = new JScrollPane(builder.getPanel());
 		sp.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		add(sp);
 	}
-	
+
 	/**
 	 * Updates all graphical components to show the global configuration.<br>
-	 * This is being used to roll back changes after editing properties and
-	 * canceling the dialog.
+	 * This is being used to roll back changes after editing properties and canceling the dialog.
 	 */
 	public void applyConfig() {
 		cbUseRottenTomatoes.setSelected(globalConfig.isUseRottenTomatoes());
@@ -112,8 +111,8 @@ public class GlobalConfigurationPanel extends JPanel {
 	@SuppressWarnings("unchecked")
 	public void updateConfiguration(GlobalConfiguration gc) {
 		gc.setUseRottenTomatoes(cbUseRottenTomatoes.isSelected());
-		gc.setPlotType(((ComboBoxItem<PlotType>)cbPlotType.getSelectedItem()).getValue());
-		
+		gc.setPlotType(((ComboBoxItem<PlotType>) cbPlotType.getSelectedItem()).getValue());
+
 		int coverWidth = globalConfig.getCoverWidth();
 		try {
 			coverWidth = Integer.parseInt(tfCoverWidth.getText());
@@ -121,7 +120,7 @@ public class GlobalConfigurationPanel extends JPanel {
 			log.error(String.format("Failed to parse cover width '%s' as an integer", tfCoverWidth.getText()));
 		}
 		gc.setCoverWidth(coverWidth);
-		
+
 		int receiveTimeout = globalConfig.getReceiveTimeoutSec();
 		try {
 			receiveTimeout = Integer.parseInt(tfReceiveTimeout.getText());

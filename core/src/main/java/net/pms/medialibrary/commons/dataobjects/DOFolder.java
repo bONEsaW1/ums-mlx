@@ -21,11 +21,11 @@ package net.pms.medialibrary.commons.dataobjects;
 import net.pms.medialibrary.commons.enumarations.FolderType;
 
 public class DOFolder {
-	private String               name;
-	private long                 id;
-	private long                 parentId;
-	private int                  positionInParent;
-	private FolderType           folderType;
+	private String name;
+	private long id;
+	private long parentId;
+	private int positionInParent;
+	private FolderType folderType;
 	private DOMediaLibraryFolder parentFolder;
 
 	public DOFolder(String name, long id, long parentId, DOMediaLibraryFolder parentFolder, int positionInParent, FolderType folderType) {
@@ -54,7 +54,8 @@ public class DOFolder {
 	}
 
 	public String getName() {
-		if(name == null) name = "";
+		if (name == null)
+			name = "";
 		return name;
 	}
 
@@ -87,17 +88,18 @@ public class DOFolder {
 	}
 
 	public FolderType getFolderType() {
-		if(folderType == null) folderType = FolderType.UNKNOWN;
+		if (folderType == null)
+			folderType = FolderType.UNKNOWN;
 		return folderType;
 	}
 
 	public void setParentFolder(DOMediaLibraryFolder parentFolder) {
 		this.parentId = parentFolder == null ? -1 : parentFolder.getId();
-		if(this.parentFolder != null && !this.parentFolder.equals(parentFolder)){
+		if (this.parentFolder != null && !this.parentFolder.equals(parentFolder)) {
 			this.parentFolder.getChildFolders().remove(this);
 		}
 		this.parentFolder = parentFolder;
-		if(parentFolder != null && parentFolder.getChildFolders() != null && !parentFolder.getChildFolders().contains(this)){
+		if (parentFolder != null && parentFolder.getChildFolders() != null && !parentFolder.getChildFolders().contains(this)) {
 			parentFolder.getChildFolders().add(this);
 		}
 	}
@@ -113,32 +115,32 @@ public class DOFolder {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof DOFolder)) { 
-			return false; 
+		if (!(obj instanceof DOFolder)) {
+			return false;
 		}
 
 		DOFolder compObj = (DOFolder) obj;
-		if (getName().equals(compObj.getName()) 
-				&& getId() == compObj.getId() 
+		if (getName().equals(compObj.getName())
+				&& getId() == compObj.getId()
 				&& getParentId() == compObj.getParentId()
-		        && getPositionInParent() == compObj.getPositionInParent() 
-		        && getFolderType() == compObj.getFolderType()) { 
-			return true; 
+				&& getPositionInParent() == compObj.getPositionInParent()
+				&& getFolderType() == compObj.getFolderType()) {
+			return true;
 		}
-		
+
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		int hashCode =  24 + getName().hashCode();
+		int hashCode = 24 + getName().hashCode();
 		hashCode *= 24 + getId();
 		hashCode *= 24 + getParentId();
 		hashCode *= 24 + getPositionInParent();
 		hashCode *= 24 + getFolderType().hashCode();
-		
+
 		return hashCode;
-	}	
+	}
 
 	@Override
 	public String toString() {

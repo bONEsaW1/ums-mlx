@@ -1,8 +1,7 @@
 package net.pms.notifications;
 
 /**
- * Subscribe to messages being posted to the {@link NotificationCenter} with
- * this interface
+ * Subscribe to messages being posted to the {@link NotificationCenter} with this interface
  * 
  * @author pw
  * 

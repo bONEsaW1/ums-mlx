@@ -21,7 +21,7 @@ public class AdditionalFoldersAtRootWrapper extends BaseWrapper implements Plugi
 	private AdditionalFoldersAtRoot additionalFoldersAtRoot;
 	private String displayName;
 	private DLNAResource dlnaResource;
-	
+
 	/**
 	 * The Constructor.
 	 *
@@ -69,28 +69,30 @@ public class AdditionalFoldersAtRootWrapper extends BaseWrapper implements Plugi
 	@Override
 	public DLNAResource getDLNAResource() {
 		AdditionalFoldersAtRoot additionalFolderAtRoot = getAdditionalFoldersAtRoot();
-		if(dlnaResource == null && additionalFolderAtRoot != null) {
+		if (dlnaResource == null && additionalFolderAtRoot != null) {
 			// lazy-initialize the DLNA resource
-			
+
 			// 1) Create a new VirtualFolder in order to set the specified name for it
 			dlnaResource = new VirtualFolder(displayName, null);
-			
+
 			// 2) Add all children of the plugin to the folder
 			Iterator<DLNAResource> originalChildren = additionalFolderAtRoot.getChildren();
-			while(originalChildren.hasNext()) {
+			while (originalChildren.hasNext()) {
 				DLNAResource childResource = originalChildren.next();
 				dlnaResource.addChild(childResource);
 			}
 		}
-		
+
 		return dlnaResource;
 	}
 
 	@Override
-	public void saveInstanceConfiguration(String saveFilePath) throws IOException {	}
+	public void saveInstanceConfiguration(String saveFilePath) throws IOException {
+	}
 
 	@Override
-	public void loadInstanceConfiguration(String saveFilePath)throws IOException { }
+	public void loadInstanceConfiguration(String saveFilePath) throws IOException {
+	}
 
 	@Override
 	public boolean isInstanceAvailable() {

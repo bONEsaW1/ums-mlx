@@ -20,6 +20,7 @@ package net.pms.medialibrary.commons.enumarations;
 
 /**
  * Enumeration used to define a combination of the pressed keys ctrl + shift + alt
+ * 
  * @author pw
  *
  */

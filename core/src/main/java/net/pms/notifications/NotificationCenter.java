@@ -11,25 +11,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class exposes methods to subscribe and unsubscribe {@link NotificationSubscriber} 
- * to be notified of messages posted to the message queue.<br>
+ * This class exposes methods to subscribe and unsubscribe {@link NotificationSubscriber} to be notified of messages
+ * posted to the message queue.<br>
  * Get a singleton using the static getInstance method.<br>
  * 
  * @author pw
  */
 public class NotificationCenter<T> {
 	private static final Logger log = LoggerFactory.getLogger(NotificationCenter.class);
-	
+
 	/**
 	 * Holds a map of instances of {@link NotificationCenter} per {@link Class}
 	 */
 	private static Map<Class<?>, NotificationCenter<?>> notificationCenters = new Hashtable<Class<?>, NotificationCenter<?>>();
-	
+
 	/**
 	 * TODO: figure out how to manage the multiple threads best.
 	 */
 	private static ExecutorService executorService = Executors.newFixedThreadPool(50);
-	
+
 	/**
 	 * The subscribers to notify when a message is being posted to the queue
 	 */
@@ -38,11 +38,12 @@ public class NotificationCenter<T> {
 	/**
 	 * Private constructor. Use getInstance to get a singleton
 	 */
-	private NotificationCenter() { }
+	private NotificationCenter() {
+	}
 
 	/**
-	 * Get an instance of {@link NotificationCenter} which can subscribe/unsubscribe
-	 * {@link NotificationSubscriber} to messages of type c
+	 * Get an instance of {@link NotificationCenter} which can subscribe/unsubscribe {@link NotificationSubscriber} to
+	 * messages of type c
 	 * 
 	 * @param c the type of messages the subscriber will receive
 	 * @return an instance of {@link NotificationCenter}
@@ -52,15 +53,15 @@ public class NotificationCenter<T> {
 		NotificationCenter<?> nc = null;
 		synchronized (notificationCenters) {
 			nc = notificationCenters.get(c);
-			if(nc == null) {
+			if (nc == null) {
 				nc = new NotificationCenter<T>();
 				notificationCenters.put(c, nc);
-			}			
+			}
 		}
-		
+
 		return (NotificationCenter<T>) nc;
 	}
-	
+
 	/**
 	 * Gets an array of classes for which a notification queue has been created
 	 * 
@@ -69,7 +70,7 @@ public class NotificationCenter<T> {
 	public static Class<?>[] getExistingMessageQueues() {
 		Class<?>[] res = new Class<?>[0];
 		synchronized (notificationCenters) {
-			res = notificationCenters.keySet().toArray(new Class<?>[notificationCenters.size()]);			
+			res = notificationCenters.keySet().toArray(new Class<?>[notificationCenters.size()]);
 		}
 		return res;
 	}

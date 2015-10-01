@@ -38,7 +38,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	private static final String KEY_sortMethod = "sortMethod";
 	private static final String KEY_browseArchives = "browseArchives";
 	private String propertiesFilePath;
-	
+
 	/**
 	 * Instantiates a new global configuration.
 	 */
@@ -52,7 +52,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save() throws IOException {
-			save(propertiesFilePath);
+		save(propertiesFilePath);
 	}
 
 	/**

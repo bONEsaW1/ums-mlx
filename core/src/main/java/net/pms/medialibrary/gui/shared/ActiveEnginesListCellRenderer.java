@@ -26,6 +26,7 @@ import javax.swing.JList;
 
 /**
  * Sets a white background for items shown in a JList
+ * 
  * @author pw
  *
  */
@@ -34,8 +35,8 @@ public class ActiveEnginesListCellRenderer extends DefaultListCellRenderer {
 
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		Component res = super.getListCellRendererComponent(list, value, index, isSelected,cellHasFocus);
-		if(!isSelected) {
+		Component res = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		if (!isSelected) {
 			res.setBackground(Color.WHITE);
 		}
 		return res;

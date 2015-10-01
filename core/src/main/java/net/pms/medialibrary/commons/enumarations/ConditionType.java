@@ -20,8 +20,8 @@ package net.pms.medialibrary.commons.enumarations;
 
 public enum ConditionType {
 	UNKNOWN,
-	
-	//File
+
+	// File
 	FILE_FILENAME,
 	FILE_FOLDERPATH,
 	FILE_SIZEBYTE,
@@ -35,7 +35,7 @@ public enum ConditionType {
 	FILE_ISACTIF,
 	FILE_THUMBNAILPATH,
 
-	//Video
+	// Video
 	VIDEO_ORIGINALNAME,
 	VIDEO_NAME,
 	VIDEO_SORTNAME,
@@ -73,12 +73,12 @@ public enum ConditionType {
 	VIDEO_AVCLEVEL,
 	VIDEO_REFERENCEFRAMECOUNT,
 	VIDEO_STEREOSCOPY,
-	
-	//Image
+
+	// Image
 	IMAGE_WIDTH,
 	IMAGE_HEIGHT,
-	
-	//Audio
+
+	// Audio
 	AUDIO_SONGNAME,
 	AUDIO_ARTIST,
 	AUDIO_ALBUM,

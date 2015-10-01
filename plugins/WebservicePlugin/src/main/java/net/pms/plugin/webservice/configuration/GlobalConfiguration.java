@@ -27,7 +27,7 @@ import net.pms.configuration.BaseConfiguration;
 public class GlobalConfiguration extends BaseConfiguration {
 	private static final String KEY_port = "port";
 	private String propertiesFilePath;
-	
+
 	/**
 	 * Instantiates a new global configuration.
 	 */
@@ -41,7 +41,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save() throws IOException {
-			save(propertiesFilePath);
+		save(propertiesFilePath);
 	}
 
 	/**
@@ -52,11 +52,11 @@ public class GlobalConfiguration extends BaseConfiguration {
 	public void load() throws IOException {
 		load(propertiesFilePath);
 	}
-	
+
 	public int getPort() {
 		return getValue(KEY_port, 54423);
 	}
-	
+
 	public void setPort(int port) {
 		setValue(KEY_port, port);
 	}

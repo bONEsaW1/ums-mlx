@@ -80,13 +80,12 @@ public class GlobalConfigurationPanel extends JPanel {
 		init();
 		build();
 	}
-	
+
 	/**
 	 * Updates all graphical components to show the global configuration.<br>
-	 * This is being used to roll back changes after editing properties and
-	 * canceling the dialog.
+	 * This is being used to roll back changes after editing properties and canceling the dialog.
 	 */
-	public void applyConfig() {		
+	public void applyConfig() {
 		cbGenerateThumbs.setSelected(globalConfig.isThumbnailGenerationEnabled());
 		cbDvdIsoThumbs.setSelected(globalConfig.isDvdIsoThumbnailsEnabled());
 		cbImageThumbs.setSelected(globalConfig.getImageThumbnailsEnabled());
@@ -106,12 +105,12 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	private void init() {
 		// Thumbnails
-		
+
 		// Generate thumbnails
 		cbGenerateThumbs = new JCheckBox(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.1"));
 		cbGenerateThumbs.setContentAreaFilled(false);
 
-		//ThumbnailSeekPos
+		// ThumbnailSeekPos
 		tfSeekPos = new JTextField();
 		tfSeekPos.setPreferredSize(new Dimension(60, tfSeekPos.getPreferredSize().height));
 
@@ -122,10 +121,10 @@ public class GlobalConfigurationPanel extends JPanel {
 		cbImageThumbs = new JCheckBox(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.4"));
 
 		// AudioThumbnailMethod
-		KeyedComboBoxModel thumbKCBM = new KeyedComboBoxModel(new Object[]{"0", "1", "2"}, new Object[]{ 
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.5"), 
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.6"), 
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.7")});
+		KeyedComboBoxModel thumbKCBM = new KeyedComboBoxModel(new Object[] { "0", "1", "2" }, new Object[] {
+				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.5"),
+				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.6"),
+				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.7") });
 		cbAudioThumbs = new JComboBox(thumbKCBM);
 		cbAudioThumbs.setEditable(false);
 
@@ -150,8 +149,8 @@ public class GlobalConfigurationPanel extends JPanel {
 				}
 			}
 		});
-		
-		//Navigation & parsing
+
+		// Navigation & parsing
 		cbBrowseArchives = new JCheckBox(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.22"));
 		cbHideTranscode = new JCheckBox(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.9"));
 		cbHideEngineNames = new JCheckBox(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.23"));
@@ -160,21 +159,21 @@ public class GlobalConfigurationPanel extends JPanel {
 
 		// sort method
 		final KeyedComboBoxModel kcbm = new KeyedComboBoxModel(
-			new Object[]{
-				"0", // alphabetical
-				"4", // natural sort
-				"3", // ASCIIbetical
-				"1", // newest first
-				"2"  // oldest first
-			},
-			new Object[]{
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.12"),
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.13"),
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.14"),
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.15"),
-				FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.16")
-			}
-		);
+				new Object[] {
+						"0", // alphabetical
+						"4", // natural sort
+						"3", // ASCIIbetical
+						"1", // newest first
+						"2" // oldest first
+				},
+				new Object[] {
+						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.12"),
+						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.13"),
+						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.14"),
+						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.15"),
+						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.16")
+				}
+				);
 		cbSortMethod = new JComboBox(kcbm);
 		cbSortMethod.setEditable(false);
 		kcbm.setSelectedKey(String.valueOf(globalConfig.getSortMethod()));
@@ -185,21 +184,21 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	private void build() {
 		// Set basic layout
-		FormLayout layout = new FormLayout("5px, p, 5px, f:p:g, 5px", //columns
-				"5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, f:5px:g"); //rows
+		FormLayout layout = new FormLayout("5px, p, 5px, f:p:g, 5px", // columns
+				"5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, 5px, p, f:5px:g"); // rows
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
 
-		//thumbnails
+		// thumbnails
 		JComponent cmp = builder.addSeparator(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.17"), cc.xyw(2, 2, 3));
 		cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
 
-		//generate thumbnails
+		// generate thumbnails
 		builder.add(cbGenerateThumbs, cc.xy(2, 4));
-		
-		//thumbnail seek pos
+
+		// thumbnail seek pos
 		JPanel pSeekPos = new JPanel(new BorderLayout());
 		pSeekPos.add(new JLabel(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.18")), BorderLayout.LINE_START);
 		pSeekPos.add(tfSeekPos, BorderLayout.CENTER);
@@ -208,18 +207,18 @@ public class GlobalConfigurationPanel extends JPanel {
 		builder.add(cbDvdIsoThumbs, cc.xy(2, 6));
 		builder.add(cbImageThumbs, cc.xy(4, 6));
 
-		//audio thumbs
+		// audio thumbs
 		builder.addLabel(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.19"), cc.xy(2, 8));
 		builder.add(cbAudioThumbs, cc.xy(4, 8));
 
-		//alternate cover folder
+		// alternate cover folder
 		JPanel pAlternateCoverFolder = new JPanel(new BorderLayout());
 		pAlternateCoverFolder.add(tfDefaultThumbFolder, BorderLayout.CENTER);
 		pAlternateCoverFolder.add(bBrowseAlternateThumbFolder, BorderLayout.EAST);
 		builder.addLabel(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.20"), cc.xy(2, 10));
 		builder.add(pAlternateCoverFolder, cc.xy(4, 10));
-		
-		//navigation/parsing
+
+		// navigation/parsing
 		cmp = builder.addSeparator(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.21"), cc.xyw(2, 12, 3));
 		cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
 
@@ -228,13 +227,13 @@ public class GlobalConfigurationPanel extends JPanel {
 		builder.add(cbHideExtensions, cc.xy(2, 16));
 		builder.add(cbHideEngineNames, cc.xy(4, 16));
 		builder.add(cbHideEmptyFolders, cc.xyw(2, 18, 3));
-		
+
 		builder.addLabel(FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.24"), cc.xy(2, 20));
 		builder.add(cbSortMethod, cc.xy(4, 20));
-		
+
 		JScrollPane sp = new JScrollPane(builder.getPanel());
 		sp.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		add(sp);
 	}
 
@@ -245,7 +244,7 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	public void updateConfiguration(GlobalConfiguration gc) {
 		gc.setAlternateThumbFolder(tfDefaultThumbFolder.getText());
-		gc.setAudioThumbnailMethod(Integer.parseInt((String) ((KeyedComboBoxModel)cbAudioThumbs.getModel()).getSelectedKey()));
+		gc.setAudioThumbnailMethod(Integer.parseInt((String) ((KeyedComboBoxModel) cbAudioThumbs.getModel()).getSelectedKey()));
 		gc.setBrowseArchives(cbBrowseArchives.isSelected());
 		gc.setDvdIsoThumbnailsEnabled(cbDvdIsoThumbs.isSelected());
 		gc.setHideEmptyFolders(cbHideEmptyFolders.isSelected());
@@ -253,13 +252,14 @@ public class GlobalConfigurationPanel extends JPanel {
 		gc.setHideExtensions(cbHideExtensions.isSelected());
 		gc.setHideTranscodeEnabled(cbHideTranscode.isSelected());
 		gc.setImageThumbnailsEnabled(cbImageThumbs.isSelected());
-		gc.setSortMethod(Integer.parseInt((String) ((KeyedComboBoxModel)cbSortMethod.getModel()).getSelectedKey()));
+		gc.setSortMethod(Integer.parseInt((String) ((KeyedComboBoxModel) cbSortMethod.getModel()).getSelectedKey()));
 		gc.setThumbnailGenerationEnabled(cbGenerateThumbs.isSelected());
-		
-		int seekPos = gc.getThumbnailSeekPosSec();;
+
+		int seekPos = gc.getThumbnailSeekPosSec();
+		;
 		try {
 			seekPos = Integer.parseInt(tfSeekPos.getText());
-		} catch(NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			log.error(String.format("Failed to parse thumbnail seek position '%s' as an integer", tfSeekPos.getText()));
 		}
 		gc.setThumbnailSeekPosSec(seekPos);

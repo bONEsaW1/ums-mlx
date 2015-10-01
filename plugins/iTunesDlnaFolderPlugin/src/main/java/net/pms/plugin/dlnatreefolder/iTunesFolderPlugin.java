@@ -38,11 +38,11 @@ import net.pms.util.PmsProperties;
 
 public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 	private static final Logger logger = LoggerFactory.getLogger(iTunesFolderPlugin.class);
-	
+
 	private String rootFolderName = "root";
-	
+
 	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.dlnatreefolder.itunes.lang.messages");
-	
+
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
 	static {
@@ -52,7 +52,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 			logger.error("Could not load itunesfolderplugin.properties", e);
 		}
 	}
-	
+
 	/** The instance configuration is shared amongst all plugin instances. */
 	private InstanceConfiguration instanceConfig;
 
@@ -61,18 +61,18 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 
 	@Override
 	public JPanel getInstanceConfigurationPanel() {
-		//make sure the instance configuration has been initialized;
-		if(instanceConfig == null) {
+		// make sure the instance configuration has been initialized;
+		if (instanceConfig == null) {
 			instanceConfig = new InstanceConfiguration();
 		}
-		
-		//lazy initialize the configuration panel
-		if(pInstanceConfiguration == null ) {
+
+		// lazy initialize the configuration panel
+		if (pInstanceConfiguration == null) {
 			pInstanceConfiguration = new InstanceConfigurationPanel(instanceConfig);
 		}
-		
-		//make sure the iTunes file path has been set
-		if(instanceConfig.getiTunesFilePath() == null || instanceConfig.getiTunesFilePath().equals("")) {
+
+		// make sure the iTunes file path has been set
+		if (instanceConfig.getiTunesFilePath() == null || instanceConfig.getiTunesFilePath().equals("")) {
 			try {
 				instanceConfig.setiTunesFilePath(getiTunesFile());
 			} catch (Exception e) {
@@ -80,7 +80,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 			}
 		}
 		pInstanceConfiguration.applyConfig();
-		
+
 		return pInstanceConfiguration;
 	}
 
@@ -102,7 +102,10 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 				String iTunesFile = getiTunesFile();
 
 				if (iTunesFile != null && (new File(iTunesFile)).exists()) {
-					iTunesLib = Plist.load(URLDecoder.decode(iTunesFile, System.getProperty("file.encoding"))); // loads the (nested) properties.
+					iTunesLib = Plist.load(URLDecoder.decode(iTunesFile, System.getProperty("file.encoding"))); // loads
+																												// the
+																												// (nested)
+																												// properties.
 					Tracks = (Map<?, ?>) iTunesLib.get("Tracks"); // the list of tracks
 					Playlists = (List<?>) iTunesLib.get("Playlists"); // the list of Playlists
 					res = new VirtualFolder(rootFolderName, null);
@@ -138,7 +141,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 
 									if (track != null && track.get("Location") != null && track.get("Location").toString().startsWith("file://")) {
 
-										String name = Normalizer.normalize((String)track.get("Name"), Normalizer.Form.NFC);
+										String name = Normalizer.normalize((String) track.get("Name"), Normalizer.Form.NFC);
 										// remove dots from name to prevent media renderer from trimming
 										name = name.replace('.', '-');
 
@@ -148,7 +151,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 										boolean isCompilation = (track.containsKey("Compilation") && track.get("Compilation").equals(Boolean.TRUE));
 
 										artistName = (String) (isCompilation ? "Compilation" :
-															   track.containsKey("Album Artist") ? track.get("Album Artist") : track.get("Artist"));
+												track.containsKey("Album Artist") ? track.get("Album Artist") : track.get("Artist"));
 										albumName = (String) track.get("Album");
 										genreName = (String) track.get("Genre");
 
@@ -182,7 +185,8 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 										File refFile = new File(URLDecoder.decode(tURI2.toURL().getFile(), "UTF-8"));
 										RealFile file = new RealFile(refFile, name);
 
-										// ARTISTS FOLDER - Put the track into the artist's album folder and the artist's "All tracks" folder
+										// ARTISTS FOLDER - Put the track into the artist's album folder and the
+										// artist's "All tracks" folder
 										{
 											VirtualFolder individualArtistFolder = null;
 											VirtualFolder individualArtistAllTracksFolder = null;
@@ -206,7 +210,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 												individualArtistAllTracksFolder = new VirtualFolder(Messages.getString("PMS.11"), null);
 												individualArtistFolder.addChild(individualArtistAllTracksFolder);
 											} else {
-												individualArtistAllTracksFolder = (VirtualFolder)individualArtistFolder.getChildren().get(0);
+												individualArtistAllTracksFolder = (VirtualFolder) individualArtistFolder.getChildren().get(0);
 											}
 
 											if (individualArtistAlbumFolder == null) {
@@ -303,9 +307,8 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 									track = (Map<?, ?>) Tracks.get(td.get("Track ID").toString());
 
 									if (track != null
-												&& track.get("Location") != null
-												&& track.get("Location").toString().startsWith("file://")
-											) {
+											&& track.get("Location") != null
+											&& track.get("Location").toString().startsWith("file://")) {
 										String name = Normalizer.normalize(track.get("Name").toString(), Normalizer.Form.NFC);
 										// remove dots from name to prevent media renderer from trimming
 										name = name.replace('.', '-');
@@ -320,7 +323,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 								}
 							}
 
-							int kind = Playlist.containsKey("Distinguished Kind") ? ((Number)Playlist.get("Distinguished Kind")).intValue() : -1;
+							int kind = Playlist.containsKey("Distinguished Kind") ? ((Number) Playlist.get("Distinguished Kind")).intValue() : -1;
 							if (kind >= 0 && kind != 17 && kind != 19 && kind != 20) {
 								// System folder, but not voice memos (17) and purchased items (19 & 20)
 								res.addChild(pf);
@@ -347,7 +350,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 
 		return res;
 	}
-	
+
 	private String getiTunesFile() throws Exception {
 		String line = null;
 		String iTunesFile = null;
@@ -401,9 +404,9 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 	public String getName() {
 		return "iTunes";
 	}
-	
+
 	@Override
-	public void setDisplayName(String name){
+	public void setDisplayName(String name) {
 		rootFolderName = name;
 	}
 
@@ -415,7 +418,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 
 	@Override
 	public void saveInstanceConfiguration(String configFilePath) throws IOException {
-		if(pInstanceConfiguration != null) {
+		if (pInstanceConfiguration != null) {
 			pInstanceConfiguration.updateConfiguration(instanceConfig);
 			instanceConfig.save(configFilePath);
 		}
@@ -427,16 +430,16 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 	}
 
 	@Override
-    public boolean isInstanceAvailable() {
+	public boolean isInstanceAvailable() {
 		return isPluginAvailable();
-    }
+	}
 
 	@Override
 	public boolean isPluginAvailable() {
-		if(System.getProperty("os.name").toLowerCase().indexOf("nix") < 0) {
+		if (System.getProperty("os.name").toLowerCase().indexOf("nix") < 0) {
 			return true;
-        }
-        return false;
+		}
+		return false;
 	}
 
 	@Override

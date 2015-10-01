@@ -23,12 +23,12 @@ import net.pms.medialibrary.commons.enumarations.AutoFolderProperty;
 public class AutoFolderProperyCBItem implements Comparable<AutoFolderProperyCBItem> {
 	private AutoFolderProperty autoFolderProperty;
 	private String displayName;
-	
-	public AutoFolderProperyCBItem(){
-		
+
+	public AutoFolderProperyCBItem() {
+
 	}
-	
-	public AutoFolderProperyCBItem(AutoFolderProperty autoFolderProperty, String displayName){
+
+	public AutoFolderProperyCBItem(AutoFolderProperty autoFolderProperty, String displayName) {
 		this.setAutoFolderProperty(autoFolderProperty);
 		this.setDisplayName(displayName);
 	}
@@ -48,35 +48,35 @@ public class AutoFolderProperyCBItem implements Comparable<AutoFolderProperyCBIt
 	public AutoFolderProperty getAutoFolderProperty() {
 		return autoFolderProperty;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDisplayName();
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(!(o instanceof AutoFolderProperyCBItem)){
+	public boolean equals(Object o) {
+		if (!(o instanceof AutoFolderProperyCBItem)) {
 			return false;
 		}
 
-		AutoFolderProperyCBItem compObj = (AutoFolderProperyCBItem)o;
-		if(getDisplayName() == compObj.getDisplayName()
-			&& getAutoFolderProperty() == compObj.getAutoFolderProperty()){
+		AutoFolderProperyCBItem compObj = (AutoFolderProperyCBItem) o;
+		if (getDisplayName() == compObj.getDisplayName()
+				&& getAutoFolderProperty() == compObj.getAutoFolderProperty()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + getDisplayName().hashCode();
 		hashCode *= 24 + getAutoFolderProperty().hashCode();
 		return hashCode;
 	}
 
 	@Override
-    public int compareTo(AutoFolderProperyCBItem o) {
-	    return getDisplayName().compareTo(o.getDisplayName());
-    }
+	public int compareTo(AutoFolderProperyCBItem o) {
+		return getDisplayName().compareTo(o.getDisplayName());
+	}
 }

@@ -23,14 +23,14 @@ import net.pms.medialibrary.commons.events.NodeMovedActionEvent;
 import net.pms.medialibrary.commons.events.NodeMovedActionListener;
 
 public class DLNAViewTreeTransferHandler extends TransferHandler {
-	private static final long               serialVersionUID  = 1L;
+	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(DLNAViewTreeTransferHandler.class);
-	private DataFlavor                      nodesFlavor;
-	private DataFlavor[]                    flavors           = new DataFlavor[1];
-	private DefaultMutableTreeNode   nodeToRemove;
-	private List<NodeMovedActionListener>   nodeMoveListeners = new ArrayList<NodeMovedActionListener>();
+	private DataFlavor nodesFlavor;
+	private DataFlavor[] flavors = new DataFlavor[1];
+	private DefaultMutableTreeNode nodeToRemove;
+	private List<NodeMovedActionListener> nodeMoveListeners = new ArrayList<NodeMovedActionListener>();
 	private DefaultMutableTreeNode[] nodesToRefresh;
-	private DefaultMutableTreeNode   moveNode;
+	private DefaultMutableTreeNode moveNode;
 
 	public DLNAViewTreeTransferHandler() {
 		String mimeType = "";
@@ -51,21 +51,22 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 
 	@Override
 	public boolean canImport(TransferHandler.TransferSupport support) {
-		if (!support.isDrop()) { 
-			return false; 
+		if (!support.isDrop()) {
+			return false;
 		}
 
 		support.setShowDropLocation(true);
 
-		if (!support.isDataFlavorSupported(nodesFlavor)) { return false; }
+		if (!support.isDataFlavorSupported(nodesFlavor)) {
+			return false;
+		}
 
 		JTree tree = (JTree) support.getComponent();
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
 
 		// Only allow drops onto media library folders
-		if (!(dl.getPath().getLastPathComponent() instanceof DefaultMutableTreeNode)
-				) { 
-			return false; 
+		if (!(dl.getPath().getLastPathComponent() instanceof DefaultMutableTreeNode)) {
+			return false;
 		}
 
 		DefaultMutableTreeNode nodeToMove = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -74,16 +75,16 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 		// don't allow drop on itself or own child folder
 		DefaultMutableTreeNode parent = nodeToDropOnto;
 		while (parent != null) {
-			if (parent.equals(nodeToMove)) { 
-				return false; 
+			if (parent.equals(nodeToMove)) {
+				return false;
 			}
 			parent = (DefaultMutableTreeNode) parent.getParent();
 		}
 
 		// Do not allow a drop underneath another node than a DOFolder
-		if (dl.getChildIndex() > 0 
+		if (dl.getChildIndex() > 0
 				&& !(((DefaultMutableTreeNode) tree.getModel().getChild(nodeToDropOnto, dl.getChildIndex() - 1)).getUserObject() instanceof DOFolder)) {
-			return false; 
+			return false;
 		}
 
 		return true;
@@ -93,9 +94,9 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 	protected Transferable createTransferable(JComponent c) {
 		JTree tree = (JTree) c;
 		TreePath[] paths = tree.getSelectionPaths();
-		if (paths != null && paths.length > 0 
-				&& paths[0].getLastPathComponent() instanceof DefaultMutableTreeNode 
-				&& ((DefaultMutableTreeNode)paths[0].getLastPathComponent()).getUserObject() instanceof DOFolder) {
+		if (paths != null && paths.length > 0
+				&& paths[0].getLastPathComponent() instanceof DefaultMutableTreeNode
+				&& ((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject() instanceof DOFolder) {
 			this.nodeToRemove = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
 
 			return new NodesTransferable(this.nodeToRemove);
@@ -123,7 +124,9 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 
 	@Override
 	public boolean importData(TransferHandler.TransferSupport support) {
-		if (!canImport(support)) { return false; }
+		if (!canImport(support)) {
+			return false;
+		}
 		// Extract transfer data.
 		DefaultMutableTreeNode node = null;
 		try {
@@ -153,7 +156,7 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 			childIndex--;
 		}
 
-		DefaultMutableTreeNode oldParentNode = (DefaultMutableTreeNode)this.nodeToRemove.getParent();
+		DefaultMutableTreeNode oldParentNode = (DefaultMutableTreeNode) this.nodeToRemove.getParent();
 
 		List<String> expandedPaths = new ArrayList<String>();
 		if (tree.isExpanded(new TreePath(this.nodeToRemove.getPath()))) {
@@ -169,10 +172,10 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 
 		moveNode = node;
 		moveNode.setParent(parent);
-		
-		if(moveNode instanceof DefaultMutableTreeNode
-				&& ((DefaultMutableTreeNode)moveNode).getUserObject() instanceof DOFolder){
-			((DOFolder)((DefaultMutableTreeNode)moveNode).getUserObject()).setParentFolder((DOMediaLibraryFolder) parent.getUserObject());
+
+		if (moveNode instanceof DefaultMutableTreeNode
+				&& ((DefaultMutableTreeNode) moveNode).getUserObject() instanceof DOFolder) {
+			((DOFolder) ((DefaultMutableTreeNode) moveNode).getUserObject()).setParentFolder((DOMediaLibraryFolder) parent.getUserObject());
 		}
 
 		// Keep paths expanded as they were before
@@ -225,7 +228,7 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 	private int getInsertIndex(DefaultMutableTreeNode parent) {
 		int insertIndex = -1;
 		for (int i = 0; i < parent.getChildCount(); i++) {
-			if (!(((DefaultMutableTreeNode)parent.getChildAt(i)).getUserObject() instanceof DOFolder)) {
+			if (!(((DefaultMutableTreeNode) parent.getChildAt(i)).getUserObject() instanceof DOFolder)) {
 				insertIndex = i;
 				break;
 			}
@@ -251,7 +254,8 @@ public class DLNAViewTreeTransferHandler extends TransferHandler {
 
 		@Override
 		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-			if (!isDataFlavorSupported(flavor)) throw new UnsupportedFlavorException(flavor);
+			if (!isDataFlavorSupported(flavor))
+				throw new UnsupportedFlavorException(flavor);
 			return node;
 		}
 

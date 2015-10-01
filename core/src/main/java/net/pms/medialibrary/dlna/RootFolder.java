@@ -30,18 +30,18 @@ import net.pms.plugins.PluginsFactory;
 /**
  * The dlna root folder is the entry point to create the dlna tree shown on the renderer
  */
-public class RootFolder extends MediaLibraryFolder{
+public class RootFolder extends MediaLibraryFolder {
 	private MediaLibraryFolder rootFolder;
 	private ArrayList<String> tags;
-	
+
 	/**
 	 * Instantiates a new root folder.
 	 */
-	public RootFolder(){
+	public RootFolder() {
 		super(MediaLibraryStorage.getInstance().getMediaLibraryFolder(MediaLibraryStorage.getInstance().getRootFolderId(), MediaLibraryStorage.ALL_CHILDREN));
 		setId("0");
 	}
-	
+
 	public RootFolder(ArrayList<String> tags) {
 		this();
 		this.tags = tags;
@@ -52,19 +52,23 @@ public class RootFolder extends MediaLibraryFolder{
 	 *
 	 * @return the root folder
 	 */
-	public DOMediaLibraryFolder getRootFolder(){
+	public DOMediaLibraryFolder getRootFolder() {
 		return rootFolder.getFolder();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.medialibrary.dlna.MediaLibraryFolder#isRefreshNeeded()
 	 */
 	@Override
 	public boolean isRefreshNeeded() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.medialibrary.dlna.MediaLibraryFolder#discoverChildren()
 	 */
 	@Override
@@ -73,39 +77,41 @@ public class RootFolder extends MediaLibraryFolder{
 		addAdditionalFoldersAtRoot();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.medialibrary.dlna.MediaLibraryFolder#refreshChildren()
 	 */
 	@Override
 	public boolean refreshChildren() {
 		super.refreshChildren();
 		addAdditionalFoldersAtRoot();
-		
+
 		return true;
 	}
 
 	public void setFolder(DLNAResource res) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 	}
 
 	public void stopPlaying(DLNAResource res) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 	}
 
 	public ArrayList<String> getTags() {
 		return tags;
 	}
-	
+
 	/**
 	 * Adds the additional folders at root.
 	 */
 	private void addAdditionalFoldersAtRoot() {
-		for(AdditionalFolderAtRoot l : PluginsFactory.getAdditionalFolderAtRootList()) {
-			addChild(l.getChild());			
+		for (AdditionalFolderAtRoot l : PluginsFactory.getAdditionalFolderAtRootList()) {
+			addChild(l.getChild());
 		}
-		for(AdditionalFoldersAtRoot l : PluginsFactory.getAdditionalFoldersAtRootList()) {
+		for (AdditionalFoldersAtRoot l : PluginsFactory.getAdditionalFoldersAtRootList()) {
 			DLNAResource child;
-			while((child = l.getChildren().next()) != null){
+			while ((child = l.getChildren().next()) != null) {
 				addChild(child);
 			}
 		}

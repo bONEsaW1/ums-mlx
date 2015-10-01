@@ -63,55 +63,59 @@ public class FileSystemResource extends VirtualFolder {
 	 * @param folderPaths the paths of the folders to share
 	 */
 	public FileSystemResource(String name, List<String> folderPaths) {
-	    super(name, null);
-	    setFolderPaths(folderPaths);
-    }
-	
+		super(name, null);
+		setFolderPaths(folderPaths);
+	}
+
 	/**
 	 * Gets the folder paths.
 	 *
 	 * @return the folder paths
 	 */
-	public List<String> getFolderPaths(){
+	public List<String> getFolderPaths() {
 		return folderPaths;
 	}
-	
+
 	/**
 	 * Adds the folder path.
 	 *
 	 * @param path the path
 	 */
-	public void addFolderPath(String path){
-		if(!folderPaths.contains(path)){
+	public void addFolderPath(String path) {
+		if (!folderPaths.contains(path)) {
 			folderPaths.add(path);
 		}
 	}
-	
+
 	/**
 	 * Sets the folder paths.
 	 *
 	 * @param folderPaths the new folder paths
 	 */
-	public void setFolderPaths(List<String> folderPaths){
+	public void setFolderPaths(List<String> folderPaths) {
 		this.folderPaths = folderPaths;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#discoverChildren()
 	 */
 	@Override
 	public void discoverChildren() {
-		if (discoverable == null){
-			discoverable = new ArrayList<File>();			
+		if (discoverable == null) {
+			discoverable = new ArrayList<File>();
 		}
-		else{
-			return;			
+		else {
+			return;
 		}
-		
+
 		refreshChildren(true);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#isRefreshNeeded()
 	 */
 	@Override
@@ -119,7 +123,9 @@ public class FileSystemResource extends VirtualFolder {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#refreshChildren()
 	 */
 	@Override
@@ -128,40 +134,38 @@ public class FileSystemResource extends VirtualFolder {
 	}
 
 	/**
-	 * Refresh children. For the first use, the shared files and
-	 * folders found will be added to the list discoverable to
-	 * speed up the process and read the files later. When
-	 * refreshing a {@link FileSystemResource}, files which have
-	 * been removed from the file system will disappear and added
-	 * ones show up at the bottom of the list
+	 * Refresh children. For the first use, the shared files and folders found will be added to the list discoverable to
+	 * speed up the process and read the files later. When refreshing a {@link FileSystemResource}, files which have
+	 * been removed from the file system will disappear and added ones show up at the bottom of the list
 	 *
 	 * @param isFirstUse true if it is the first use
 	 * @return true, if children have been refreshed
 	 */
 	private boolean refreshChildren(boolean isFirstUse) {
 		synchronized (this) {
-			if(isRefreshing) return false;
-			isRefreshing = true;			
+			if (isRefreshing)
+				return false;
+			isRefreshing = true;
 		}
 
-		if(folderPaths == null){
+		if (folderPaths == null) {
 			folderPaths = new ArrayList<String>();
 		}
 
 		List<File> rootFolders = Arrays.asList(File.listRoots());
 
-		//Get the list of files and folders contained in the configured folders
+		// Get the list of files and folders contained in the configured folders
 		Map<File, String> mergeFolders = new HashMap<File, String>(); // value=file, key=Name
 		Map<File, String> mergeFiles = new HashMap<File, String>(); // value=file, key=Name
-		
-		if(folderPaths.size() == 0){
-			//add all disks if no folder has been configured
-			for(File f : rootFolders){
+
+		if (folderPaths.size() == 0) {
+			// add all disks if no folder has been configured
+			for (File f : rootFolders) {
 				mergeFolders.put(f, f.getAbsolutePath());
 			}
 			logger.info(String.format("Added all disks (%s) because no folders were configured for file system folder %s", mergeFolders.size(), getName()));
 		} else {
-			//add the configured folder(s)
+			// add the configured folder(s)
 			for (String folderPath : folderPaths) {
 				File dir = new File(folderPath);
 				if (dir.isDirectory()) {
@@ -170,18 +174,18 @@ public class FileSystemResource extends VirtualFolder {
 						if (child.isDirectory()) {
 							mergeFolders.put(child, child.getName());
 						} else if (child.isFile()) {
-							mergeFiles.put(child, child.getName()); 
+							mergeFiles.put(child, child.getName());
 						}
 					}
 				}
 			}
 		}
-		
-		//merge the sorted lists
+
+		// merge the sorted lists
 		List<File> allFiles = new ArrayList<File>(getSortedPaths(mergeFolders));
 		allFiles.addAll(getSortedPaths(mergeFiles));
-		
-		//Use the same algo as in RealFile
+
+		// Use the same algo as in RealFile
 		ArrayList<DLNAResource> removedFiles = new ArrayList<DLNAResource>();
 		ArrayList<File> addedFiles = new ArrayList<File>();
 
@@ -224,8 +228,8 @@ public class FileSystemResource extends VirtualFolder {
 		for (File f : addedFiles) {
 			manageFile(f);
 		}
-		for(File f : addedFiles) {
-			if(isFirstUse){
+		for (File f : addedFiles) {
+			if (isFirstUse) {
 				discoverable.add(f);
 			} else {
 				addChild(new RealFile(f));
@@ -235,12 +239,13 @@ public class FileSystemResource extends VirtualFolder {
 		synchronized (this) {
 			isRefreshing = false;
 		}
-		
+
 		return isFirstUse ? false : removedFiles.size() > 0 || addedFiles.size() > 0;
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.DLNAResource#analyzeChildren(int)
 	 */
 	@Override
@@ -263,19 +268,18 @@ public class FileSystemResource extends VirtualFolder {
 	 */
 	private Collection<File> getSortedPaths(Map<File, String> mergePaths) {
 		List<File> res = new ArrayList<File>();
-		
-		//Sort the lists by folder or file name
+
+		// Sort the lists by folder or file name
 		Entry<File, String>[] sortedFolders = getSortedHashtableEntries(mergePaths);
-		for(Entry<File, String> entry : sortedFolders){
+		for (Entry<File, String> entry : sortedFolders) {
 			res.add(entry.getKey());
 		}
-		
-	    return res;
-    }
-	
+
+		return res;
+	}
+
 	/**
-	 * Loads a specific resource if the file is of type
-	 * .zip, .cbz, .rar, .cbr, .iso, .img etc.
+	 * Loads a specific resource if the file is of type .zip, .cbz, .rar, .cbr, .iso, .img etc.
 	 *
 	 * @param f the file
 	 */
@@ -293,12 +297,13 @@ public class FileSystemResource extends VirtualFolder {
 			} else if (f.getName().toLowerCase().endsWith(".cue")) {
 				addChild(new CueFolder(f));
 			} else {
-				
+
 				/* Optionally ignore empty directories */
-				if (f.isDirectory() && PMS.getConfiguration().isHideEmptyFolders() && !isFolderRelevant(f)) {					
-					if(logger.isInfoEnabled()) logger.info("Ignoring empty/non relevant directory: " + f.getName());
+				if (f.isDirectory() && PMS.getConfiguration().isHideEmptyFolders() && !isFolderRelevant(f)) {
+					if (logger.isInfoEnabled())
+						logger.info("Ignoring empty/non relevant directory: " + f.getName());
 				}
-				
+
 				/* Otherwise add the file */
 				else {
 					RealFile file = new RealFile(f);
@@ -307,7 +312,7 @@ public class FileSystemResource extends VirtualFolder {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if a folder is relevant.
 	 *
@@ -320,8 +325,10 @@ public class FileSystemResource extends VirtualFolder {
 		if (f.isDirectory() && PMS.getConfiguration().isHideEmptyFolders()) {
 			File[] children = f.listFiles();
 
-			// listFiles() returns null if "this abstract pathname does not denote a directory, or if an I/O error occurs".
-			// in this case (since we've already confirmed that it's a directory), this seems to mean the directory is non-readable
+			// listFiles() returns null if
+			// "this abstract pathname does not denote a directory, or if an I/O error occurs".
+			// in this case (since we've already confirmed that it's a directory), this seems to mean the directory is
+			// non-readable
 			// http://www.ps3mediaserver.org/forum/viewtopic.php?f=6&t=15135
 			// http://stackoverflow.com/questions/3228147/retrieving-the-underlying-error-when-file-listfiles-return-null
 			if (children == null) {
@@ -344,7 +351,7 @@ public class FileSystemResource extends VirtualFolder {
 		}
 		return isRelevant;
 	}
-	
+
 	/**
 	 * Checks if is file relevant.
 	 *
@@ -354,9 +361,9 @@ public class FileSystemResource extends VirtualFolder {
 	private boolean isFileRelevant(File f) {
 		String fileName = f.getName().toLowerCase();
 		return (PMS.getConfiguration().isArchiveBrowsing() && (fileName.endsWith(".zip") || fileName.endsWith(".cbz") ||
-			fileName.endsWith(".rar") || fileName.endsWith(".cbr"))) ||
-			fileName.endsWith(".iso") || fileName.endsWith(".img") || 
-			fileName.endsWith(".m3u") || fileName.endsWith(".m3u8") || fileName.endsWith(".pls") || fileName.endsWith(".cue");
+				fileName.endsWith(".rar") || fileName.endsWith(".cbr"))) ||
+				fileName.endsWith(".iso") || fileName.endsWith(".img") ||
+				fileName.endsWith(".m3u") || fileName.endsWith(".m3u8") || fileName.endsWith(".pls") || fileName.endsWith(".cue");
 	}
 
 	/**
@@ -380,7 +387,7 @@ public class FileSystemResource extends VirtualFolder {
 	}
 
 	private boolean foundInList(List<File> files, DLNAResource dlna) {
-		for (File file: files) {
+		for (File file : files) {
 			if (!file.isHidden() && isNameMatch(dlna, file) && (isRealFolder(dlna) || isSameLastModified(dlna, file))) {
 				files.remove(file);
 				return true;

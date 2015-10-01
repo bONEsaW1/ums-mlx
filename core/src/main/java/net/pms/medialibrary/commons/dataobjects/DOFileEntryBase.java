@@ -25,7 +25,7 @@ import java.util.List;
 
 import net.pms.medialibrary.commons.enumarations.FileDisplayType;
 
-public class DOFileEntryBase implements Cloneable{
+public class DOFileEntryBase implements Cloneable {
 	private long id;
 	private DOFileEntryFolder parent;
 	private int positionInParent;
@@ -35,13 +35,13 @@ public class DOFileEntryBase implements Cloneable{
 	private int maxLineLength;
 	private String pluginName;
 	private String pluginConfigFilePath;
-	
-	public DOFileEntryBase(){
+
+	public DOFileEntryBase() {
 		this(-1, null, -1, "", null, FileDisplayType.UNKNOWN, 0, "", "");
 	}
-	
+
 	public DOFileEntryBase(long id, DOFileEntryFolder parent, int positionInParent, String displayNameMask,
-			List<DOThumbnailPriority> thumbnailPrioritis, FileDisplayType fileEntryType, int maxLineLength, String pluginName, String pluginConfigFilePath){
+			List<DOThumbnailPriority> thumbnailPrioritis, FileDisplayType fileEntryType, int maxLineLength, String pluginName, String pluginConfigFilePath) {
 		setId(id);
 		setParent(parent);
 		setPositionInParent(positionInParent);
@@ -66,7 +66,8 @@ public class DOFileEntryBase implements Cloneable{
 	}
 
 	public String getDisplayNameMask() {
-		if(displayNameMask == null) displayNameMask = "";
+		if (displayNameMask == null)
+			displayNameMask = "";
 		return displayNameMask;
 	}
 
@@ -79,88 +80,92 @@ public class DOFileEntryBase implements Cloneable{
 	}
 
 	public void setParent(DOFileEntryFolder parent) {
-	    this.parent = parent;
-    }
+		this.parent = parent;
+	}
 
 	public DOFileEntryFolder getParent() {
-	    return parent;
-    }
-	
+		return parent;
+	}
+
 	public void setThumbnailPrioritis(List<DOThumbnailPriority> thumbnailPrioritis) {
-	    this.thumbnailPrioritis = thumbnailPrioritis;
-    }
+		this.thumbnailPrioritis = thumbnailPrioritis;
+	}
 
 	public List<DOThumbnailPriority> getThumbnailPriorities() {
-		if(thumbnailPrioritis == null) thumbnailPrioritis = new ArrayList<DOThumbnailPriority>();
+		if (thumbnailPrioritis == null)
+			thumbnailPrioritis = new ArrayList<DOThumbnailPriority>();
 		Collections.sort(thumbnailPrioritis, new Comparator<DOThumbnailPriority>() {
 			@Override
 			public int compare(DOThumbnailPriority o1, DOThumbnailPriority o2) {
 				return o1.getPriorityIndex() == o2.getPriorityIndex() ? 0 :
-				o1.getPriorityIndex() > o2.getPriorityIndex() ? 1 : -1;
+						o1.getPriorityIndex() > o2.getPriorityIndex() ? 1 : -1;
 			}
 		});
-	    return thumbnailPrioritis;
-    }
+		return thumbnailPrioritis;
+	}
 
 	public void setFileEntryType(FileDisplayType fileEntryType) {
-	    this.fileEntryType = fileEntryType;
-    }
+		this.fileEntryType = fileEntryType;
+	}
 
 	public FileDisplayType getFileEntryType() {
-		if(fileEntryType == null) fileEntryType = FileDisplayType.UNKNOWN;
-	    return fileEntryType;
-    }
+		if (fileEntryType == null)
+			fileEntryType = FileDisplayType.UNKNOWN;
+		return fileEntryType;
+	}
 
 	public void setMaxLineLength(int maxLineLength) {
-	    this.maxLineLength = maxLineLength;
-    }
+		this.maxLineLength = maxLineLength;
+	}
 
 	public int getMaxLineLength() {
-	    return maxLineLength;
-    }
+		return maxLineLength;
+	}
 
 	public void setPluginName(String pluginName) {
-	    this.pluginName = pluginName;
-    }
+		this.pluginName = pluginName;
+	}
 
 	public String getPluginName() {
-		if(pluginName == null) pluginName = "";
-	    return pluginName;
-    }
+		if (pluginName == null)
+			pluginName = "";
+		return pluginName;
+	}
 
 	public void setPluginConfigFilePath(String pluginConfigFilePath) {
-	    this.pluginConfigFilePath = pluginConfigFilePath;
-    }
+		this.pluginConfigFilePath = pluginConfigFilePath;
+	}
 
 	public String getPluginConfigFilePath() {
-		if(pluginConfigFilePath == null) pluginConfigFilePath = "";
-	    return pluginConfigFilePath;
-    }
+		if (pluginConfigFilePath == null)
+			pluginConfigFilePath = "";
+		return pluginConfigFilePath;
+	}
 
 	@Override
-	public boolean equals(Object obj){
-		if(!(obj instanceof DOFileEntryBase)){
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DOFileEntryBase)) {
 			return false;
 		}
-		
-		DOFileEntryBase compObj = (DOFileEntryBase)obj;
-		if(getId() == compObj.getId()
-				&& ((getParent() == null && compObj.getParent() == null) 
-						|| (getParent() != null && compObj.getParent() != null && getParent().getId() == compObj.getParent().getId()))
+
+		DOFileEntryBase compObj = (DOFileEntryBase) obj;
+		if (getId() == compObj.getId()
+				&& ((getParent() == null && compObj.getParent() == null)
+				|| (getParent() != null && compObj.getParent() != null && getParent().getId() == compObj.getParent().getId()))
 				&& getDisplayNameMask().equals(compObj.getDisplayNameMask())
 				&& getPositionInParent() == compObj.getPositionInParent()
 				&& getThumbnailPriorities().equals(compObj.getThumbnailPriorities())
 				&& getFileEntryType() == compObj.getFileEntryType()
 				&& getMaxLineLength() == compObj.getMaxLineLength()
 				&& getPluginName().equals(compObj.getPluginName())
-				&& getPluginConfigFilePath().equals(compObj.getPluginConfigFilePath())){
+				&& getPluginConfigFilePath().equals(compObj.getPluginConfigFilePath())) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hashCode = 24 + String.valueOf(getId()).hashCode();
 		hashCode *= 24 + (getParent() == null ? -1 : String.valueOf(getParent().getId()).hashCode());
 		hashCode *= 24 + getDisplayNameMask().hashCode();
@@ -172,15 +177,15 @@ public class DOFileEntryBase implements Cloneable{
 		hashCode *= 24 + getPluginConfigFilePath().hashCode();
 		return hashCode;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDisplayNameMask();
 	}
 
 	@Override
-	public DOFileEntryBase clone(){
-		return new DOFileEntryBase(getId(), getParent(), getPositionInParent(), getDisplayNameMask(), 
+	public DOFileEntryBase clone() {
+		return new DOFileEntryBase(getId(), getParent(), getPositionInParent(), getDisplayNameMask(),
 				getThumbnailPriorities(), getFileEntryType(), getMaxLineLength(), getPluginName(), getPluginConfigFilePath());
 	}
 }

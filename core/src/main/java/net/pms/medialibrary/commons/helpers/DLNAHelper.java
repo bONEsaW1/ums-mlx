@@ -37,7 +37,7 @@ import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
 public class DLNAHelper {
 	private static final Logger log = LoggerFactory.getLogger(DLNAHelper.class);
 
-	public static DLNAMediaInfo getMediaForVideo(DOVideoFileInfo video) {		
+	public static DLNAMediaInfo getMediaForVideo(DOVideoFileInfo video) {
 		DLNAMediaInfo dbMedia = new DLNAMediaInfo();
 		dbMedia.setDuration(video.getDurationSec());
 		dbMedia.setBitrate(video.getBitrate());
@@ -75,10 +75,10 @@ public class DLNAHelper {
 		dbMedia.setEmbeddedFontExists(video.isEmbeddedFontExists());
 
 		dbMedia.setMediaparsed(true);
-		
+
 		return dbMedia;
-	}	
-	
+	}
+
 	public static String[] getSplitLines(String input, int maxLineLength) {
 		List<String> lines = new ArrayList<String>();
 		if (maxLineLength > 0 && input.length() > maxLineLength) {
@@ -141,10 +141,7 @@ public class DLNAHelper {
 	}
 
 	public static String formatSecToHHMMSS(int secsIn) {
-		int hours = secsIn / 3600, 
-		remainder = secsIn % 3600, 
-		minutes = remainder / 60, 
-		seconds = remainder % 60;
+		int hours = secsIn / 3600, remainder = secsIn % 3600, minutes = remainder / 60, seconds = remainder % 60;
 
 		return ((hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
 	}
@@ -154,11 +151,12 @@ public class DLNAHelper {
 		rootFolder.setParent(parent);
 		rootFolder.addChild(originalFile.clone());
 		rootFolder.resolve();
-		//get the transcode folder which is hidden a bit deeper. this could break at some point but is an easy solution..
+		// get the transcode folder which is hidden a bit deeper. this could break at some point but is an easy
+		// solution..
 		DLNAResource originalTranscodeFolder = rootFolder.getChildren().get(1).getChildren().get(0);
 		originalTranscodeFolder.resolve();
-		
-		for(DLNAResource r : originalTranscodeFolder.getChildren()) {
+
+		for (DLNAResource r : originalTranscodeFolder.getChildren()) {
 			parent.addChild(r);
 		}
 	}

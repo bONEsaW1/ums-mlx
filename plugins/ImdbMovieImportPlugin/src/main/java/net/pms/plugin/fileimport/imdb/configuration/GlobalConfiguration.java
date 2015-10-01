@@ -25,16 +25,18 @@ import net.pms.configuration.BaseConfiguration;
  * Holds the global configuration for the plugin.
  */
 public class GlobalConfiguration extends BaseConfiguration {
-	public enum PlotType { Short, Long }
-	
+	public enum PlotType {
+		Short, Long
+	}
+
 	private static final String KEY_coverWidth = "coverWidth";
 	private static final String KEY_plotType = "plotType";
 	private static final String KEY_useRottenTomatoes = "useRottenTomatoes";
 	private static final String KEY_receiveTimeoutMs = "receiveTimeoutMs";
-	
+
 	/** The properties file path. */
 	private String propertiesFilePath;
-	
+
 	/**
 	 * Instantiates a new global configuration.
 	 */
@@ -48,7 +50,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save() throws IOException {
-			save(propertiesFilePath);
+		save(propertiesFilePath);
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	public int getCoverWidth() {
 		return getValue(KEY_coverWidth, 400);
 	}
-	
+
 	/**
 	 * Sets the cover width in pixels.
 	 *

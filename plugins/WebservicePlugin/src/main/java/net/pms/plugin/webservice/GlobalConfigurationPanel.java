@@ -35,11 +35,10 @@ public class GlobalConfigurationPanel extends JPanel {
 		init();
 		build();
 	}
-	
+
 	/**
 	 * Updates all graphical components to show the global configuration.<br>
-	 * This is being used to roll back changes after editing properties and
-	 * canceling the dialog.
+	 * This is being used to roll back changes after editing properties and canceling the dialog.
 	 */
 	public void applyConfig() {
 		tfPort.setText(String.valueOf(globalConfig.getPort()));
@@ -59,17 +58,17 @@ public class GlobalConfigurationPanel extends JPanel {
 	 */
 	private void build() {
 		// Set basic layout
-		FormLayout layout = new FormLayout("5px, p, 5px, 70, 5px, p, f:5px:g", //columns
-				"5px, p, f:5px:g"); //rows
+		FormLayout layout = new FormLayout("5px, p, 5px, 70, 5px, p, f:5px:g", // columns
+				"5px, p, f:5px:g"); // rows
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		CellConstraints cc = new CellConstraints();
-		
+
 		builder.add(lHeader, cc.xy(2, 2));
 		builder.add(tfPort, cc.xy(4, 2));
 		builder.add(lRequireRestart, cc.xy(6, 2));
-		
+
 		removeAll();
 		add(builder.getPanel());
 	}
@@ -84,7 +83,7 @@ public class GlobalConfigurationPanel extends JPanel {
 		try {
 			int newVal = Integer.parseInt(valStr);
 			gc.setPort(newVal);
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			log.error(String.format("'%s' could not be parsed as an int", valStr));
 		}
 	}
