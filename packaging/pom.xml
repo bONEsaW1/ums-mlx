@@ -16,12 +16,12 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>5.2.3-mlx-1.4-SNAPSHOT</version>
+		<version>5.2.4-mlx-1.4-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<!-- NSIS needs a version without "-SNAPSHOT" or "-b1" -->
-		<project.version.short>5.1.5</project.version.short>
+		<project.version.short>5.2.4</project.version.short>
 
 		<project.core.name>Universal Media Server MLX</project.core.name>
 		
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>github.com.taconaut</groupId>
 			<artifactId>ums-core</artifactId>
-			<version>5.2.3-mlx-1.4-SNAPSHOT</version>
+			<version>5.2.4-mlx-1.4-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

@@ -28,7 +28,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>github.com.taconaut</groupId>
 	<artifactId>ums</artifactId>
-	<version>5.2.3-mlx-1.4-SNAPSHOT</version>
+	<version>5.2.4-mlx-1.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>UMS</name>
 	<url>http://www.universalmediaserver.org/</url>
