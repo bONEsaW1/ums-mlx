@@ -190,6 +190,8 @@ public class PmsConfiguration extends RendererConfiguration {
 	protected static final String KEY_LOGGING_SYSLOG_PORT = "logging_syslog_port";
 	protected static final String KEY_LOGGING_USE_SYSLOG = "logging_use_syslog";
 	protected static final String KEY_MAIN_WINDOW_HEIGHT = "main_window_height";
+	protected static final String KEY_MAIN_WINDOW_POSX = "main_window_pos_x";
+	protected static final String KEY_MAIN_WINDOW_POSY = "main_window_pos_y";
 	protected static final String KEY_MAIN_WINDOW_WIDTH = "main_window_width";
 	protected static final String KEY_MAX_AUDIO_BUFFER = "maximum_audio_buffer_size";
 	protected static final String KEY_MAX_BITRATE = "maximum_bitrate";
@@ -3838,6 +3840,22 @@ public class PmsConfiguration extends RendererConfiguration {
 	public int getMainWindowHeight() {
 		return getInt(KEY_MAIN_WINDOW_HEIGHT, 750);
 	}
+
+	public void setMainWindowPosX(int value) {
+		configuration.setProperty(KEY_MAIN_WINDOW_POSX, value);
+	}
+
+	public int getMainWindowPosX() {
+		return getInt(KEY_MAIN_WINDOW_POSX, -1);
+	}
+
+	public void setMainWindowPosY(int value) {
+		configuration.setProperty(KEY_MAIN_WINDOW_POSY, value);
+	}
+
+	public int getMainWindowPosY() {
+		return getInt(KEY_MAIN_WINDOW_POSY, -1);
+	}
 	
 	/**
 	 * Gets the languages supported by pms. The map is sorted by display name.
@@ -3845,18 +3863,18 @@ public class PmsConfiguration extends RendererConfiguration {
 	 * @return the supported languages
 	 */
 	public static Map<String, String> getSupportedLanguages() {
-		if(supportedLanguages == null) {
+		if (supportedLanguages == null) {
 			HashMap<String, String> languages = new HashMap<String, String>();
 			languages.put("ar", "Arabic");
 			languages.put("bg", "Bulgarian");
 			languages.put("ca", "Catalan");
-			languages.put("zhs", "Chinese (Simplified)");
-			languages.put("zht", "Chinese (Traditional)");
-			languages.put("cz", "Czech");
+			languages.put("zh-Hans", "Chinese (Simplified)");
+			languages.put("zh-Hant", "Chinese (Traditional)");
+			languages.put("cs", "Czech");
 			languages.put("da", "Danish");
 			languages.put("nl", "Dutch");
-			languages.put("en", "English (US)");
-			languages.put("en_uk", "English (UK)");
+			languages.put("en-US", "English (US)");
+			languages.put("en-GB", "English (UK)");
 			languages.put("fi", "Finnish");
 			languages.put("fr", "French");
 			languages.put("de", "German");
@@ -3869,7 +3887,7 @@ public class PmsConfiguration extends RendererConfiguration {
 			languages.put("no", "Norwegian");
 			languages.put("pl", "Polish");
 			languages.put("pt", "Portuguese");
-			languages.put("br", "Portuguese (Brazilian)");
+			languages.put("pt-BR", "Portuguese (Brazilian)");
 			languages.put("ro", "Romanian");
 			languages.put("ru", "Russian");
 			languages.put("sl", "Slovenian");
@@ -3877,11 +3895,11 @@ public class PmsConfiguration extends RendererConfiguration {
 			languages.put("sv", "Swedish");
 			languages.put("tr", "Turkish");
 
-	        LanguageNameComparator bvc =  new LanguageNameComparator(languages);
-			supportedLanguages = new TreeMap<String,String>(bvc);
+			LanguageNameComparator bvc = new LanguageNameComparator(languages);
+			supportedLanguages = new TreeMap<String, String>(bvc);
 			supportedLanguages.putAll(languages);
 		}
-		
+
 		return supportedLanguages;
 	}
 	
