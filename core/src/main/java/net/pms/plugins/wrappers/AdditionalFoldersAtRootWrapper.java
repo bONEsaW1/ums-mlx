@@ -33,6 +33,12 @@ public class AdditionalFoldersAtRootWrapper extends BaseWrapper implements Plugi
 	}
 
 	/**
+	 * The Constructor.
+	 */
+	public AdditionalFoldersAtRootWrapper() {
+	}
+
+	/**
 	 * Gets the folders.
 	 *
 	 * @return the folders

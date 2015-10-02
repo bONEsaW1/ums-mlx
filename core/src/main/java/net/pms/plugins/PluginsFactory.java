@@ -265,6 +265,7 @@ public class PluginsFactory {
 		// Filter all .jar files from the plugin directory
 		File[] jarFiles = pluginDirectory.listFiles(
 				new FileFilter() {
+					@Override
 					public boolean accept(File file) {
 						return file.isFile() && file.getName().toLowerCase().endsWith(".jar");
 					}
@@ -382,7 +383,7 @@ public class PluginsFactory {
 		BaseWrapper wp = null;
 		if (externalListener instanceof AdditionalFolderAtRoot) {
 			wp = new AdditionalFolderAtRootWrapper((AdditionalFolderAtRoot) externalListener);
-		} else if (externalListener instanceof AdditionalFolderAtRoot) {
+		} else if (externalListener instanceof AdditionalFoldersAtRoot) {
 			wp = new AdditionalFoldersAtRootWrapper((AdditionalFoldersAtRoot) externalListener);
 		} else if (externalListener instanceof FinalizeTranscoderArgsListener) {
 			wp = new FinalizeTranscoderArgsListenerWrapper((net.pms.external.FinalizeTranscoderArgsListener) externalListener);

@@ -526,6 +526,10 @@ public class PMS {
 
 		globalRepo = new GlobalIdRepo();
 
+		infoDb = new InfoDb();
+		codes = new CodeDb();
+		masterCode = null;
+
 		AutoUpdater autoUpdater = null;
 		if (Build.isUpdatable()) {
 			String serverURL = Build.getUpdateServerURL();
@@ -582,10 +586,6 @@ public class PMS {
 		if (configuration.useWebInterface()) {
 			web = new RemoteWeb(configuration.getWebPort());
 		}
-
-		infoDb = new InfoDb();
-		codes = new CodeDb();
-		masterCode = null;
 
 		// Now that renderer confs are all loaded, we can start searching for renderers
 		UPNPHelper.getInstance().init();
