@@ -21,11 +21,8 @@ package net.pms.medialibrary.dlna;
 import java.util.ArrayList;
 
 import net.pms.dlna.DLNAResource;
-import net.pms.external.AdditionalFolderAtRoot;
-import net.pms.external.AdditionalFoldersAtRoot;
 import net.pms.medialibrary.commons.dataobjects.DOMediaLibraryFolder;
 import net.pms.medialibrary.storage.MediaLibraryStorage;
-import net.pms.plugins.PluginsFactory;
 
 /**
  * The dlna root folder is the entry point to create the dlna tree shown on the renderer
@@ -74,7 +71,6 @@ public class RootFolder extends MediaLibraryFolder {
 	@Override
 	public void discoverChildren() {
 		super.discoverChildren();
-		addAdditionalFoldersAtRoot();
 	}
 
 	/*
@@ -85,7 +81,6 @@ public class RootFolder extends MediaLibraryFolder {
 	@Override
 	public boolean refreshChildren() {
 		super.refreshChildren();
-		addAdditionalFoldersAtRoot();
 
 		return true;
 	}
@@ -100,20 +95,5 @@ public class RootFolder extends MediaLibraryFolder {
 
 	public ArrayList<String> getTags() {
 		return tags;
-	}
-
-	/**
-	 * Adds the additional folders at root.
-	 */
-	private void addAdditionalFoldersAtRoot() {
-		for (AdditionalFolderAtRoot l : PluginsFactory.getAdditionalFolderAtRootList()) {
-			addChild(l.getChild());
-		}
-		for (AdditionalFoldersAtRoot l : PluginsFactory.getAdditionalFoldersAtRootList()) {
-			DLNAResource child;
-			while ((child = l.getChildren().next()) != null) {
-				addChild(child);
-			}
-		}
 	}
 }
