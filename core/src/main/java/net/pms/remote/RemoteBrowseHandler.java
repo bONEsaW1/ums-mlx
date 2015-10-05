@@ -16,7 +16,7 @@ import net.pms.configuration.WebRender;
 import net.pms.dlna.CodeEnter;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.Playlist;
-import net.pms.medialibrary.dlna.RootFolder;
+import net.pms.dlna.RootFolder;
 import net.pms.dlna.virtual.VirtualVideoAction;
 import net.pms.util.UMSUtils;
 

@@ -56,7 +56,6 @@ import net.pms.logging.FrameAppender;
 import net.pms.logging.LoggingConfig;
 import net.pms.network.ChromecastMgr;
 import net.pms.medialibrary.commons.MediaLibraryConfiguration;
-import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.medialibrary.filewatch.DirectoryWatcher;
 import net.pms.medialibrary.scanner.FullDataCollector;
 import net.pms.medialibrary.storage.MediaLibraryStorage;

@@ -53,44 +53,12 @@ public class RootFolder extends MediaLibraryFolder {
 		return rootFolder.getFolder();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.pms.medialibrary.dlna.MediaLibraryFolder#isRefreshNeeded()
-	 */
-	@Override
-	public boolean isRefreshNeeded() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.pms.medialibrary.dlna.MediaLibraryFolder#discoverChildren()
-	 */
-	@Override
-	public void discoverChildren() {
-		super.discoverChildren();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.pms.medialibrary.dlna.MediaLibraryFolder#refreshChildren()
-	 */
-	@Override
-	public boolean refreshChildren() {
-		super.refreshChildren();
-
-		return true;
-	}
-
 	public void setFolder(DLNAResource res) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 	}
 
 	public void stopPlaying(DLNAResource res) {
-		// TODO Auto-generated method stub
+		// Nothing to do here
 	}
 
 	public ArrayList<String> getTags() {

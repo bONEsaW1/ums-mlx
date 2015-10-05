@@ -43,7 +43,6 @@ import net.pms.PMS;
 import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
 import net.pms.external.URLResolver.URLResult;
-import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.newgui.LooksFrame;
 
 import org.apache.commons.io.FileUtils;

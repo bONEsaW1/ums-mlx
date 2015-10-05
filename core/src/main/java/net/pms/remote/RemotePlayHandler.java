@@ -21,7 +21,7 @@ import net.pms.formats.v2.SubtitleType;
 import net.pms.io.OutputParams;
 import net.pms.util.SubtitleUtils;
 import org.apache.commons.io.IOUtils;
-import net.pms.medialibrary.dlna.RootFolder;
+import net.pms.dlna.RootFolder;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;

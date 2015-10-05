@@ -13,7 +13,7 @@ import java.util.List;
 import net.pms.PMS;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.Range;
-import net.pms.medialibrary.dlna.RootFolder;
+import net.pms.dlna.RootFolder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

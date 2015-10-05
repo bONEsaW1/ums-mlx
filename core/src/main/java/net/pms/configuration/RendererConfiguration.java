@@ -19,7 +19,6 @@ import net.pms.dlna.*;
 import net.pms.encoders.Player;
 import net.pms.formats.Format;
 import net.pms.io.OutputParams;
-import net.pms.medialibrary.dlna.RootFolder;
 import net.pms.network.HTTPResource;
 import net.pms.network.SpeedStats;
 import net.pms.network.UPNPHelper;
