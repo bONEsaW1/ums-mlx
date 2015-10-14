@@ -122,9 +122,10 @@ public class MediaLibraryFolder extends VirtualFolder {
 	 * @see net.pms.dlna.DLNAResource#refreshChildren()
 	 */
 	@Override
-	public boolean refreshChildren() {
-		if (isUpdating)
-			return false;
+	public void doRefreshChildren() {
+		if (isUpdating) {
+			return;
+		}
 		isUpdating = true;
 
 		if (log.isDebugEnabled())
@@ -241,10 +242,9 @@ public class MediaLibraryFolder extends VirtualFolder {
 
 		isUpdating = false;
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug(String.format("Finished refreshing children for folder '%s' (%s). Refreshed=%s", getName(), getId(), nodeRefreshed));
-
-		return nodeRefreshed;
+		}
 	}
 
 	/**
