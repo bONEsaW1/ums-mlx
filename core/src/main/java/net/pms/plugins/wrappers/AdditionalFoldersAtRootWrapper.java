@@ -1,13 +1,11 @@
 package net.pms.plugins.wrappers;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.pms.dlna.DLNAResource;
-import net.pms.dlna.virtual.VirtualFolder;
 import net.pms.external.AdditionalFoldersAtRoot;
 import net.pms.plugins.DlnaTreeFolderPlugin;
 import net.pms.plugins.Plugin;
@@ -20,7 +18,7 @@ import net.pms.util.ImagesUtil;
 public class AdditionalFoldersAtRootWrapper extends BaseWrapper implements Plugin, DlnaTreeFolderPlugin {
 	private AdditionalFoldersAtRoot additionalFoldersAtRoot;
 	private String displayName;
-	private DLNAResource dlnaResource;
+	private AdditionalFoldersAtRootWrapperDlnaResource dlnaResource;
 
 	/**
 	 * The Constructor.
@@ -74,19 +72,10 @@ public class AdditionalFoldersAtRootWrapper extends BaseWrapper implements Plugi
 
 	@Override
 	public DLNAResource getDLNAResource() {
-		AdditionalFoldersAtRoot additionalFolderAtRoot = getAdditionalFoldersAtRoot();
-		if (dlnaResource == null && additionalFolderAtRoot != null) {
+		AdditionalFoldersAtRoot additionalFoldersAtRoot = getAdditionalFoldersAtRoot();
+		if (dlnaResource == null && additionalFoldersAtRoot != null) {
 			// lazy-initialize the DLNA resource
-
-			// 1) Create a new VirtualFolder in order to set the specified name for it
-			dlnaResource = new VirtualFolder(displayName, null);
-
-			// 2) Add all children of the plugin to the folder
-			Iterator<DLNAResource> originalChildren = additionalFolderAtRoot.getChildren();
-			while (originalChildren.hasNext()) {
-				DLNAResource childResource = originalChildren.next();
-				dlnaResource.addChild(childResource);
-			}
+			dlnaResource = new AdditionalFoldersAtRootWrapperDlnaResource(displayName, null, additionalFoldersAtRoot);
 		}
 
 		return dlnaResource;
