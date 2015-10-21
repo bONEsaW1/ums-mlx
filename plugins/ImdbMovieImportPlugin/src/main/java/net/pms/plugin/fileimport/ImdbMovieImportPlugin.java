@@ -138,7 +138,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 		} catch (IOException e) {
 			throw new FileImportException(String.format("IOException when trying to query %s for title='%s'", SERVICE_URL, title), e);
 		} catch (JSONException e) {
-			throw new FileImportException(String.format("JSONException when trying to query *s for title='%s'", SERVICE_URL, title), e);
+			throw new FileImportException(String.format("JSONException when trying to query %s for title='%s'", SERVICE_URL, title), e);
 		}
 	}
 
