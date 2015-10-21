@@ -36,13 +36,15 @@ import net.pms.util.PmsProperties;
 
 /**
  * Class used to collect information about a movie from imdb.<br>
- * It uses the services provides by http://www.imdbapi.com
+ * It uses the services provides by http://www.omdbapi.com
  * 
  * @author pw
  *
  */
 public class ImdbMovieImportPlugin implements FileImportPlugin {
-	private static final Logger logger = LoggerFactory.getLogger(ImdbMovieImportPlugin.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImdbMovieImportPlugin.class);
+	private static final String SERVICE_URL = "http://www.omdbapi.com";
+
 	private JSONObject movieObject;
 
 	/** Resource used for localization */
@@ -51,8 +53,9 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 	/**
 	 * Contains the mapping of tag names and corresponding tags coming from imdb.
 	 * 
-	 * */
+	 */
 	private static final Dictionary<String, String> tags; // key=tag name, value=value to query on imdb
+
 	static {
 		tags = new Hashtable<String, String>();
 		tags.put("Actor", "Actors");
@@ -61,11 +64,12 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/filesystemfolderplugin.properties", ImdbMovieImportPlugin.class);
 		} catch (IOException e) {
-			logger.error("Could not load filesystemfolderplugin.properties", e);
+			LOGGER.error("Could not load filesystemfolderplugin.properties", e);
 		}
 	}
 
@@ -74,12 +78,13 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
+
 	static {
 		globalConfig = new GlobalConfiguration();
 		try {
 			globalConfig.load();
 		} catch (IOException e) {
-			logger.error("Failed to load global configuration", e);
+			LOGGER.error("Failed to load global configuration", e);
 		}
 	}
 
@@ -131,9 +136,9 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 				throw new FileImportException(String.format("Parse error in response when searching for title='%s'", title));
 			}
 		} catch (IOException e) {
-			throw new FileImportException(String.format("IOException when trying to query imdb for title='%s'", title), e);
+			throw new FileImportException(String.format("IOException when trying to query %s for title='%s'", SERVICE_URL, title), e);
 		} catch (JSONException e) {
-			throw new FileImportException(String.format("JSONException when trying to query imdb for title='%s'", title), e);
+			throw new FileImportException(String.format("JSONException when trying to query *s for title='%s'", SERVICE_URL, title), e);
 		}
 	}
 
@@ -143,7 +148,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 		movieObject = null;
 
 		try {
-			URL call = new URL(String.format("http://www.imdbapi.com/?i=%s%s", id, getUrlProperties()));
+			URL call = new URL(String.format("%s/?i=%s%s", SERVICE_URL, id, getUrlProperties()));
 			String jsonString = readUrlResponse(call).trim();
 
 			movieObject = new JSONObject(jsonString.toString());
@@ -153,9 +158,9 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 				throw new FileImportException(String.format("Parse error in response when searching for id='%s'", id));
 			}
 		} catch (IOException e) {
-			throw new FileImportException(String.format("IOException when trying to query imdb for id='%s'", id), e);
+			throw new FileImportException(String.format("IOException when trying to query %s for id='%s'", SERVICE_URL, id), e);
 		} catch (JSONException e) {
-			throw new FileImportException(String.format("JSONException when trying to query imdb for id='%s'", id), e);
+			throw new FileImportException(String.format("JSONException when trying to query %s for id='%s'", SERVICE_URL, id), e);
 		}
 	}
 
@@ -181,9 +186,9 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 				res.add(new FileSearchObject(jsonObject));
 			}
 		} catch (IOException e) {
-			logger.error(String.format("IOException when trying to query imdb for name='%s'", name), e);
+			LOGGER.error(String.format("IOException when trying to query %s for name='%s'", SERVICE_URL, name), e);
 		} catch (JSONException e) {
-			logger.error(String.format("JSONException when trying to query imdb for name='%s'", name), e);
+			LOGGER.error(String.format("JSONException when trying to query %s for name='%s'", SERVICE_URL, name), e);
 		}
 
 		return res;
@@ -275,7 +280,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 						res = (int) r;
 					}
 				} catch (NumberFormatException ex) {
-					logger.error(String.format("Failed to parse rating='%s' as a double", ratingObj.toString()), ex);
+					LOGGER.error(String.format("Failed to parse rating='%s' as a double", ratingObj.toString()), ex);
 				}
 			}
 			break;
@@ -290,7 +295,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 				try {
 					res = Integer.parseInt(ratingObj.toString().replace(",", ""));
 				} catch (NumberFormatException ex) {
-					logger.error(String.format("Failed to parse rating='%s' as a integer", ratingObj.toString()), ex);
+					LOGGER.error(String.format("Failed to parse rating='%s' as a integer", ratingObj.toString()), ex);
 				}
 			}
 			break;
@@ -309,12 +314,12 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 						res = Integer.parseInt(dStr.substring(dStr.length() - 4, dStr.length()));
 					}
 				} catch (NumberFormatException ex) {
-					logger.error("Failed to parse release year='%s' as a double", ex);
+					LOGGER.error("Failed to parse release year='%s' as a double", ex);
 				}
 			}
 			break;
 		default:
-			logger.warn("Unsupported FileProperty: %s", property);
+			LOGGER.warn("Unsupported FileProperty: %s", property);
 			break;
 		}
 		return res;
@@ -325,7 +330,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 		try {
 			res = movieObject.get(key);
 		} catch (JSONException e) {
-			logger.warn(String.format("Failed to get key='%s'", key));
+			LOGGER.warn(String.format("Failed to get key='%s'", key));
 		}
 		return res;
 	}
@@ -396,7 +401,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 	}
 
 	private String getJsonResponse(String title) throws IOException {
-		URL call = new URL(String.format("http://www.imdbapi.com/?t=%s%s", URLEncoder.encode(String.format("%s", title), "UTF8"), getUrlProperties()));
+		URL call = new URL(String.format("%s/?t=%s%s", SERVICE_URL, URLEncoder.encode(String.format("%s", title), "UTF8"), getUrlProperties()));
 		return readUrlResponse(call).trim();
 	}
 
@@ -442,7 +447,7 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 			try {
 				globalConfig.save();
 			} catch (IOException e) {
-				logger.error("Failed to save global configuration", e);
+				LOGGER.error("Failed to save global configuration", e);
 			}
 		}
 	}
