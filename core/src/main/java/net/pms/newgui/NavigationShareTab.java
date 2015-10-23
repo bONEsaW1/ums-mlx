@@ -46,35 +46,20 @@ public class NavigationShareTab {
 	private static final String PANEL_ROW_SPEC = "p, 3dlu, p, 3dlu, p, 3dlu, p, 9dlu, p, 3dlu, p, 3dlu, p, 9dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 9dlu, fill:default:grow";
 
 	private JTable FList;
-	private JCheckBox hidevideosettings;
-	private JCheckBox hidetranscode;
-	private JCheckBox hidemedialibraryfolder;
-	private JCheckBox hideextensions;
-	private JCheckBox hideemptyfolders;
 	private JCheckBox hideengines;
 	private JTextField seekpos;
 	private JCheckBox thumbgenCheckBox;
 	private JCheckBox mplayer_thumb;
 	private JCheckBox dvdiso_thumb;
 	private JCheckBox image_thumb;
-	private JCheckBox cacheenable;
 	private JCheckBox archive;
 	private JComboBox sortmethod;
 	private JComboBox audiothumbnail;
 	private JTextField defaultThumbFolder;
-	private JCheckBox iphoto;
-	private JCheckBox aperture;
-	public static JCheckBox itunes;
 	private CustomJButton select;
-	private CustomJButton cachereset;
 	private JCheckBox ignorethewordthe;
-	private JTextField atzLimit;
-	private JCheckBox liveSubtitles;
 	private JCheckBox prettifyfilenames;
 	private JCheckBox episodeTitles;
-	private JCheckBox newmediafolder;
-	private JCheckBox recentlyplayedfolder;
-	private JCheckBox resume;
 
 	private final PmsConfiguration configuration;
 	private LooksFrame looksFrame;
@@ -135,29 +120,8 @@ public class NavigationShareTab {
 			cmp = (JComponent) cmp.getComponent(0);
 			cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
 
-			builder.add(GuiUtil.getPreferredSizeComponent(hideextensions), FormLayoutUtil.flip(cc.xyw(1, 17, 3), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(hideengines), FormLayoutUtil.flip(cc.xyw(4, 17, 3), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(hideemptyfolders), FormLayoutUtil.flip(cc.xy(9, 17), colSpec, orientation));
-
-			builder.add(GuiUtil.getPreferredSizeComponent(itunes), FormLayoutUtil.flip(cc.xy(1, 19), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(iphoto), FormLayoutUtil.flip(cc.xyw(4, 19, 3), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(aperture), FormLayoutUtil.flip(cc.xy(9, 19), colSpec, orientation));
-
-			builder.add(GuiUtil.getPreferredSizeComponent(cacheenable), FormLayoutUtil.flip(cc.xy(1, 21), colSpec, orientation));
-			builder.add(cachereset, FormLayoutUtil.flip(cc.xyw(4, 21, 3), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(hidemedialibraryfolder), FormLayoutUtil.flip(cc.xy(9, 21), colSpec, orientation));
-
-			builder.add(GuiUtil.getPreferredSizeComponent(archive), FormLayoutUtil.flip(cc.xyw(1, 23, 3), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(hidevideosettings), FormLayoutUtil.flip(cc.xyw(4, 23, 3), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(hidetranscode), FormLayoutUtil.flip(cc.xy(9, 23), colSpec, orientation));
-
-			builder.add(GuiUtil.getPreferredSizeComponent(liveSubtitles), FormLayoutUtil.flip(cc.xyw(1, 25, 3), colSpec, orientation));
-			builder.addLabel(Messages.getString("FoldTab.37"), FormLayoutUtil.flip(cc.xyw(4, 25, 2), colSpec, orientation));
-			builder.add(atzLimit, FormLayoutUtil.flip(cc.xy(6, 25), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(newmediafolder), FormLayoutUtil.flip(cc.xy(9, 25), colSpec, orientation));
-
-			builder.add(GuiUtil.getPreferredSizeComponent(resume), FormLayoutUtil.flip(cc.xy(1, 27), colSpec, orientation));
-			builder.add(GuiUtil.getPreferredSizeComponent(recentlyplayedfolder), FormLayoutUtil.flip(cc.xyw(4, 27, 3), colSpec, orientation));
+			builder.add(GuiUtil.getPreferredSizeComponent(hideengines), FormLayoutUtil.flip(cc.xyw(1, 17, 3), colSpec, orientation));
+			builder.add(GuiUtil.getPreferredSizeComponent(archive), FormLayoutUtil.flip(cc.xyw(4, 17, 3), colSpec, orientation));
 		}
 
 		JPanel panel = builder.getPanel();
@@ -298,32 +262,6 @@ public class NavigationShareTab {
 			}
 		});
 
-		// Hide Server Settings folder
-		hidevideosettings = new JCheckBox(Messages.getString("FoldTab.38"), configuration.getHideVideoSettings());
-		hidevideosettings.setContentAreaFilled(false);
-		hidevideosettings.setEnabled(false);
-		hidevideosettings.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideVideoSettings((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		// Hide #--TRANSCODE--# folder
-		hidetranscode = new JCheckBox(Messages.getString("FoldTab.33"), configuration.getHideTranscodeEnabled());
-		hidetranscode.setContentAreaFilled(false);
-		hidetranscode.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideTranscodeEnabled((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		// Hide cache folder
-		hidemedialibraryfolder = new JCheckBox(Messages.getString("FoldTab.32"), configuration.isHideMediaLibraryFolder());
-		hidemedialibraryfolder.setContentAreaFilled(false);
-		hidemedialibraryfolder.setEnabled(false);
-
 		// Browse compressed archives
 		archive = new JCheckBox(Messages.getString("NetworkTab.1"), configuration.isArchiveBrowsing());
 		archive.setContentAreaFilled(false);
@@ -331,43 +269,6 @@ public class NavigationShareTab {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				configuration.setArchiveBrowsing(e.getStateChange() == ItemEvent.SELECTED);
-			}
-		});
-
-		// Enable the cache
-		cacheenable = new JCheckBox(Messages.getString("NetworkTab.17"), configuration.getUseCache());
-		cacheenable.setToolTipText(Messages.getString("FoldTab.48"));
-		cacheenable.setContentAreaFilled(false);
-		cacheenable.setEnabled(false);
-
-		// Reset cache
-		cachereset = new CustomJButton(Messages.getString("NetworkTab.18"));
-		cachereset.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int option = JOptionPane.showConfirmDialog(
-					looksFrame,
-					Messages.getString("NetworkTab.13") + Messages.getString("NetworkTab.19"),
-					Messages.getString("Dialog.Question"),
-					JOptionPane.YES_NO_OPTION);
-				if (option == JOptionPane.YES_OPTION) {
-					PMS.get().getDatabase().init(true);
-				}
-
-			}
-		});
-		cachereset.setEnabled(configuration.getUseCache());
-
-		// Hide file extensions
-		hideextensions = new JCheckBox(Messages.getString("FoldTab.5"), configuration.isHideExtensions());
-		hideextensions.setContentAreaFilled(false);
-		if (configuration.isPrettifyFilenames()) {
-			hideextensions.setEnabled(false);
-		}
-		hideextensions.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideExtensions((e.getStateChange() == ItemEvent.SELECTED));
 			}
 		});
 
@@ -379,53 +280,6 @@ public class NavigationShareTab {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				configuration.setHideEngineNames((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		// Hide empty folders
-		hideemptyfolders = new JCheckBox(Messages.getString("FoldTab.31"), configuration.isHideEmptyFolders());
-		hideemptyfolders.setToolTipText(Messages.getString("FoldTab.59"));
-		hideemptyfolders.setContentAreaFilled(false);
-		hideemptyfolders.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideEmptyFolders((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		// Show iTunes library
-		itunes = new JCheckBox(Messages.getString("FoldTab.30"), configuration.isShowItunesLibrary());
-		itunes.setToolTipText(Messages.getString("FoldTab.47"));
-		itunes.setContentAreaFilled(false);
-		itunes.setEnabled(false);
-		itunes.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setShowItunesLibrary((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		// Show iPhoto library
-		iphoto = new JCheckBox(Messages.getString("FoldTab.29"), configuration.isShowIphotoLibrary());
-		iphoto.setContentAreaFilled(false);
-		iphoto.setEnabled(false);
-		iphoto.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setShowIphotoLibrary((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		// Show aperture library
-		aperture = new JCheckBox(Messages.getString("FoldTab.34"), configuration.isShowApertureLibrary());
-		aperture.setContentAreaFilled(false);
-		if (!Platform.isMac()) {
-			aperture.setEnabled(false);
-		}
-		aperture.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setShowApertureLibrary((e.getStateChange() == ItemEvent.SELECTED));
 			}
 		});
 
@@ -480,30 +334,6 @@ public class NavigationShareTab {
 			}
 		});
 
-		atzLimit = new JTextField("" + configuration.getATZLimit());
-		atzLimit.setToolTipText(Messages.getString("FoldTab.49"));
-		atzLimit.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				try {
-					int ab = Integer.parseInt(atzLimit.getText());
-					configuration.setATZLimit(ab);
-				} catch (NumberFormatException nfe) {
-					LOGGER.debug("Could not parse ATZ limit from \"" + atzLimit.getText() + "\"");
-					LOGGER.debug("The full error was: " + nfe);
-				}
-			}
-		});
-
-		liveSubtitles = new JCheckBox(Messages.getString("FoldTab.42"), configuration.isHideLiveSubtitlesFolder());
-		liveSubtitles.setContentAreaFilled(false);
-		liveSubtitles.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideLiveSubtitlesFolder((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
 		prettifyfilenames = new JCheckBox(Messages.getString("FoldTab.43"), configuration.isPrettifyFilenames());
 		prettifyfilenames.setToolTipText(Messages.getString("FoldTab.45"));
 		prettifyfilenames.setContentAreaFilled(false);
@@ -511,7 +341,6 @@ public class NavigationShareTab {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				configuration.setPrettifyFilenames((e.getStateChange() == ItemEvent.SELECTED));
-				hideextensions.setEnabled((e.getStateChange() != ItemEvent.SELECTED));
 				episodeTitles.setEnabled((e.getStateChange() == ItemEvent.SELECTED));
 			}
 		});
@@ -526,37 +355,6 @@ public class NavigationShareTab {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				configuration.setUseInfoFromIMDB((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		newmediafolder = new JCheckBox(Messages.getString("FoldTab.54"), configuration.isHideNewMediaFolder());
-		newmediafolder.setEnabled(false);
-		newmediafolder.setToolTipText(Messages.getString("FoldTab.60"));
-		newmediafolder.setContentAreaFilled(false);
-		newmediafolder.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideNewMediaFolder((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		recentlyplayedfolder = new JCheckBox(Messages.getString("FoldTab.55"), configuration.isHideRecentlyPlayedFolder());
-		recentlyplayedfolder.setContentAreaFilled(false);
-		recentlyplayedfolder.setEnabled(false);
-		recentlyplayedfolder.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setHideRecentlyPlayedFolder((e.getStateChange() == ItemEvent.SELECTED));
-			}
-		});
-
-		resume = new JCheckBox(Messages.getString("NetworkTab.68"), configuration.isResumeEnabled());
-		resume.setToolTipText(Messages.getString("NetworkTab.69"));
-		resume.setContentAreaFilled(false);
-		resume.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				configuration.setResume((e.getStateChange() == ItemEvent.SELECTED));
 			}
 		});
 	}
