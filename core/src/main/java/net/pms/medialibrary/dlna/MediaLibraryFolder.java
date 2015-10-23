@@ -86,6 +86,16 @@ public class MediaLibraryFolder extends VirtualFolder {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see net.pms.dlna.DLNAResource#isLiveSubtitleFolderAvailable()
+	 */
+	@Override
+	public boolean isLiveSubtitleFolderAvailable() {
+		return folder.getDisplayProperties() != null && folder.getDisplayProperties().isShowLiveSubtitleFolder();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.pms.dlna.virtual.VirtualFolder#isFolder()
 	 */
 	@Override

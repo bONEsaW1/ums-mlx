@@ -34,6 +34,7 @@ public class FileDisplayProperties implements Cloneable {
 	private List<DOThumbnailPriority> thumbnailPriorities = new ArrayList<DOThumbnailPriority>();
 	private SortOption sortOption;
 	private boolean showTranscodeFolder;
+	private boolean showLiveSubtitleFolder;
 
 	public FileDisplayProperties() {
 		this(true, true);
@@ -51,19 +52,20 @@ public class FileDisplayProperties implements Cloneable {
 	public FileDisplayProperties(String displayNameMask, boolean displayItems,
 			FileDisplayType fileDisplayType, boolean inherit) {
 		this(displayNameMask, displayItems, fileDisplayType, inherit, ConditionType.FILE_DATEINSERTEDDB, false, new DOTemplate("", -1),
-				SortOption.FileProperty, false);
+				SortOption.FileProperty, false, false);
 	}
 
 	public FileDisplayProperties(String displayNameMask, boolean displayItems,
 			FileDisplayType fileDisplayType, boolean inherit,
 			ConditionType sortType, boolean sortAscending, DOTemplate termplate,
-			SortOption sortOption, boolean showTranscodeFolder) {
+			SortOption sortOption, boolean showTranscodeFolder, boolean showLiveSubtitlesFolder) {
 		setDisplayNameMask(displayNameMask);
 		setFileDisplayType(fileDisplayType);
 		setSortType(sortType);
 		setSortAscending(sortAscending);
 		setSortOption(sortOption);
 		setShowTranscodeFolder(showTranscodeFolder);
+		setShowLiveSubtitleFolder(showLiveSubtitlesFolder);
 		this.template = termplate;
 	}
 
@@ -140,10 +142,18 @@ public class FileDisplayProperties implements Cloneable {
 		return showTranscodeFolder && getFileDisplayType() == FileDisplayType.FILE;
 	}
 
+	public void setShowLiveSubtitleFolder(boolean showLiveSubtitleFolder) {
+		this.showLiveSubtitleFolder = showLiveSubtitleFolder;
+	}
+
+	public boolean isShowLiveSubtitleFolder() {
+		return showLiveSubtitleFolder;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("mask=%s, fileDisplayType=%s, sortType=%s, templateId=%s, thumbnailPrios=%s, sortAscending=%s, sortOption=%s, showTranscodeFolder=%s",
-				getDisplayNameMask(), getFileDisplayType(), getSortType(), getTemplate() == null ? "null" : getTemplate().getId(), getThumbnailPriorities().size(), isSortAscending(), getSortOption(), isShowTranscodeFolder());
+		return String.format("mask=%s, fileDisplayType=%s, sortType=%s, templateId=%s, thumbnailPrios=%s, sortAscending=%s, sortOption=%s, showTranscodeFolder=%s, liveSubtitleFolderAvailable=%S",
+				getDisplayNameMask(), getFileDisplayType(), getSortType(), getTemplate() == null ? "null" : getTemplate().getId(), getThumbnailPriorities().size(), isSortAscending(), getSortOption(), isShowTranscodeFolder(), isShowLiveSubtitleFolder());
 	}
 
 	@Override
@@ -161,7 +171,8 @@ public class FileDisplayProperties implements Cloneable {
 				&& ((getTemplate() == null && compObj.getTemplate() == null)
 						|| (getTemplate() != null && compObj.getTemplate() != null && getTemplate().equals(compObj.getTemplate())))
 				&& getThumbnailPriorities().size() == compObj.getThumbnailPriorities().size()
-				&& isShowTranscodeFolder() == compObj.isShowTranscodeFolder()) {
+				&& isShowTranscodeFolder() == compObj.isShowTranscodeFolder()
+				&& isShowLiveSubtitleFolder() == compObj.isShowLiveSubtitleFolder()) {
 			for (int i = 0; i < this.getThumbnailPriorities().size(); i++) {
 				if (!this.getThumbnailPriorities().get(i).equals(compObj.getThumbnailPriorities().get(i))) {
 					return false;
@@ -183,6 +194,7 @@ public class FileDisplayProperties implements Cloneable {
 		fdp.setSortType(getSortType());
 		fdp.setSortOption(getSortOption());
 		fdp.setShowTranscodeFolder(isShowTranscodeFolder());
+		fdp.setShowLiveSubtitleFolder(isShowLiveSubtitleFolder());
 		ArrayList<DOThumbnailPriority> prios = new ArrayList<DOThumbnailPriority>();
 		for (DOThumbnailPriority prio : getThumbnailPriorities()) {
 			prios.add(prio.clone());

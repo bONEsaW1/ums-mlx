@@ -50,12 +50,12 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 	public DOMediaLibraryFolder(long id, DOMediaLibraryFolder parentFolder, String displayName, String equation, List<DOCondition> conditions, boolean displayItems,
 			boolean inheritsConditions, FileType fileType, int positionInParent, boolean inheritSort, boolean inheritDisplayFileAs) {
 		this(id, parentFolder, displayName, equation, conditions, displayItems, inheritsConditions, fileType, positionInParent,
-				new FileDisplayProperties(), inheritSort, inheritDisplayFileAs, false);
+				new FileDisplayProperties(), inheritSort, inheritDisplayFileAs);
 	}
 
 	public DOMediaLibraryFolder(long id, DOMediaLibraryFolder parentFolder, String displayName, String equation, List<DOCondition> conditions, boolean displayItems,
 			boolean inheritsConditions, FileType fileType, int positionInParent, FileDisplayProperties displayProperties, boolean inheritSort,
-			boolean inheritDisplayFileAs, boolean showTranscodeFolder) {
+			boolean inheritDisplayFileAs) {
 		super(displayName, id, parentFolder == null ? -1 : parentFolder.getId(), positionInParent, FolderType.MEDIALIBRARY);
 		setParentFolder(parentFolder);
 		setFilter(new DOFilter(equation, conditions));
@@ -211,6 +211,7 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 				this.displayProperties.setTemplate(props.getTemplate());
 				this.displayProperties.setThumbnailPriorities(props.getThumbnailPriorities());
 				this.displayProperties.setShowTranscodeFolder(props.isShowTranscodeFolder());
+				this.displayProperties.setShowLiveSubtitleFolder(props.isShowLiveSubtitleFolder());
 			}
 			if (this.isInheritSort()) {
 				this.displayProperties.setSortAscending(props.isSortAscending());

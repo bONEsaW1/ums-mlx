@@ -121,6 +121,7 @@ class DisplayPanel extends JPanel {
 	private JCheckBox cbInheritSort;
 	private JCheckBox cbInheritDisplayFileAs;
 	private CustomJCheckBox cbShowTranscodeFolder;
+	private CustomJCheckBox cbShowLiveSubtitlesFolder;
 	private JComboBox cbTemplate;
 	private JButton bNewTemplate;
 	private JButton bDeleteTemplate;
@@ -247,6 +248,7 @@ class DisplayPanel extends JPanel {
 		props.setSortOption(getSortOption());
 		props.setThumbnailPriorities(pFileDispay.getThumbnailPriorities());
 		props.setShowTranscodeFolder(isShowTranscodeFolder());
+		props.setShowLiveSubtitleFolder(isShowLiveSubtitlesFolder());
 		return props;
 	}
 
@@ -269,6 +271,10 @@ class DisplayPanel extends JPanel {
 
 	boolean isShowTranscodeFolder() {
 		return cbShowTranscodeFolder.isSelected();
+	}
+
+	boolean isShowLiveSubtitlesFolder() {
+		return cbShowLiveSubtitlesFolder.isSelected();
 	}
 
 	private String getDisdplayNameMask() {
@@ -379,6 +385,7 @@ class DisplayPanel extends JPanel {
 		rbGroupDisplayItemAs.add(rbDisplayIemAsFolder);
 
 		cbShowTranscodeFolder = new CustomJCheckBox(Messages.getString("ML.DisplayPanel.cbShowTranscodeFolder"));
+		cbShowLiveSubtitlesFolder = new CustomJCheckBox(Messages.getString("ML.DisplayPanel.cbShowLiveSubtitlesFolder"));
 
 		// create file display type
 		DOFileEntryBase fileEntry = new DOFileEntryBase(-1, null, 0, folder.getDisplayProperties().getDisplayNameMask(), folder.getDisplayProperties()
@@ -1065,13 +1072,14 @@ class DisplayPanel extends JPanel {
 		PanelBuilder builder;
 		CellConstraints cc = new CellConstraints();
 
-		FormLayout layout = new FormLayout("3px, p, 10px, p, 10px, r:p:grow, 3px", // columns
+		FormLayout layout = new FormLayout("3px, p, 10px, p, 10px, p, 10px, p:grow, 3px", // columns
 				"p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		lShowAdditionalFolders = builder.addLabel(Messages.getString("ML.DisplayPanel.lShowAdditionalFolders"), cc.xy(2, 1));
 		builder.add(GuiUtil.getPreferredSizeComponent(cbShowTranscodeFolder), cc.xy(4, 1));
+		builder.add(GuiUtil.getPreferredSizeComponent(cbShowLiveSubtitlesFolder), cc.xy(6, 1));
 
 		return builder.getPanel();
 
@@ -1094,6 +1102,7 @@ class DisplayPanel extends JPanel {
 
 		FileDisplayProperties fdp = folder.getDisplayProperties();
 		cbShowTranscodeFolder.setSelected(fdp.isShowTranscodeFolder());
+		cbShowLiveSubtitlesFolder.setSelected(fdp.isShowLiveSubtitleFolder());
 		if (cbInheritSort.isSelected()) {
 			// update the fields that have to be
 			cbSortType.setSelectedItem(folderHelper.getConditionTypeCBItem(fdp.getSortType()));
@@ -1123,6 +1132,7 @@ class DisplayPanel extends JPanel {
 			rbDisplayIemAsFolder.setEnabled(false);
 			lShowAdditionalFolders.setEnabled(false);
 			cbShowTranscodeFolder.setEnabled(false);
+			cbShowLiveSubtitlesFolder.setEnabled(false);
 			lTemplate.setEnabled(false);
 			cbTemplate.setEnabled(false);
 			bNewTemplate.setVisible(false);
@@ -1134,6 +1144,7 @@ class DisplayPanel extends JPanel {
 			rbDisplayIemAsFolder.setEnabled(true);
 			lShowAdditionalFolders.setEnabled(true);
 			cbShowTranscodeFolder.setEnabled(true);
+			cbShowLiveSubtitlesFolder.setEnabled(true);
 			lTemplate.setEnabled(true);
 			if (!isCreatingTemplate && !isEditingTemplate) {
 				cbTemplate.setEnabled(true);

@@ -269,7 +269,7 @@ class DBFolders extends DBBase {
 		try {
 			stmt = conn.prepareStatement("UPDATE MEDIALIBRARYFOLDERS" +
 					" SET EQUATION = ?, INHERITSCONDITIONS = ?, FILETYPE = ?, DISPLAYNAMEMASK = ?, TEMPLATEID = ?, DISPLAYITEMS = ?, DISPLAYTYPE = ?," +
-					" INHERITSSORT = ?, INHERITDISPLAYFILES = ?, SORTASCENDING = ?, SORTTYPE = ?, MAXFILES = ?, SORTOPTION = ?, SHOWTRANSCODEFOLDER = ?" +
+					" INHERITSSORT = ?, INHERITDISPLAYFILES = ?, SORTASCENDING = ?, SORTTYPE = ?, MAXFILES = ?, SORTOPTION = ?, SHOWTRANSCODEFOLDER = ?, SHOWLIVESUBTITLESFOLDER = ?" +
 					" WHERE FOLDERID = ?");
 			stmt.clearParameters();
 			stmt.setString(1, f.getFilter().getEquation());
@@ -287,8 +287,9 @@ class DBFolders extends DBBase {
 			stmt.setLong(12, f.getMaxFiles());
 			stmt.setString(13, tmpDisplayProps.getSortOption().toString());
 			stmt.setBoolean(14, tmpDisplayProps.isShowTranscodeFolder());
+			stmt.setBoolean(15, tmpDisplayProps.isShowLiveSubtitleFolder());
 
-			stmt.setLong(15, f.getId());
+			stmt.setLong(16, f.getId());
 			stmt.executeUpdate();
 
 			// delete and update conditions
@@ -361,7 +362,7 @@ class DBFolders extends DBBase {
 
 		try {
 			stmt = conn.prepareStatement("INSERT INTO MEDIALIBRARYFOLDERS (EQUATION, INHERITSCONDITIONS, FILETYPE, DISPLAYITEMS, INHERITSSORT" +
-					", INHERITDISPLAYFILES, DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, FOLDERID, MAXFILES, SORTOPTION, SHOWTRANSCODEFOLDER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					", INHERITDISPLAYFILES, DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, FOLDERID, MAXFILES, SORTOPTION, SHOWTRANSCODEFOLDER, SHOWLIVESUBTITLESFOLDER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.clearParameters();
 			stmt.setString(1, f.getFilter().getEquation());
 			stmt.setBoolean(2, f.isInheritsConditions());
@@ -380,6 +381,7 @@ class DBFolders extends DBBase {
 			stmt.setLong(13, f.getMaxFiles());
 			stmt.setString(14, fdp.getSortOption().toString());
 			stmt.setBoolean(15, fdp.isShowTranscodeFolder());
+			stmt.setBoolean(16, fdp.isShowLiveSubtitleFolder());
 			stmt.executeUpdate();
 
 			// update conditions (first delete, then insert)
@@ -647,7 +649,7 @@ class DBFolders extends DBBase {
 			}
 
 			stmt = conn.prepareStatement("SELECT EQUATION, INHERITSCONDITIONS, FILETYPE, INHERITSSORT, INHERITDISPLAYFILES, DISPLAYITEMS," +
-					" DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, MAXFILES, SORTOPTION, SHOWTRANSCODEFOLDER" +
+					" DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, MAXFILES, SORTOPTION, SHOWTRANSCODEFOLDER, SHOWLIVESUBTITLESFOLDER" +
 					" FROM MEDIALIBRARYFOLDERS" +
 					" WHERE FOLDERID = ?");
 			stmt.clearParameters();
@@ -675,6 +677,7 @@ class DBFolders extends DBBase {
 				res.setMaxFiles(rs.getInt(12));
 				tmpDisplayProps.setSortOption(SortOption.valueOf(rs.getString(13)));
 				tmpDisplayProps.setShowTranscodeFolder(rs.getBoolean(14));
+				tmpDisplayProps.setShowLiveSubtitleFolder(rs.getBoolean(15));
 
 				res.setDisplayProperties(tmpDisplayProps);
 			}

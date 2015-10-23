@@ -515,6 +515,7 @@ class DBInitializer extends DBBase {
 			sb.append(", SORTOPTION        VARCHAR_IGNORECASE(64)");
 			sb.append(", MAXFILES          INT DEFAULT 0");
 			sb.append(", SHOWTRANSCODEFOLDER BIT DEFAULT 0");
+			sb.append(", SHOWLIVESUBTITLESFOLDER BIT DEFAULT 0");
 			sb.append(", CONSTRAINT PK_MEDIALIBRARYFOLDERS PRIMARY KEY (FOLDERID))");
 			stmt.executeUpdate(sb.toString());
 			if (log.isDebugEnabled())
@@ -1295,6 +1296,9 @@ class DBInitializer extends DBBase {
 
 			// do updates
 			stmt = conn.prepareStatement("ALTER TABLE MEDIALIBRARYFOLDERS ADD SHOWTRANSCODEFOLDER BIT DEFAULT 0");
+			stmt.executeUpdate();
+
+			stmt = conn.prepareStatement("ALTER TABLE MEDIALIBRARYFOLDERS ADD SHOWLIVESUBTITLESFOLDER BIT DEFAULT 0");
 			stmt.executeUpdate();
 
 			// update db version

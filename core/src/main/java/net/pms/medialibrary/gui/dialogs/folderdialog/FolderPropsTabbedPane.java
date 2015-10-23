@@ -130,10 +130,6 @@ public class FolderPropsTabbedPane extends JTabbedPane {
 		return displayPanel.getSortType();
 	}
 
-	protected boolean isShowTranscodeFolder() {
-		return displayPanel.isShowTranscodeFolder();
-	}
-
 	protected int getMaxFiles() {
 		return displayPanel.getMaxFiles();
 	}
