@@ -101,6 +101,8 @@ import net.pms.medialibrary.commons.interfaces.IMediaLibraryStorage;
 import net.pms.medialibrary.gui.dialogs.ConfigureFileEntryDialog;
 import net.pms.medialibrary.gui.dialogs.FileEntryPluginDialog;
 import net.pms.medialibrary.gui.shared.FileDisplayPanel;
+import net.pms.newgui.GuiUtil;
+import net.pms.newgui.components.CustomJCheckBox;
 import net.pms.notifications.NotificationCenter;
 import net.pms.notifications.NotificationSubscriber;
 import net.pms.notifications.types.PluginEvent;
@@ -118,6 +120,7 @@ class DisplayPanel extends JPanel {
 	private JTextField tfMaxFiles;
 	private JCheckBox cbInheritSort;
 	private JCheckBox cbInheritDisplayFileAs;
+	private CustomJCheckBox cbShowTranscodeFolder;
 	private JComboBox cbTemplate;
 	private JButton bNewTemplate;
 	private JButton bDeleteTemplate;
@@ -154,6 +157,8 @@ class DisplayPanel extends JPanel {
 	private JMenuItem miAddInfo;
 	private JMenu mAdd;
 	private JLabel lMaxFiles;
+	private JPanel pShowAdditionalFoldersPanel;
+	private JLabel lShowAdditionalFolders;
 
 	DisplayPanel(DOMediaLibraryFolder f, IMediaLibraryStorage storage, List<FolderDialogActionListener> folderDialogActionListeners) {
 		this.folderDialogActionListeners = folderDialogActionListeners;
@@ -241,6 +246,7 @@ class DisplayPanel extends JPanel {
 		props.setSortType(getSortType());
 		props.setSortOption(getSortOption());
 		props.setThumbnailPriorities(pFileDispay.getThumbnailPriorities());
+		props.setShowTranscodeFolder(isShowTranscodeFolder());
 		return props;
 	}
 
@@ -259,6 +265,10 @@ class DisplayPanel extends JPanel {
 		} else {
 			return ConditionType.FILE_DATEINSERTEDDB;
 		}
+	}
+
+	boolean isShowTranscodeFolder() {
+		return cbShowTranscodeFolder.isSelected();
 	}
 
 	private String getDisdplayNameMask() {
@@ -368,6 +378,8 @@ class DisplayPanel extends JPanel {
 		rbGroupDisplayItemAs.add(rbDisplayItemAsFile);
 		rbGroupDisplayItemAs.add(rbDisplayIemAsFolder);
 
+		cbShowTranscodeFolder = new CustomJCheckBox(Messages.getString("ML.DisplayPanel.cbShowTranscodeFolder"));
+
 		// create file display type
 		DOFileEntryBase fileEntry = new DOFileEntryBase(-1, null, 0, folder.getDisplayProperties().getDisplayNameMask(), folder.getDisplayProperties()
 				.getThumbnailPriorities(), folder.getDisplayProperties().getFileDisplayType(), 0, null, null);
@@ -467,8 +479,7 @@ class DisplayPanel extends JPanel {
 					long selTemplateId = ((TemplateCBItem) cbTemplate.getSelectedItem()).getId();
 					if (storage.isTemplateIdInUse(selTemplateId)) {
 						JOptionPane.showMessageDialog(SwingUtilities.getRoot(cbTemplate), Messages.getString("ML.DisplayPanel.TemplateInUse"));
-					} else if (JOptionPane.showConfirmDialog(SwingUtilities.getRoot(cbTemplate), String.format(Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateMsg"), cbTemplate.getSelectedItem())
-							, Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					} else if (JOptionPane.showConfirmDialog(SwingUtilities.getRoot(cbTemplate), String.format(Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateMsg"), cbTemplate.getSelectedItem()), Messages.getString("ML.DisplayPanel.ConfirmDeleteTemplateTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						storage.deleteTemplate(selTemplateId);
 						spTree.setViewportView(null);
 						updateTemplateList();
@@ -1037,16 +1048,33 @@ class DisplayPanel extends JPanel {
 		PanelBuilder builder;
 		CellConstraints cc = new CellConstraints();
 
-		FormLayout layout = new FormLayout("3px, p, 10px, p, 3px, r:p:grow, 3px", // columns
-				"p"); // rows
+		FormLayout layout = new FormLayout("3px, p, 10px, p, 10px, r:p:grow, 3px", // columns
+				"p, 3px, p"); // rows
 		builder = new PanelBuilder(layout);
 		builder.opaque(true);
 
 		builder.add(rbDisplayItemAsFile, cc.xy(2, 1));
 		builder.add(rbDisplayIemAsFolder, cc.xy(4, 1));
 		builder.add(cbInheritDisplayFileAs, cc.xy(6, 1));
+		builder.add(pShowAdditionalFoldersPanel = getShowAdditionalFoldersPanel(), cc.xyw(2, 3, 5));
 
 		return builder.getPanel();
+	}
+
+	private JPanel getShowAdditionalFoldersPanel() {
+		PanelBuilder builder;
+		CellConstraints cc = new CellConstraints();
+
+		FormLayout layout = new FormLayout("3px, p, 10px, p, 10px, r:p:grow, 3px", // columns
+				"p"); // rows
+		builder = new PanelBuilder(layout);
+		builder.opaque(true);
+
+		lShowAdditionalFolders = builder.addLabel(Messages.getString("ML.DisplayPanel.lShowAdditionalFolders"), cc.xy(2, 1));
+		builder.add(GuiUtil.getPreferredSizeComponent(cbShowTranscodeFolder), cc.xy(4, 1));
+
+		return builder.getPanel();
+
 	}
 
 	private void updateGUI() {
@@ -1065,6 +1093,7 @@ class DisplayPanel extends JPanel {
 		cbSortOption.setSelectedItem(new SortOptionCBItem(folder.getDisplayProperties().getSortOption(), Messages.getString("ML.SortOption." + folder.getDisplayProperties().getSortOption().toString())));
 
 		FileDisplayProperties fdp = folder.getDisplayProperties();
+		cbShowTranscodeFolder.setSelected(fdp.isShowTranscodeFolder());
 		if (cbInheritSort.isSelected()) {
 			// update the fields that have to be
 			cbSortType.setSelectedItem(folderHelper.getConditionTypeCBItem(fdp.getSortType()));
@@ -1092,6 +1121,8 @@ class DisplayPanel extends JPanel {
 			pFileDispay.setEnabled(false);
 			rbDisplayItemAsFile.setEnabled(false);
 			rbDisplayIemAsFolder.setEnabled(false);
+			lShowAdditionalFolders.setEnabled(false);
+			cbShowTranscodeFolder.setEnabled(false);
 			lTemplate.setEnabled(false);
 			cbTemplate.setEnabled(false);
 			bNewTemplate.setVisible(false);
@@ -1101,6 +1132,8 @@ class DisplayPanel extends JPanel {
 			pFileDispay.setEnabled(true);
 			rbDisplayItemAsFile.setEnabled(true);
 			rbDisplayIemAsFolder.setEnabled(true);
+			lShowAdditionalFolders.setEnabled(true);
+			cbShowTranscodeFolder.setEnabled(true);
 			lTemplate.setEnabled(true);
 			if (!isCreatingTemplate && !isEditingTemplate) {
 				cbTemplate.setEnabled(true);
@@ -1115,11 +1148,13 @@ class DisplayPanel extends JPanel {
 
 			pTemplate.setVisible(false);
 			spTree.setVisible(false);
+			pShowAdditionalFoldersPanel.setVisible(true);
 		} else if (rbDisplayIemAsFolder.isSelected()) {
 			pFileDispay.setVisible(false);
 
 			pTemplate.setVisible(true);
 			spTree.setVisible(true);
+			pShowAdditionalFoldersPanel.setVisible(false);
 		}
 
 		if (folder.getFileType() != FileType.VIDEO) {

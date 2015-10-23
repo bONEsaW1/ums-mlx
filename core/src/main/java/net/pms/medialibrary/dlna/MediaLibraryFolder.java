@@ -80,7 +80,7 @@ public class MediaLibraryFolder extends VirtualFolder {
 	 */
 	@Override
 	public boolean isTranscodeFolderAvailable() {
-		return false;
+		return folder.getDisplayProperties() != null && folder.getDisplayProperties().isShowTranscodeFolder();
 	}
 
 	/*

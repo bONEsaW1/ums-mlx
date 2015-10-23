@@ -28,7 +28,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.pms.external.*;
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.pms.external.AdditionalFolderAtRoot;
+import net.pms.external.AdditionalFoldersAtRoot;
+import net.pms.external.ExternalListener;
 import net.pms.medialibrary.commons.dataobjects.DOCondition;
 import net.pms.medialibrary.commons.dataobjects.DOFilter;
 import net.pms.medialibrary.commons.dataobjects.DOFolder;
@@ -48,11 +54,9 @@ import net.pms.medialibrary.commons.enumarations.ThumbnailPrioType;
 import net.pms.medialibrary.commons.exceptions.StorageException;
 import net.pms.plugins.DlnaTreeFolderPlugin;
 import net.pms.plugins.PluginsFactory;
-import net.pms.plugins.wrappers.*;
-
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.pms.plugins.wrappers.AdditionalFolderAtRootWrapper;
+import net.pms.plugins.wrappers.AdditionalFoldersAtRootWrapper;
+import net.pms.plugins.wrappers.BaseWrapper;
 
 class DBFolders extends DBBase {
 	private static final Logger log = LoggerFactory.getLogger(DBFolders.class);
@@ -86,8 +90,7 @@ class DBFolders extends DBBase {
 
 			// set the id of the referenced folder
 			rs = stmt.getGeneratedKeys();
-			if (rs != null && rs.next())
-			{
+			if (rs != null && rs.next()) {
 				f.setId(rs.getInt(1));
 			}
 
@@ -266,7 +269,7 @@ class DBFolders extends DBBase {
 		try {
 			stmt = conn.prepareStatement("UPDATE MEDIALIBRARYFOLDERS" +
 					" SET EQUATION = ?, INHERITSCONDITIONS = ?, FILETYPE = ?, DISPLAYNAMEMASK = ?, TEMPLATEID = ?, DISPLAYITEMS = ?, DISPLAYTYPE = ?," +
-					" INHERITSSORT = ?, INHERITDISPLAYFILES = ?, SORTASCENDING = ?, SORTTYPE = ?, MAXFILES = ?, SORTOPTION = ?" +
+					" INHERITSSORT = ?, INHERITDISPLAYFILES = ?, SORTASCENDING = ?, SORTTYPE = ?, MAXFILES = ?, SORTOPTION = ?, SHOWTRANSCODEFOLDER = ?" +
 					" WHERE FOLDERID = ?");
 			stmt.clearParameters();
 			stmt.setString(1, f.getFilter().getEquation());
@@ -283,8 +286,9 @@ class DBFolders extends DBBase {
 			stmt.setString(11, tmpDisplayProps.getSortType().toString());
 			stmt.setLong(12, f.getMaxFiles());
 			stmt.setString(13, tmpDisplayProps.getSortOption().toString());
+			stmt.setBoolean(14, tmpDisplayProps.isShowTranscodeFolder());
 
-			stmt.setLong(14, f.getId());
+			stmt.setLong(15, f.getId());
 			stmt.executeUpdate();
 
 			// delete and update conditions
@@ -322,8 +326,7 @@ class DBFolders extends DBBase {
 						stmt.executeUpdate();
 
 						rs = stmt.getGeneratedKeys();
-						if (rs != null && rs.next())
-						{
+						if (rs != null && rs.next()) {
 							tp.setId(rs.getInt(1));
 						}
 					}
@@ -358,7 +361,7 @@ class DBFolders extends DBBase {
 
 		try {
 			stmt = conn.prepareStatement("INSERT INTO MEDIALIBRARYFOLDERS (EQUATION, INHERITSCONDITIONS, FILETYPE, DISPLAYITEMS, INHERITSSORT" +
-					", INHERITDISPLAYFILES, DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, FOLDERID, MAXFILES, SORTOPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					", INHERITDISPLAYFILES, DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, FOLDERID, MAXFILES, SORTOPTION, SHOWTRANSCODEFOLDER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.clearParameters();
 			stmt.setString(1, f.getFilter().getEquation());
 			stmt.setBoolean(2, f.isInheritsConditions());
@@ -376,6 +379,7 @@ class DBFolders extends DBBase {
 			stmt.setLong(12, f.getId());
 			stmt.setLong(13, f.getMaxFiles());
 			stmt.setString(14, fdp.getSortOption().toString());
+			stmt.setBoolean(15, fdp.isShowTranscodeFolder());
 			stmt.executeUpdate();
 
 			// update conditions (first delete, then insert)
@@ -406,8 +410,7 @@ class DBFolders extends DBBase {
 						stmt.executeUpdate();
 
 						rs = stmt.getGeneratedKeys();
-						if (rs != null && rs.next())
-						{
+						if (rs != null && rs.next()) {
 							tp.setId(rs.getInt(1));
 						}
 					}
@@ -576,8 +579,7 @@ class DBFolders extends DBBase {
 					ExternalListener externalListener = PluginsFactory.getExternalListenerByClassName(externalListenerClassName);
 					if (sf instanceof AdditionalFolderAtRootWrapper && externalListener instanceof AdditionalFolderAtRoot) {
 						((AdditionalFolderAtRootWrapper) sf).setAdditionalFolderAtRoot((AdditionalFolderAtRoot) externalListener);
-					}
-					else if (sf instanceof AdditionalFoldersAtRootWrapper && externalListener instanceof AdditionalFoldersAtRoot) {
+					} else if (sf instanceof AdditionalFoldersAtRootWrapper && externalListener instanceof AdditionalFoldersAtRoot) {
 						((AdditionalFoldersAtRootWrapper) sf).setAdditionalFoldersAtRoot((AdditionalFoldersAtRoot) externalListener);
 					}
 				}
@@ -645,7 +647,7 @@ class DBFolders extends DBBase {
 			}
 
 			stmt = conn.prepareStatement("SELECT EQUATION, INHERITSCONDITIONS, FILETYPE, INHERITSSORT, INHERITDISPLAYFILES, DISPLAYITEMS," +
-					" DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, MAXFILES, SORTOPTION" +
+					" DISPLAYNAMEMASK, TEMPLATEID, DISPLAYTYPE, SORTASCENDING, SORTTYPE, MAXFILES, SORTOPTION, SHOWTRANSCODEFOLDER" +
 					" FROM MEDIALIBRARYFOLDERS" +
 					" WHERE FOLDERID = ?");
 			stmt.clearParameters();
@@ -672,6 +674,7 @@ class DBFolders extends DBBase {
 				tmpDisplayProps.setSortType(sortType);
 				res.setMaxFiles(rs.getInt(12));
 				tmpDisplayProps.setSortOption(SortOption.valueOf(rs.getString(13)));
+				tmpDisplayProps.setShowTranscodeFolder(rs.getBoolean(14));
 
 				res.setDisplayProperties(tmpDisplayProps);
 			}

@@ -24,6 +24,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.h2.jdbcx.JdbcDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.pms.Messages;
 import net.pms.PMS;
 import net.pms.medialibrary.commons.VersionConstants;
@@ -36,11 +41,6 @@ import net.pms.medialibrary.commons.exceptions.StorageException;
 import net.pms.medialibrary.commons.helpers.AutoFolderCreator;
 import net.pms.medialibrary.commons.helpers.ConfigurationHelper;
 import net.pms.medialibrary.commons.interfaces.IMediaLibraryStorage;
-
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.h2.jdbcx.JdbcDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class DBInitializer extends DBBase {
 	private static final Logger log = LoggerFactory.getLogger(DBInitializer.class);
@@ -96,8 +96,7 @@ class DBInitializer extends DBBase {
 			if (log.isInfoEnabled())
 				log.info("Reinitializing DB because the version number could not be found. Create DB version " + VersionConstants.DB_VERSION);
 			initDb();
-		}
-		else if (VersionConstants.DB_VERSION.equals(realStorageVersion)) {
+		} else if (VersionConstants.DB_VERSION.equals(realStorageVersion)) {
 			if (log.isInfoEnabled())
 				log.info(String.format("Database version %s is up and running", VersionConstants.DB_VERSION));
 		} else {
@@ -515,6 +514,7 @@ class DBInitializer extends DBBase {
 			sb.append(", SORTTYPE          VARCHAR_IGNORECASE(64)");
 			sb.append(", SORTOPTION        VARCHAR_IGNORECASE(64)");
 			sb.append(", MAXFILES          INT DEFAULT 0");
+			sb.append(", SHOWTRANSCODEFOLDER BIT DEFAULT 0");
 			sb.append(", CONSTRAINT PK_MEDIALIBRARYFOLDERS PRIMARY KEY (FOLDERID))");
 			stmt.executeUpdate(sb.toString());
 			if (log.isDebugEnabled())
@@ -813,6 +813,10 @@ class DBInitializer extends DBBase {
 		if (realStorageVersion.equals("1.4")) {
 			updateDb14_15();
 			realStorageVersion = "1.5";
+		}
+		if (realStorageVersion.equals("1.5")) {
+			updateDb15_16();
+			realStorageVersion = "1.6";
 		}
 	}
 
@@ -1277,6 +1281,28 @@ class DBInitializer extends DBBase {
 				log.info("Updated DB from version 1.4 to 1.5");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.4 to 1.5", se);
+		} finally {
+			close(conn, stmt);
+		}
+	}
+
+	private void updateDb15_16() {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+
+		try {
+			conn = cp.getConnection();
+
+			// do updates
+			stmt = conn.prepareStatement("ALTER TABLE MEDIALIBRARYFOLDERS ADD SHOWTRANSCODEFOLDER BIT DEFAULT 0");
+			stmt.executeUpdate();
+
+			// update db version
+			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.6");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.5 to 1.6");
+		} catch (SQLException se) {
+			log.error("Failed to update DB from version 1.5 to 1.6", se);
 		} finally {
 			close(conn, stmt);
 		}

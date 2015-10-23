@@ -19,6 +19,7 @@
 package net.pms.medialibrary.gui.dialogs.folderdialog;
 
 import java.util.List;
+
 import javax.swing.JTabbedPane;
 
 import net.pms.Messages;
@@ -72,7 +73,7 @@ public class FolderPropsTabbedPane extends JTabbedPane {
 		boolean isValid = false;
 		if (this.folder.getParentFolder() != null
 				&& (this.folder.getParentFolder().getFileType() == this.folder.getFileType()
-				|| this.folder.getParentFolder().getFileType() == FileType.FILE)) {
+						|| this.folder.getParentFolder().getFileType() == FileType.FILE)) {
 			isValid = true;
 		}
 
@@ -127,6 +128,10 @@ public class FolderPropsTabbedPane extends JTabbedPane {
 
 	protected ConditionType getSortType() {
 		return displayPanel.getSortType();
+	}
+
+	protected boolean isShowTranscodeFolder() {
+		return displayPanel.isShowTranscodeFolder();
 	}
 
 	protected int getMaxFiles() {

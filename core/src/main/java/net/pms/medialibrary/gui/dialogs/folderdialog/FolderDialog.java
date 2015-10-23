@@ -40,20 +40,20 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import net.pms.Messages;
 import net.pms.medialibrary.commons.dataobjects.DOMediaLibraryFolder;
 import net.pms.medialibrary.commons.dataobjects.comboboxitems.FileTypeCBItem;
 import net.pms.medialibrary.commons.enumarations.DialogActionType;
 import net.pms.medialibrary.commons.enumarations.FileType;
-import net.pms.medialibrary.commons.events.FolderDialogFolderUpdateEvent;
 import net.pms.medialibrary.commons.events.FolderDialogActionListener;
+import net.pms.medialibrary.commons.events.FolderDialogFolderUpdateEvent;
 import net.pms.medialibrary.commons.exceptions.ConditionException;
 import net.pms.medialibrary.commons.exceptions.TemplateException;
 import net.pms.medialibrary.commons.helpers.FolderHelper;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 public class FolderDialog extends JDialog {
 	private static final Logger log = LoggerFactory.getLogger(FolderDialog.class);

@@ -48,7 +48,6 @@ import net.pms.medialibrary.commons.enumarations.FileType;
 import net.pms.medialibrary.commons.enumarations.SortOption;
 import net.pms.medialibrary.commons.enumarations.ThumbnailPrioType;
 import net.pms.medialibrary.commons.interfaces.IMediaLibraryStorage;
-import net.pms.medialibrary.commons.helpers.ConfigurationHelper;
 
 public class AutoFolderCreator {
 	private static final Logger log = LoggerFactory.getLogger(AutoFolderCreator.class);
@@ -99,7 +98,7 @@ public class AutoFolderCreator {
 		storage.insertTemplate(movieFileTemplate, movieFileFolder);
 
 		// Insert root node (it will get the id=1)
-		DOMediaLibraryFolder rootFolder = new DOMediaLibraryFolder(-1, null, Messages.getString("ML.InitialFolders.Root"), "", new ArrayList<DOCondition>(), false, false, FileType.FILE, 0, new FileDisplayProperties("%file_name", false, FileDisplayType.FILE, false), false, false);
+		DOMediaLibraryFolder rootFolder = new DOMediaLibraryFolder(-1, null, Messages.getString("ML.InitialFolders.Root"), "", new ArrayList<DOCondition>(), false, false, FileType.FILE, 0, new FileDisplayProperties("%file_name", false, FileDisplayType.FILE, false), false, false, false);
 		rootFolder.getDisplayProperties().setThumbnailPriorities(defaultFileThumbnailPriority);
 		rootFolder.getDisplayProperties().setDisplayNameMask("%file_name");
 
@@ -110,15 +109,15 @@ public class AutoFolderCreator {
 		childProps.setSortAscending(true);
 
 		// Create folders in root
-		DOMediaLibraryFolder videoFolder = new DOMediaLibraryFolder(-1, rootFolder, Messages.getString("ML.InitialFolders.Root.Video"), "", new ArrayList<DOCondition>(), false, true, FileType.VIDEO, 0, childProps, false, false);
+		DOMediaLibraryFolder videoFolder = new DOMediaLibraryFolder(-1, rootFolder, Messages.getString("ML.InitialFolders.Root.Video"), "", new ArrayList<DOCondition>(), false, true, FileType.VIDEO, 0, childProps, false, false, false);
 		videoFolder.getDisplayProperties().setThumbnailPriorities(defaultFileThumbnailPriority);
 
 		childProps.setDisplayNameMask("???");
-		DOMediaLibraryFolder audioFolder = new DOMediaLibraryFolder(-1, rootFolder, Messages.getString("ML.InitialFolders.Root.Audio"), "", new ArrayList<DOCondition>(), true, true, FileType.AUDIO, 1, childProps, false, false);
+		DOMediaLibraryFolder audioFolder = new DOMediaLibraryFolder(-1, rootFolder, Messages.getString("ML.InitialFolders.Root.Audio"), "", new ArrayList<DOCondition>(), true, true, FileType.AUDIO, 1, childProps, false, false, false);
 		audioFolder.getDisplayProperties().setThumbnailPriorities(defaultFileThumbnailPriority);
 
 		childProps.setDisplayNameMask("!!!");
-		DOMediaLibraryFolder imageFolder = new DOMediaLibraryFolder(-1, rootFolder, Messages.getString("ML.InitialFolders.Root.Pictures"), "", new ArrayList<DOCondition>(), true, true, FileType.PICTURES, 2, childProps, false, false);
+		DOMediaLibraryFolder imageFolder = new DOMediaLibraryFolder(-1, rootFolder, Messages.getString("ML.InitialFolders.Root.Pictures"), "", new ArrayList<DOCondition>(), true, true, FileType.PICTURES, 2, childProps, false, false, false);
 		imageFolder.getDisplayProperties().setThumbnailPriorities(defaultFileThumbnailPriority);
 
 		// Create folders in video
@@ -135,7 +134,7 @@ public class AutoFolderCreator {
 		notPlayedFolder.setName(Messages.getString("ML.InitialFolders.Root.Video.NotPlayed"));
 		notPlayedFolder.setFilter(new DOFilter("c1", Arrays.asList(new DOCondition(ConditionType.FILE_PLAYCOUNT, ConditionOperator.IS, "0", "c1", ConditionValueType.INTEGER, null, ""))));
 
-		DOMediaLibraryFolder recentlyAddedFolder = new DOMediaLibraryFolder(-1, videoFolder, Messages.getString("ML.InitialFolders.Root.Video.RecentlyAdded"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 3, childProps, false, true);
+		DOMediaLibraryFolder recentlyAddedFolder = new DOMediaLibraryFolder(-1, videoFolder, Messages.getString("ML.InitialFolders.Root.Video.RecentlyAdded"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 3, childProps, false, true, false);
 		recentlyAddedFolder.getDisplayProperties().setSortType(ConditionType.FILE_DATEINSERTEDDB);
 		recentlyAddedFolder.getDisplayProperties().setSortAscending(false);
 		recentlyAddedFolder.setFilter(new DOFilter("c1", Arrays.asList(new DOCondition(ConditionType.FILE_DATEINSERTEDDB, ConditionOperator.IS_IN_THE_LAST_SEC, "15", "c1", ConditionValueType.INTEGER, ConditionUnit.TIMESPAN_DAYS, ""))));
@@ -149,74 +148,74 @@ public class AutoFolderCreator {
 	}
 
 	private static DOMediaLibraryFolder createAllFolder(DOMediaLibraryFolder parent, int positionInParent, FileDisplayProperties childProps, DOTemplate movieFileTemplate) {
-		DOMediaLibraryFolder allFolder = new DOMediaLibraryFolder(-1, parent, Messages.getString("ML.InitialFolders.Root.Video.All"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, positionInParent, childProps, true, true);
+		DOMediaLibraryFolder allFolder = new DOMediaLibraryFolder(-1, parent, Messages.getString("ML.InitialFolders.Root.Video.All"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, positionInParent, childProps, true, true, false);
 
 		// Create Movie FileFolder display properties
-		FileDisplayProperties childMovieProps = new FileDisplayProperties("%name (%year) - %rating_percent/100 [%rating_voters]", true, FileDisplayType.FOLDER, false, ConditionType.FILE_DATEINSERTEDDB, false, movieFileTemplate, SortOption.FileProperty);
+		FileDisplayProperties childMovieProps = new FileDisplayProperties("%name (%year) - %rating_percent/100 [%rating_voters]", true, FileDisplayType.FOLDER, false, ConditionType.FILE_DATEINSERTEDDB, false, movieFileTemplate, SortOption.FileProperty, false);
 
 		// Create folders in All
 
-		DOMediaLibraryFolder resolutionFolder = new DOMediaLibraryFolder(-1, allFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution"), "", new ArrayList<DOCondition>(), false, true, FileType.VIDEO, 0, childProps, true, true);
+		DOMediaLibraryFolder resolutionFolder = new DOMediaLibraryFolder(-1, allFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution"), "", new ArrayList<DOCondition>(), false, true, FileType.VIDEO, 0, childProps, true, true, false);
 
-		DOMediaLibraryFolder allSortedFolder = new DOMediaLibraryFolder(-1, allFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted"), "", new ArrayList<DOCondition>(), false, true, FileType.VIDEO, 1, childProps, true, true);
+		DOMediaLibraryFolder allSortedFolder = new DOMediaLibraryFolder(-1, allFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted"), "", new ArrayList<DOCondition>(), false, true, FileType.VIDEO, 1, childProps, true, true, false);
 
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 2, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 2, childMovieProps, true, false, false);
 
 		// create SD folder
 		ArrayList<DOCondition> sdConditions = new ArrayList<DOCondition>();
 		sdConditions.add(new DOCondition(ConditionType.VIDEO_WIDTH, ConditionOperator.IS_LESS_THAN, "1280", "c1", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
 		sdConditions.add(new DOCondition(ConditionType.VIDEO_HEIGHT, ConditionOperator.IS_LESS_THAN, "720", "c2", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
-		DOMediaLibraryFolder allSdFolder = new DOMediaLibraryFolder(-1, resolutionFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.SD"), "c1 AND c2", sdConditions, true, true, FileType.VIDEO, 0, childProps, true, true);
+		DOMediaLibraryFolder allSdFolder = new DOMediaLibraryFolder(-1, resolutionFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.SD"), "c1 AND c2", sdConditions, true, true, FileType.VIDEO, 0, childProps, true, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allSdFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allSdFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		// create HD folder
 		ArrayList<DOCondition> hdConditions = new ArrayList<DOCondition>();
 		hdConditions.add(new DOCondition(ConditionType.VIDEO_WIDTH, ConditionOperator.IS_GREATER_THAN, "1279", "c1", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
 		hdConditions.add(new DOCondition(ConditionType.VIDEO_HEIGHT, ConditionOperator.IS_GREATER_THAN, "719", "c2", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
-		DOMediaLibraryFolder allHdFolder = new DOMediaLibraryFolder(-1, resolutionFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.HD"), "c1 OR c2", hdConditions, true, true, FileType.VIDEO, 1, childProps, true, true);
+		DOMediaLibraryFolder allHdFolder = new DOMediaLibraryFolder(-1, resolutionFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.HD"), "c1 OR c2", hdConditions, true, true, FileType.VIDEO, 1, childProps, true, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allHdFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allHdFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		// create 720 folder
 		ArrayList<DOCondition> hdReadyConditions = new ArrayList<DOCondition>();
 		hdReadyConditions.add(new DOCondition(ConditionType.VIDEO_WIDTH, ConditionOperator.IS_LESS_THAN, "1281", "c1", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
 		hdReadyConditions.add(new DOCondition(ConditionType.VIDEO_HEIGHT, ConditionOperator.IS_LESS_THAN, "721", "c2", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
-		DOMediaLibraryFolder allHdReadyFolder = new DOMediaLibraryFolder(-1, allHdFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.HD.720"), "c1 OR c2", hdReadyConditions, true, true, FileType.VIDEO, 0, childProps, true, true);
+		DOMediaLibraryFolder allHdReadyFolder = new DOMediaLibraryFolder(-1, allHdFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.HD.720"), "c1 OR c2", hdReadyConditions, true, true, FileType.VIDEO, 0, childProps, true, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allHdReadyFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allHdReadyFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		// create 1080 folder
 		ArrayList<DOCondition> fullHdConditions = new ArrayList<DOCondition>();
 		fullHdConditions.add(new DOCondition(ConditionType.VIDEO_WIDTH, ConditionOperator.IS_GREATER_THAN, "1919", "c1", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
 		fullHdConditions.add(new DOCondition(ConditionType.VIDEO_HEIGHT, ConditionOperator.IS_GREATER_THAN, "1079", "c2", ConditionValueType.INTEGER, ConditionUnit.UNKNOWN, ""));
-		DOMediaLibraryFolder allHdFullFolder = new DOMediaLibraryFolder(-1, allHdFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.HD.1080"), "c1 OR c2", fullHdConditions, true, true, FileType.VIDEO, 1, childProps, true, true);
+		DOMediaLibraryFolder allHdFullFolder = new DOMediaLibraryFolder(-1, allHdFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Resolution.HD.1080"), "c1 OR c2", fullHdConditions, true, true, FileType.VIDEO, 1, childProps, true, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allHdFullFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allHdFullFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		// Create folders in Sorted
 		childProps.setSortAscending(false);
 		childProps.setSortType(ConditionType.VIDEO_YEAR);
 		childProps.setDisplayNameMask("%name (%year) - %rating_percent/100 [%rating_voters]");
-		DOMediaLibraryFolder allByYearFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Year"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childProps, false, true);
+		DOMediaLibraryFolder allByYearFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Year"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childProps, false, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allByYearFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allByYearFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		childProps.setSortType(ConditionType.VIDEO_DURATIONSEC);
-		DOMediaLibraryFolder allByDurationFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Duration"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 1, childProps, false, true);
+		DOMediaLibraryFolder allByDurationFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Duration"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 1, childProps, false, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allByDurationFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allByDurationFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		childProps.setSortType(ConditionType.VIDEO_RATINGPERCENT);
-		DOMediaLibraryFolder allByRatingFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Rating"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 2, childProps, false, true);
+		DOMediaLibraryFolder allByRatingFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Rating"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 2, childProps, false, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allByRatingFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allByRatingFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		childProps.setSortType(ConditionType.FILE_DATEINSERTEDDB);
-		DOMediaLibraryFolder allByDateAddedFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Added"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 3, childProps, false, true);
+		DOMediaLibraryFolder allByDateAddedFolder = new DOMediaLibraryFolder(-1, allSortedFolder, Messages.getString("ML.InitialFolders.Root.Video.All.Sorted.Added"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 3, childProps, false, true, false);
 		// create detail folder
-		new DOMediaLibraryFolder(-1, allByDateAddedFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false);
+		new DOMediaLibraryFolder(-1, allByDateAddedFolder, Messages.getString("ML.InitialFolders.Detail"), "", new ArrayList<DOCondition>(), true, true, FileType.VIDEO, 0, childMovieProps, true, false, false);
 
 		return allFolder;
 	}
@@ -289,7 +288,7 @@ public class AutoFolderCreator {
 			equation = equation.substring(0, equation.length() - suffix.length()).trim();
 		}
 		int insertPos = 0;
-		DOMediaLibraryFolder numbersFolder = new DOMediaLibraryFolder(-1, newFolder, "#", equation, cons, true, true, newFolder.getFileType(), 0, new FileDisplayProperties(), true, true);
+		DOMediaLibraryFolder numbersFolder = new DOMediaLibraryFolder(-1, newFolder, "#", equation, cons, true, true, newFolder.getFileType(), 0, new FileDisplayProperties(), true, true, false);
 		;
 
 		// Add A-Z folders (ascending or descending)
@@ -357,7 +356,7 @@ public class AutoFolderCreator {
 		// Create the base node
 		FileDisplayProperties displayProps = new FileDisplayProperties(false, true);
 		DOMediaLibraryFolder newRootFolder = new DOMediaLibraryFolder(-1, parent, Messages.getString("ML.Condition.Header.Type." + conditionType.toString()),
-				"", new ArrayList<DOCondition>(), false, true, parent.getFileType(), insertPos, displayProps, true, true);
+				"", new ArrayList<DOCondition>(), false, true, parent.getFileType(), insertPos, displayProps, true, true, false);
 
 		// Get the node names to add sorted from the db
 		List<String> items = storage.getVideoProperties(conditionType, isAscending, minOccurences);
@@ -376,8 +375,7 @@ public class AutoFolderCreator {
 
 			// create new child folder. It will be automatically added to newRootFolder
 			// by setting it as the parent
-			new DOMediaLibraryFolder(-1, newRootFolder, displayName, "c1", cons, true, true,
-					newRootFolder.getFileType(), insertPosition++, displayProps, true, true);
+			new DOMediaLibraryFolder(-1, newRootFolder, displayName, "c1", cons, true, true, newRootFolder.getFileType(), insertPosition++, displayProps, true, true, false);
 		}
 		storage.insertFolder(newRootFolder);
 		if (log.isInfoEnabled())
@@ -393,8 +391,7 @@ public class AutoFolderCreator {
 
 		// Create the base node
 		FileDisplayProperties displayProps = new FileDisplayProperties(false, true);
-		DOMediaLibraryFolder newRootFolder = new DOMediaLibraryFolder(-1, parent, tagName,
-				"", new ArrayList<DOCondition>(), false, true, parent.getFileType(), insertPos, displayProps, true, true);
+		DOMediaLibraryFolder newRootFolder = new DOMediaLibraryFolder(-1, parent, tagName, "", new ArrayList<DOCondition>(), false, true, parent.getFileType(), insertPos, displayProps, true, true, false);
 
 		// Add nodes
 		int insertPosition = 0;
@@ -405,8 +402,7 @@ public class AutoFolderCreator {
 
 			// create new child folder. It will be automatically added to newRootFolder
 			// by setting it as the parents
-			new DOMediaLibraryFolder(-1, newRootFolder, tagValue, "c1", cons, true, true,
-					newRootFolder.getFileType(), insertPosition++, displayProps, true, true);
+			new DOMediaLibraryFolder(-1, newRootFolder, tagValue, "c1", cons, true, true, newRootFolder.getFileType(), insertPosition++, displayProps, true, true, false);
 		}
 		storage.insertFolder(newRootFolder);
 		if (log.isInfoEnabled())
