@@ -19,7 +19,9 @@
 package net.pms.newgui;
 
 import com.jgoodies.looks.Options;
-
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
+import com.sun.jna.Platform;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +39,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.pms.Messages;
 import net.pms.PMS;
@@ -96,6 +100,7 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 	private MediaLibraryTab mediaLibraryTab;
 	private AbstractButton reload;
 	private JLabel status;
+	private static boolean lookAndFeelInitialized = false;
 	private ViewLevel viewLevel = ViewLevel.UNKNOWN;
 
 	public ViewLevel getViewLevel() {
@@ -127,6 +132,64 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 
 	public AbstractButton getReload() {
 		return reload;
+	}
+
+	static void initializeLookAndFeel() {
+		if (lookAndFeelInitialized) {
+			return;
+		}
+
+		LookAndFeel selectedLaf = null;
+		if (Platform.isWindows()) {
+			selectedLaf = new WindowsLookAndFeel();
+		} else if (System.getProperty("nativelook") == null && !Platform.isMac()) {
+			selectedLaf = new PlasticLookAndFeel();
+		} else {
+			try {
+				String systemClassName = UIManager.getSystemLookAndFeelClassName();
+				// Workaround for Gnome
+				try {
+					String gtkLAF = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+					Class.forName(gtkLAF);
+
+					if (systemClassName.equals("javax.swing.plaf.metal.MetalLookAndFeel")) {
+						systemClassName = gtkLAF;
+					}
+				} catch (ClassNotFoundException ce) {
+					LOGGER.error("Error loading GTK look and feel: ", ce);
+				}
+
+				LOGGER.trace("Choosing Java look and feel: " + systemClassName);
+				UIManager.setLookAndFeel(systemClassName);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1) {
+				selectedLaf = new PlasticLookAndFeel();
+				LOGGER.error("Error while setting native look and feel: ", e1);
+			}
+		}
+
+		if (selectedLaf instanceof PlasticLookAndFeel) {
+			PlasticLookAndFeel.setPlasticTheme(PlasticLookAndFeel.createMyDefaultTheme());
+			PlasticLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_DEFAULT_VALUE);
+			PlasticLookAndFeel.setHighContrastFocusColorsEnabled(false);
+		} else if (selectedLaf != null && selectedLaf.getClass() == MetalLookAndFeel.class) {
+			MetalLookAndFeel.setCurrentTheme(new DefaultMetalTheme());
+		}
+
+		// Work around caching in MetalRadioButtonUI
+		JRadioButton radio = new JRadioButton();
+		radio.getUI().uninstallUI(radio);
+		JCheckBox checkBox = new JCheckBox();
+		checkBox.getUI().uninstallUI(checkBox);
+
+		if (selectedLaf != null) {
+			try {
+				UIManager.setLookAndFeel(selectedLaf);
+			} catch (UnsupportedLookAndFeelException e) {
+				LOGGER.warn("Can't change look and feel", e);
+			}
+		}
+
+		lookAndFeelInitialized = true;
 	}
 
 	/**
@@ -258,10 +321,8 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 			title = title + "  [" + Messages.getString("TracesTab.10").toUpperCase() + "]";
 		}
 
-		this.setTitle(title);
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-//		Dimension screenSize = getToolkit().getScreenSize();
-
+		setTitle(title);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		if (screenSize.width < MINIMUM_SIZE.width || screenSize.height < MINIMUM_SIZE.height) {
 			setMinimumSize(screenSize);
 		} else {
@@ -280,6 +341,9 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 		if (storedScreenSize.width != screenSize.getWidth() || storedScreenSize.height != screenSize.getHeight()) {
 			setSize(STANDARD_SIZE);
 			screenChanged = true;
+		} else if (configuration.getWindowExtendedState() != NORMAL) {
+			setSize(STANDARD_SIZE);
+			setExtendedState(configuration.getWindowExtendedState());
 		} else if (screenSize.width < storedWindowSize.width || screenSize.height < storedWindowSize.height) {
 			setSize(screenSize);
 		} else {
@@ -434,7 +498,13 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 	public void quit() {
 		WindowsNamedPipe.setLoop(false);
 		String windowGeometry = getBounds().toString();
-		configuration.setWindowGeometry(windowGeometry.substring(windowGeometry.indexOf("[") + 1, windowGeometry.indexOf("]")));
+		if (getExtendedState() != NORMAL) {
+			configuration.setWindowExtendedState(getExtendedState());
+		} else {
+			configuration.setWindowExtendedState(NORMAL);
+			configuration.setWindowGeometry(windowGeometry.substring(windowGeometry.indexOf("[") + 1, windowGeometry.indexOf("]")));
+		}
+
 		configuration.setScreenSize((int) screenSize.getWidth() + "x" + (int) screenSize.getHeight());
 		try {
 			Thread.sleep(100);
