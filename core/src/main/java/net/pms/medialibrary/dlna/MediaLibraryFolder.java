@@ -206,7 +206,7 @@ public class MediaLibraryFolder extends VirtualFolder {
 				if (pos < getChildren().size()) {
 					if (getChildren().get(pos) instanceof MediaLibraryRealFile) {
 						MediaLibraryRealFile dlnaFile = (MediaLibraryRealFile) getChildren().get(pos);
-						if (!dlnaFile.equals(new MediaLibraryRealFile(child, getFolder().getDisplayProperties(), getFolder().getFileType()))) {
+						if (!dlnaFile.equals(new MediaLibraryRealFile(child, getFolder().getDisplayProperties(), getFolder().getFileType(), isTranscodeFolderAvailable()))) {
 							// a file has changed
 							add = true;
 							break;
@@ -265,7 +265,7 @@ public class MediaLibraryFolder extends VirtualFolder {
 	private void manageFile(DOFileInfo fileInfo) {
 		File f = new File(fileInfo.getFilePath());
 		if ((f.isFile() || f.isDirectory()) && !f.isHidden()) {
-			DLNAResource fileToAdd = new MediaLibraryRealFile(fileInfo, getFolder().getDisplayProperties(), getFolder().getFileType());
+			DLNAResource fileToAdd = new MediaLibraryRealFile(fileInfo, getFolder().getDisplayProperties(), getFolder().getFileType(), isTranscodeFolderAvailable());
 
 			if (getFolder().getDisplayProperties().getFileDisplayType() == FileDisplayType.FOLDER) {
 				// add the child as a MediaLibraryRealFile anyway when it has to be displayed as a folder

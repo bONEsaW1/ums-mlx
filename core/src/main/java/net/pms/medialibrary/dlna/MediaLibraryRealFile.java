@@ -58,6 +58,7 @@ public class MediaLibraryRealFile extends RealFile {
 	private FileType fileType;
 	private DOFileEntryBase fileBase;
 	private RealFile originalFile;
+	private boolean isTranscodeFolderAvailable;
 
 	/**
 	 * Instantiates a new media library real file.
@@ -66,12 +67,13 @@ public class MediaLibraryRealFile extends RealFile {
 	 * @param displayProperties the display properties
 	 * @param fileType the file type
 	 */
-	public MediaLibraryRealFile(DOFileInfo fileInfo, FileDisplayProperties displayProperties, FileType fileType) {
+	public MediaLibraryRealFile(DOFileInfo fileInfo, FileDisplayProperties displayProperties, FileType fileType, boolean isTranscodeFolderAvailable) {
 		super(new File(fileInfo.getFilePath()));
 
 		setFileType(fileType);
 		setFileInfo(fileInfo);
 		setDisplayProperties(displayProperties);
+		this.isTranscodeFolderAvailable = isTranscodeFolderAvailable;
 
 		originalFile = this;
 
@@ -109,7 +111,7 @@ public class MediaLibraryRealFile extends RealFile {
 	 */
 	@Override
 	public boolean isTranscodeFolderAvailable() {
-		return false;
+		return isTranscodeFolderAvailable;
 	}
 
 	/**
@@ -341,7 +343,8 @@ public class MediaLibraryRealFile extends RealFile {
 		MediaLibraryRealFile compObj = (MediaLibraryRealFile) obj;
 		if (getFileInfo().equals(compObj.getFileInfo())
 				&& getDisplayProperties().equals(compObj.getDisplayProperties())
-				&& getFileType().equals(compObj.fileType)) {
+				&& getFileType().equals(compObj.fileType)
+				&& isTranscodeFolderAvailable() == compObj.isTranscodeFolderAvailable()) {
 			return true;
 		}
 		return false;
