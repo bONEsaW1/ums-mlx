@@ -52,7 +52,7 @@ public class AdditionalFoldersAtRootWrapperDlnaResource extends VirtualFolder {
 		Iterator<DLNAResource> iteratorRemove = additionalFoldersAtRoot.getChildren();
 		while (iteratorRemove.hasNext()) {
 			DLNAResource r = iteratorRemove.next();
-			if (getChildren().size() < firstIndexToRemove || !getChildren().get(firstIndexToRemove).equals(r)) {
+			if (getChildren().size() <= firstIndexToRemove || !getChildren().get(firstIndexToRemove).equals(r)) {
 				break;
 			}
 			firstIndexToRemove++;
@@ -70,7 +70,7 @@ public class AdditionalFoldersAtRootWrapperDlnaResource extends VirtualFolder {
 		int indexAdd = 0;
 		while (iteratorAdd.hasNext()) {
 			DLNAResource r = iteratorAdd.next();
-			if (getChildren().size() < indexAdd || !getChildren().get(indexAdd).equals(r)) {
+			if (getChildren().size() <= indexAdd || !getChildren().get(indexAdd).equals(r)) {
 				addChild(r);
 			}
 			indexAdd++;
