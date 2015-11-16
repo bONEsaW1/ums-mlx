@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>5.2.4-mlx-1.4-SNAPSHOT</version>
+		<version>5.3.1-mlx-1.4-SNAPSHOT</version>
 	</parent>
 
 	<modules>
@@ -52,31 +52,14 @@
 		<dependency>
 			<groupId>github.com.taconaut</groupId>
 			<artifactId>ums-core</artifactId>
-			<version>5.2.4-mlx-1.4-SNAPSHOT</version>
+			<version>5.3.1-mlx-1.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<pluginManagement>			
+		<pluginManagement>
 			<plugins>
 
-	      <!-- This plugin will take care of installing the external dependencies -->
-				<plugin>
-					<groupId>com.savage7.maven.plugins</groupId>
-					<artifactId>maven-external-dependency-plugin</artifactId>
-					<version>${maven-external-dependency-plugin-version}</version>
-					<configuration>
-						<stagingDirectory>${project.build.directory}/dependencies/</stagingDirectory>
-						<createChecksum>true</createChecksum>
-						<skipChecksumVerification>false</skipChecksumVerification>
-						<force>false</force>
-						
-						<artifactItems>
-							<!-- Add artifact items common to multiple plugins here -->
-						</artifactItems>
-					</configuration>
-				</plugin>
-			
 				<!-- Export all built plugins to target dir at the root of the project -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -102,7 +85,8 @@
 					</executions>
 				</plugin>
 
-				<!-- Ignore/Execute plugin execution to avoid .m2e warnings in eclipse fro child plugins -->
+				<!-- Ignore/Execute plugin execution to avoid .m2e warnings in eclipse 
+					fro child plugins -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>

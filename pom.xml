@@ -8,10 +8,9 @@
         down to first building the pms.jar and then assembling all application resources. 
         
         Note that Maven 3 does not automatically install all dependencies, unlike Maven 2.
-        To install all dependencies to your local repository, run the following commands:
+        To install external dependencies to your local repository, run the following commands:
         
-            mvn com.savage7.maven.plugins:maven-external-dependency-plugin:resolve-external 
-            mvn com.savage7.maven.plugins:maven-external-dependency-plugin:install-external 
+        	mvn external:install
         
         To build PMS, do:
         
@@ -28,7 +27,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>github.com.taconaut</groupId>
 	<artifactId>ums</artifactId>
-	<version>5.2.4-mlx-1.4-SNAPSHOT</version>
+	<version>5.3.1-mlx-1.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>UMS</name>
 	<url>http://www.universalmediaserver.org/</url>
@@ -152,12 +151,12 @@
 		<!-- Version numbers for libraries shared by multiple modules -->
 		<jgoodies-common-version>1.4.0</jgoodies-common-version>
 		<jgoodies-forms-version>1.6.0</jgoodies-forms-version>
-		<jgoodies-looks-version>2.5.3</jgoodies-looks-version>
+		<jgoodies-looks-version>2.7.0</jgoodies-looks-version>
 		<jgoodies-binding-version>2.0.6</jgoodies-binding-version>
 		<xmlwise-version>1.2.11</xmlwise-version>
 		
 		<!-- Version numbers for plugins shared by multiple modules  -->
-		<maven-external-dependency-plugin-version>0.5</maven-external-dependency-plugin-version>
+		<com.universalmediaserver-plugin-version>0.1</com.universalmediaserver-plugin-version>
 		<maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
 		<maven-compiler-plugin-version>3.3</maven-compiler-plugin-version>
 		<maven-surefire-plugin-version>2.18.1</maven-surefire-plugin-version>
@@ -190,57 +189,32 @@
 	<build>
 		<plugins>
 
-            <!-- This plugin will take care of installing the external dependencies 
-                that do not exist in a public Maven repository. That is why we store some 
-                jar files in the "src/main/external-resources/lib" directory and have this 
-                plugin take care of the installation at build time. 
-                Note: The plugin does not work automatically in Maven 3 if included in the project
-                requiering the liraries (see http://code.google.com/p/maven-external-dependency-plugin/issues/detail?id=8#c3
-                for details).
-                
-                To install the required dependencies manually, execute the following commands: 
-                
-                mvn com.savage7.maven.plugins:maven-external-dependency-plugin:resolve-external 
-                mvn com.savage7.maven.plugins:maven-external-dependency-plugin:install-external 
-                
-                Checksums can be calculated with "openssl sha1 [filename]". 
-                See: http://code.google.com/p/maven-external-dependency-plugin/issues/detail?id=8#c4 -->
+			<!--
+				This plugin will take care of installing the external dependencies that do not
+				exist in a public Maven repository. That is why we store some jar files in the
+				"src/main/external-resources/lib" directory and have this plugin take care of
+				the installation at build time.
+
+				Checksums can be calculated with "openssl sha1 [filename]".
+			-->
 			<plugin>
-				<groupId>com.savage7.maven.plugins</groupId>
-				<artifactId>maven-external-dependency-plugin</artifactId>
-				<version>${maven-external-dependency-plugin-version}</version>
-				<inherited>false</inherited>
+				<groupId>com.universalmediaserver</groupId>
+				<artifactId>external-maven-plugin</artifactId>
+				<version>0.1</version>
+				<inherited>true</inherited>
 				<configuration>
 					<stagingDirectory>${project.build.directory}/dependencies/</stagingDirectory>
 					<createChecksum>true</createChecksum>
-					<skipChecksumVerification>false</skipChecksumVerification>
-					<force>false</force>
-
 					<artifactItems>
-						<!-- Add artifact items common to multiple modules here -->
+            <!-- Add artifact items common to multiple modules here -->
 					</artifactItems>
 				</configuration>
-
 				<executions>
 					<execution>
 						<id>clean-external-dependencies</id>
 						<phase>clean</phase>
 						<goals>
-							<!-- mvn com.savage7.maven.plugins:maven-external-dependency-plugin:clean-external -->
-							<goal>clean-external</goal>
-						</goals>
-					</execution>
-
-					<execution>
-						<id>resolve-install-external-dependencies</id>
-						<!-- Not bound to a phase, you need to execute these manually. See above -->
-						<phase>process-resources</phase>
-						<goals>
-							<!-- mvn com.savage7.maven.plugins:maven-external-dependency-plugin:resolve-external -->
-							<goal>resolve-external</goal>
-
-							<!-- mvn com.savage7.maven.plugins:maven-external-dependency-plugin:install-external -->
-							<goal>install-external</goal>
+							<goal>clean</goal>
 						</goals>
 					</execution>
 				</executions>

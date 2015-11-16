@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- PMS consists of two major parts: PMS itself and the third party software 
-		needed to run it. While PMS itself is 100% pure Java, some of the third party 
-		software is not. This means building a platform specific distribution boils 
-		down to first building the pms.jar and then assembling all application resources. 
-		Note that Maven 3 does not automatically install all dependencies, unlike 
-		Maven 2. To install all dependencies to your local repository, run the following 
-		commands: mvn com.savage7.maven.plugins:maven-external-dependency-plugin:resolve-external 
-		mvn com.savage7.maven.plugins:maven-external-dependency-plugin:install-external 
-		To build PMS, do: mvn clean package After building, the "target" directory 
-		will contain the binary. To generate a full source code report, do: mvn site 
-		After generating, the "target/site" directory will contain the reports. -->
+    <!--
+        UMS consists of two major parts: UMS itself and the third party software 
+        needed to run it. While PMS itself is 100% pure Java, some of the third party 
+        software is not. This means building a platform specific distribution boils 
+        down to first building the pms.jar and then assembling all application resources. 
+        
+        Note that Maven 3 does not automatically install all dependencies, unlike Maven 2.
+		To install external dependencies to your local repository, run the following commands:
 
+		mvn external:install
+        
+        To build PMS, do:
+        
+            mvn clean package
+        
+        After building, the "target" directory will contain the binary.
+        To generate a full source code report, do:
+        
+            mvn site 
+        
+        After generating, the "target/site" directory will contain the reports.
+    -->
+    
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ums-core</artifactId>
@@ -23,12 +34,12 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>5.2.4-mlx-1.4-SNAPSHOT</version>
+		<version>5.3.1-mlx-1.4-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<!-- Used library versions -->
-		<jna-version>4.2.0</jna-version>
+		<jna-version>4.2.1</jna-version>
 		<cuelib-version>1.2.1-2008-06-13</cuelib-version>
 		<junrar-version>0.7</junrar-version>
 		<mediautil-version>1.0</mediautil-version>
@@ -62,7 +73,7 @@
 		<chromcast-api-v2-version>0.0.6</chromcast-api-v2-version>
 		<jmustache-version>1.10</jmustache-version>
 		<javassist-version>3.20.0-GA</javassist-version>
-		<icu4j-version>55.1</icu4j-version>
+		<icu4j-version>56.1</icu4j-version>
 		<fest-util-version>1.2.5</fest-util-version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,16 +92,6 @@
 			<url>https://oss.sonatype.org/content/groups/public</url>
 			<snapshots>
 				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
-		<!-- Java.net -->
-		<repository>
-			<id>java.net</id>
-			<name>Java.net Repository</name>
-			<url>http://download.java.net/maven/2/</url>
-			<snapshots>
-				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 
@@ -572,14 +573,12 @@
 
             <!-- This plugin will take care of installing the external dependencies (see root POM for details) -->
 			<plugin>
-				<groupId>com.savage7.maven.plugins</groupId>
-				<artifactId>maven-external-dependency-plugin</artifactId>
-				<version>${maven-external-dependency-plugin-version}</version>
+				<groupId>com.universalmediaserver</groupId>
+				<artifactId>external-maven-plugin</artifactId>
+				<version>${com.universalmediaserver-plugin-version}</version>
 				<configuration>
 					<stagingDirectory>${project.build.directory}/dependencies/</stagingDirectory>
 					<createChecksum>true</createChecksum>
-					<skipChecksumVerification>false</skipChecksumVerification>
-					<force>false</force>
 
 					<artifactItems>
 					
@@ -587,8 +586,6 @@
 							<groupId>sevenzip</groupId>
 							<artifactId>jbinding</artifactId>
 							<version>${sevenzip-version}</version>
-							<packaging>jar</packaging>
-							<install>true</install>
 							<downloadUrl>http://www.spirton.com/uploads/7-Zip-JBinding/7-Zip-JBinding-{version}.{packaging}</downloadUrl>
 						</artifactItem>
 						
@@ -596,8 +593,6 @@
 							<groupId>sevenzip-allplatforms</groupId>
 							<artifactId>jbinding-allplatforms</artifactId>
 							<version>${sevenzip-version}</version>
-							<packaging>jar</packaging>
-							<install>true</install>
 							<downloadUrl>http://www.spirton.com/uploads/7-Zip-JBinding/7-Zip-JBinding-AllPlatforms-{version}.{packaging}</downloadUrl>
 						</artifactItem>
 						
@@ -605,7 +600,6 @@
 							<groupId>jwbroek.cuelib</groupId>
 							<artifactId>cuelib</artifactId>
 							<version>${cuelib-version}</version>
-							<packaging>jar</packaging>
 							<downloadUrl>http://cuelib.googlecode.com/files/cuelib-${cuelib-version}.jar</downloadUrl>
 							<checksum>d03b6b960b3b83a2a419e8b5f07b6ba4bd18387b</checksum>
 						</artifactItem>
@@ -614,9 +608,6 @@
 							<groupId>mediautil</groupId>
 							<artifactId>mediautil</artifactId>
 							<version>${mediautil-version}</version>
-							<packaging>jar</packaging>
-							<install>true</install>
-							<force>false</force>
 							<downloadUrl>http://downloads.sourceforge.net/project/mediachest/MediaUtil/Version%201.0/mediautil-1.zip</downloadUrl>
 							<checksum>aa7ae51bb24a9268a8e57c6afe478c4293f84fda</checksum>
 							<extractFile>mediautil-${mediautil-version}/mediautil-${mediautil-version}.jar</extractFile>
@@ -627,7 +618,6 @@
 							<groupId>org.freixas</groupId>
 							<artifactId>jcalendar</artifactId>
 							<version>${jcalendar-version}</version>
-							<packaging>jar</packaging>
 							<downloadUrl>http://sourceforge.net/projects/flib/files/flib/FLib%201.1.1/jcalendar.jar</downloadUrl>
 							<checksum>83eb4b1a4823daf3b5bea61958cf6097930f74fb</checksum>
 						</artifactItem>
@@ -636,9 +626,6 @@
 							<groupId>jnotify</groupId>
 							<artifactId>jnotify</artifactId>
 							<version>${jnotify-version}</version>
-							<packaging>jar</packaging>
-							<install>true</install>
-							<force>false</force>
 							<downloadUrl>http://sourceforge.net/projects/jnotify/files/jnotify/jnotify-${jnotify-version}/jnotify-lib-${jnotify-version}.zip</downloadUrl>
 							<checksum>7f81f3429b2fe061f75ed870ca749109</checksum>
 							<extractFile>jnotify-${jnotify-version}.jar</extractFile>
@@ -646,7 +633,16 @@
 
 					</artifactItems>
 
-				</configuration>
+				</configuration>				
+				<executions>
+					<execution>
+						<id>clean-external-dependencies</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			
 			<!-- Plugin to add git commit information properties. These are used in 
@@ -899,19 +895,6 @@
 					<family>windows</family>
 				</os>
 			</activation>
-
-			<pluginRepositories>
-				<pluginRepository>
-					<id>Codehaus Snapshots</id>
-					<url>http://nexus.codehaus.org/snapshots/</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-				</pluginRepository>
-			</pluginRepositories>
 
 			<build>
 				<plugins>
