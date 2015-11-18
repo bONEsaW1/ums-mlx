@@ -67,6 +67,7 @@ public class FileDisplayer extends JPanel {
 	private FileDisplayTable tFiles;
 
 	private boolean isFilterApplied;
+	private boolean isApplyingFilter;
 
 	public FileDisplayer(FileType fileType) {
 		super(new GridLayout(1, 1));
@@ -146,6 +147,12 @@ public class FileDisplayer extends JPanel {
 
 	@SuppressWarnings("unchecked")
 	private void applyFilter() {
+		if (isApplyingFilter) {
+			return;
+		}
+
+		isApplyingFilter = true;
+
 		DOFilter filter;
 		try {
 			filter = filterEditor.getFilter();
@@ -155,30 +162,33 @@ public class FileDisplayer extends JPanel {
 			return;
 		}
 
-		// Show a wait cursor as this can be a lengthy operation
-		setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		try {
+			// Show a wait cursor as this can be a lengthy operation
+			setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-		List<DOFileInfo> files = new ArrayList<DOFileInfo>();
-		if (fileType == FileType.VIDEO) {
-			List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getVideoFileInfo(filter, true, ConditionType.VIDEO_NAME, 0, SortOption.FileProperty, false);
-			files = (List<DOFileInfo>) (List<?>) vFiles;
-		} else if (fileType == FileType.FILE) {
-			files = MediaLibraryStorage.getInstance().getFileInfo(filter, true, ConditionType.FILE_FILENAME, 0, SortOption.FileProperty);
+			List<DOFileInfo> files = new ArrayList<DOFileInfo>();
+			if (fileType == FileType.VIDEO) {
+				List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getVideoFileInfo(filter, true, ConditionType.VIDEO_NAME, 0, SortOption.FileProperty, false);
+				files = (List<DOFileInfo>) (List<?>) vFiles;
+			} else if (fileType == FileType.FILE) {
+				files = MediaLibraryStorage.getInstance().getFileInfo(filter, true, ConditionType.FILE_FILENAME, 0, SortOption.FileProperty);
+			}
+			// else if(fileType == FileType.AUDIO){
+			// List<DOVideoFileInfo> aFiles = MediaLibraryStorage.getInstance().getAudioFileInfo(filter, true,
+			// ConditionType.VIDEO_NAME, 0);
+			// files = (List<DOFileInfo>)(List<?>)aFiles;
+			// } else if(fileType == FileType.PICTURES){
+			// List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getPicturesFileInfo(filter, true,
+			// ConditionType.VIDEO_NAME, 0);
+			// files = (List<DOFileInfo>)(List<?>)vFiles;
+			// }
+			tFiles.setContent(files);
+		} finally {
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+			isApplyingFilter = false;
+			isFilterApplied = true;
 		}
-		// else if(fileType == FileType.AUDIO){
-		// List<DOVideoFileInfo> aFiles = MediaLibraryStorage.getInstance().getAudioFileInfo(filter, true,
-		// ConditionType.VIDEO_NAME, 0);
-		// files = (List<DOFileInfo>)(List<?>)aFiles;
-		// } else if(fileType == FileType.PICTURES){
-		// List<DOVideoFileInfo> vFiles = MediaLibraryStorage.getInstance().getPicturesFileInfo(filter, true,
-		// ConditionType.VIDEO_NAME, 0);
-		// files = (List<DOFileInfo>)(List<?>)vFiles;
-		// }
-		tFiles.setContent(files);
-
-		isFilterApplied = true;
-
-		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	private void repositionExpandFilterLabel() {
