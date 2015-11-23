@@ -29,8 +29,10 @@ import org.slf4j.LoggerFactory;
 import net.pms.dlna.CueFolder;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.DVDISOFile;
+import net.pms.dlna.FileTranscodeVirtualFolder;
 import net.pms.dlna.PlaylistFolder;
 import net.pms.dlna.RarredFile;
+import net.pms.dlna.SubSelect;
 import net.pms.dlna.ZippedFile;
 import net.pms.dlna.virtual.VirtualFolder;
 import net.pms.medialibrary.commons.MediaLibraryConfiguration;
@@ -138,8 +140,9 @@ public class MediaLibraryFolder extends VirtualFolder {
 		}
 		isUpdating = true;
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug(String.format("Start refreshing children for folder '%s' (%s)", getName(), getId()));
+		}
 
 		updateFolder();
 
@@ -148,36 +151,57 @@ public class MediaLibraryFolder extends VirtualFolder {
 		short folderIndex = 0;
 		boolean nodeRefreshed = false;
 		boolean add = false;
-		int pos = 0;
+		int currentPosition = 0;
 
 		// check if the folders have changed
 		for (DOFolder f : getFolder().getChildFolders()) {
-			if (getChildren().size() > pos) {
-				switch (f.getFolderType()) {
-				case MEDIALIBRARY:
-					if (getChildren().get(pos) instanceof MediaLibraryFolder) {
-						MediaLibraryFolder currNodeInTree = (MediaLibraryFolder) getChildren().get(pos);
-						if (!currNodeInTree.getFolder().equals(f)) {
-							// if this is a different media library folder node
-							add = true;
-						}
-					} else {
-						// if this is another type of node then a media library one
-						add = true;
+			if (getChildren().size() > currentPosition) {
+				// Skip live subtitles and transcode folders if they have been set
+				DLNAResource currentResource = getChildren().get(currentPosition);
+				while ((isTranscodeFolderAvailable() && currentResource instanceof FileTranscodeVirtualFolder) ||
+						(isLiveSubtitleFolderAvailable() && currentResource instanceof SubSelect)) {
+					currentPosition++;
+
+					if (currentPosition >= getChildren().size()) {
+						break;
 					}
-					break;
-				case SPECIAL:
-					if (!getChildren().get(pos).getName().equals(((DOSpecialFolder) f).getName())) {
-						// if the special folder has changed
-						// TODO: Improve.. How to check if this is actually a special folder??
-						add = true;
-					}
-					break;
-				default:
-					log.warn(String.format("Unhandled folder type received (%s). This should never happen!", f.getFolderType()));
+
+					currentResource = getChildren().get(currentPosition);
+				}
+
+				// Don't handle additional folders if we are out of bounds due to position changes because
+				// of transcode or live subtitles folders.
+				if (currentPosition >= getChildren().size()) {
 					break;
 				}
-				if (getChildren().get(pos) instanceof MediaLibraryRealFile) {
+
+				switch (f.getFolderType()) {
+					case MEDIALIBRARY:
+						if (getChildren().get(currentPosition) instanceof MediaLibraryFolder) {
+							MediaLibraryFolder currNodeInTree = (MediaLibraryFolder) getChildren().get(currentPosition);
+							if (!currNodeInTree.getFolder().equals(f)) {
+								// if this is a different media library folder node
+								add = true;
+							}
+						} else {
+							// if this is another type of node then a media library one
+							add = true;
+						}
+						break;
+
+					case SPECIAL:
+						if (!getChildren().get(currentPosition).getName().equals(((DOSpecialFolder) f).getName())) {
+							// if the special folder has changed
+							// TODO: Improve.. How to check if this is actually a special folder??
+							add = true;
+						}
+						break;
+
+					default:
+						log.warn(String.format("Unhandled folder type received (%s). This should never happen!", f.getFolderType()));
+						break;
+				}
+				if (getChildren().get(currentPosition) instanceof MediaLibraryRealFile) {
 					add = true;
 				}
 			} else {
@@ -191,7 +215,7 @@ public class MediaLibraryFolder extends VirtualFolder {
 				folderIndex++;
 			}
 
-			pos++;
+			currentPosition++;
 		}
 
 		List<DOFileInfo> files = new ArrayList<DOFileInfo>();
@@ -203,9 +227,9 @@ public class MediaLibraryFolder extends VirtualFolder {
 		if (!add) {
 			// the folders haven't changed, check the files
 			for (DOFileInfo child : files) {
-				if (pos < getChildren().size()) {
-					if (getChildren().get(pos) instanceof MediaLibraryRealFile) {
-						MediaLibraryRealFile dlnaFile = (MediaLibraryRealFile) getChildren().get(pos);
+				if (currentPosition < getChildren().size()) {
+					if (getChildren().get(currentPosition) instanceof MediaLibraryRealFile) {
+						MediaLibraryRealFile dlnaFile = (MediaLibraryRealFile) getChildren().get(currentPosition);
 						if (!dlnaFile.equals(new MediaLibraryRealFile(child, getFolder().getDisplayProperties(), getFolder().getFileType(), isTranscodeFolderAvailable()))) {
 							// a file has changed
 							add = true;
@@ -218,33 +242,33 @@ public class MediaLibraryFolder extends VirtualFolder {
 					add = true;
 					break;
 				}
-				pos++;
+				currentPosition++;
 			}
 		}
 
 		// remove nodes if needed
-		while (pos < getChildren().size()) {
-			getChildren().remove(pos);
+		while (currentPosition < getChildren().size()) {
+			getChildren().remove(currentPosition);
 			nodeRefreshed = true;
 		}
 
 		if (add) {
 			// add folders if needed
-			if (pos < getFolder().getChildFolders().size()) {
+			if (currentPosition < getFolder().getChildFolders().size()) {
 				for (int i = folderIndex; i < getFolder().getChildFolders().size(); i++) {
 					addChildFolder(getFolder().getChildFolders().get(i));
 					nodeRefreshed = true;
-					pos++;
+					currentPosition++;
 				}
 			}
 
 			// add files if needed
 			if (MediaLibraryConfiguration.getInstance().isMediaLibraryEnabled() && getFolder().isDisplayItems() && files != null) {
-				if (pos < getFolder().getChildFolders().size() + files.size()) {
+				if (currentPosition < getFolder().getChildFolders().size() + files.size()) {
 					for (int i = fileIndex; i < files.size(); i++) {
 						manageFile(files.get(i));
 						nodeRefreshed = true;
-						pos++;
+						currentPosition++;
 					}
 				}
 			}
