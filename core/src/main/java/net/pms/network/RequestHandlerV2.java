@@ -319,14 +319,14 @@ public class RequestHandlerV2 extends SimpleChannelUpstreamHandler {
 		}
 		if (cause != null) {
 			if (cause.getClass().equals(IOException.class)) {
-				LOGGER.debug("Connection error: " + cause);
+				LOGGER.error("Connection error: " + cause, cause);
 				StartStopListenerDelegate startStopListenerDelegate = (StartStopListenerDelegate)ctx.getAttachment();
 				if (startStopListenerDelegate != null) {
 					LOGGER.debug("Premature end, stopping...");
 					startStopListenerDelegate.stop();
 				}
 			} else if (!cause.getClass().equals(ClosedChannelException.class)) {
-				LOGGER.debug("Caught exception: " + cause);
+				LOGGER.error("Caught exception: " + cause, cause);
 			}
 		}
 		if (ch.isConnected()) {
