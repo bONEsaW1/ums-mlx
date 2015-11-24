@@ -20,7 +20,6 @@ package net.pms.medialibrary.dlna;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -29,13 +28,12 @@ import org.slf4j.LoggerFactory;
 import net.pms.dlna.CueFolder;
 import net.pms.dlna.DLNAResource;
 import net.pms.dlna.DVDISOFile;
-import net.pms.dlna.FileTranscodeVirtualFolder;
 import net.pms.dlna.PlaylistFolder;
 import net.pms.dlna.RarredFile;
 import net.pms.dlna.SubSelect;
 import net.pms.dlna.ZippedFile;
+import net.pms.dlna.virtual.TranscodeVirtualFolder;
 import net.pms.dlna.virtual.VirtualFolder;
-import net.pms.medialibrary.commons.MediaLibraryConfiguration;
 import net.pms.medialibrary.commons.dataobjects.DOFileInfo;
 import net.pms.medialibrary.commons.dataobjects.DOFolder;
 import net.pms.medialibrary.commons.dataobjects.DOMediaLibraryFolder;
@@ -144,140 +142,127 @@ public class MediaLibraryFolder extends VirtualFolder {
 			log.debug(String.format("Start refreshing children for folder '%s' (%s)", getName(), getId()));
 		}
 
-		updateFolder();
+		boolean isFolderRefreshed = false;
+		try {
+			// Make sure the media library folder is up to date
+			updateFolder();
 
-		FileDisplayProperties fdp = getFolder().getDisplayProperties();
-		short fileIndex = 0;
-		short folderIndex = 0;
-		boolean nodeRefreshed = false;
-		boolean add = false;
-		int currentPosition = 0;
+			// Get the folders that will be displayed (from the media library folder)
+			List<DOFolder> foldersToAdd = getFolder().getChildFolders();
 
-		// check if the folders have changed
-		for (DOFolder f : getFolder().getChildFolders()) {
-			if (getChildren().size() > currentPosition) {
-				// Skip live subtitles and transcode folders if they have been set
-				DLNAResource currentResource = getChildren().get(currentPosition);
-				while ((isTranscodeFolderAvailable() && currentResource instanceof FileTranscodeVirtualFolder) ||
-						(isLiveSubtitleFolderAvailable() && currentResource instanceof SubSelect)) {
-					currentPosition++;
+			// Get the files that will be displayed (form the DB)
+			FileDisplayProperties fileDisplayProperties = getFolder().getDisplayProperties();
+			List<DOFileInfo> filesToAdd = new ArrayList<DOFileInfo>();
+			if (getFolder().isDisplayItems() && getFolder().getFileType() == FileType.VIDEO) {
+				List<DOVideoFileInfo> videoFiles = MediaLibraryStorage.getInstance().getVideoFileInfo(getFolder().getInheritedFilter(), fileDisplayProperties.isSortAscending(), fileDisplayProperties.getSortType(), folder.getMaxFiles(), fileDisplayProperties.getSortOption(), true);
 
-					if (currentPosition >= getChildren().size()) {
-						break;
+				// Only add files which physically exist on the disk
+				for (DOVideoFileInfo videoFile : videoFiles) {
+					if (new File(videoFile.getFilePath()).exists()) {
+						filesToAdd.add(videoFile);
 					}
-
-					currentResource = getChildren().get(currentPosition);
 				}
-
-				// Don't handle additional folders if we are out of bounds due to position changes because
-				// of transcode or live subtitles folders.
-				if (currentPosition >= getChildren().size()) {
-					break;
-				}
-
-				switch (f.getFolderType()) {
-					case MEDIALIBRARY:
-						if (getChildren().get(currentPosition) instanceof MediaLibraryFolder) {
-							MediaLibraryFolder currNodeInTree = (MediaLibraryFolder) getChildren().get(currentPosition);
-							if (!currNodeInTree.getFolder().equals(f)) {
-								// if this is a different media library folder node
-								add = true;
-							}
-						} else {
-							// if this is another type of node then a media library one
-							add = true;
-						}
-						break;
-
-					case SPECIAL:
-						if (!getChildren().get(currentPosition).getName().equals(((DOSpecialFolder) f).getName())) {
-							// if the special folder has changed
-							// TODO: Improve.. How to check if this is actually a special folder??
-							add = true;
-						}
-						break;
-
-					default:
-						log.warn(String.format("Unhandled folder type received (%s). This should never happen!", f.getFolderType()));
-						break;
-				}
-				if (getChildren().get(currentPosition) instanceof MediaLibraryRealFile) {
-					add = true;
-				}
-			} else {
-				// If we have to add a new node
-				add = true;
 			}
 
-			if (add) {
-				break;
-			} else {
-				folderIndex++;
-			}
+			// Determine what files and folders have to be added (folderIndex and fileIndex) and from which index in the currently
+			// displayed DLNAResources have to be removed (currentPosition)
+			short fileIndex = 0;
+			short folderIndex = 0;
+			int currentPosition = 0;
+			List<DLNAResource> resourcesToRemove = new ArrayList<>();
+			for (DLNAResource currentResource : getChildren()) {
+				if (currentResource.isFolder()) {
+					// The current resource is a folder
+					DOFolder folderToAdd = foldersToAdd.size() > folderIndex ? foldersToAdd.get(folderIndex) : null;
 
-			currentPosition++;
-		}
-
-		List<DOFileInfo> files = new ArrayList<DOFileInfo>();
-		if (getFolder().isDisplayItems() && getFolder().getFileType() == FileType.VIDEO) {
-			List<DOVideoFileInfo> videoFiles = MediaLibraryStorage.getInstance().getVideoFileInfo(getFolder().getInheritedFilter(), fdp.isSortAscending(), fdp.getSortType(), folder.getMaxFiles(), fdp.getSortOption(), true);
-			files = Arrays.asList(videoFiles.toArray(new DOFileInfo[videoFiles.size()]));
-		}
-
-		if (!add) {
-			// the folders haven't changed, check the files
-			for (DOFileInfo child : files) {
-				if (currentPosition < getChildren().size()) {
-					if (getChildren().get(currentPosition) instanceof MediaLibraryRealFile) {
-						MediaLibraryRealFile dlnaFile = (MediaLibraryRealFile) getChildren().get(currentPosition);
-						if (!dlnaFile.equals(new MediaLibraryRealFile(child, getFolder().getDisplayProperties(), getFolder().getFileType(), isTranscodeFolderAvailable()))) {
-							// a file has changed
-							add = true;
+					if (currentResource instanceof MediaLibraryFolder) {
+						// The current folder is a media library folder (which has been configured by the user)
+						if (!(folderToAdd instanceof DOMediaLibraryFolder)) {
 							break;
 						}
-						fileIndex++;
+
+						// Check if the folder has changed
+						DOMediaLibraryFolder mediaLibraryFolderToAdd = (DOMediaLibraryFolder) folderToAdd;
+						MediaLibraryFolder currentMediaLibraryFolder = (MediaLibraryFolder) currentResource;
+						if (!mediaLibraryFolderToAdd.equals(currentMediaLibraryFolder.getFolder())) {
+							break;
+						}
+
+						folderIndex++;
+
+					} else if (currentResource instanceof TranscodeVirtualFolder) {
+						// The current folder is the transcode or subtitles folder (which has been automatically added by UMS)
+						// Move on, nothing to do here
+						if (!isTranscodeFolderAvailable()) {
+							resourcesToRemove.add(currentResource);
+						}
+					} else if (currentResource instanceof SubSelect) {
+						// The current folder is the transcode or subtitles folder (which has been automatically added by UMS)
+						// Move on, nothing to do here
+						if (!isLiveSubtitleFolderAvailable()) {
+							resourcesToRemove.add(currentResource);
+						}
+					} else {
+						// If we are neither of the above, we probably are a special folder (which has been configured by the user)
+						if (!currentResource.getName().equals(folderToAdd.getName())) {
+							// if the special folder has changed
+							// TODO: Improve.. How to check if this is actually a special folder??
+							break;
+						}
+
+						folderIndex++;
 					}
+
 				} else {
-					// there's a new file
-					add = true;
-					break;
+					// The current resource is a file
+					MediaLibraryRealFile mediaLibraryRealFile = (MediaLibraryRealFile) currentResource;
+					DOFileInfo fileToAdd = filesToAdd.get(fileIndex);
+					if (!mediaLibraryRealFile.getFileInfo().equals(fileToAdd)) {
+						break;
+					}
+
+					fileIndex++;
 				}
+
 				currentPosition++;
 			}
-		}
 
-		// remove nodes if needed
-		while (currentPosition < getChildren().size()) {
-			getChildren().remove(currentPosition);
-			nodeRefreshed = true;
-		}
-
-		if (add) {
-			// add folders if needed
-			if (currentPosition < getFolder().getChildFolders().size()) {
-				for (int i = folderIndex; i < getFolder().getChildFolders().size(); i++) {
-					addChildFolder(getFolder().getChildFolders().get(i));
-					nodeRefreshed = true;
-					currentPosition++;
-				}
+			// Remove all currently displayed DLNAResources after the computed currentPosition
+			while (currentPosition < getChildren().size()) {
+				getChildren().remove(currentPosition);
+				isFolderRefreshed = true;
+			}
+			// Remove DLNA resources which have been automatically added by UMS (transcode and subtitles folders)
+			for (DLNAResource resouceToRemove : resourcesToRemove) {
+				getChildren().remove(resouceToRemove);
 			}
 
-			// add files if needed
-			if (MediaLibraryConfiguration.getInstance().isMediaLibraryEnabled() && getFolder().isDisplayItems() && files != null) {
-				if (currentPosition < getFolder().getChildFolders().size() + files.size()) {
-					for (int i = fileIndex; i < files.size(); i++) {
-						manageFile(files.get(i));
-						nodeRefreshed = true;
-						currentPosition++;
-					}
+			// Add folders and files
+			while (folderIndex < foldersToAdd.size()) {
+				addChildFolder(foldersToAdd.get(folderIndex++));
+				isFolderRefreshed = true;
+			}
+			while (fileIndex < filesToAdd.size()) {
+				manageFile(filesToAdd.get(fileIndex++));
+				isFolderRefreshed = true;
+			}
+
+			// Make sure the transcode and subtitles folder are being displayed if they have been configured and files
+			// are contained in the folder
+			if (filesToAdd.size() > 0) {
+				if (isLiveSubtitleFolderAvailable()) {
+					getSubSelector(true);
+				}
+				if (isTranscodeFolderAvailable()) {
+					getTranscodeFolder(true);
 				}
 			}
+		} finally {
+			isUpdating = false;
 		}
-
-		isUpdating = false;
 
 		if (log.isDebugEnabled()) {
-			log.debug(String.format("Finished refreshing children for folder '%s' (%s). Refreshed=%s", getName(), getId(), nodeRefreshed));
+			log.debug(String.format("Finished refreshing children for folder '%s' (%s). Refreshed=%s", getName(), getId(), isFolderRefreshed));
 		}
 	}
 

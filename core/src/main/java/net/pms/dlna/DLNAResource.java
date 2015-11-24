@@ -3773,7 +3773,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	// Subtitle handling
 	////////////////////////////////////////////////////
 
-	private SubSelect getSubSelector(boolean create) {
+	protected SubSelect getSubSelector(boolean create) {
 		if (
 			configuration.isDisableSubtitles() ||
 			!configuration.isAutoloadExternalSubtitles() ||
