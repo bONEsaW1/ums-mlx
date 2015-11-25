@@ -896,9 +896,9 @@ public class FileUtil {
 		}
 
 		if (result != null) {
-			LOGGER.debug("Detected encoding for {} is {}.", file.getAbsolutePath(), result.getName());
+			LOGGER.trace("Detected encoding for {} is {}.", file.getAbsolutePath(), result.getName());
 		} else {
-			LOGGER.debug("No encoding detected for {}.", file.getAbsolutePath());
+			LOGGER.trace("No encoding detected for {}.", file.getAbsolutePath());
 		}
 
 		return result;

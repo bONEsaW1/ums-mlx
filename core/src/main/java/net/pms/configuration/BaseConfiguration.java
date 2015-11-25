@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class BaseConfiguration {
-	private static final Logger log = LoggerFactory.getLogger(BaseConfiguration.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BaseConfiguration.class);
 	protected Properties properties = new Properties();
 	
 	/**
@@ -58,7 +58,7 @@ public class BaseConfiguration {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void save(String propertiesFilePath) throws IOException {
-		if (log.isDebugEnabled()) log.debug("Saving configuration to " + propertiesFilePath);
+		if (LOGGER.isDebugEnabled()) LOGGER.debug("Saving configuration to " + propertiesFilePath);
 
 		// make sure the save directory exists
 		File saveFile = new File(propertiesFilePath);
@@ -69,7 +69,7 @@ public class BaseConfiguration {
 
 		FileOutputStream configStream = new FileOutputStream(propertiesFilePath);
 		properties.store(configStream, "");
-		log.debug("Saved configuration to " + propertiesFilePath);
+		LOGGER.debug("Saved configuration to " + propertiesFilePath);
 	}
 
 	/**
@@ -80,12 +80,12 @@ public class BaseConfiguration {
 	 */
 	public void load(String propertiesFilePath) throws IOException {
 		if(new File(propertiesFilePath).exists()) {
-			if (log.isDebugEnabled()) log.debug("Restoring configuration from " + propertiesFilePath);
+			if (LOGGER.isDebugEnabled()) LOGGER.debug("Restoring configuration from " + propertiesFilePath);
 			FileInputStream configStream = new FileInputStream(propertiesFilePath);
 			properties.load(configStream);
-			log.info("Loaded configuration from " + propertiesFilePath);
+			LOGGER.debug("Loaded configuration from " + propertiesFilePath);
 		} else {
-			log.debug("No configuration file found at " + propertiesFilePath);
+			LOGGER.debug("No configuration file found at " + propertiesFilePath);
 		}
 	}
 
