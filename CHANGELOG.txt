@@ -1,6 +1,20 @@
-5.3.2 - 2015-12-??
+5.3.2-mlx-1.4 - 2015-11-25
 
 	General:
+		Added the possibility to show or hide the transcode and live subtitles folders for every media library folder
+		Fixed refreshing of folders when content changed (full rewrite)
+		Update tools to use the same as UMS
+		Cleaned up ums-mlx specific code using an eclipse formatter
+		Multiple minor bug fixes
+	User interface:
+		Removed unused configuration properties in 'Navigation/Share Settings' tab
+		Made user interface more responsive by updating the Library view less frequently
+	Plugins:
+		Added the possibility to add origninal UMS/PMS plugins of type AdditionalFolder(s)AtRoot to the DLNA tree
+		Jumpy can now be installed with the installer in ums-mlx the same way as for UMS (thanks skeptical!)
+		IMDB import:
+			Fixed plugin by using http://www.omdbapi.com instead of the now obsolete http://www.imdbapi.com
+		
 		
 
 5.3.1 - 2015-11-23
