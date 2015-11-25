@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ums-file-system-folder-plugin</artifactId>
-	<version>3.1.3-SNAPSHOT</version>
+	<version>3.1.3</version>
 
 	<name>UMS File System DLNA Folder Plugin</name>
 	<description>Plugin which will merge all configured file system folders into one.</description>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums-plugins</artifactId>
-		<version>1.0.5-SNAPSHOT</version>
+		<version>1.0.5</version>
 	</parent>
 
 	<build>
