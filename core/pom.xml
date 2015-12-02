@@ -62,7 +62,6 @@
 		<thumbnailator-version>[0.4, 0.5)</thumbnailator-version>
 		<jai-imageio-core-version>1.3.0</jai-imageio-core-version>
 		<jaudiotagger-version>2.0.3</jaudiotagger-version>
-		<junit-version>4.11</junit-version>
 		<org.assertj-version>2.2.0</org.assertj-version>
 		<jmte-version>3.0</jmte-version>
 		<jnotify-version>0.94</jnotify-version>
