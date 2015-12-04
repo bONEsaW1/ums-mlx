@@ -79,7 +79,7 @@ public class KodiNfoImportPlugin implements FileImportPlugin {
 
 	@Override
 	public String getWebSiteUrl() {
-		return "http://www.universalmediaserver.com/";
+		return "http://www.universalmediaserver.com/forum/viewtopic.php?f=6&t=3355";
 	}
 
 	@Override
