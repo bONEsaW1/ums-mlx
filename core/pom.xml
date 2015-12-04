@@ -820,31 +820,34 @@
 							<version>${l10n-maven-plugin-version}</version>
 							<configuration>
 								<locales>
-									<locale>de</locale>
+									<locale>ar</locale>
 									<locale>bg</locale>
-									<locale>br</locale>
 									<locale>ca</locale>
-									<locale>cz</locale>
+									<locale>zh_Hans</locale>
+									<locale>zh_Hant</locale>
+									<locale>cs</locale>
 									<locale>da</locale>
-									<locale>de</locale>
-									<locale>el</locale>
-									<locale>es</locale>
+									<locale>nl</locale>
+									<locale>en_GB</locale>
 									<locale>fi</locale>
 									<locale>fr</locale>
+									<locale>de</locale>
+									<locale>el</locale>
+									<locale>iw</locale>
 									<locale>is</locale>
 									<locale>it</locale>
 									<locale>ja</locale>
 									<locale>ko</locale>
-									<locale>nl</locale>
 									<locale>no</locale>
 									<locale>pl</locale>
 									<locale>pt</locale>
+									<locale>pt_BR</locale>
 									<locale>ro</locale>
 									<locale>ru</locale>
 									<locale>sl</locale>
+									<locale>es</locale>
 									<locale>sv</locale>
-									<locale>zhs</locale>
-									<locale>zht</locale>
+									<locale>tr</locale>
 								</locales>
 							</configuration>
 						</plugin>
