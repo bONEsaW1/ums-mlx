@@ -25,7 +25,7 @@ public class KodiNfoImportPluginTests {
 	public void kodiNfoParserTest() {
 		KodiNfoParser kodiNfoParser = new KodiNfoParser();
 		try {
-			KodiNfoVideo kodiNfoVideo = kodiNfoParser.getKodiNfoVideo(getResourceFilePath("testMovie.nfo"));
+			KodiNfoVideo kodiNfoVideo = kodiNfoParser.getKodiNfoVideo(getResourceFilePath("testMovie1.nfo"));
 			assertNotNull(kodiNfoVideo);
 		} catch (FileImportException e) {
 			assertTrue(false);
@@ -44,7 +44,7 @@ public class KodiNfoImportPluginTests {
 		try {
 			// Do the import
 			KodiNfoImportPlugin importPlugin = getKodiNfoImportPlugin();
-			importPlugin.importFile("", getResourceFilePath("testMovie.avi"));
+			importPlugin.importFile("", getResourceFilePath("testMovie1.avi"));
 
 			// Test file properties
 			// Simple tests (string comparisons)
@@ -56,8 +56,9 @@ public class KodiNfoImportPluginTests {
 			assertTrue(importPlugin.getFileProperty(FileProperty.VIDEO_TRAILERURL).equals("http://www.imdb.com/video/imdb/vi1681366553"));
 			assertTrue(importPlugin.getFileProperty(FileProperty.VIDEO_OVERVIEW).equals(plot));
 			assertTrue(importPlugin.getFileProperty(FileProperty.VIDEO_TAGLINE).equals("Sie dachten, auf den Strassen geht es mies zu. Bis sie zurück an die Highschool kamen."));
-
-			assertTrue(importPlugin.getFileProperty(FileProperty.VIDEO_COVERURL) != null);
+			Object coverUrlObject = importPlugin.getFileProperty(FileProperty.VIDEO_COVERURL);
+			assertTrue(coverUrlObject.getClass() == String.class);
+			assertTrue(((String) coverUrlObject).endsWith("testMovie1-poster.jpg"));
 
 			// Test rating (percent and voters)
 			Object ratingPercent = importPlugin.getFileProperty(FileProperty.VIDEO_RATINGPERCENT);
@@ -102,6 +103,40 @@ public class KodiNfoImportPluginTests {
 			assertTrue(actors.contains("Caroline Aaron"));
 			assertTrue(actors.contains("Johnny Depp"));
 			assertTrue(!actors.contains("Johnny Depp "));
+		} catch (FileImportException e) {
+			assertTrue(false);
+		}
+	}
+
+	@Test
+	public void importMovieTestCoverThumb() {
+		try {
+			// Do the import
+			KodiNfoImportPlugin importPlugin = getKodiNfoImportPlugin();
+			importPlugin.importFile("", getResourceFilePath("testMovie2.avi"));
+
+			// Test file properties
+			// Simple tests (string comparisons)
+			Object coverUrlObject = importPlugin.getFileProperty(FileProperty.VIDEO_COVERURL);
+			assertTrue(coverUrlObject.getClass() == String.class);
+			assertTrue(((String) coverUrlObject).endsWith("testMovie2-thumb.jpg"));
+		} catch (FileImportException e) {
+			assertTrue(false);
+		}
+	}
+
+	@Test
+	public void importMovieTestCoverUrl() {
+		try {
+			// Do the import
+			KodiNfoImportPlugin importPlugin = getKodiNfoImportPlugin();
+			importPlugin.importFile("", getResourceFilePath("testMovie3.avi"));
+
+			// Test file properties
+			// Simple tests (string comparisons)
+			Object coverUrlObject = importPlugin.getFileProperty(FileProperty.VIDEO_COVERURL);
+			assertTrue(coverUrlObject.getClass() == String.class);
+			assertTrue(((String) coverUrlObject).startsWith("http"));
 		} catch (FileImportException e) {
 			assertTrue(false);
 		}

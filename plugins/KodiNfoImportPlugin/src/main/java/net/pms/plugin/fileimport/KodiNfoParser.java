@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import net.pms.medialibrary.commons.exceptions.FileImportException;
+import net.pms.medialibrary.commons.helpers.FileHelper;
 
 /**
  * Class used to parse Kodi NFO files
@@ -72,10 +73,10 @@ public class KodiNfoParser {
 			String rootNodeName = document.getDocumentElement().getNodeName();
 			switch (rootNodeName) {
 				case TAG_MOVIE:
-					return parseMovieNfo(document);
+					return parseMovieNfo(document, nfoFilePath);
 
 				case TAG_EPISODEDETAILS:
-					return parseEpisodeNfo(document);
+					return parseEpisodeNfo(document, nfoFilePath);
 
 				default:
 					throw new FileImportException(String.format("Failed to read NFO file '%s'. Unexpected root node '%s'", nfoFilePath, rootNodeName));
@@ -90,10 +91,11 @@ public class KodiNfoParser {
 	 * Parses the Kodi NFO for an episode.
 	 *
 	 * @param document the XML document
+	 * @param nfoFilePath the path of the NFO file
 	 * @return the Kodi NFO video
 	 * @throws FileImportException the file import exception
 	 */
-	private KodiNfoVideo parseEpisodeNfo(Document document) throws FileImportException {
+	private KodiNfoVideo parseEpisodeNfo(Document document, String nfoFilePath) throws FileImportException {
 		KodiNfoVideo result = new KodiNfoVideo();
 
 		Element movieElement = document.getDocumentElement();
@@ -102,7 +104,6 @@ public class KodiNfoParser {
 		result.setName(getSingleElementText(movieElement, "title"));
 		result.setSeriesName(getSingleElementText(movieElement, "showtitle"));
 		result.setOverview(getSingleElementText(movieElement, "plot"));
-		result.setCoverUrl(getSingleElementText(movieElement, "thumb"));
 		result.setWriter(getSingleElementText(movieElement, "writer"));
 		result.setDirector(getSingleElementText(movieElement, "director"));
 		result.setFirstAired(getSingleElementText(movieElement, "premiered"));
@@ -111,6 +112,7 @@ public class KodiNfoParser {
 		result.setWriter(getSingleElementText(movieElement, "credits"));
 
 		// Values which need some processing
+		result.setCoverUrl(getThumbnail(movieElement, nfoFilePath));
 		result.setSeasonNumber(leftPad(getSingleElementText(movieElement, "season"), 2, "0"));
 		result.setEpisodeNumber(leftPad(getSingleElementText(movieElement, "episode"), 2, "0"));
 		result.setRatingPercent((int) (getSingleElementDouble(movieElement, "rating") * 10));
@@ -125,10 +127,11 @@ public class KodiNfoParser {
 	 * Parses the Kodi NFO for a movie.
 	 *
 	 * @param document the XML document
+	 * @param nfoFilePath the path of the NFO file
 	 * @return the Kodi NFO video
 	 * @throws FileImportException the file import exception
 	 */
-	private KodiNfoVideo parseMovieNfo(Document document) throws FileImportException {
+	private KodiNfoVideo parseMovieNfo(Document document, String nfoFilePath) throws FileImportException {
 		KodiNfoVideo result = new KodiNfoVideo();
 
 		Element movieElement = document.getDocumentElement();
@@ -144,11 +147,7 @@ public class KodiNfoParser {
 		result.setTrailerUrl(getSingleElementText(movieElement, "trailer"));
 
 		// Values which need some processing
-		// TODO: improve thumbnail handling
-		List<String> thumbnails = getThumbnails(movieElement);
-		if (thumbnails != null && thumbnails.size() > 0) {
-			result.setCoverUrl(thumbnails.get(0));
-		}
+		result.setCoverUrl(getThumbnail(movieElement, nfoFilePath));
 		result.setRatingPercent((int) (getSingleElementDouble(movieElement, "rating") * 10));
 		result.setYear((int) getSingleElementDouble(movieElement, "year"));
 		result.setRatingVoters((int) getSingleElementDouble(movieElement, "votes"));
@@ -170,14 +169,7 @@ public class KodiNfoParser {
 		NodeList allElements = parentElement.getElementsByTagName(tagName);
 
 		// Only consider direct child nodes and not nodes having the same tag name in the entire hierarchy
-		List<Node> elements = new ArrayList<>();
-		for (int i = 0; i < allElements.getLength(); i++) {
-			Node currentNode = allElements.item(i);
-			if (currentNode.getParentNode() == parentElement) {
-				elements.add(currentNode);
-			}
-		}
-
+		List<Node> elements = getDirectChildrenOnly(allElements, parentElement);
 		if (elements != null && elements.size() == 1) {
 			return elements.get(0).getTextContent().trim();
 		}
@@ -214,11 +206,12 @@ public class KodiNfoParser {
 	 * @return the director
 	 */
 	private String getDirector(Element parentElement) {
-		NodeList elements = parentElement.getElementsByTagName("director");
-		if (elements != null && elements.getLength() > 0) {
+		NodeList allElements = parentElement.getElementsByTagName("director");
+		List<Node> elements = getDirectChildrenOnly(allElements, parentElement);
+		if (elements != null && elements.size() > 0) {
 			String directors = "";
-			for (int i = 0; i < elements.getLength(); i++) {
-				directors += elements.item(i).getTextContent().trim() + ", ";
+			for (int i = 0; i < elements.size(); i++) {
+				directors += elements.get(i).getTextContent().trim() + ", ";
 			}
 
 			// Remove the last separator (, )
@@ -239,11 +232,12 @@ public class KodiNfoParser {
 	 * @return the actors
 	 */
 	private List<String> getActors(Element parentElement) {
-		NodeList elements = parentElement.getElementsByTagName("actor");
-		if (elements != null && elements.getLength() > 0) {
+		NodeList allElements = parentElement.getElementsByTagName("actor");
+		List<Node> elements = getDirectChildrenOnly(allElements, parentElement);
+		if (elements != null && elements.size() > 0) {
 			List<String> actors = new ArrayList<>();
-			for (int i = 0; i < elements.getLength(); i++) {
-				Node actorNode = elements.item(i);
+			for (int i = 0; i < elements.size(); i++) {
+				Node actorNode = elements.get(i);
 				if (actorNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element actorElement = (Element) actorNode;
 					actors.add(actorElement.getElementsByTagName("name").item(0).getTextContent().trim());
@@ -263,11 +257,12 @@ public class KodiNfoParser {
 	 * @return the genres
 	 */
 	private List<String> getGenres(Element parentElement) {
-		NodeList elements = parentElement.getElementsByTagName("genre");
-		if (elements != null && elements.getLength() > 0) {
+		NodeList allElements = parentElement.getElementsByTagName("genre");
+		List<Node> elements = getDirectChildrenOnly(allElements, parentElement);
+		if (elements != null && elements.size() > 0) {
 			List<String> genres = new ArrayList<>();
-			for (int i = 0; i < elements.getLength(); i++) {
-				genres.add(elements.item(i).getTextContent().trim());
+			for (int i = 0; i < elements.size(); i++) {
+				genres.add(elements.get(i).getTextContent().trim());
 			}
 
 			return genres;
@@ -277,23 +272,63 @@ public class KodiNfoParser {
 	}
 
 	/**
-	 * Gets the thumbnails from the parent element.
+	 * Gets the thumbnail.<br>
+	 * 1. Return the file path to the file <i>video_name</i>-poster.jpg if it exists<br>
+	 * 2. Return the file path to the file <i>video_name</i>-thumb.jpg if it exists<br>
+	 * 3. Return the first valid URL specified in a 'thumb' element<br>
+	 * 4. Return NULL if none of the above is possible
 	 *
 	 * @param parentElement the parent element
-	 * @return the thumbnails
+	 * @param nfoFilePath the NFO file path
+	 * @return the thumbnail (file path or URL)
 	 */
-	private List<String> getThumbnails(Element parentElement) {
-		NodeList elements = parentElement.getElementsByTagName("thumb");
-		if (elements != null && elements.getLength() > 0) {
-			List<String> thumbnails = new ArrayList<>();
-			for (int i = 0; i < elements.getLength(); i++) {
-				thumbnails.add(elements.item(i).getTextContent().trim());
-			}
-
-			return thumbnails;
+	private String getThumbnail(Element parentElement, String nfoFilePath) {
+		// 1. Return the file path to the file <video_name>-poster.jpg if it exists
+		String coverFilePath = nfoFilePath.substring(0, nfoFilePath.lastIndexOf('.')) + "-poster.jpg";
+		if (new File(coverFilePath).exists()) {
+			return coverFilePath;
 		}
 
+		// 2. Return the file path to the file <video_name>-thumb.jpg if it exists
+		coverFilePath = nfoFilePath.substring(0, nfoFilePath.lastIndexOf('.')) + "-thumb.jpg";
+		if (new File(coverFilePath).exists()) {
+			return coverFilePath;
+		}
+
+		// 3. Return the first valid URL specified in a 'thumb' element
+		NodeList allElements = parentElement.getElementsByTagName("thumb");
+		List<Node> elements = getDirectChildrenOnly(allElements, parentElement);
+		if (elements != null && elements.size() > 0) {
+			for (int i = 0; i < elements.size(); i++) {
+				String coverUrl = elements.get(i).getTextContent();
+				if (FileHelper.isValidUrl(coverUrl)) {
+					return coverUrl;
+
+				}
+			}
+		}
+
+		// 4. Return NULL if none of the above is possible
 		return null;
+	}
+
+	/**
+	 * Gets a list of nodes which are direct children (not in nested elements)
+	 *
+	 * @param allElements the all elements
+	 * @param parentElement the parent element
+	 * @return the direct children only
+	 */
+	private List<Node> getDirectChildrenOnly(NodeList allElements, Element parentElement) {
+		List<Node> elements = new ArrayList<>();
+		for (int i = 0; i < allElements.getLength(); i++) {
+			Node currentNode = allElements.item(i);
+			if (currentNode.getParentNode() == parentElement) {
+				elements.add(currentNode);
+			}
+		}
+
+		return elements;
 	}
 
 	/**

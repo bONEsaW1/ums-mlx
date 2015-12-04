@@ -101,10 +101,9 @@ public class FileImportHelper {
 	private static List<String> imageFileExtensions;
 
 	/**
-	 * This method will return a map containing all prioritized engine names that can be used to query information for a
-	 * file type.<br>
-	 * The returned map will only contain engines being currently available. If engines are being found which haven't
-	 * been configured for the given template they will be added to the end of the list of available engines
+	 * This method will return a map containing all prioritized engine names that can be used to query information for a file type.<br>
+	 * The returned map will only contain engines being currently available. If engines are being found which haven't been configured for the given template they will be added to
+	 * the end of the list of available engines
 	 * 
 	 * @param template the template specifying the priorities of the engines that will be used
 	 * @return a map containing the prioritized engines for all file types
@@ -300,14 +299,14 @@ public class FileImportHelper {
 				log.debug(String.format("Imported %s='%s' with plugin='%s' for file='%s'", fileProperty, value, plugin.getName(), fileInfo.getFilePath()));
 			} catch (FilePropertyImportException ex) {
 				switch (ex.getExceptionType()) {
-				case NoResult:
-					log.debug(String.format("No result found for FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, plugin.getName(), fileInfo.getFilePath()));
-					break;
-				case WrongType:
-					log.error(String.format("The plugin='%s' returned a value of the wrong type for the FileProperty='%s'. Expected='%s', Received='%s'", plugin.getName(), fileProperty, ex.getExpectedType(), ex.getReceivedType()));
-					break;
-				case ProcessingFailed:
-					log.error(String.format("An operation failed while trying to get the FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, plugin.getName(), fileInfo.getFilePath()));
+					case NoResult:
+						log.debug(String.format("No result found for FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, plugin.getName(), fileInfo.getFilePath()));
+						break;
+					case WrongType:
+						log.error(String.format("The plugin='%s' returned a value of the wrong type for the FileProperty='%s'. Expected='%s', Received='%s'", plugin.getName(), fileProperty, ex.getExpectedType(), ex.getReceivedType()));
+						break;
+					case ProcessingFailed:
+						log.error(String.format("An operation failed while trying to get the FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, plugin.getName(), fileInfo.getFilePath()));
 				}
 			}
 		}
@@ -461,14 +460,14 @@ public class FileImportHelper {
 					break;
 				} catch (FilePropertyImportException ex) {
 					switch (ex.getExceptionType()) {
-					case NoResult:
-						log.debug(String.format("No result found for FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, engineName, filePath));
-						break;
-					case WrongType:
-						log.error(String.format("The plugin='%s' returned a value of the wrong type for the FileProperty='%s'. Expected='%s', Received='%s'", engineName, fileProperty, ex.getExpectedType(), ex.getReceivedType()));
-						break;
-					case ProcessingFailed:
-						log.error(String.format("An operation failed while trying to get the FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, engineName, filePath));
+						case NoResult:
+							log.debug(String.format("No result found for FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, engineName, filePath));
+							break;
+						case WrongType:
+							log.error(String.format("The plugin='%s' returned a value of the wrong type for the FileProperty='%s'. Expected='%s', Received='%s'", engineName, fileProperty, ex.getExpectedType(), ex.getReceivedType()));
+							break;
+						case ProcessingFailed:
+							log.error(String.format("An operation failed while trying to get the FileProperty='%s' with plugin='%s' for file='%s'", fileProperty, engineName, filePath));
 					}
 				}
 			}
@@ -545,39 +544,39 @@ public class FileImportHelper {
 	public static void updateFileInfo(DOFileInfo fiSource, DOFileInfo fiDestination, List<ConditionType> propertiesToUse) {
 		for (ConditionType ct : propertiesToUse) {
 			switch (ct) {
-			case FILE_THUMBNAILPATH:
-				String coverPath = fiSource.getThumbnailPath();
-				try {
-					String savePath = getTmpCoverPath(fiSource.getThumbnailPath(), fiSource);
-					FileImportHelper.saveUrlToFile(fiSource.getThumbnailPath(), savePath);
-					coverPath = savePath;
-				} catch (IOException e) {
-					// do nothing
-				}
-				fiDestination.setThumbnailPath(coverPath);
-				break;
-			case FILE_CONTAINS_TAG:
-				// merge tags
-				Map<String, List<String>> allTags = fiDestination.getTags();
-				Map<String, List<String>> newTags = fiSource.getTags();
-
-				for (String tagName : newTags.keySet()) {
-					if (!allTags.containsKey(tagName)) {
-						allTags.put(tagName, new ArrayList<String>());
+				case FILE_THUMBNAILPATH:
+					String coverPath = fiSource.getThumbnailPath();
+					try {
+						String savePath = getTmpCoverPath(fiSource.getThumbnailPath(), fiSource);
+						FileImportHelper.saveUrlToFile(fiSource.getThumbnailPath(), savePath);
+						coverPath = savePath;
+					} catch (IOException e) {
+						// do nothing
 					}
+					fiDestination.setThumbnailPath(coverPath);
+					break;
+				case FILE_CONTAINS_TAG:
+					// merge tags
+					Map<String, List<String>> allTags = fiDestination.getTags();
+					Map<String, List<String>> newTags = fiSource.getTags();
 
-					List<String> allTagValues = allTags.get(tagName);
-					List<String> newTagValues = newTags.get(tagName);
-					for (String tagValue : newTagValues) {
-						if (!allTagValues.contains(tagValue)) {
-							allTagValues.add(tagValue);
+					for (String tagName : newTags.keySet()) {
+						if (!allTags.containsKey(tagName)) {
+							allTags.put(tagName, new ArrayList<String>());
+						}
+
+						List<String> allTagValues = allTags.get(tagName);
+						List<String> newTagValues = newTags.get(tagName);
+						for (String tagValue : newTagValues) {
+							if (!allTagValues.contains(tagValue)) {
+								allTagValues.add(tagValue);
+							}
 						}
 					}
-				}
-				fiDestination.setTags(allTags);
-				break;
-			default:
-				break;
+					fiDestination.setTags(allTags);
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -596,79 +595,79 @@ public class FileImportHelper {
 	private static void updateFileInfo(DOVideoFileInfo fiSource, DOVideoFileInfo fiDestination, List<ConditionType> propertiesToUse) {
 		for (ConditionType ct : propertiesToUse) {
 			switch (ct) {
-			case FILE_THUMBNAILPATH:
-				String coverPath = fiSource.getThumbnailPath();
-				try {
-					String savePath = getTmpCoverPath(fiSource.getThumbnailPath(), fiSource);
-					FileImportHelper.saveUrlToFile(fiSource.getThumbnailPath(), savePath);
-					coverPath = savePath;
-				} catch (IOException e) {
-					// do nothing
-				}
-				fiDestination.setThumbnailPath(coverPath);
-				break;
-			case VIDEO_CERTIFICATION:
-				fiDestination.getAgeRating().setLevel(fiSource.getAgeRating().getLevel());
-				break;
-			case VIDEO_CERTIFICATIONREASON:
-				fiDestination.getAgeRating().setReason(fiSource.getAgeRating().getReason());
-				break;
-			case VIDEO_BUDGET:
-				fiDestination.setBudget(fiSource.getBudget());
-				break;
-			case VIDEO_DIRECTOR:
-				fiDestination.setDirector(fiSource.getDirector());
-				break;
-			case VIDEO_CONTAINS_GENRE:
-				// merge new with existing genres
-				List<String> allGenres = fiDestination.getGenres();
-				for (String genre : fiSource.getGenres()) {
-					if (!allGenres.contains(genre)) {
-						allGenres.add(genre);
+				case FILE_THUMBNAILPATH:
+					String coverPath = fiSource.getThumbnailPath();
+					try {
+						String savePath = getTmpCoverPath(fiSource.getThumbnailPath(), fiSource);
+						FileImportHelper.saveUrlToFile(fiSource.getThumbnailPath(), savePath);
+						coverPath = savePath;
+					} catch (IOException e) {
+						// do nothing
 					}
-				}
-				fiDestination.setGenres(allGenres);
-				break;
-			case VIDEO_HOMEPAGEURL:
-				fiDestination.setHomepageUrl(fiSource.getHomepageUrl());
-				break;
-			case VIDEO_IMDBID:
-				fiDestination.setImdbId(fiSource.getImdbId());
-				break;
-			case VIDEO_NAME:
-				fiDestination.setName(fiSource.getName());
-				break;
-			case VIDEO_ORIGINALNAME:
-				fiDestination.setOriginalName(fiSource.getOriginalName());
-				break;
-			case VIDEO_SORTNAME:
-				fiDestination.setSortName(fiSource.getSortName());
-			case VIDEO_OVERVIEW:
-				fiDestination.setOverview(fiSource.getOverview());
-				break;
-			case VIDEO_RATINGPERCENT:
-				fiDestination.getRating().setRatingPercent(fiSource.getRating().getRatingPercent());
-				break;
-			case VIDEO_RATINGVOTERS:
-				fiDestination.getRating().setVotes(fiSource.getRating().getVotes());
-				break;
-			case VIDEO_REVENUE:
-				fiDestination.setRevenue(fiSource.getRevenue());
-				break;
-			case VIDEO_TAGLINE:
-				fiDestination.setTagLine(fiSource.getTagLine());
-				break;
-			case VIDEO_TMDBID:
-				fiDestination.setTmdbId(fiSource.getTmdbId());
-				break;
-			case VIDEO_TRAILERURL:
-				fiDestination.setTrailerUrl(fiSource.getTrailerUrl());
-				break;
-			case VIDEO_YEAR:
-				fiDestination.setYear(fiSource.getYear());
-				break;
-			default:
-				break;
+					fiDestination.setThumbnailPath(coverPath);
+					break;
+				case VIDEO_CERTIFICATION:
+					fiDestination.getAgeRating().setLevel(fiSource.getAgeRating().getLevel());
+					break;
+				case VIDEO_CERTIFICATIONREASON:
+					fiDestination.getAgeRating().setReason(fiSource.getAgeRating().getReason());
+					break;
+				case VIDEO_BUDGET:
+					fiDestination.setBudget(fiSource.getBudget());
+					break;
+				case VIDEO_DIRECTOR:
+					fiDestination.setDirector(fiSource.getDirector());
+					break;
+				case VIDEO_CONTAINS_GENRE:
+					// merge new with existing genres
+					List<String> allGenres = fiDestination.getGenres();
+					for (String genre : fiSource.getGenres()) {
+						if (!allGenres.contains(genre)) {
+							allGenres.add(genre);
+						}
+					}
+					fiDestination.setGenres(allGenres);
+					break;
+				case VIDEO_HOMEPAGEURL:
+					fiDestination.setHomepageUrl(fiSource.getHomepageUrl());
+					break;
+				case VIDEO_IMDBID:
+					fiDestination.setImdbId(fiSource.getImdbId());
+					break;
+				case VIDEO_NAME:
+					fiDestination.setName(fiSource.getName());
+					break;
+				case VIDEO_ORIGINALNAME:
+					fiDestination.setOriginalName(fiSource.getOriginalName());
+					break;
+				case VIDEO_SORTNAME:
+					fiDestination.setSortName(fiSource.getSortName());
+				case VIDEO_OVERVIEW:
+					fiDestination.setOverview(fiSource.getOverview());
+					break;
+				case VIDEO_RATINGPERCENT:
+					fiDestination.getRating().setRatingPercent(fiSource.getRating().getRatingPercent());
+					break;
+				case VIDEO_RATINGVOTERS:
+					fiDestination.getRating().setVotes(fiSource.getRating().getVotes());
+					break;
+				case VIDEO_REVENUE:
+					fiDestination.setRevenue(fiSource.getRevenue());
+					break;
+				case VIDEO_TAGLINE:
+					fiDestination.setTagLine(fiSource.getTagLine());
+					break;
+				case VIDEO_TMDBID:
+					fiDestination.setTmdbId(fiSource.getTmdbId());
+					break;
+				case VIDEO_TRAILERURL:
+					fiDestination.setTrailerUrl(fiSource.getTrailerUrl());
+					break;
+				case VIDEO_YEAR:
+					fiDestination.setYear(fiSource.getYear());
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -722,132 +721,141 @@ public class FileImportHelper {
 	}
 
 	/**
-	 * Sets the value in the fileInfo for the fileProperty if it is valid, throws a FilePropertyImportException
-	 * otherwise
+	 * Sets the value in the fileInfo for the fileProperty if it is valid, throws a FilePropertyImportException otherwise
 	 * 
 	 * @param value the value to set
 	 * @param fileProperty the file property to set in fileinfo
 	 * @param fileInfo the specified file property will be set in this fileInfo
-	 * @throws FilePropertyImportException thrown if either no result was received or the type of the value wasn't
-	 *             correct
+	 * @throws FilePropertyImportException thrown if either no result was received or the type of the value wasn't correct
 	 */
 	@SuppressWarnings("unchecked")
 	private static void setValue(Object value, FileProperty fileProperty, DOVideoFileInfo fileInfo) throws FilePropertyImportException {
 		switch (fileProperty) {
-		case VIDEO_COVERURL:
-			validateStringValue(value, fileProperty);
-			String coverUrl = (String) value;
-			try {
-				String savePath = getTmpCoverPath(coverUrl, fileInfo);
-				FileImportHelper.saveUrlToFile(coverUrl, savePath);
-				if (new File(savePath).exists()) {
-					fileInfo.setThumbnailPath(savePath);
-				} else {
-					throw new FilePropertyImportException(fileProperty, null, String.class, ExceptionType.NoResult);
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
+			case VIDEO_COVERURL:
+				validateStringValue(value, fileProperty);
 
-			break;
-		case VIDEO_CERTIFICATION:
-			validateStringValue(value, fileProperty);
-			fileInfo.getAgeRating().setLevel((String) value);
-			break;
-		case VIDEO_CERTIFICATIONREASON:
-			validateStringValue(value, fileProperty);
-			fileInfo.getAgeRating().setReason((String) value);
-			break;
-		case VIDEO_BUDGET:
-			validateIntegerValue(value, fileProperty);
-			fileInfo.setBudget((Integer) value);
-			break;
-		case VIDEO_DIRECTOR:
-			validateStringValue(value, fileProperty);
-			fileInfo.setDirector((String) value);
-			break;
-		case VIDEO_GENRES:
-			if (value == null) {
-				throw new FilePropertyImportException(fileProperty, null, List.class, ExceptionType.NoResult);
-			} else if (!(value instanceof List<?>)) {
-				throw new FilePropertyImportException(fileProperty, value.getClass(), List.class, ExceptionType.WrongType);
-			} else {
-				// we've got an untyped list, check the contained elements
-				for (Object o : (List<?>) value) {
-					if (!(o instanceof String)) {
-						throw new FilePropertyImportException(fileProperty, value.getClass(), List.class, ExceptionType.WrongType);
+				String coverUrl = (String) value;
+				if (FileHelper.isValidUrl(coverUrl)) {
+					// A URL has been specified, try to download the image and set it as thumbnail path
+					try {
+						String savePath = getTmpCoverPath(coverUrl, fileInfo);
+						FileImportHelper.saveUrlToFile(coverUrl, savePath);
+						if (new File(savePath).exists()) {
+							fileInfo.setThumbnailPath(savePath);
+						} else {
+							throw new FilePropertyImportException(fileProperty, null, String.class, ExceptionType.NoResult);
+						}
+					} catch (IOException e) {
+						// do nothing
+					}
+				} else {
+					// Probably a file path has been specified, check that the file exists and set it as the
+					// thumbnail path if it does
+					if (new File(coverUrl).exists()) {
+						fileInfo.setThumbnailPath(coverUrl);
+					} else {
+						throw new FilePropertyImportException(fileProperty, coverUrl.getClass(), String.class, ExceptionType.NoResult);
+					}
+				}
+				break;
+			case VIDEO_CERTIFICATION:
+				validateStringValue(value, fileProperty);
+				fileInfo.getAgeRating().setLevel((String) value);
+				break;
+			case VIDEO_CERTIFICATIONREASON:
+				validateStringValue(value, fileProperty);
+				fileInfo.getAgeRating().setReason((String) value);
+				break;
+			case VIDEO_BUDGET:
+				validateIntegerValue(value, fileProperty);
+				fileInfo.setBudget((Integer) value);
+				break;
+			case VIDEO_DIRECTOR:
+				validateStringValue(value, fileProperty);
+				fileInfo.setDirector((String) value);
+				break;
+			case VIDEO_GENRES:
+				if (value == null) {
+					throw new FilePropertyImportException(fileProperty, null, List.class, ExceptionType.NoResult);
+				} else if (!(value instanceof List<?>)) {
+					throw new FilePropertyImportException(fileProperty, value.getClass(), List.class, ExceptionType.WrongType);
+				} else {
+					// we've got an untyped list, check the contained elements
+					for (Object o : (List<?>) value) {
+						if (!(o instanceof String)) {
+							throw new FilePropertyImportException(fileProperty, value.getClass(), List.class, ExceptionType.WrongType);
+						}
+					}
+
+					if (((List<?>) value).size() == 0) {
+						throw new FilePropertyImportException(fileProperty, null, List.class, ExceptionType.NoResult);
 					}
 				}
 
-				if (((List<?>) value).size() == 0) {
-					throw new FilePropertyImportException(fileProperty, null, List.class, ExceptionType.NoResult);
+				// merge new with existing genres
+				List<String> allGenres = fileInfo.getGenres();
+				for (String genre : (List<String>) value) {
+					if (!allGenres.contains(genre)) {
+						allGenres.add(genre);
+					}
 				}
-			}
 
-			// merge new with existing genres
-			List<String> allGenres = fileInfo.getGenres();
-			for (String genre : (List<String>) value) {
-				if (!allGenres.contains(genre)) {
-					allGenres.add(genre);
-				}
-			}
-
-			fileInfo.setGenres(allGenres);
-			break;
-		case VIDEO_HOMEPAGEURL:
-			validateStringValue(value, fileProperty);
-			fileInfo.setHomepageUrl((String) value);
-			break;
-		case VIDEO_IMDBID:
-			validateStringValue(value, fileProperty);
-			fileInfo.setImdbId((String) value);
-			break;
-		case VIDEO_NAME:
-			validateStringValue(value, fileProperty);
-			fileInfo.setName((String) value);
-			break;
-		case VIDEO_ORIGINALNAME:
-			validateStringValue(value, fileProperty);
-			fileInfo.setOriginalName((String) value);
-			break;
-		case VIDEO_SORTNAME:
-			validateStringValue(value, fileProperty);
-			fileInfo.setSortName((String) value);
-			break;
-		case VIDEO_OVERVIEW:
-			validateStringValue(value, fileProperty);
-			fileInfo.setOverview((String) value);
-			break;
-		case VIDEO_RATINGPERCENT:
-			validateIntegerValue(value, fileProperty);
-			fileInfo.getRating().setRatingPercent((Integer) value);
-			break;
-		case VIDEO_RATINGVOTERS:
-			validateIntegerValue(value, fileProperty);
-			fileInfo.getRating().setVotes((Integer) value);
-			break;
-		case VIDEO_REVENUE:
-			validateIntegerValue(value, fileProperty);
-			fileInfo.setRevenue((Integer) value);
-			break;
-		case VIDEO_TAGLINE:
-			validateStringValue(value, fileProperty);
-			fileInfo.setTagLine((String) value);
-			break;
-		case VIDEO_TMDBID:
-			validateIntegerValue(value, fileProperty);
-			fileInfo.setTmdbId((Integer) value);
-			break;
-		case VIDEO_TRAILERURL:
-			validateStringValue(value, fileProperty);
-			fileInfo.setTrailerUrl((String) value);
-			break;
-		case VIDEO_YEAR:
-			validateIntegerValue(value, fileProperty);
-			fileInfo.setYear((Integer) value);
-			break;
-		default:
-			break;
+				fileInfo.setGenres(allGenres);
+				break;
+			case VIDEO_HOMEPAGEURL:
+				validateStringValue(value, fileProperty);
+				fileInfo.setHomepageUrl((String) value);
+				break;
+			case VIDEO_IMDBID:
+				validateStringValue(value, fileProperty);
+				fileInfo.setImdbId((String) value);
+				break;
+			case VIDEO_NAME:
+				validateStringValue(value, fileProperty);
+				fileInfo.setName((String) value);
+				break;
+			case VIDEO_ORIGINALNAME:
+				validateStringValue(value, fileProperty);
+				fileInfo.setOriginalName((String) value);
+				break;
+			case VIDEO_SORTNAME:
+				validateStringValue(value, fileProperty);
+				fileInfo.setSortName((String) value);
+				break;
+			case VIDEO_OVERVIEW:
+				validateStringValue(value, fileProperty);
+				fileInfo.setOverview((String) value);
+				break;
+			case VIDEO_RATINGPERCENT:
+				validateIntegerValue(value, fileProperty);
+				fileInfo.getRating().setRatingPercent((Integer) value);
+				break;
+			case VIDEO_RATINGVOTERS:
+				validateIntegerValue(value, fileProperty);
+				fileInfo.getRating().setVotes((Integer) value);
+				break;
+			case VIDEO_REVENUE:
+				validateIntegerValue(value, fileProperty);
+				fileInfo.setRevenue((Integer) value);
+				break;
+			case VIDEO_TAGLINE:
+				validateStringValue(value, fileProperty);
+				fileInfo.setTagLine((String) value);
+				break;
+			case VIDEO_TMDBID:
+				validateIntegerValue(value, fileProperty);
+				fileInfo.setTmdbId((Integer) value);
+				break;
+			case VIDEO_TRAILERURL:
+				validateStringValue(value, fileProperty);
+				fileInfo.setTrailerUrl((String) value);
+				break;
+			case VIDEO_YEAR:
+				validateIntegerValue(value, fileProperty);
+				fileInfo.setYear((Integer) value);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -899,13 +907,11 @@ public class FileImportHelper {
 	}
 
 	/**
-	 * Throws a FilePropertyImportException if the type of value is not a String or is an empty String, does nothing
-	 * otherwise
+	 * Throws a FilePropertyImportException if the type of value is not a String or is an empty String, does nothing otherwise
 	 * 
 	 * @param value value to validate
 	 * @param fileProperty FileProperty for the value
-	 * @throws FilePropertyImportException thrown if the type of value is not a String or is an empty String, does
-	 *             nothing otherwise
+	 * @throws FilePropertyImportException thrown if the type of value is not a String or is an empty String, does nothing otherwise
 	 */
 	private static void validateStringValue(Object value, FileProperty fileProperty) throws FilePropertyImportException {
 		if (value == null) {
@@ -1202,11 +1208,9 @@ public class FileImportHelper {
 		String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
 		if (videoFileExtensions.contains(extension)) {
 			retVal = FileType.VIDEO;
-		}
-		else if (audioFileExtensions.contains(extension)) {
+		} else if (audioFileExtensions.contains(extension)) {
 			retVal = FileType.AUDIO;
-		}
-		else if (imageFileExtensions.contains(extension)) {
+		} else if (imageFileExtensions.contains(extension)) {
 			retVal = FileType.PICTURES;
 		}
 

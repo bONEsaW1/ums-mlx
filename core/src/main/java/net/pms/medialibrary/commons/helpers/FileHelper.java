@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +71,24 @@ public class FileHelper {
 	 * @param path2 the path 2
 	 * @return the combined path
 	 */
-	public static String combine(String path1, String path2)
-	{
+	public static String combine(String path1, String path2) {
 		File file1 = new File(path1);
 		File file2 = new File(file1, path2);
 		return file2.getPath();
+	}
+
+	/**
+	 * Checks if the specified path is a valid URL
+	 *
+	 * @param path the path
+	 * @return true, if the URL is valid; otherwise false
+	 */
+	static public boolean isValidUrl(String path) {
+		try {
+			URI uri = new URI(path);
+			return uri.getScheme().equals("http") || uri.getScheme().equals("https");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

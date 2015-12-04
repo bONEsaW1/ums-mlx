@@ -35,10 +35,10 @@ import net.pms.PMS;
 import net.pms.medialibrary.commons.VersionConstants;
 import net.pms.medialibrary.commons.dataobjects.DOAudioFileInfo;
 import net.pms.medialibrary.commons.dataobjects.DOCondition;
+import net.pms.medialibrary.commons.dataobjects.DOFileEntryFolder;
 import net.pms.medialibrary.commons.dataobjects.DOFileImportTemplate;
 import net.pms.medialibrary.commons.dataobjects.DOFileInfo;
 import net.pms.medialibrary.commons.dataobjects.DOFilter;
-import net.pms.medialibrary.commons.dataobjects.DOFileEntryFolder;
 import net.pms.medialibrary.commons.dataobjects.DOFolder;
 import net.pms.medialibrary.commons.dataobjects.DOImageFileInfo;
 import net.pms.medialibrary.commons.dataobjects.DOManagedFile;
@@ -440,16 +440,16 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 
 		FileType fileType = FileImportHelper.getFileType(fileName);
 		switch (fileType) {
-		case VIDEO:
-			List<DOVideoFileInfo> videoFileInfos = getVideoFileInfo(filter, true, ConditionType.FILE_FILENAME, 1, SortOption.Unknown, false);
-			if (videoFileInfos.size() > 0) {
-				res = videoFileInfos.get(0);
-			}
-			break;
-		case AUDIO:
-		case PICTURES:
-		default:
-			log.error("Currently, only files of type VIDEO are supported by the method 'public DOFileInfo getFileInfo(String filePath)'");
+			case VIDEO:
+				List<DOVideoFileInfo> videoFileInfos = getVideoFileInfo(filter, true, ConditionType.FILE_FILENAME, 1, SortOption.Unknown, false);
+				if (videoFileInfos.size() > 0) {
+					res = videoFileInfos.get(0);
+				}
+				break;
+			case AUDIO:
+			case PICTURES:
+			default:
+				log.error("Currently, only files of type VIDEO are supported by the method 'public DOFileInfo getFileInfo(String filePath)'");
 		}
 
 		return res;
@@ -494,33 +494,33 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		fileInfo.setDateLastUpdatedDb(new java.util.Date());
 
 		switch (fileInfo.getType()) {
-		case AUDIO:
-			try {
-				dbAudioFileInfo.insertAudioFileInfo((DOAudioFileInfo) fileInfo);
+			case AUDIO:
+				try {
+					dbAudioFileInfo.insertAudioFileInfo((DOAudioFileInfo) fileInfo);
+					if (log.isInfoEnabled())
+						log.info(String.format("Imported audio file %s", fileInfo.getFilePath()));
+				} catch (StorageException e) {
+					log.error("Storage error (get)", e);
+				}
+				break;
+			case PICTURES:
+				dbPicturesFileInfo.insertPicturesFileInfo((DOImageFileInfo) fileInfo);
 				if (log.isInfoEnabled())
-					log.info(String.format("Imported audio file %s", fileInfo.getFilePath()));
-			} catch (StorageException e) {
-				log.error("Storage error (get)", e);
-			}
-			break;
-		case PICTURES:
-			dbPicturesFileInfo.insertPicturesFileInfo((DOImageFileInfo) fileInfo);
-			if (log.isInfoEnabled())
-				log.info(String.format("Imported picture %s", fileInfo.getFilePath()));
-			break;
-		case VIDEO:
-			try {
-				dbVideoFileInfo.insertVideoFileInfo((DOVideoFileInfo) fileInfo);
-				if (log.isInfoEnabled())
-					log.info(String.format("Imported video file %s", fileInfo.getFilePath()));
-				statusMsg = Messages.getString("ML.Messages.VideoInserted") + " " + fileInfo.toString();
-			} catch (StorageException e) {
-				log.error("Storage error (get)", e);
-			}
-			break;
-		default:
-			log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileInfo.getType()));
-			break;
+					log.info(String.format("Imported picture %s", fileInfo.getFilePath()));
+				break;
+			case VIDEO:
+				try {
+					dbVideoFileInfo.insertVideoFileInfo((DOVideoFileInfo) fileInfo);
+					if (log.isInfoEnabled())
+						log.info(String.format("Imported video file %s", fileInfo.getFilePath()));
+					statusMsg = Messages.getString("ML.Messages.VideoInserted") + " " + fileInfo.toString();
+				} catch (StorageException e) {
+					log.error("Storage error (get)", e);
+				}
+				break;
+			default:
+				log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileInfo.getType()));
+				break;
 		}
 
 		// notify of the insert in the GUI
@@ -533,7 +533,15 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		// copy the thumbnail if required
 		File thumbnailFile = new File(fileInfo.getThumbnailPath());
 		String coverPath = FileImportHelper.getCoverPath(fileInfo.getThumbnailPath(), fileInfo);
-		if (thumbnailFile.exists() && !fileInfo.getThumbnailPath().equals(coverPath)) {
+
+		boolean isThumbnailInTempFolder = false;
+		try {
+			isThumbnailInTempFolder = fileInfo.getThumbnailPath().startsWith(PMS.getConfiguration().getTempFolder().getAbsolutePath());
+		} catch (IOException e) {
+			log.warn("Failed to get UMS temp folder path", e);
+		}
+
+		if (thumbnailFile.exists() && !fileInfo.getThumbnailPath().equals(coverPath) && isThumbnailInTempFolder) {
 			try {
 				FileImportHelper.copyFile(thumbnailFile, new File(coverPath), true);
 				fileInfo.setThumbnailPath(coverPath);
@@ -551,29 +559,29 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		fileInfo.setDateLastUpdatedDb(new java.util.Date());
 
 		switch (fileInfo.getType()) {
-		case AUDIO:
-			dbAudioFileInfo.updateAudioFileInfo((DOAudioFileInfo) fileInfo);
-			if (log.isInfoEnabled())
-				log.info(String.format("Updated audio file %s", fileInfo.getFilePath()));
-			break;
-		case PICTURES:
-			dbPicturesFileInfo.updatePicturesFileInfo((DOImageFileInfo) fileInfo);
-			if (log.isInfoEnabled())
-				log.info(String.format("Updated picture %s", fileInfo.getFilePath()));
-			break;
-		case VIDEO:
-			try {
-				dbVideoFileInfo.updateFileInfo((DOVideoFileInfo) fileInfo);
-				if (log.isDebugEnabled())
-					log.debug(String.format("Updated video file %s", fileInfo.getFilePath()));
-				statusMsg = Messages.getString("ML.Messages.VideoUpdated") + " " + fileInfo.toString();
-			} catch (StorageException e) {
-				log.error("Storage error (update)", e);
-			}
-			break;
-		default:
-			log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileInfo.getType()));
-			break;
+			case AUDIO:
+				dbAudioFileInfo.updateAudioFileInfo((DOAudioFileInfo) fileInfo);
+				if (log.isInfoEnabled())
+					log.info(String.format("Updated audio file %s", fileInfo.getFilePath()));
+				break;
+			case PICTURES:
+				dbPicturesFileInfo.updatePicturesFileInfo((DOImageFileInfo) fileInfo);
+				if (log.isInfoEnabled())
+					log.info(String.format("Updated picture %s", fileInfo.getFilePath()));
+				break;
+			case VIDEO:
+				try {
+					dbVideoFileInfo.updateFileInfo((DOVideoFileInfo) fileInfo);
+					if (log.isDebugEnabled())
+						log.debug(String.format("Updated video file %s", fileInfo.getFilePath()));
+					statusMsg = Messages.getString("ML.Messages.VideoUpdated") + " " + fileInfo.toString();
+				} catch (StorageException e) {
+					log.error("Storage error (update)", e);
+				}
+				break;
+			default:
+				log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileInfo.getType()));
+				break;
 		}
 
 		// notify of the insert in the GUI
@@ -603,21 +611,21 @@ public class MediaLibraryStorage implements IMediaLibraryStorage {
 		// Call the delete method according to the type
 		DOFileInfo fileInfo = fileInfos.get(0);
 		switch (fileInfo.getType()) {
-		case AUDIO:
-			// TODO: implement
-			break;
+			case AUDIO:
+				// TODO: implement
+				break;
 
-		case PICTURES:
-			// TODO: implement
-			break;
+			case PICTURES:
+				// TODO: implement
+				break;
 
-		case VIDEO:
-			deleteVideo(fileInfo.getId());
-			break;
+			case VIDEO:
+				deleteVideo(fileInfo.getId());
+				break;
 
-		default:
-			log.warn("Unexpected file type received. Type=" + fileInfo.getType());
-			break;
+			default:
+				log.warn("Unexpected file type received. Type=" + fileInfo.getType());
+				break;
 		}
 
 		if (log.isInfoEnabled())
