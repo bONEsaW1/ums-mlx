@@ -8,8 +8,7 @@ import net.pms.encoders.Player;
 import net.pms.io.OutputParams;
 
 /**
- * Classes implementing this interface and packaged as pms plugins will have the possibility to modify transcoding
- * arguments when a resource is being transcoded
+ * Classes implementing this interface and packaged as pms plugins will have the possibility to modify transcoding arguments when a resource is being transcoded
  */
 public interface FinalizeTranscoderArgsListener extends PluginBase {
 	/**

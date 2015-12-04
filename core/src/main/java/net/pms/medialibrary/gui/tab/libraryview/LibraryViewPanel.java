@@ -61,21 +61,21 @@ public class LibraryViewPanel extends JPanel {
 
 	public void configure(DOFilter filter, FileType fileType) {
 		switch (fileType) {
-		case AUDIO:
-			audioFileDisplayer.setFilter(filter);
-			break;
-		case VIDEO:
-			videoFileDisplayer.setFilter(filter);
-			break;
-		case PICTURES:
-			picturesDisplayer.setFilter(filter);
-			break;
-		case FILE:
-			fileDisplayer.setFilter(filter);
-			break;
-		default:
-			log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileType));
-			break;
+			case AUDIO:
+				audioFileDisplayer.setFilter(filter);
+				break;
+			case VIDEO:
+				videoFileDisplayer.setFilter(filter);
+				break;
+			case PICTURES:
+				picturesDisplayer.setFilter(filter);
+				break;
+			case FILE:
+				fileDisplayer.setFilter(filter);
+				break;
+			default:
+				log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileType));
+				break;
 		}
 	}
 

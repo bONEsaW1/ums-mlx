@@ -52,8 +52,6 @@ public class FilePropertyImportException extends Exception {
 	}
 
 	public enum ExceptionType {
-		NoResult,
-		WrongType,
-		ProcessingFailed
+		NoResult, WrongType, ProcessingFailed
 	}
 }

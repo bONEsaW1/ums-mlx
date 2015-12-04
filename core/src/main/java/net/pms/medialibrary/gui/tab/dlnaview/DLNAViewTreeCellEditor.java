@@ -76,6 +76,6 @@ public class DLNAViewTreeCellEditor extends DefaultTreeCellEditor {
 	public boolean isCellEditable(EventObject event) {
 		return event == null ||
 				((((DLNAViewTree) event.getSource()).getSelectedNode() != null
-				&& ((DLNAViewTree) event.getSource()).getSelectedNode().getUserObject() instanceof DOFolder));
+						&& ((DLNAViewTree) event.getSource()).getSelectedNode().getUserObject() instanceof DOFolder));
 	}
 }

@@ -53,8 +53,7 @@ public class DLNAViewPanel extends JPanel {
 	/**
 	 * DLNAViewPanel constructor
 	 * 
-	 * @param mediaLibraryStorage storage that will be used for saving the folder structure as well as displaying
-	 *            folders and items
+	 * @param mediaLibraryStorage storage that will be used for saving the folder structure as well as displaying folders and items
 	 */
 	public DLNAViewPanel() {
 		super(new GridLayout());

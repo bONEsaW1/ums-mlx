@@ -67,10 +67,9 @@ public class RatingResource extends DLNAResource {
 	}
 
 	/*
-	 * protected InputStream getResourceInputStream(String fileName) { fileName = "/resources/" + fileName; ClassLoader
-	 * cll = this.getClass().getClassLoader(); InputStream is = cll.getResourceAsStream(fileName.substring(1)); while
-	 * (is == null && cll.getParent() != null) { cll = cll.getParent(); is =
-	 * cll.getResourceAsStream(fileName.substring(1)); } return is; }
+	 * protected InputStream getResourceInputStream(String fileName) { fileName = "/resources/" + fileName; ClassLoader cll = this.getClass().getClassLoader(); InputStream is =
+	 * cll.getResourceAsStream(fileName.substring(1)); while (is == null && cll.getParent() != null) { cll = cll.getParent(); is = cll.getResourceAsStream(fileName.substring(1)); }
+	 * return is; }
 	 */
 
 	@Override

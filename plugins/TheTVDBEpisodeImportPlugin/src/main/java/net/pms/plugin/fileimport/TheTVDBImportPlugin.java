@@ -49,6 +49,7 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 
 	// Holds only the project version. It's used to always use the maven buildnumber in code
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/thetvdbimportplugin.properties", TheTVDBImportPlugin.class);
@@ -75,14 +76,7 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 	 * Available tags.
 	 */
 	private enum Tag {
-		EpisodeNumber,
-		SeasonNumber,
-		FirstAired,
-		GuestStars,
-		Writers,
-		Runtime,
-		Network,
-		SeriesName
+		EpisodeNumber, SeasonNumber, FirstAired, GuestStars, Writers, Runtime, Network, SeriesName
 	}
 
 	public void importFile(String title, String filePath) throws FileImportException {
@@ -207,49 +201,49 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 		Object res = null;
 		// return the proper object for every supported file property
 		switch (property) {
-		case VIDEO_COVERURL:
-			res = cover;
-			break;
-		case VIDEO_DIRECTOR:
-			res = currentEpisode == null && currentEpisode.getDirectors().size() > 0 ? null : currentEpisode.getDirectors().get(0);
-			break;
-		case VIDEO_GENRES:
-			res = currentSeries == null ? null : currentSeries.getGenres();
-			break;
-		case VIDEO_IMDBID:
-			res = currentEpisode == null ? null : currentEpisode.getImdbId();
-			break;
-		case VIDEO_OVERVIEW:
-			res = currentEpisode == null ? null : currentEpisode.getOverview();
-			break;
-		case VIDEO_RATINGPERCENT:
-			if (currentEpisode != null && currentEpisode.getRating() != null && !currentEpisode.getRating().equals("")) {
-				try {
-					double rating = Double.parseDouble(currentEpisode.getRating());
-					res = (int) (10 * rating);
-				} catch (Exception ex) {
-					logger.error("Failed to parse rating as a double. value=" + currentEpisode.getRating());
+			case VIDEO_COVERURL:
+				res = cover;
+				break;
+			case VIDEO_DIRECTOR:
+				res = currentEpisode == null && currentEpisode.getDirectors().size() > 0 ? null : currentEpisode.getDirectors().get(0);
+				break;
+			case VIDEO_GENRES:
+				res = currentSeries == null ? null : currentSeries.getGenres();
+				break;
+			case VIDEO_IMDBID:
+				res = currentEpisode == null ? null : currentEpisode.getImdbId();
+				break;
+			case VIDEO_OVERVIEW:
+				res = currentEpisode == null ? null : currentEpisode.getOverview();
+				break;
+			case VIDEO_RATINGPERCENT:
+				if (currentEpisode != null && currentEpisode.getRating() != null && !currentEpisode.getRating().equals("")) {
+					try {
+						double rating = Double.parseDouble(currentEpisode.getRating());
+						res = (int) (10 * rating);
+					} catch (Exception ex) {
+						logger.error("Failed to parse rating as a double. value=" + currentEpisode.getRating());
+					}
 				}
-			}
-			break;
-		case VIDEO_NAME:
-			res = currentEpisode == null ? null : currentEpisode.getEpisodeName();
-			break;
-		case VIDEO_SORTNAME:
-			res = currentEpisode == null ? null : String.format("%d%03d", currentEpisode.getSeasonNumber(), currentEpisode.getEpisodeNumber());
-			break;
-		case VIDEO_YEAR:
-			if (currentEpisode != null && currentEpisode.getFirstAired() != null && !currentEpisode.getFirstAired().equals("")) {
-				try {
-					res = Integer.parseInt(currentEpisode.getFirstAired().substring(0, 4));
-				} catch (Exception ex) {
-					logger.error("Failed to parse the year in first air date. value=" + currentEpisode.getFirstAired());
+				break;
+			case VIDEO_NAME:
+				res = currentEpisode == null ? null : currentEpisode.getEpisodeName();
+				break;
+			case VIDEO_SORTNAME:
+				res = currentEpisode == null ? null : String.format("%d%03d", currentEpisode.getSeasonNumber(), currentEpisode.getEpisodeNumber());
+				break;
+			case VIDEO_YEAR:
+				if (currentEpisode != null && currentEpisode.getFirstAired() != null && !currentEpisode.getFirstAired().equals("")) {
+					try {
+						res = Integer.parseInt(currentEpisode.getFirstAired().substring(0, 4));
+					} catch (Exception ex) {
+						logger.error("Failed to parse the year in first air date. value=" + currentEpisode.getFirstAired());
+					}
 				}
-			}
-			break;
-		default:
-			logger.warn("Unexpected FileProperty received: " + property);
-			break;
+				break;
+			default:
+				logger.warn("Unexpected FileProperty received: " + property);
+				break;
 		}
 
 		return res;

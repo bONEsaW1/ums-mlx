@@ -11,8 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class exposes methods to subscribe and unsubscribe {@link NotificationSubscriber} to be notified of messages
- * posted to the message queue.<br>
+ * This class exposes methods to subscribe and unsubscribe {@link NotificationSubscriber} to be notified of messages posted to the message queue.<br>
  * Get a singleton using the static getInstance method.<br>
  * 
  * @author pw
@@ -42,8 +41,7 @@ public class NotificationCenter<T> {
 	}
 
 	/**
-	 * Get an instance of {@link NotificationCenter} which can subscribe/unsubscribe {@link NotificationSubscriber} to
-	 * messages of type c
+	 * Get an instance of {@link NotificationCenter} which can subscribe/unsubscribe {@link NotificationSubscriber} to messages of type c
 	 * 
 	 * @param c the type of messages the subscriber will receive
 	 * @return an instance of {@link NotificationCenter}

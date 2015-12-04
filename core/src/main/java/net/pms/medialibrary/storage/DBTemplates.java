@@ -60,8 +60,7 @@ class DBTemplates extends DBBase {
 			stmt.executeUpdate();
 
 			rs = stmt.getGeneratedKeys();
-			if (rs != null && rs.next())
-			{
+			if (rs != null && rs.next()) {
 				template.setId(rs.getInt(1));
 			}
 			insertTemplateEntry(template, fileFolder, conn, stmt);

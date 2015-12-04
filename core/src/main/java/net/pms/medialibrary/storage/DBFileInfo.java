@@ -686,147 +686,147 @@ class DBFileInfo extends DBBase {
 
 			// these conditions are special cases
 			switch (condition.getType()) {
-			case FILE_CONTAINS_TAG:
-				innerSelect = "SELECT DISTINCT(FILE.ID)"
-						+ " FROM FILE"
-						+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
-						+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", condition.getTagName());
+				case FILE_CONTAINS_TAG:
+					innerSelect = "SELECT DISTINCT(FILE.ID)"
+							+ " FROM FILE"
+							+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
+							+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", condition.getTagName());
 
-				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
-				querySuffix = "))";
-				break;
-			case VIDEO_CONTAINS_VIDEOAUDIO:
-				innerSelect = "SELECT DISTINCT(FILE.ID)"
-						+ " FROM FILE"
-						+ " LEFT JOIN VIDEOAUDIO ON FILE.ID = VIDEOAUDIO.FILEID"
-						+ " WHERE VIDEOAUDIO.LANG";
+					conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
+					querySuffix = "))";
+					break;
+				case VIDEO_CONTAINS_VIDEOAUDIO:
+					innerSelect = "SELECT DISTINCT(FILE.ID)"
+							+ " FROM FILE"
+							+ " LEFT JOIN VIDEOAUDIO ON FILE.ID = VIDEOAUDIO.FILEID"
+							+ " WHERE VIDEOAUDIO.LANG";
 
-				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
-				querySuffix = "))";
-				break;
-			case VIDEO_CONTAINS_GENRE:
-				innerSelect = "SELECT DISTINCT(FILE.ID)"
-						+ " FROM FILE"
-						+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
-						+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", GENRE_KEY);
+					conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
+					querySuffix = "))";
+					break;
+				case VIDEO_CONTAINS_GENRE:
+					innerSelect = "SELECT DISTINCT(FILE.ID)"
+							+ " FROM FILE"
+							+ " LEFT JOIN FILETAGS ON FILE.ID = FILETAGS.FILEID"
+							+ String.format(" WHERE FILETAGS.KEY = '%s' AND FILETAGS.VALUE", GENRE_KEY);
 
-				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
-				querySuffix = "))";
-				break;
-			case VIDEO_CONTAINS_SUBTITLES:
-				innerSelect = "SELECT DISTINCT(FILE.ID)"
-						+ " FROM FILE"
-						+ " LEFT JOIN SUBTITLES ON FILE.ID = SUBTITLES.FILEID"
-						+ " WHERE SUBTITLES.LANG";
+					conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
+					querySuffix = "))";
+					break;
+				case VIDEO_CONTAINS_SUBTITLES:
+					innerSelect = "SELECT DISTINCT(FILE.ID)"
+							+ " FROM FILE"
+							+ " LEFT JOIN SUBTITLES ON FILE.ID = SUBTITLES.FILEID"
+							+ " WHERE SUBTITLES.LANG";
 
-				conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
-				querySuffix = "))";
-				break;
-			default:
-				// do nothing, the 'normal' cases are handled later
-				break;
+					conStr = String.format("(FILE.ID = FILETAGS.FILEID AND FILE.ID IN (%s", innerSelect);
+					querySuffix = "))";
+					break;
+				default:
+					// do nothing, the 'normal' cases are handled later
+					break;
 			}
 
 			String originalConString = conStr;
 			List<String> notLikeCons;
 			switch (condition.getOperator()) {
-			case CONTAINS:
-				conStr += " LIKE '%" + prepCon + "%'";
-				break;
-			case DOES_NOT_CONTAIN:
-				conStr += " NOT LIKE '%" + prepCon + "%'";
-				break;
-			case ENDS_WITH:
-				conStr += " LIKE '%" + prepCon + "'";
-				break;
-			case DOES_NOT_END_WITH:
-				conStr += " NOT LIKE '%" + prepCon + "'";
-				break;
-			case IS:
-				if (condition.getValueType() == ConditionValueType.STRING) {
-					conStr += " LIKE '" + prepCon + "'";
-				} else {
-					conStr += " = '" + prepCon + "'";
-				}
-				break;
-			case IS_AFTER:
-				conStr += " > '" + prepCon + "'";
-				break;
-			case IS_BEFORE:
-				conStr += " < '" + prepCon + "'";
-				break;
-			case IS_GREATER_THAN:
-				conStr += " > '" + prepCon + "'";
-				break;
-			case IS_LESS_THAN:
-				conStr += " < '" + prepCon + "'";
-				break;
-			case IS_IN_THE_LAST_SEC:
-				conStr += " > '" + getConvertedTimespanDateString(condition)
-						+ "'";
-				break;
-			case IS_NOT:
-				if (condition.getValueType() == ConditionValueType.STRING) {
-					conStr += " NOT LIKE '" + prepCon + "'";
-				} else {
-					conStr += " <> '" + prepCon + "'";
-				}
-				break;
-			case IS_NOT_IN_THE_LAST_SEC:
-				conStr += " < '" + getConvertedTimespanDateString(condition)
-						+ "'";
-				break;
-			case STARTS_WITH:
-				notLikeCons = new ArrayList<String>();
-				conStr += " LIKE '" + prepCon + "%'";
+				case CONTAINS:
+					conStr += " LIKE '%" + prepCon + "%'";
+					break;
+				case DOES_NOT_CONTAIN:
+					conStr += " NOT LIKE '%" + prepCon + "%'";
+					break;
+				case ENDS_WITH:
+					conStr += " LIKE '%" + prepCon + "'";
+					break;
+				case DOES_NOT_END_WITH:
+					conStr += " NOT LIKE '%" + prepCon + "'";
+					break;
+				case IS:
+					if (condition.getValueType() == ConditionValueType.STRING) {
+						conStr += " LIKE '" + prepCon + "'";
+					} else {
+						conStr += " = '" + prepCon + "'";
+					}
+					break;
+				case IS_AFTER:
+					conStr += " > '" + prepCon + "'";
+					break;
+				case IS_BEFORE:
+					conStr += " < '" + prepCon + "'";
+					break;
+				case IS_GREATER_THAN:
+					conStr += " > '" + prepCon + "'";
+					break;
+				case IS_LESS_THAN:
+					conStr += " < '" + prepCon + "'";
+					break;
+				case IS_IN_THE_LAST_SEC:
+					conStr += " > '" + getConvertedTimespanDateString(condition)
+							+ "'";
+					break;
+				case IS_NOT:
+					if (condition.getValueType() == ConditionValueType.STRING) {
+						conStr += " NOT LIKE '" + prepCon + "'";
+					} else {
+						conStr += " <> '" + prepCon + "'";
+					}
+					break;
+				case IS_NOT_IN_THE_LAST_SEC:
+					conStr += " < '" + getConvertedTimespanDateString(condition)
+							+ "'";
+					break;
+				case STARTS_WITH:
+					notLikeCons = new ArrayList<String>();
+					conStr += " LIKE '" + prepCon + "%'";
 
-				// Do some special filtering for certain condition types
-				OmitPrefixesConfiguration omitConfig = MediaLibraryConfiguration.getInstance().getOmitPrefixesConfiguration();
-				if (omitConfig.isFiltering()
-						&& (condition.getType() == ConditionType.VIDEO_NAME || condition.getType() == ConditionType.VIDEO_ORIGINALNAME)) {
-					for (String prefix : omitConfig.getPrefixes()) {
-						String formattedPrefixes = sqlFormatString(prefix);
-						if (Character.isJavaIdentifierStart(formattedPrefixes.charAt(formattedPrefixes.length() - 1))) {
-							formattedPrefixes += " ";
+					// Do some special filtering for certain condition types
+					OmitPrefixesConfiguration omitConfig = MediaLibraryConfiguration.getInstance().getOmitPrefixesConfiguration();
+					if (omitConfig.isFiltering()
+							&& (condition.getType() == ConditionType.VIDEO_NAME || condition.getType() == ConditionType.VIDEO_ORIGINALNAME)) {
+						for (String prefix : omitConfig.getPrefixes()) {
+							String formattedPrefixes = sqlFormatString(prefix);
+							if (Character.isJavaIdentifierStart(formattedPrefixes.charAt(formattedPrefixes.length() - 1))) {
+								formattedPrefixes += " ";
+							}
+							if (prefix.toLowerCase().startsWith(prepCon.toLowerCase())) {
+								notLikeCons.add(String.format(" AND (%s NOT LIKE '%s%%' OR %s LIKE '%s%%')",
+										originalConString, formattedPrefixes, originalConString, formattedPrefixes + prepCon));
+							} else {
+								conStr += String.format(" OR %s LIKE '%s%%'", originalConString, formattedPrefixes + prepCon);
+							}
 						}
-						if (prefix.toLowerCase().startsWith(prepCon.toLowerCase())) {
-							notLikeCons.add(String.format(" AND (%s NOT LIKE '%s%%' OR %s LIKE '%s%%')",
-									originalConString, formattedPrefixes, originalConString, formattedPrefixes + prepCon));
-						} else {
-							conStr += String.format(" OR %s LIKE '%s%%'", originalConString, formattedPrefixes + prepCon);
+						conStr = "(" + conStr + ")";
+
+						if (notLikeCons.size() > 0) {
+							for (String notLikeCon : notLikeCons) {
+								conStr += notLikeCon;
+							}
 						}
 					}
-					conStr = "(" + conStr + ")";
+					break;
+				case DOES_NOT_START_WITH:
+					notLikeCons = new ArrayList<String>();
+					conStr += " NOT LIKE '" + prepCon + "%'";
 
-					if (notLikeCons.size() > 0) {
-						for (String notLikeCon : notLikeCons) {
-							conStr += notLikeCon;
+					// Do some special filtering for certain condition types
+					omitConfig = MediaLibraryConfiguration.getInstance().getOmitPrefixesConfiguration();
+					if (omitConfig.isFiltering()
+							&& (condition.getType() == ConditionType.VIDEO_NAME || condition.getType() == ConditionType.VIDEO_ORIGINALNAME)) {
+						for (String prefix : omitConfig.getPrefixes()) {
+							String formattedPrefix = sqlFormatString(prefix);
+							if (Character.isJavaIdentifierStart(formattedPrefix.charAt(formattedPrefix.length() - 1))) {
+								formattedPrefix += " ";
+							}
+							if (!prefix.toLowerCase().startsWith(prepCon.toLowerCase())) {
+								conStr += String.format(" AND %s NOT LIKE '%s%%'", originalConString, formattedPrefix + " " + prepCon);
+							}
 						}
 					}
-				}
-				break;
-			case DOES_NOT_START_WITH:
-				notLikeCons = new ArrayList<String>();
-				conStr += " NOT LIKE '" + prepCon + "%'";
-
-				// Do some special filtering for certain condition types
-				omitConfig = MediaLibraryConfiguration.getInstance().getOmitPrefixesConfiguration();
-				if (omitConfig.isFiltering()
-						&& (condition.getType() == ConditionType.VIDEO_NAME || condition.getType() == ConditionType.VIDEO_ORIGINALNAME)) {
-					for (String prefix : omitConfig.getPrefixes()) {
-						String formattedPrefix = sqlFormatString(prefix);
-						if (Character.isJavaIdentifierStart(formattedPrefix.charAt(formattedPrefix.length() - 1))) {
-							formattedPrefix += " ";
-						}
-						if (!prefix.toLowerCase().startsWith(prepCon.toLowerCase())) {
-							conStr += String.format(" AND %s NOT LIKE '%s%%'", originalConString, formattedPrefix + " " + prepCon);
-						}
-					}
-				}
-				break;
-			case UNKNOWN:
-				log.error("An UNKNOWN condition has been found while formatting the equation. This should never happen!");
-				break;
+					break;
+				case UNKNOWN:
+					log.error("An UNKNOWN condition has been found while formatting the equation. This should never happen!");
+					break;
 			}
 
 			conStr += querySuffix;
@@ -885,30 +885,30 @@ class DBFileInfo extends DBBase {
 		int tOriginal = Integer.parseInt(condition.getCondition());
 		int res = 0;
 		switch (condition.getUnit()) {
-		case TIMESPAN_SECONDS:
-			res = tOriginal;
-			break;
-		case TIMESPAN_MINUTES:
-			res = tOriginal * 60;
-			break;
-		case TIMESPAN_HOURS:
-			res = tOriginal * 60 * 60;
-			break;
-		case TIMESPAN_DAYS:
-			res = tOriginal * 60 * 60 * 24;
-			break;
-		case TIMESPAN_WEEKS:
-			res = tOriginal * 60 * 60 * 24 * 7;
-			break;
-		case TIMESPAN_MONTHS:
-			res = tOriginal * 60 * 60 * 24 * 30;
-			break;
-		case TIMESPAN_YEARS:
-			res = tOriginal * 60 * 60 * 24 * 365;
-			break;
-		default:
-			log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
-			break;
+			case TIMESPAN_SECONDS:
+				res = tOriginal;
+				break;
+			case TIMESPAN_MINUTES:
+				res = tOriginal * 60;
+				break;
+			case TIMESPAN_HOURS:
+				res = tOriginal * 60 * 60;
+				break;
+			case TIMESPAN_DAYS:
+				res = tOriginal * 60 * 60 * 24;
+				break;
+			case TIMESPAN_WEEKS:
+				res = tOriginal * 60 * 60 * 24 * 7;
+				break;
+			case TIMESPAN_MONTHS:
+				res = tOriginal * 60 * 60 * 24 * 30;
+				break;
+			case TIMESPAN_YEARS:
+				res = tOriginal * 60 * 60 * 24 * 365;
+				break;
+			default:
+				log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
+				break;
 		}
 
 		return String.valueOf(res);
@@ -921,30 +921,30 @@ class DBFileInfo extends DBBase {
 		try {
 			int timespan = Integer.parseInt(condition.getCondition());
 			switch (condition.getUnit()) {
-			case TIMESPAN_SECONDS:
-				c.add(Calendar.SECOND, -timespan);
-				break;
-			case TIMESPAN_MINUTES:
-				c.add(Calendar.MINUTE, -timespan);
-				break;
-			case TIMESPAN_HOURS:
-				c.add(Calendar.HOUR, -timespan);
-				break;
-			case TIMESPAN_DAYS:
-				c.add(Calendar.DAY_OF_MONTH, -timespan);
-				break;
-			case TIMESPAN_WEEKS:
-				c.add(Calendar.WEEK_OF_YEAR, -timespan);
-				break;
-			case TIMESPAN_MONTHS:
-				c.add(Calendar.MONTH, -timespan);
-				break;
-			case TIMESPAN_YEARS:
-				c.add(Calendar.YEAR, -timespan);
-				break;
-			default:
-				log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
-				break;
+				case TIMESPAN_SECONDS:
+					c.add(Calendar.SECOND, -timespan);
+					break;
+				case TIMESPAN_MINUTES:
+					c.add(Calendar.MINUTE, -timespan);
+					break;
+				case TIMESPAN_HOURS:
+					c.add(Calendar.HOUR, -timespan);
+					break;
+				case TIMESPAN_DAYS:
+					c.add(Calendar.DAY_OF_MONTH, -timespan);
+					break;
+				case TIMESPAN_WEEKS:
+					c.add(Calendar.WEEK_OF_YEAR, -timespan);
+					break;
+				case TIMESPAN_MONTHS:
+					c.add(Calendar.MONTH, -timespan);
+					break;
+				case TIMESPAN_YEARS:
+					c.add(Calendar.YEAR, -timespan);
+					break;
+				default:
+					log.warn(String.format("Unhandled time span unit received (%s). This should never happen!", condition.getUnit()));
+					break;
 			}
 		} catch (Exception ex) {
 			log.error("Failed to convert time span to length in seconds. string was '" + condition.getCondition() + "'");
@@ -960,24 +960,24 @@ class DBFileInfo extends DBBase {
 		try {
 			size = Long.parseLong(condition.getCondition());
 			switch (condition.getUnit()) {
-			case FILESIZE_BYTE:
-				// do nothing
-				break;
-			case FILESIZE_KILOBYTE:
-				size = size * 1024;
-				break;
-			case FILESIZE_MEGABYTE:
-				size = size * 1024 * 1024;
-				break;
-			case FILESIZE_GIGABYTE:
-				size = size * 1024 * 1024 * 1024;
-				break;
-			case FILESIZE_TERABYTE:
-				size = size * 1024 * 1024 * 1024 * 1024;
-				break;
-			default:
-				log.warn(String.format("Unhandled file size unit received (%s). This should never happen!", condition.getUnit()));
-				break;
+				case FILESIZE_BYTE:
+					// do nothing
+					break;
+				case FILESIZE_KILOBYTE:
+					size = size * 1024;
+					break;
+				case FILESIZE_MEGABYTE:
+					size = size * 1024 * 1024;
+					break;
+				case FILESIZE_GIGABYTE:
+					size = size * 1024 * 1024 * 1024;
+					break;
+				case FILESIZE_TERABYTE:
+					size = size * 1024 * 1024 * 1024 * 1024;
+					break;
+				default:
+					log.warn(String.format("Unhandled file size unit received (%s). This should never happen!", condition.getUnit()));
+					break;
 			}
 		} catch (Exception ex) {
 			log.error("Failed to convert time span to length in seconds. string was '" + condition.getCondition() + "'");

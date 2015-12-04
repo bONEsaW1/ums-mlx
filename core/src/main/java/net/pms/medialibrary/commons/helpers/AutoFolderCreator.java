@@ -325,32 +325,32 @@ public class AutoFolderCreator {
 		ConditionUnit conditionUnit = ConditionUnit.UNKNOWN;
 
 		switch (prop) {
-		case CERTIFICATION:
-			conditionType = ConditionType.VIDEO_CERTIFICATION;
-			conditionValueType = ConditionValueType.STRING;
-			break;
-		case AUDIO_LANGUAGE:
-			conditionType = ConditionType.VIDEO_CONTAINS_VIDEOAUDIO;
-			conditionValueType = ConditionValueType.STRING;
-			break;
-		case DIRECTOR:
-			conditionType = ConditionType.VIDEO_DIRECTOR;
-			conditionValueType = ConditionValueType.STRING;
-			break;
-		case GENRE:
-			conditionType = ConditionType.VIDEO_CONTAINS_GENRE;
-			conditionValueType = ConditionValueType.STRING;
-			break;
-		case SUBTITLE_LANGUAGE:
-			conditionType = ConditionType.VIDEO_CONTAINS_SUBTITLES;
-			conditionValueType = ConditionValueType.STRING;
-			break;
-		case YEAR:
-			conditionType = ConditionType.VIDEO_YEAR;
-			conditionValueType = ConditionValueType.INTEGER;
-			break;
-		default:
-			return;
+			case CERTIFICATION:
+				conditionType = ConditionType.VIDEO_CERTIFICATION;
+				conditionValueType = ConditionValueType.STRING;
+				break;
+			case AUDIO_LANGUAGE:
+				conditionType = ConditionType.VIDEO_CONTAINS_VIDEOAUDIO;
+				conditionValueType = ConditionValueType.STRING;
+				break;
+			case DIRECTOR:
+				conditionType = ConditionType.VIDEO_DIRECTOR;
+				conditionValueType = ConditionValueType.STRING;
+				break;
+			case GENRE:
+				conditionType = ConditionType.VIDEO_CONTAINS_GENRE;
+				conditionValueType = ConditionValueType.STRING;
+				break;
+			case SUBTITLE_LANGUAGE:
+				conditionType = ConditionType.VIDEO_CONTAINS_SUBTITLES;
+				conditionValueType = ConditionValueType.STRING;
+				break;
+			case YEAR:
+				conditionType = ConditionType.VIDEO_YEAR;
+				conditionValueType = ConditionValueType.INTEGER;
+				break;
+			default:
+				return;
 		}
 
 		// Create the base node

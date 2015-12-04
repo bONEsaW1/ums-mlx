@@ -106,8 +106,7 @@ public class TemplateTreeTransferHandler extends TransferHandler {
 		}
 
 		// Only allow drops onto Folders
-		if (!(_nodeToDropOnto.getUserObject() instanceof DOFileEntryFolder))
-		{
+		if (!(_nodeToDropOnto.getUserObject() instanceof DOFileEntryFolder)) {
 			return false;
 		}
 
@@ -131,10 +130,10 @@ public class TemplateTreeTransferHandler extends TransferHandler {
 		// under the last folder if there are folders
 		if (!isFolder((DOFileEntryBase) _nodeToMove.getUserObject())
 				&& ((_childIndex == 0 && (_nodeToDropOnto.getChildCount() > 0 && isFolder((DOFileEntryBase) ((DefaultMutableTreeNode) _nodeToDropOnto.getChildAt(_childIndex)).getUserObject())))
-				|| (_childIndex > 0
-				&& (isFolder((DOFileEntryBase) ((DefaultMutableTreeNode) _nodeToDropOnto.getChildAt(_childIndex - 1)).getUserObject())
-						&& _nodeToDropOnto.getChildCount() > _childIndex
-						&& isFolder((DOFileEntryBase) ((DefaultMutableTreeNode) _nodeToDropOnto.getChildAt(_childIndex)).getUserObject()))))) {
+						|| (_childIndex > 0
+								&& (isFolder((DOFileEntryBase) ((DefaultMutableTreeNode) _nodeToDropOnto.getChildAt(_childIndex - 1)).getUserObject())
+										&& _nodeToDropOnto.getChildCount() > _childIndex
+										&& isFolder((DOFileEntryBase) ((DefaultMutableTreeNode) _nodeToDropOnto.getChildAt(_childIndex)).getUserObject()))))) {
 			return false;
 		}
 

@@ -285,13 +285,10 @@ public class FileDisplayTable extends JPanel {
 
 		// listen to mouse events to select a row on right click and show the context menu
 		// http://www.stupidjavatricks.com/?p=12
-		table.addMouseListener(new MouseAdapter()
-		{
+		table.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e)
-			{
-				if (SwingUtilities.isRightMouseButton(e))
-				{
+			public void mouseClicked(MouseEvent e) {
+				if (SwingUtilities.isRightMouseButton(e)) {
 					int rowNumber = table.rowAtPoint(e.getPoint());
 
 					// store for use on menu item click
@@ -333,43 +330,43 @@ public class FileDisplayTable extends JPanel {
 					}
 
 					switch (quickTag.getKeyCombination()) {
-					case Ctrl:
-						if (!e.isControlDown()) {
+						case Ctrl:
+							if (!e.isControlDown()) {
+								continue;
+							}
+							break;
+						case Alt:
+							if (!e.isAltDown()) {
+								continue;
+							}
+							break;
+						case Shift:
+							if (!e.isShiftDown()) {
+								continue;
+							}
+							break;
+						case CtrlShift:
+							if (!(e.isControlDown() && e.isShiftDown())) {
+								continue;
+							}
+							break;
+						case CtrlAlt:
+							if (!(e.isControlDown() && e.isAltDown())) {
+								continue;
+							}
+							break;
+						case ShiftAlt:
+							if (!(e.isShiftDown() && e.isAltDown())) {
+								continue;
+							}
+							break;
+						case CtrlShiftAlt:
+							if (!(e.isShiftDown() && e.isShiftDown() && e.isAltDown())) {
+								continue;
+							}
+							break;
+						default:
 							continue;
-						}
-						break;
-					case Alt:
-						if (!e.isAltDown()) {
-							continue;
-						}
-						break;
-					case Shift:
-						if (!e.isShiftDown()) {
-							continue;
-						}
-						break;
-					case CtrlShift:
-						if (!(e.isControlDown() && e.isShiftDown())) {
-							continue;
-						}
-						break;
-					case CtrlAlt:
-						if (!(e.isControlDown() && e.isAltDown())) {
-							continue;
-						}
-						break;
-					case ShiftAlt:
-						if (!(e.isShiftDown() && e.isAltDown())) {
-							continue;
-						}
-						break;
-					case CtrlShiftAlt:
-						if (!(e.isShiftDown() && e.isShiftDown() && e.isAltDown())) {
-							continue;
-						}
-						break;
-					default:
-						continue;
 					}
 
 					tagSelectedFiles(quickTag);
@@ -378,27 +375,27 @@ public class FileDisplayTable extends JPanel {
 				// handle the default events
 				if (e.isControlDown()) {
 					switch (e.getKeyCode()) {
-					case KeyEvent.VK_ADD:
-						List<DOFileInfo> updatedFiles = new ArrayList<DOFileInfo>();
-						for (DOFileInfo fileInfo : getSelectedFiles()) {
-							fileInfo.setPlayCount(fileInfo.getPlayCount() + 1);
-							updatedFiles.add(fileInfo);
-						}
-						updateFiles(updatedFiles);
-						break;
-					case KeyEvent.VK_SUBTRACT:
-						updatedFiles = new ArrayList<DOFileInfo>();
-						for (DOFileInfo fileInfo : getSelectedFiles()) {
-							if (fileInfo.getPlayCount() > 0) {
-								fileInfo.setPlayCount(fileInfo.getPlayCount() - 1);
+						case KeyEvent.VK_ADD:
+							List<DOFileInfo> updatedFiles = new ArrayList<DOFileInfo>();
+							for (DOFileInfo fileInfo : getSelectedFiles()) {
+								fileInfo.setPlayCount(fileInfo.getPlayCount() + 1);
 								updatedFiles.add(fileInfo);
 							}
-						}
-						updateFiles(updatedFiles);
-						break;
-					case KeyEvent.VK_E:
-						editSelectedFiles();
-						break;
+							updateFiles(updatedFiles);
+							break;
+						case KeyEvent.VK_SUBTRACT:
+							updatedFiles = new ArrayList<DOFileInfo>();
+							for (DOFileInfo fileInfo : getSelectedFiles()) {
+								if (fileInfo.getPlayCount() > 0) {
+									fileInfo.setPlayCount(fileInfo.getPlayCount() - 1);
+									updatedFiles.add(fileInfo);
+								}
+							}
+							updateFiles(updatedFiles);
+							break;
+						case KeyEvent.VK_E:
+							editSelectedFiles();
+							break;
 					}
 				}
 
@@ -440,11 +437,11 @@ public class FileDisplayTable extends JPanel {
 				if (obj instanceof Boolean) {
 					boolean newVal = (Boolean) obj;
 					switch (ct) {
-					case FILE_ISACTIF:
-						fileInfo.setActive(newVal);
-						break;
-					default:
-						break;
+						case FILE_ISACTIF:
+							fileInfo.setActive(newVal);
+							break;
+						default:
+							break;
 					}
 				}
 
@@ -454,65 +451,65 @@ public class FileDisplayTable extends JPanel {
 					if (obj instanceof String) {
 						String newVal = (String) obj;
 						switch (ct) {
-						case VIDEO_NAME:
-							video.setName(newVal);
-							break;
-						case VIDEO_ORIGINALNAME:
-							video.setOriginalName(newVal);
-							break;
-						case VIDEO_SORTNAME:
-							video.setSortName(newVal);
-							break;
-						case VIDEO_DIRECTOR:
-							video.setDirector(newVal);
-							break;
-						case VIDEO_IMDBID:
-							video.setImdbId(newVal);
-							break;
-						case VIDEO_HOMEPAGEURL:
-							video.setHomepageUrl(newVal);
-							break;
-						case VIDEO_TRAILERURL:
-							video.setTrailerUrl(newVal);
-							break;
-						case VIDEO_CERTIFICATION:
-							video.getAgeRating().setLevel(newVal);
-							break;
-						case VIDEO_CERTIFICATIONREASON:
-							video.getAgeRating().setReason(newVal);
-							break;
-						case VIDEO_TAGLINE:
-							video.setTagLine(newVal);
-							break;
-						case VIDEO_OVERVIEW:
-							video.setOverview(newVal);
-							break;
-						default:
-							break;
+							case VIDEO_NAME:
+								video.setName(newVal);
+								break;
+							case VIDEO_ORIGINALNAME:
+								video.setOriginalName(newVal);
+								break;
+							case VIDEO_SORTNAME:
+								video.setSortName(newVal);
+								break;
+							case VIDEO_DIRECTOR:
+								video.setDirector(newVal);
+								break;
+							case VIDEO_IMDBID:
+								video.setImdbId(newVal);
+								break;
+							case VIDEO_HOMEPAGEURL:
+								video.setHomepageUrl(newVal);
+								break;
+							case VIDEO_TRAILERURL:
+								video.setTrailerUrl(newVal);
+								break;
+							case VIDEO_CERTIFICATION:
+								video.getAgeRating().setLevel(newVal);
+								break;
+							case VIDEO_CERTIFICATIONREASON:
+								video.getAgeRating().setReason(newVal);
+								break;
+							case VIDEO_TAGLINE:
+								video.setTagLine(newVal);
+								break;
+							case VIDEO_OVERVIEW:
+								video.setOverview(newVal);
+								break;
+							default:
+								break;
 						}
 					} else if (obj instanceof Integer) {
 						Integer newVal = (Integer) obj;
 						switch (ct) {
-						case VIDEO_YEAR:
-							video.setYear(newVal);
-							break;
-						case VIDEO_TMDBID:
-							video.setTmdbId(newVal);
-							break;
-						case VIDEO_RATINGPERCENT:
-							video.getRating().setRatingPercent(newVal);
-							break;
-						case VIDEO_RATINGVOTERS:
-							video.getRating().setVotes(newVal);
-							break;
-						case VIDEO_BUDGET:
-							video.setBudget(newVal);
-							break;
-						case VIDEO_REVENUE:
-							video.setRevenue(newVal);
-							break;
-						default:
-							break;
+							case VIDEO_YEAR:
+								video.setYear(newVal);
+								break;
+							case VIDEO_TMDBID:
+								video.setTmdbId(newVal);
+								break;
+							case VIDEO_RATINGPERCENT:
+								video.getRating().setRatingPercent(newVal);
+								break;
+							case VIDEO_RATINGVOTERS:
+								video.getRating().setVotes(newVal);
+								break;
+							case VIDEO_BUDGET:
+								video.setBudget(newVal);
+								break;
+							case VIDEO_REVENUE:
+								video.setRevenue(newVal);
+								break;
+							default:
+								break;
 						}
 					}
 				}
@@ -864,16 +861,16 @@ public class FileDisplayTable extends JPanel {
 		boolean deleteFile = false;
 		boolean removeFromLibrary = false;
 		switch (dialogResponse) {
-		case 0:
-			// do nothing
-			break;
-		case 1:
-			deleteFile = true;
-			removeFromLibrary = true;
-			break;
-		case 2:
-			removeFromLibrary = true;
-			break;
+			case 0:
+				// do nothing
+				break;
+			case 1:
+				deleteFile = true;
+				removeFromLibrary = true;
+				break;
+			case 2:
+				removeFromLibrary = true;
+				break;
 		}
 
 		if (removeFromLibrary) {

@@ -83,18 +83,18 @@ public class OptionChooser extends JPanel {
 
 	public void setOptionType(OptionType optionType) {
 		switch (optionType) {
-		case GENERAL:
-			setOptionSelected(generalEntry);
-			break;
-		case LIBRARY:
-			setOptionSelected(libraryEntry);
-			break;
-		case TREE:
-			setOptionSelected(treeEntry);
-			break;
-		default:
-			log.warn(String.format("Unhandled option type received (%s). This should never happen!", optionType));
-			break;
+			case GENERAL:
+				setOptionSelected(generalEntry);
+				break;
+			case LIBRARY:
+				setOptionSelected(libraryEntry);
+				break;
+			case TREE:
+				setOptionSelected(treeEntry);
+				break;
+			default:
+				log.warn(String.format("Unhandled option type received (%s). This should never happen!", optionType));
+				break;
 		}
 	}
 

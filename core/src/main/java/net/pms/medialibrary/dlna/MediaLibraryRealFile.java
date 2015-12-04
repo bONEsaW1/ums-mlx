@@ -48,8 +48,7 @@ import net.pms.medialibrary.storage.MediaLibraryStorage;
 import net.pms.plugins.FileDetailPlugin;
 
 /**
- * Use this class to show a file in the dlna tree. It will either show a single file or folder depending on the
- * configuration
+ * Use this class to show a file in the dlna tree. It will either show a single file or folder depending on the configuration
  */
 public class MediaLibraryRealFile extends RealFile {
 	private static final Logger log = LoggerFactory.getLogger(MediaLibraryRealFile.class);
@@ -115,8 +114,7 @@ public class MediaLibraryRealFile extends RealFile {
 	}
 
 	/**
-	 * This method will replace the configurable string values with their actual value in all file entries and sub
-	 * folders.
+	 * This method will replace the configurable string values with their actual value in all file entries and sub folders.
 	 *
 	 * @param file the file
 	 */
@@ -159,18 +157,18 @@ public class MediaLibraryRealFile extends RealFile {
 		if (displayProperties.getFileDisplayType() == FileDisplayType.FILE
 				|| fileBase instanceof DOFileEntryFile) {
 			switch (fileType) {
-			case AUDIO:
-				break;
-			case FILE:
-				break;
-			case PICTURES:
-				break;
-			case VIDEO:
-				setMedia(DLNAHelper.getMediaForVideo((DOVideoFileInfo) fileInfo));
-				break;
-			default:
-				log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileType));
-				break;
+				case AUDIO:
+					break;
+				case FILE:
+					break;
+				case PICTURES:
+					break;
+				case VIDEO:
+					setMedia(DLNAHelper.getMediaForVideo((DOVideoFileInfo) fileInfo));
+					break;
+				default:
+					log.warn(String.format("Unhandled file type received (%s). This should never happen!", fileType));
+					break;
 			}
 		}
 	}
@@ -203,15 +201,15 @@ public class MediaLibraryRealFile extends RealFile {
 					DOFileEntryFile file = (DOFileEntryFile) entry;
 					MediaLibraryRealFile newChild = new MediaLibraryRealFile(entry, getFileInfo(), getDisplayProperties(), getFileType(), originalFile);
 					switch (file.getFileDisplayMode()) {
-					case MULTIPLE:
-						DLNAHelper.addMultipleFiles(this, newChild, originalFile);
-						break;
-					case SINGLE:
-						addChild(newChild);
-						break;
-					default:
-						log.warn(String.format("Unhandled file disply mode received (%s). This should never happen!", file.getFileDisplayMode()));
-						break;
+						case MULTIPLE:
+							DLNAHelper.addMultipleFiles(this, newChild, originalFile);
+							break;
+						case SINGLE:
+							addChild(newChild);
+							break;
+						default:
+							log.warn(String.format("Unhandled file disply mode received (%s). This should never happen!", file.getFileDisplayMode()));
+							break;
 					}
 				} else if (entry instanceof DOFileEntryInfo) {
 					// add a DOFileEntryInfo
@@ -268,57 +266,57 @@ public class MediaLibraryRealFile extends RealFile {
 		File coverFile = null;
 		for (DOThumbnailPriority prio : thumnailPrios) {
 			switch (prio.getThumbnailPriorityType()) {
-			case GENERATED:
-				String picFolderPath = MediaLibraryConfiguration.getInstance().getPictureSaveFolderPath();
-				if (!picFolderPath.endsWith(File.separator)) {
-					picFolderPath += File.separator;
-				}
-				picFolderPath += "generated" + File.separator;
-				String picName = fileInfo.getFileName() + "_" + prio.getSeekPosition() + ".cover.jpg";
-				File pic = new File(picFolderPath + picName);
-				if (pic.exists()) {
-					coverFile = pic;
-				} else {
-					InputFile inputFile = new InputFile();
-					inputFile.setFile(getFile());
-					getMedia().setThumbnailSeekPos(prio.getSeekPosition());
-					getMedia().generateThumbnail(inputFile, getFormat(), getType(), 0.0, false);
-					try {
-						File picFolder = new File(picFolderPath);
-						if (!picFolder.isDirectory()) {
-							picFolder.mkdirs();
-						}
-						pic.createNewFile();
-						InputStream inputStream = getMedia().getThumbnailInputStream();
-						OutputStream out = new FileOutputStream(pic);
-						byte buf[] = new byte[4096];
-						int len;
-						while ((len = inputStream.read(buf)) > 0)
-							out.write(buf, 0, len);
-						out.close();
-						inputStream.close();
-
-						coverFile = pic;
-					} catch (IOException e) {
-						log.error("Failed to save generated thumbnail to file", e);
+				case GENERATED:
+					String picFolderPath = MediaLibraryConfiguration.getInstance().getPictureSaveFolderPath();
+					if (!picFolderPath.endsWith(File.separator)) {
+						picFolderPath += File.separator;
 					}
-				}
-				break;
-			case PICTURE:
-				File tmpf = new File(fileInfo.getDisplayString(prio.getPicturePath()));
-				if (tmpf.exists()) {
-					coverFile = tmpf;
-				}
-				break;
-			case THUMBNAIL:
-				tmpf = new File(fileInfo.getThumbnailPath());
-				if (tmpf.exists()) {
-					coverFile = tmpf;
-				}
-				break;
-			default:
-				log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", prio.getThumbnailPriorityType()));
-				break;
+					picFolderPath += "generated" + File.separator;
+					String picName = fileInfo.getFileName() + "_" + prio.getSeekPosition() + ".cover.jpg";
+					File pic = new File(picFolderPath + picName);
+					if (pic.exists()) {
+						coverFile = pic;
+					} else {
+						InputFile inputFile = new InputFile();
+						inputFile.setFile(getFile());
+						getMedia().setThumbnailSeekPos(prio.getSeekPosition());
+						getMedia().generateThumbnail(inputFile, getFormat(), getType(), 0.0, false);
+						try {
+							File picFolder = new File(picFolderPath);
+							if (!picFolder.isDirectory()) {
+								picFolder.mkdirs();
+							}
+							pic.createNewFile();
+							InputStream inputStream = getMedia().getThumbnailInputStream();
+							OutputStream out = new FileOutputStream(pic);
+							byte buf[] = new byte[4096];
+							int len;
+							while ((len = inputStream.read(buf)) > 0)
+								out.write(buf, 0, len);
+							out.close();
+							inputStream.close();
+
+							coverFile = pic;
+						} catch (IOException e) {
+							log.error("Failed to save generated thumbnail to file", e);
+						}
+					}
+					break;
+				case PICTURE:
+					File tmpf = new File(fileInfo.getDisplayString(prio.getPicturePath()));
+					if (tmpf.exists()) {
+						coverFile = tmpf;
+					}
+					break;
+				case THUMBNAIL:
+					tmpf = new File(fileInfo.getThumbnailPath());
+					if (tmpf.exists()) {
+						coverFile = tmpf;
+					}
+					break;
+				default:
+					log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", prio.getThumbnailPriorityType()));
+					break;
 			}
 
 			if (coverFile != null) {

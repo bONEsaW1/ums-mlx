@@ -95,24 +95,24 @@ public class MediaLibraryTab {
 
 	private void setOptionTypeSelected(OptionType optionType) {
 		switch (optionType) {
-		case GENERAL:
-			dlnaViewPanel.setVisible(false);
-			generalOptionsPanel.setVisible(true);
-			libraryManagerView.setVisible(false);
-			break;
-		case LIBRARY:
-			dlnaViewPanel.setVisible(false);
-			generalOptionsPanel.setVisible(false);
-			libraryManagerView.setVisible(true);
-			break;
-		case TREE:
-			dlnaViewPanel.setVisible(true);
-			generalOptionsPanel.setVisible(false);
-			libraryManagerView.setVisible(false);
-			break;
-		default:
-			log.warn(String.format("Unhandled option type received (%s). This should never happen!", optionType));
-			break;
+			case GENERAL:
+				dlnaViewPanel.setVisible(false);
+				generalOptionsPanel.setVisible(true);
+				libraryManagerView.setVisible(false);
+				break;
+			case LIBRARY:
+				dlnaViewPanel.setVisible(false);
+				generalOptionsPanel.setVisible(false);
+				libraryManagerView.setVisible(true);
+				break;
+			case TREE:
+				dlnaViewPanel.setVisible(true);
+				generalOptionsPanel.setVisible(false);
+				libraryManagerView.setVisible(false);
+				break;
+			default:
+				log.warn(String.format("Unhandled option type received (%s). This should never happen!", optionType));
+				break;
 		}
 
 	}

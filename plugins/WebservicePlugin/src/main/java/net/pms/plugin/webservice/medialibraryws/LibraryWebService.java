@@ -28,7 +28,7 @@ public class LibraryWebService extends ServiceBase implements Library {
 			@WebParam(name = "scanPictures") boolean scanPictures,
 			@WebParam(name = "useFileImportTemplate") boolean useFileImportTemplate,
 			@WebParam(name = "fileImportTemplateId") int fileImportTemplateId)
-			throws InitialisationException {
+					throws InitialisationException {
 		if (!isInitialized) {
 			log.warn("Trying to access scanFolder when it's not initialized. Abort");
 			return;

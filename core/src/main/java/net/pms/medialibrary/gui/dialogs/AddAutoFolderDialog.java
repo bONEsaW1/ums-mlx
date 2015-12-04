@@ -217,9 +217,9 @@ public class AddAutoFolderDialog extends JDialog {
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		switch (fc.showOpenDialog(this)) {
-		case JFileChooser.APPROVE_OPTION:
-			tfOption.setText(fc.getSelectedFile().getAbsolutePath());
-			break;
+			case JFileChooser.APPROVE_OPTION:
+				tfOption.setText(fc.getSelectedFile().getAbsolutePath());
+				break;
 		}
 	}
 

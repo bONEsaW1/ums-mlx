@@ -449,21 +449,21 @@ class DBVideoFileInfo extends DBFileInfo {
 						String s2 = "";
 
 						switch (sortField) {
-						case VIDEO_NAME:
-							s1 = o1.getName();
-							s2 = o2.getName();
-							break;
-						case VIDEO_ORIGINALNAME:
-							s1 = o1.getOriginalName();
-							s2 = o2.getOriginalName();
-							break;
-						case VIDEO_SORTNAME:
-							s1 = o1.getSortName();
-							s2 = o2.getSortName();
-							break;
-						default:
-							log.warn(String.format("Unhandled sort field reveived (%s). This should never happen", sortField));
-							break;
+							case VIDEO_NAME:
+								s1 = o1.getName();
+								s2 = o2.getName();
+								break;
+							case VIDEO_ORIGINALNAME:
+								s1 = o1.getOriginalName();
+								s2 = o2.getOriginalName();
+								break;
+							case VIDEO_SORTNAME:
+								s1 = o1.getSortName();
+								s2 = o2.getSortName();
+								break;
+							default:
+								log.warn(String.format("Unhandled sort field reveived (%s). This should never happen", sortField));
+								break;
 						}
 
 						s1 = s1.toLowerCase();
@@ -542,8 +542,7 @@ class DBVideoFileInfo extends DBFileInfo {
 			} finally {
 				close(conn, stmt, rs);
 			}
-		}
-		else {
+		} else {
 			try {
 				retVal = new ArrayList<String>();
 				String columnName = conditionType.toString().substring(6);

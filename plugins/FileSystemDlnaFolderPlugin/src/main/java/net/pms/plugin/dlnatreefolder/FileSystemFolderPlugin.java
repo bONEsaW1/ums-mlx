@@ -49,6 +49,7 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/filesystemfolderplugin.properties", FileSystemFolderPlugin.class);
@@ -59,6 +60,7 @@ public class FileSystemFolderPlugin implements DlnaTreeFolderPlugin {
 
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
+
 	static {
 		globalConfig = new GlobalConfiguration();
 		try {

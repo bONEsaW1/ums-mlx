@@ -73,58 +73,58 @@ public class FullDataCollector {
 		String folderPath = importFile.getPath().substring(0, sep);
 		String fileName = importFile.getPath().substring(sep);
 		switch (FileImportHelper.getFileType(new File(importFile.getPath()))) {
-		case VIDEO:
-			if (importFile.isVideoImportEnabled()) {
-				DOVideoFileInfo tmpVideoFileInfo = new DOVideoFileInfo();
-				tmpVideoFileInfo.setFolderPath(folderPath);
-				tmpVideoFileInfo.setFileName(fileName);
-				tmpVideoFileInfo.setType(FileType.VIDEO);
+			case VIDEO:
+				if (importFile.isVideoImportEnabled()) {
+					DOVideoFileInfo tmpVideoFileInfo = new DOVideoFileInfo();
+					tmpVideoFileInfo.setFolderPath(folderPath);
+					tmpVideoFileInfo.setFileName(fileName);
+					tmpVideoFileInfo.setType(FileType.VIDEO);
 
-				if (importFile.isFilePropertiesImportEnabled()) {
-					// get the information from pms internal util (mediainfo or ffmpeg)
-					populateMovieInfo(tmpVideoFileInfo);
-					tmpVideoFileInfo.setFileImportVersion(VersionConstants.VIDEO_FILE_VERSION);
-				}
+					if (importFile.isFilePropertiesImportEnabled()) {
+						// get the information from pms internal util (mediainfo or ffmpeg)
+						populateMovieInfo(tmpVideoFileInfo);
+						tmpVideoFileInfo.setFileImportVersion(VersionConstants.VIDEO_FILE_VERSION);
+					}
 
-				// import the info with configured plugins
-				if (importFile.isPluginImportEnabled()) {
-					FileImportHelper.updateFileInfo(importFile.getFileImportTemplate(), tmpVideoFileInfo);
-				}
+					// import the info with configured plugins
+					if (importFile.isPluginImportEnabled()) {
+						FileImportHelper.updateFileInfo(importFile.getFileImportTemplate(), tmpVideoFileInfo);
+					}
 
-				if (tmpVideoFileInfo.getName().equals("")) {
-					tmpVideoFileInfo.setName(tmpVideoFileInfo.getFileName(false));
-				}
-				if (tmpVideoFileInfo.getSortName().equals("")) {
-					tmpVideoFileInfo.setSortName(tmpVideoFileInfo.getName());
-				}
+					if (tmpVideoFileInfo.getName().equals("")) {
+						tmpVideoFileInfo.setName(tmpVideoFileInfo.getFileName(false));
+					}
+					if (tmpVideoFileInfo.getSortName().equals("")) {
+						tmpVideoFileInfo.setSortName(tmpVideoFileInfo.getName());
+					}
 
-				retVal = tmpVideoFileInfo;
-			}
-			break;
-		case AUDIO:
-			if (importFile.isAudioImportEnabled()) {
-				DOAudioFileInfo tmpAudioFileInfo = new DOAudioFileInfo();
-				tmpAudioFileInfo.setFolderPath(folderPath);
-				tmpAudioFileInfo.setFileName(fileName);
-				tmpAudioFileInfo.setType(FileType.AUDIO);
-				tmpAudioFileInfo.setFileImportVersion(VersionConstants.AUDIO_FILE_VERSION);
-				// TODO: Implement
-				retVal = tmpAudioFileInfo;
-			}
-			break;
-		case PICTURES:
-			if (importFile.isPictureImportEnabled()) {
-				DOImageFileInfo tmpImageFileInfo = new DOImageFileInfo();
-				tmpImageFileInfo.setFolderPath(folderPath);
-				tmpImageFileInfo.setFileName(fileName);
-				tmpImageFileInfo.setType(FileType.PICTURES);
-				tmpImageFileInfo.setFileImportVersion(VersionConstants.PICTURE_FILE_VERSION);
-				// TODO: Implement
-				retVal = tmpImageFileInfo;
-			}
-			break;
-		default:
-			break;
+					retVal = tmpVideoFileInfo;
+				}
+				break;
+			case AUDIO:
+				if (importFile.isAudioImportEnabled()) {
+					DOAudioFileInfo tmpAudioFileInfo = new DOAudioFileInfo();
+					tmpAudioFileInfo.setFolderPath(folderPath);
+					tmpAudioFileInfo.setFileName(fileName);
+					tmpAudioFileInfo.setType(FileType.AUDIO);
+					tmpAudioFileInfo.setFileImportVersion(VersionConstants.AUDIO_FILE_VERSION);
+					// TODO: Implement
+					retVal = tmpAudioFileInfo;
+				}
+				break;
+			case PICTURES:
+				if (importFile.isPictureImportEnabled()) {
+					DOImageFileInfo tmpImageFileInfo = new DOImageFileInfo();
+					tmpImageFileInfo.setFolderPath(folderPath);
+					tmpImageFileInfo.setFileName(fileName);
+					tmpImageFileInfo.setType(FileType.PICTURES);
+					tmpImageFileInfo.setFileImportVersion(VersionConstants.PICTURE_FILE_VERSION);
+					// TODO: Implement
+					retVal = tmpImageFileInfo;
+				}
+				break;
+			default:
+				break;
 		}
 
 		File f = new File(importFile.getPath());

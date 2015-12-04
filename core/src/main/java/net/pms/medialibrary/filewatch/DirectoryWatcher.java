@@ -34,8 +34,8 @@ import net.pms.notifications.NotificationSubscriber;
 import net.pms.notifications.types.ManagedFoldersChangedEvent;
 
 /**
- * This class will start watching all configured managed folders when startWatch() is being called. When the managed
- * folder configuration changes, the watched directories will be updated accordingly.
+ * This class will start watching all configured managed folders when startWatch() is being called. When the managed folder configuration changes, the watched directories will be
+ * updated accordingly.
  */
 public class DirectoryWatcher {
 	private static final Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
@@ -68,9 +68,8 @@ public class DirectoryWatcher {
 	}
 
 	/**
-	 * Starts watching managed folders being configured for watching. The sub-folder flag specifies if sub-folders have
-	 * to be watched as well. When the configuration of managed folders changes, the watched folders will be updated
-	 * accordingly.
+	 * Starts watching managed folders being configured for watching. The sub-folder flag specifies if sub-folders have to be watched as well. When the configuration of managed
+	 * folders changes, the watched folders will be updated accordingly.
 	 */
 	public void startWatch() {
 		// Start watching all configured directories
@@ -195,8 +194,7 @@ public class DirectoryWatcher {
 	}
 
 	/**
-	 * The ManagedFoldersChangedNotificationSubscriber class handles managed folder change notifications and updates the
-	 * folders to be watched accordingly.
+	 * The ManagedFoldersChangedNotificationSubscriber class handles managed folder change notifications and updates the folders to be watched accordingly.
 	 */
 	private class ManagedFoldersChangedNotificationSubscriber implements NotificationSubscriber<ManagedFoldersChangedEvent> {
 

@@ -56,8 +56,7 @@ public class PluginsFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PluginsFactory.class);
 
 	/**
-	 * The name of the file containing the package and class name for which pms will instantiate the plugin. This file
-	 * has to be contained at the root of the jar
+	 * The name of the file containing the package and class name for which pms will instantiate the plugin. This file has to be contained at the root of the jar
 	 */
 	private static final String DESCRIPTOR_FILE_NAME = "plugin";
 
@@ -205,8 +204,7 @@ public class PluginsFactory {
 	}
 
 	/**
-	 * Stores the instance of an external listener in a list for later retrieval. The same instance will only be stored
-	 * once.
+	 * Stores the instance of an external listener in a list for later retrieval. The same instance will only be stored once.
 	 *
 	 * @param listener The instance to store.
 	 */
@@ -243,9 +241,8 @@ public class PluginsFactory {
 	}
 
 	/**
-	 * This method scans the plugins directory for ".jar" files and processes each file that is found. First, a resource
-	 * named "plugin" is extracted from the jar file. Its contents determine the name of the main plugin class. This
-	 * main plugin class is then loaded and an instance is created and registered for later use.
+	 * This method scans the plugins directory for ".jar" files and processes each file that is found. First, a resource named "plugin" is extracted from the jar file. Its contents
+	 * determine the name of the main plugin class. This main plugin class is then loaded and an instance is created and registered for later use.
 	 */
 	public static void lookup() {
 		File pluginDirectory = new File(PMS.getConfiguration().getPluginDirectory());
@@ -269,8 +266,7 @@ public class PluginsFactory {
 					public boolean accept(File file) {
 						return file.isFile() && file.getName().toLowerCase().endsWith(".jar");
 					}
-				}
-				);
+				});
 
 		int nJars = jarFiles.length;
 
@@ -403,8 +399,7 @@ public class PluginsFactory {
 	}
 
 	/**
-	 * Compare two version strings and return the result. E.g. <code>compareVersion("1.6.1", "1.12-SNAPSHOT")</code>
-	 * returns a number less than 0.
+	 * Compare two version strings and return the result. E.g. <code>compareVersion("1.6.1", "1.12-SNAPSHOT")</code> returns a number less than 0.
 	 *
 	 * @param version1 First version string to compare.
 	 * @param version2 Seconds version string to compare.

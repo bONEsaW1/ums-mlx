@@ -287,62 +287,62 @@ public class DLNAViewTree extends JTree {
 				if (selNode != null) {
 					if (e.getClickCount() == 1) {
 						switch (e.getButton()) {
-						case MouseEvent.BUTTON3:
-							contextMenu.removeAll();
+							case MouseEvent.BUTTON3:
+								contextMenu.removeAll();
 
-							if (selNode.getUserObject() instanceof DOSpecialFolder) {
-								contextMenu.add(editItem);
-								contextMenu.add(deleteItem);
-								contextMenu.addSeparator();
+								if (selNode.getUserObject() instanceof DOSpecialFolder) {
+									contextMenu.add(editItem);
+									contextMenu.add(deleteItem);
+									contextMenu.addSeparator();
 
-								contextMenu.add(copyItem);
-								contextMenu.add(cutItem);
-							} else if (selNode.getUserObject() instanceof DOMediaLibraryFolder) {
-								if (MediaLibraryConfiguration.getInstance().isMediaLibraryEnabled()) {
-									contextMenu.add(refreshItem);
+									contextMenu.add(copyItem);
+									contextMenu.add(cutItem);
+								} else if (selNode.getUserObject() instanceof DOMediaLibraryFolder) {
+									if (MediaLibraryConfiguration.getInstance().isMediaLibraryEnabled()) {
+										contextMenu.add(refreshItem);
+										contextMenu.addSeparator();
+										addAutoFolderItem.setVisible(true);
+										contextMenu.add(showInLibraryItem);
+										contextMenu.add(setAsRootItem);
+										contextMenu.addSeparator();
+									} else {
+										addAutoFolderItem.setVisible(false);
+									}
+
+									contextMenu.add(addMenu);
+
+									contextMenu.add(editItem);
+									contextMenu.add(deleteItem);
 									contextMenu.addSeparator();
-									addAutoFolderItem.setVisible(true);
-									contextMenu.add(showInLibraryItem);
-									contextMenu.add(setAsRootItem);
-									contextMenu.addSeparator();
+
+									contextMenu.add(copyItem);
+									contextMenu.add(cutItem);
+
+									if (selNode.getUserObject() instanceof DOMediaLibraryFolder) {
+										contextMenu.add(pasteMenuItem);
+									}
+
+									pasteMenuItem.setEnabled(copyNode != null);
+
+									editItem.setEnabled(true);
+									if (selNode.getUserObject() instanceof DOSpecialFolder) {
+										if (((DOSpecialFolder) selNode.getUserObject()).getSpecialFolderImplementation().getInstanceConfigurationPanel() == null) {
+											editItem.setEnabled(false);
+										}
+									}
 								} else {
-									addAutoFolderItem.setVisible(false);
-								}
+									contextMenu.add(addMenu);
+									contextMenu.add(editItem);
+									contextMenu.add(deleteItem);
+									contextMenu.addSeparator();
 
-								contextMenu.add(addMenu);
-
-								contextMenu.add(editItem);
-								contextMenu.add(deleteItem);
-								contextMenu.addSeparator();
-
-								contextMenu.add(copyItem);
-								contextMenu.add(cutItem);
-
-								if (selNode.getUserObject() instanceof DOMediaLibraryFolder) {
+									contextMenu.add(copyItem);
+									contextMenu.add(cutItem);
 									contextMenu.add(pasteMenuItem);
 								}
 
-								pasteMenuItem.setEnabled(copyNode != null);
-
-								editItem.setEnabled(true);
-								if (selNode.getUserObject() instanceof DOSpecialFolder) {
-									if (((DOSpecialFolder) selNode.getUserObject()).getSpecialFolderImplementation().getInstanceConfigurationPanel() == null) {
-										editItem.setEnabled(false);
-									}
-								}
-							} else {
-								contextMenu.add(addMenu);
-								contextMenu.add(editItem);
-								contextMenu.add(deleteItem);
-								contextMenu.addSeparator();
-
-								contextMenu.add(copyItem);
-								contextMenu.add(cutItem);
-								contextMenu.add(pasteMenuItem);
-							}
-
-							contextMenu.show((JTree) e.getSource(), e.getX(), e.getY());
-							break;
+								contextMenu.show((JTree) e.getSource(), e.getX(), e.getY());
+								break;
 						}
 					}
 				}
@@ -685,53 +685,53 @@ public class DLNAViewTree extends JTree {
 
 		if (folder.isDisplayItems()) {
 			switch (folder.getFileType()) {
-			case AUDIO:
-				break;
-			case VIDEO:
-				FileDisplayProperties fdp = folder.getDisplayProperties();
-				List<DOVideoFileInfo> videos = mediaLibraryStorage.getVideoFileInfo(folder.getInheritedFilter(), fdp.isSortAscending(), fdp.getSortType(), folder.getMaxFiles(), fdp.getSortOption(), true);
+				case AUDIO:
+					break;
+				case VIDEO:
+					FileDisplayProperties fdp = folder.getDisplayProperties();
+					List<DOVideoFileInfo> videos = mediaLibraryStorage.getVideoFileInfo(folder.getInheritedFilter(), fdp.isSortAscending(), fdp.getSortType(), folder.getMaxFiles(), fdp.getSortOption(), true);
 
-				int insertPos;
-				int endPos;
-				if (videos.size() == 0) {
-					// Remove all videos if the received list is empty
-					insertPos = getNewFolderInsertPosition(currentTreeNode);
-					endPos = currentTreeNode.getChildCount();
-				} else {
-					insertPos = getNewFolderInsertPosition(currentTreeNode);
-					endPos = currentTreeNode.getChildCount();
-					// check, modify or add videos
-					for (DOVideoFileInfo video : videos) {
-						switch (folder.getDisplayProperties().getFileDisplayType()) {
-						case FILE:
-							((DefaultTreeModel) getModel()).insertNodeInto(new DLNAViewFileMutableTreeNode(video, folder.getDisplayProperties()),
-									currentTreeNode, insertPos);
-							break;
-						case FOLDER:
-							insertFileFolder(currentTreeNode, video, mediaLibraryStorage.getFileFolder(folder.getDisplayProperties().getTemplate().getId()),
-									insertPos);
-							break;
-						default:
-							log.warn(String.format("Unhandled filedisplay mode received (%s). This should never happen!", folder.getDisplayProperties().getFileDisplayType()));
-							break;
+					int insertPos;
+					int endPos;
+					if (videos.size() == 0) {
+						// Remove all videos if the received list is empty
+						insertPos = getNewFolderInsertPosition(currentTreeNode);
+						endPos = currentTreeNode.getChildCount();
+					} else {
+						insertPos = getNewFolderInsertPosition(currentTreeNode);
+						endPos = currentTreeNode.getChildCount();
+						// check, modify or add videos
+						for (DOVideoFileInfo video : videos) {
+							switch (folder.getDisplayProperties().getFileDisplayType()) {
+								case FILE:
+									((DefaultTreeModel) getModel()).insertNodeInto(new DLNAViewFileMutableTreeNode(video, folder.getDisplayProperties()),
+											currentTreeNode, insertPos);
+									break;
+								case FOLDER:
+									insertFileFolder(currentTreeNode, video, mediaLibraryStorage.getFileFolder(folder.getDisplayProperties().getTemplate().getId()),
+											insertPos);
+									break;
+								default:
+									log.warn(String.format("Unhandled filedisplay mode received (%s). This should never happen!", folder.getDisplayProperties().getFileDisplayType()));
+									break;
+							}
+
+							insertPos++;
 						}
-
-						insertPos++;
 					}
-				}
 
-				// remove invalid nodes
-				if (insertPos < endPos) {
-					for (int i = insertPos; i < endPos; i++) {
-						((DefaultTreeModel) getModel()).removeNodeFromParent((DefaultMutableTreeNode) currentTreeNode.getChildAt(insertPos));
+					// remove invalid nodes
+					if (insertPos < endPos) {
+						for (int i = insertPos; i < endPos; i++) {
+							((DefaultTreeModel) getModel()).removeNodeFromParent((DefaultMutableTreeNode) currentTreeNode.getChildAt(insertPos));
+						}
 					}
-				}
-				break;
-			case PICTURES:
-				break;
-			default:
-				log.warn(String.format("Unhandled file type received (%s). This should never happen!", folder.getFileType()));
-				break;
+					break;
+				case PICTURES:
+					break;
+				default:
+					log.warn(String.format("Unhandled file type received (%s). This should never happen!", folder.getFileType()));
+					break;
 			}
 		} else {
 			int firstFileIndex = getNewFolderInsertPosition(currentTreeNode);
@@ -1026,13 +1026,13 @@ public class DLNAViewTree extends JTree {
 
 				int resp = JOptionPane.showConfirmDialog(null, question);
 				switch (resp) {
-				case JOptionPane.CANCEL_OPTION:
-					break;
-				case JOptionPane.YES_OPTION:
-					doDelete = true;
-					break;
-				case JOptionPane.NO_OPTION:
-					break;
+					case JOptionPane.CANCEL_OPTION:
+						break;
+					case JOptionPane.YES_OPTION:
+						doDelete = true;
+						break;
+					case JOptionPane.NO_OPTION:
+						break;
 				}
 
 				requestFocus();
@@ -1223,18 +1223,18 @@ public class DLNAViewTree extends JTree {
 		FolderDialog fd = (FolderDialog) event.getSource();
 		boolean doInsert = false;
 		switch (event.getActionType()) {
-		case OK:
-			doInsert = true;
-			fd.dispose();
-			break;
-		case APPLY:
-			doInsert = true;
-			break;
-		case CANCEL:
-			fd.dispose();
-			break;
-		default:
-			break;
+			case OK:
+				doInsert = true;
+				fd.dispose();
+				break;
+			case APPLY:
+				doInsert = true;
+				break;
+			case CANCEL:
+				fd.dispose();
+				break;
+			default:
+				break;
 		}
 
 		if (doInsert) {
@@ -1265,18 +1265,18 @@ public class DLNAViewTree extends JTree {
 		PluginFolderDialog d = (PluginFolderDialog) e.getSource();
 		boolean doInsert = false;
 		switch (e.getActionType()) {
-		case OK:
-			doInsert = true;
-			d.dispose();
-			break;
-		case APPLY:
-			doInsert = true;
-			break;
-		case CANCEL:
-			d.dispose();
-			break;
-		default:
-			break;
+			case OK:
+				doInsert = true;
+				d.dispose();
+				break;
+			case APPLY:
+				doInsert = true;
+				break;
+			case CANCEL:
+				d.dispose();
+				break;
+			default:
+				break;
 		}
 
 		if (doInsert) {
@@ -1330,67 +1330,67 @@ public class DLNAViewTree extends JTree {
 		DOMediaLibraryFolder selectedFolder = (DOMediaLibraryFolder) selNode.getUserObject();
 		AddAutoFolderDialog fd = (AddAutoFolderDialog) event.getSource();
 		switch (event.getActionType()) {
-		case OK:
-			// Get the position in the parent where the new node will be
-			// inserted.
-			// It will be the last folder
-			int insertPos = getNewFolderInsertPosition(selNode);
-			boolean folderCreated = false;
+			case OK:
+				// Get the position in the parent where the new node will be
+				// inserted.
+				// It will be the last folder
+				int insertPos = getNewFolderInsertPosition(selNode);
+				boolean folderCreated = false;
 
-			switch (event.getAutoFolderType()) {
-			case A_TO_Z:
-				AutoFolderCreator.addAtoZVideoFolders(mediaLibraryStorage, selectedFolder, event.isAscending(), insertPos);
-				folderCreated = true;
-				break;
-			case FILE_SYSTEM:
-				if (event.getUserObject() != null && event.getUserObject() instanceof String) {
-					File f = new File((String) event.getUserObject());
-					if (f.isDirectory()) {
-						AutoFolderCreator.addFileSystemFolders(mediaLibraryStorage, selectedFolder, insertPos, f);
+				switch (event.getAutoFolderType()) {
+					case A_TO_Z:
+						AutoFolderCreator.addAtoZVideoFolders(mediaLibraryStorage, selectedFolder, event.isAscending(), insertPos);
 						folderCreated = true;
-					} else {
-						JOptionPane.showMessageDialog(this, Messages.getString("ML.DLNAViewTree.FolderInvalid"));
-					}
+						break;
+					case FILE_SYSTEM:
+						if (event.getUserObject() != null && event.getUserObject() instanceof String) {
+							File f = new File((String) event.getUserObject());
+							if (f.isDirectory()) {
+								AutoFolderCreator.addFileSystemFolders(mediaLibraryStorage, selectedFolder, insertPos, f);
+								folderCreated = true;
+							} else {
+								JOptionPane.showMessageDialog(this, Messages.getString("ML.DLNAViewTree.FolderInvalid"));
+							}
+						}
+						break;
+					case TYPE_NAME:
+						if (event.getUserObject() != null && event.getUserObject() instanceof AutoFolderProperty) {
+							AutoFolderProperty prop = (AutoFolderProperty) event.getUserObject();
+							AutoFolderCreator.addTypeFolder(mediaLibraryStorage, selectedFolder, prop, event.isAscending(), insertPos, event.getMinOccurences());
+							folderCreated = true;
+						}
+						break;
+					case TAG:
+						String tagName;
+						if (event.getUserObject() != null && event.getUserObject() instanceof String && !((tagName = (String) event.getUserObject()).equals(""))) {
+							AutoFolderCreator.addTagFolder(mediaLibraryStorage, selectedFolder, tagName, event.isAscending(), insertPos, event.getMinOccurences());
+							folderCreated = true;
+						} else {
+							JOptionPane.showMessageDialog(this, Messages.getString("ML.DLNAViewTree.NoTagSelected"));
+						}
+						break;
+					default:
+						// Do nothing
+						break;
 				}
-				break;
-			case TYPE_NAME:
-				if (event.getUserObject() != null && event.getUserObject() instanceof AutoFolderProperty) {
-					AutoFolderProperty prop = (AutoFolderProperty) event.getUserObject();
-					AutoFolderCreator.addTypeFolder(mediaLibraryStorage, selectedFolder, prop, event.isAscending(), insertPos, event.getMinOccurences());
-					folderCreated = true;
+
+				if (!folderCreated) {
+					return;
 				}
+
+				refreshNode(selectedNode);
+
+				// Set the new node selected
+				DefaultMutableTreeNode sn = (DefaultMutableTreeNode) treeModel.getChild(selNode, insertPos);
+				setNodeSelected(sn);
+				fd.dispose();
 				break;
-			case TAG:
-				String tagName;
-				if (event.getUserObject() != null && event.getUserObject() instanceof String && !((tagName = (String) event.getUserObject()).equals(""))) {
-					AutoFolderCreator.addTagFolder(mediaLibraryStorage, selectedFolder, tagName, event.isAscending(), insertPos, event.getMinOccurences());
-					folderCreated = true;
-				} else {
-					JOptionPane.showMessageDialog(this, Messages.getString("ML.DLNAViewTree.NoTagSelected"));
-				}
+			case CANCEL:
+				fd.dispose();
 				break;
+
 			default:
-				// Do nothing
 				break;
-			}
-
-			if (!folderCreated) {
-				return;
-			}
-
-			refreshNode(selectedNode);
-
-			// Set the new node selected
-			DefaultMutableTreeNode sn = (DefaultMutableTreeNode) treeModel.getChild(selNode, insertPos);
-			setNodeSelected(sn);
-			fd.dispose();
-			break;
-		case CANCEL:
-			fd.dispose();
-			break;
-
-		default:
-			break;
 		}
 	}
 

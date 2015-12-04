@@ -172,8 +172,7 @@ public class GlobalConfigurationPanel extends JPanel {
 						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.14"),
 						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.15"),
 						FileSystemFolderPlugin.messages.getString("GlobalConfigurationPanel.16")
-				}
-				);
+				});
 		cbSortMethod = new JComboBox(kcbm);
 		cbSortMethod.setEditable(false);
 		kcbm.setSelectedKey(String.valueOf(globalConfig.getSortMethod()));

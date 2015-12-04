@@ -25,12 +25,5 @@ package net.pms.medialibrary.commons.enumarations;
  *
  */
 public enum KeyCombination {
-	Ctrl,
-	Shift,
-	Alt,
-	CtrlShift,
-	CtrlAlt,
-	ShiftAlt,
-	CtrlShiftAlt,
-	Unknown
+	Ctrl, Shift, Alt, CtrlShift, CtrlAlt, ShiftAlt, CtrlShiftAlt, Unknown
 }

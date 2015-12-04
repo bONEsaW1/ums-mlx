@@ -38,8 +38,7 @@ import net.pms.io.OutputParams;
 import net.pms.io.ProcessWrapperImpl;
 
 /**
- * If showing a file as a folder, this class can be added to have an entry with an icon and a name. When played, the
- * thumbnail will be converted to a video to be shown full screen
+ * If showing a file as a folder, this class can be added to have an entry with an icon and a name. When played, the thumbnail will be converted to a video to be shown full screen
  */
 public class MediaLibraryFileInfo extends VirtualFolder {
 	private static final Logger log = LoggerFactory.getLogger(MediaLibraryFileInfo.class);

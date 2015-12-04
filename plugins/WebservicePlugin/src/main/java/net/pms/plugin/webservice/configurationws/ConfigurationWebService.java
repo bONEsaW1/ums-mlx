@@ -36,12 +36,12 @@ public class ConfigurationWebService extends ServiceBase implements
 		// TODO: add all the possible configuration values
 		String res = "";
 		switch (enumKey) {
-		case Language:
-			res = conf.getLanguage();
-			break;
-		default:
-			throw new InvalidParameterException(String.format(
-					"Retrieval of key %s hasn't been implemented yet", key));
+			case Language:
+				res = conf.getLanguage();
+				break;
+			default:
+				throw new InvalidParameterException(String.format(
+						"Retrieval of key %s hasn't been implemented yet", key));
 		}
 		return res;
 	}
@@ -67,7 +67,7 @@ public class ConfigurationWebService extends ServiceBase implements
 	@WebMethod(operationName = "setValue")
 	public void setValue(@WebParam(name = "key") String key,
 			@WebParam(name = "value") String value)
-			throws InvalidParameterException {
+					throws InvalidParameterException {
 		if (!isInitialized) {
 			log.warn("Trying to access setValue when it's not initialized. Abort");
 			return;
@@ -78,12 +78,12 @@ public class ConfigurationWebService extends ServiceBase implements
 
 		// TODO: add all the possible configuration values
 		switch (enumKey) {
-		case Language:
-			conf.setLanguage(value);
-			break;
-		default:
-			throw new InvalidParameterException(String.format(
-					"Setting of key %s hasn't been implemented yet", key));
+			case Language:
+				conf.setLanguage(value);
+				break;
+			default:
+				throw new InvalidParameterException(String.format(
+						"Setting of key %s hasn't been implemented yet", key));
 		}
 	}
 

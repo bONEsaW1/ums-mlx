@@ -219,8 +219,7 @@ public class WebFolderResource extends VirtualFolder {
 	}
 
 	/**
-	 * Gets the web config filehash. Source:
-	 * http://examples.javacodegeeks.com/core-java/security/messagedigest/generate-a-file-checksum-value-in-java/
+	 * Gets the web config filehash. Source: http://examples.javacodegeeks.com/core-java/security/messagedigest/generate-a-file-checksum-value-in-java/
 	 * 
 	 * @return the web config filehash
 	 * @throws NoSuchAlgorithmException the no such algorithm exception

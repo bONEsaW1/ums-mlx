@@ -37,8 +37,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * A FolderEntryPanel represents one shared folder showing up with a text field and a button to browse for a folder and
- * one to delete the shared folder
+ * A FolderEntryPanel represents one shared folder showing up with a text field and a button to browse for a folder and one to delete the shared folder
  */
 public class FolderEntryPanel extends JPanel {
 	private static final long serialVersionUID = 436739054166843859L;

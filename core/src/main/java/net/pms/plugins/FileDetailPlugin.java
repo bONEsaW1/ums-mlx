@@ -9,8 +9,7 @@ import net.pms.dlna.DLNAResource;
 import net.pms.medialibrary.commons.dataobjects.DOVideoFileInfo;
 
 /**
- * Classes implementing this interface and packaged as plugins can be used to add additional configuration properties
- * when displaying a file as a folder.
+ * Classes implementing this interface and packaged as plugins can be used to add additional configuration properties when displaying a file as a folder.
  * 
  * @author pw
  * 
@@ -39,10 +38,9 @@ public interface FileDetailPlugin extends PluginBase {
 	JPanel getConfigurationPanel();
 
 	/***
-	 * Save the configuration to the specified path to restore the same state as the plugin had when calling
-	 * saveConfiguration. This mechanism allows a single configuration per plugin instance<br>
-	 * The plugin can store its configuration how it wants. The plugin must be able to restore the same state as when
-	 * this method was called, when calling loadConfiguration<br>
+	 * Save the configuration to the specified path to restore the same state as the plugin had when calling saveConfiguration. This mechanism allows a single configuration per
+	 * plugin instance<br>
+	 * The plugin can store its configuration how it wants. The plugin must be able to restore the same state as when this method was called, when calling loadConfiguration<br>
 	 * If their is no configuration to save, do nothing.
 	 * 
 	 * @exception IOException can be thrown when the file couldn't be saved
@@ -51,8 +49,8 @@ public interface FileDetailPlugin extends PluginBase {
 	void saveConfiguration(String saveFilePath) throws IOException;
 
 	/**
-	 * Load the configuration from the specified path to restore the same state as the plugin had when calling
-	 * saveConfiguration. This mechanism allows a single configuration per plugin instance<br>
+	 * Load the configuration from the specified path to restore the same state as the plugin had when calling saveConfiguration. This mechanism allows a single configuration per
+	 * plugin instance<br>
 	 * If their is no configuration to load, do nothing.
 	 * 
 	 * @param saveFilePath path from which the plugin can load its configuration
@@ -61,8 +59,8 @@ public interface FileDetailPlugin extends PluginBase {
 	void loadConfiguration(String saveFilePath) throws IOException;
 
 	/***
-	 * the name set through this method has to be used as the name for the root folder retrieved through
-	 * getDLNAResource. This method is required as the name of a DLNAResource can't be set.<br>
+	 * the name set through this method has to be used as the name for the root folder retrieved through getDLNAResource. This method is required as the name of a DLNAResource
+	 * can't be set.<br>
 	 * This method will be called right before calling getResource
 	 */
 	void setDisplayName(String name);

@@ -76,7 +76,7 @@ public class ScanFolderDialog extends JDialog {
 		setIconImage(new ImageIcon(
 				FileImportTemplateDialog.class
 						.getResource("/resources/images/icon-32.png"))
-				.getImage());
+								.getImage());
 		setTitle(Messages.getString("ML.ScanFolderDialog.Title"));
 
 		build(folderPath);

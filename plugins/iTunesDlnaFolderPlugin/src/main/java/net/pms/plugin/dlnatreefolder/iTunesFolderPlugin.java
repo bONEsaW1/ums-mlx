@@ -45,6 +45,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/itunesfolderplugin.properties", iTunesFolderPlugin.class);
@@ -150,8 +151,7 @@ public class iTunesFolderPlugin implements DlnaTreeFolderPlugin {
 
 										boolean isCompilation = (track.containsKey("Compilation") && track.get("Compilation").equals(Boolean.TRUE));
 
-										artistName = (String) (isCompilation ? "Compilation" :
-												track.containsKey("Album Artist") ? track.get("Album Artist") : track.get("Artist"));
+										artistName = (String) (isCompilation ? "Compilation" : track.containsKey("Album Artist") ? track.get("Album Artist") : track.get("Artist"));
 										albumName = (String) track.get("Album");
 										genreName = (String) track.get("Genre");
 

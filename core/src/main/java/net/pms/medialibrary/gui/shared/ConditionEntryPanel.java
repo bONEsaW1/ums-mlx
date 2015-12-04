@@ -207,46 +207,46 @@ public class ConditionEntryPanel implements ActionListener {
 		CellConstraints cc = new CellConstraints();
 
 		switch (conditionValueType) {
-		case TIMESPAN:
-			Object selectedItemCD = cbConditionUnit.getSelectedItem();
-			cbConditionUnit.removeAllItems();
-			for (ConditionUnit unit : ConditionUnit.values()) {
-				if (unit.toString().startsWith("TIMESPAN_")) {
-					cbConditionUnit.addItem(new ConditionUnitCBItem(unit, Messages.getString("ML.Condition.Unit." + unit)));
+			case TIMESPAN:
+				Object selectedItemCD = cbConditionUnit.getSelectedItem();
+				cbConditionUnit.removeAllItems();
+				for (ConditionUnit unit : ConditionUnit.values()) {
+					if (unit.toString().startsWith("TIMESPAN_")) {
+						cbConditionUnit.addItem(new ConditionUnitCBItem(unit, Messages.getString("ML.Condition.Unit." + unit)));
+					}
 				}
-			}
-			if (selectedItemCD != null) {
-				cbConditionUnit.setSelectedItem(selectedItemCD);
-			} else {
-				cbConditionUnit.setSelectedItem(new ConditionUnitCBItem(ConditionUnit.TIMESPAN_MINUTES, Messages.getString("ML.Condition.Unit." + ConditionUnit.TIMESPAN_MINUTES)));
-			}
-
-			builderCCondition.add(tfCondition, cc.xy(1, 1));
-			builderCCondition.add(cbConditionUnit, cc.xy(3, 1));
-			break;
-		case FILESIZE:
-			selectedItemCD = cbConditionUnit.getSelectedItem();
-			cbConditionUnit.removeAllItems();
-			for (ConditionUnit unit : ConditionUnit.values()) {
-				if (unit.toString().startsWith("FILESIZE_")) {
-					cbConditionUnit.addItem(new ConditionUnitCBItem(unit, Messages.getString("ML.Condition.Unit." + unit)));
+				if (selectedItemCD != null) {
+					cbConditionUnit.setSelectedItem(selectedItemCD);
+				} else {
+					cbConditionUnit.setSelectedItem(new ConditionUnitCBItem(ConditionUnit.TIMESPAN_MINUTES, Messages.getString("ML.Condition.Unit." + ConditionUnit.TIMESPAN_MINUTES)));
 				}
-			}
-			if (selectedItemCD != null) {
-				cbConditionUnit.setSelectedItem(selectedItemCD);
-			} else {
-				cbConditionUnit.setSelectedItem(new ConditionUnitCBItem(ConditionUnit.FILESIZE_MEGABYTE, Messages.getString("ML.Condition.Unit." + ConditionUnit.FILESIZE_MEGABYTE)));
-			}
 
-			builderCCondition.add(tfCondition, cc.xy(1, 1));
-			builderCCondition.add(cbConditionUnit, cc.xy(3, 1));
-			break;
-		case DATETIME:
-			builderCCondition.add(calendar, cc.xyw(1, 1, 3));
-			break;
-		default:
-			builderCCondition.add(tfCondition, cc.xyw(1, 1, 3));
-			break;
+				builderCCondition.add(tfCondition, cc.xy(1, 1));
+				builderCCondition.add(cbConditionUnit, cc.xy(3, 1));
+				break;
+			case FILESIZE:
+				selectedItemCD = cbConditionUnit.getSelectedItem();
+				cbConditionUnit.removeAllItems();
+				for (ConditionUnit unit : ConditionUnit.values()) {
+					if (unit.toString().startsWith("FILESIZE_")) {
+						cbConditionUnit.addItem(new ConditionUnitCBItem(unit, Messages.getString("ML.Condition.Unit." + unit)));
+					}
+				}
+				if (selectedItemCD != null) {
+					cbConditionUnit.setSelectedItem(selectedItemCD);
+				} else {
+					cbConditionUnit.setSelectedItem(new ConditionUnitCBItem(ConditionUnit.FILESIZE_MEGABYTE, Messages.getString("ML.Condition.Unit." + ConditionUnit.FILESIZE_MEGABYTE)));
+				}
+
+				builderCCondition.add(tfCondition, cc.xy(1, 1));
+				builderCCondition.add(cbConditionUnit, cc.xy(3, 1));
+				break;
+			case DATETIME:
+				builderCCondition.add(calendar, cc.xyw(1, 1, 3));
+				break;
+			default:
+				builderCCondition.add(tfCondition, cc.xyw(1, 1, 3));
+				break;
 		}
 		cCondition.removeAll();
 		cCondition.add(builderCCondition.getPanel());

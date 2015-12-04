@@ -56,10 +56,7 @@ public class ThumbnailPrioChooser {
 	public JButton bMoveDown;
 
 	public enum ActionType {
-		Add,
-		Remove,
-		MoveUp,
-		MoveDown
+		Add, Remove, MoveUp, MoveDown
 	}
 
 	public List<ActionListener> actionListeners = new ArrayList<ActionListener>();
@@ -128,27 +125,27 @@ public class ThumbnailPrioChooser {
 				if (cbPrioType.getSelectedItem() instanceof TumbnailPrioCBItem) {
 					TumbnailPrioCBItem item = (TumbnailPrioCBItem) cbPrioType.getSelectedItem();
 					switch (item.getThumbnailPrioType()) {
-					case GENERATED:
-						tfPicturePath.setVisible(false);
-						bBrowsePicturePath.setVisible(false);
-						tfSeekPointSec.setVisible(true);
-						lUnitSec.setVisible(true);
-						break;
-					case PICTURE:
-						tfPicturePath.setVisible(true);
-						bBrowsePicturePath.setVisible(true);
-						tfSeekPointSec.setVisible(false);
-						lUnitSec.setVisible(false);
-						break;
-					case THUMBNAIL:
-						tfPicturePath.setVisible(false);
-						bBrowsePicturePath.setVisible(false);
-						tfSeekPointSec.setVisible(false);
-						lUnitSec.setVisible(false);
-						break;
-					default:
-						log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", item.getThumbnailPrioType()));
-						break;
+						case GENERATED:
+							tfPicturePath.setVisible(false);
+							bBrowsePicturePath.setVisible(false);
+							tfSeekPointSec.setVisible(true);
+							lUnitSec.setVisible(true);
+							break;
+						case PICTURE:
+							tfPicturePath.setVisible(true);
+							bBrowsePicturePath.setVisible(true);
+							tfSeekPointSec.setVisible(false);
+							lUnitSec.setVisible(false);
+							break;
+						case THUMBNAIL:
+							tfPicturePath.setVisible(false);
+							bBrowsePicturePath.setVisible(false);
+							tfSeekPointSec.setVisible(false);
+							lUnitSec.setVisible(false);
+							break;
+						default:
+							log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", item.getThumbnailPrioType()));
+							break;
 					}
 				}
 			}
@@ -175,23 +172,23 @@ public class ThumbnailPrioChooser {
 		ThumbnailPrioType prioType = getTumbnailPrioType();
 		prio.setThumbnailPriorityType(prioType);
 		switch (prioType) {
-		case THUMBNAIL:
-			// do nothing more
-			break;
-		case GENERATED:
-			try {
-				prio.setSeekPosition(Integer.valueOf(tfSeekPointSec.getText()));
-			} catch (Exception ex) {
-				prio.setSeekPosition(30);
-				tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
-			}
-			break;
-		case PICTURE:
-			prio.setPicturePath(tfPicturePath.getText());
-			break;
-		default:
-			log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", prioType));
-			break;
+			case THUMBNAIL:
+				// do nothing more
+				break;
+			case GENERATED:
+				try {
+					prio.setSeekPosition(Integer.valueOf(tfSeekPointSec.getText()));
+				} catch (Exception ex) {
+					prio.setSeekPosition(30);
+					tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
+				}
+				break;
+			case PICTURE:
+				prio.setPicturePath(tfPicturePath.getText());
+				break;
+			default:
+				log.warn(String.format("Unhandled thumbnail priority type received (%s). This should never happen!", prioType));
+				break;
 		}
 		return prio;
 	}
@@ -203,14 +200,14 @@ public class ThumbnailPrioChooser {
 		if (prio != null) {
 			cbPrioType.setSelectedItem(prio);
 			switch (prio.getThumbnailPriorityType()) {
-			case GENERATED:
-				tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
-				break;
-			case PICTURE:
-				tfPicturePath.setText(prio.getPicturePath());
-				break;
-			default:
-				break;
+				case GENERATED:
+					tfSeekPointSec.setText(String.valueOf(prio.getSeekPosition()));
+					break;
+				case PICTURE:
+					tfPicturePath.setText(prio.getPicturePath());
+					break;
+				default:
+					break;
 			}
 			cbPrioType.setSelectedItem(new TumbnailPrioCBItem(prio.getThumbnailPriorityType(), Messages.getString("ML.ThumbnailPrioType."
 					+ prio.getThumbnailPriorityType().toString())));

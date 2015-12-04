@@ -97,8 +97,7 @@ public class DOFileEntryBase implements Cloneable {
 		Collections.sort(thumbnailPrioritis, new Comparator<DOThumbnailPriority>() {
 			@Override
 			public int compare(DOThumbnailPriority o1, DOThumbnailPriority o2) {
-				return o1.getPriorityIndex() == o2.getPriorityIndex() ? 0 :
-						o1.getPriorityIndex() > o2.getPriorityIndex() ? 1 : -1;
+				return o1.getPriorityIndex() == o2.getPriorityIndex() ? 0 : o1.getPriorityIndex() > o2.getPriorityIndex() ? 1 : -1;
 			}
 		});
 		return thumbnailPrioritis;
@@ -151,7 +150,7 @@ public class DOFileEntryBase implements Cloneable {
 		DOFileEntryBase compObj = (DOFileEntryBase) obj;
 		if (getId() == compObj.getId()
 				&& ((getParent() == null && compObj.getParent() == null)
-				|| (getParent() != null && compObj.getParent() != null && getParent().getId() == compObj.getParent().getId()))
+						|| (getParent() != null && compObj.getParent() != null && getParent().getId() == compObj.getParent().getId()))
 				&& getDisplayNameMask().equals(compObj.getDisplayNameMask())
 				&& getPositionInParent() == compObj.getPositionInParent()
 				&& getThumbnailPriorities().equals(compObj.getThumbnailPriorities())

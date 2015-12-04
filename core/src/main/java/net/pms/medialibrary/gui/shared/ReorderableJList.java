@@ -56,6 +56,7 @@ public class ReorderableJList extends JList implements DragSourceListener,
 	 */
 	private static final long serialVersionUID = 6724612074505958204L;
 	static DataFlavor localObjectFlavor;
+
 	static {
 		try {
 			localObjectFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType);
@@ -63,6 +64,7 @@ public class ReorderableJList extends JList implements DragSourceListener,
 			cnfe.printStackTrace();
 		}
 	}
+
 	static DataFlavor[] supportedFlavors = { localObjectFlavor };
 	DragSource dragSource;
 	DropTarget dropTarget;
@@ -132,8 +134,7 @@ public class ReorderableJList extends JList implements DragSourceListener,
 
 		if (dtde.getSource() != dropTarget || !((DropTarget) dtde.getSource()).getComponent().equals(this)) {
 			dtde.rejectDrag();
-		}
-		else {
+		} else {
 			dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
 		}
 	}
@@ -154,8 +155,7 @@ public class ReorderableJList extends JList implements DragSourceListener,
 		int index = locationToIndex(dragPoint);
 		if (index == -1) {
 			dropTargetCell = null;
-		}
-		else {
+		} else {
 			dropTargetCell = getModel().getElementAt(index);
 		}
 		repaint();

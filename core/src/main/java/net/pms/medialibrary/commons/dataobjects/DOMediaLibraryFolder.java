@@ -281,11 +281,9 @@ public class DOMediaLibraryFolder extends DOFolder implements Cloneable {
 				&& getDisplayProperties().equals(compObj.getDisplayProperties())
 				&& getMaxFiles() == compObj.getMaxFiles()) {
 			/*
-			 * if(getChildFolders() == null && compObj.getChildFolders() == null){ return true; } else
-			 * if((getChildFolders() == null || compObj.getChildFolders() == null || getChildFolders().size() !=
-			 * compObj.getChildFolders().size())){ return false; } else { for(DOFolder c1 : getChildFolders()){ boolean
-			 * found = false; for(DOFolder c2 : compObj.getChildFolders()){ if(c1.getId() == c2.getId() &&
-			 * c1.getName().equals(c2.getName())){ found = true; break; } } if(!found){ return false; } } }
+			 * if(getChildFolders() == null && compObj.getChildFolders() == null){ return true; } else if((getChildFolders() == null || compObj.getChildFolders() == null ||
+			 * getChildFolders().size() != compObj.getChildFolders().size())){ return false; } else { for(DOFolder c1 : getChildFolders()){ boolean found = false; for(DOFolder c2 :
+			 * compObj.getChildFolders()){ if(c1.getId() == c2.getId() && c1.getName().equals(c2.getName())){ found = true; break; } } if(!found){ return false; } } }
 			 */
 			return true;
 		}

@@ -7,8 +7,8 @@ import net.pms.medialibrary.commons.enumarations.FileType;
 import net.pms.medialibrary.commons.exceptions.FileImportException;
 
 /**
- * Classes implementing this interface and packaged as plugins will be used by pms to import additional informations
- * about files while scanning folders or editing files in the library. A file can be of type video, audio or a picture.
+ * Classes implementing this interface and packaged as plugins will be used by pms to import additional informations about files while scanning folders or editing files in the
+ * library. A file can be of type video, audio or a picture.
  * 
  * @author pw
  * 
@@ -16,15 +16,12 @@ import net.pms.medialibrary.commons.exceptions.FileImportException;
 public interface FileImportPlugin extends PluginBase {
 
 	/**
-	 * The plugin should import the properties that will be available through getFileProperty and getTags when this
-	 * method is being called.<br>
+	 * The plugin should import the properties that will be available through getFileProperty and getTags when this method is being called.<br>
 	 * This method will only be called if a required file type or tag is needed.<br>
 	 * It's up to the plugin developer to decide if he wants to use the title or the filePath.
 	 * 
-	 * @exception FileImportException must be thrown if it the file import failed or no information could be found for
-	 *                the given title and path
-	 * @param title the title for which to search. It usually corresponds to the file name but it might have been
-	 *            modified (cleaned)
+	 * @exception FileImportException must be thrown if it the file import failed or no information could be found for the given title and path
+	 * @param title the title for which to search. It usually corresponds to the file name but it might have been modified (cleaned)
 	 * @param filePath the absolute path of the file to import
 	 * @see #getFileProperty(FileProperty property)
 	 * @see #getTags(String tagName)
@@ -33,13 +30,11 @@ public interface FileImportPlugin extends PluginBase {
 			throws FileImportException;
 
 	/**
-	 * The plugin should import the properties that will be available through getFileProperty and getTags when this
-	 * method is being called.<br>
+	 * The plugin should import the properties that will be available through getFileProperty and getTags when this method is being called.<br>
 	 * This method will only be called if isImportByIdPossible returns true.
 	 * 
 	 * @exception FileImportException must be thrown if it wasn't possible to import the information for the given id
-	 * @param id the id for which the plugin should search. E.g. the tmdb plugin will accept the tmdbId, the one for
-	 *            imdb the imdbId
+	 * @param id the id for which the plugin should search. E.g. the tmdb plugin will accept the tmdbId, the one for imdb the imdbId
 	 * @see #getFileProperty(FileProperty property)
 	 * @see #getTags(String tagName)
 	 * @see #isImportByIdPossible()
@@ -63,14 +58,11 @@ public interface FileImportPlugin extends PluginBase {
 	public boolean isSearchForFilePossible();
 
 	/**
-	 * When this method is being called, it has to return a list of Object containing the possible results for the
-	 * queried name.<br>
-	 * The user will be asked to choose which result is the correct one (based on Object.toString()), then
-	 * importFileBySearchObject will be called with the selected Object
+	 * When this method is being called, it has to return a list of Object containing the possible results for the queried name.<br>
+	 * The user will be asked to choose which result is the correct one (based on Object.toString()), then importFileBySearchObject will be called with the selected Object
 	 * 
 	 * @param name the string to search for
-	 * @return a list of Objects containing possible results, where Object.toString() has to return a comprehensive name
-	 *         for the user
+	 * @return a list of Objects containing possible results, where Object.toString() has to return a comprehensive name for the user
 	 * @see #isSearchForFilePossible()
 	 */
 	public List<Object> searchForFile(String name);
@@ -92,10 +84,8 @@ public interface FileImportPlugin extends PluginBase {
 	public List<FileProperty> getSupportedFileProperties();
 
 	/**
-	 * Returns the value for the file property. A generic object can be returned, but it will be checked in pms if the
-	 * correct type has been returned for the FileProperty.<br>
-	 * If no value could be found, null should be returned. Integers < 0 will be handled the same way as well as an
-	 * empty String for String values<br>
+	 * Returns the value for the file property. A generic object can be returned, but it will be checked in pms if the correct type has been returned for the FileProperty.<br>
+	 * If no value could be found, null should be returned. Integers < 0 will be handled the same way as well as an empty String for String values<br>
 	 * <br>
 	 * Expected values for file types:<br>
 	 * VIDEO_CERTIFICATION = String<br>
@@ -137,11 +127,9 @@ public interface FileImportPlugin extends PluginBase {
 	 * Gets the list of supported tag names for a file type.<br>
 	 * Beside the predefined file properties, custom tags consisting of a key-value pair can be configured.<br>
 	 * E.g. key=Actor, value=Jeff Bridges or key=language, value=German. This method will return the keys.<br>
-	 * A valid tag name contains only alphanumeric characters (a-z, 0-9). All tag names which aren't alphanumeric will
-	 * be discarded!
+	 * A valid tag name contains only alphanumeric characters (a-z, 0-9). All tag names which aren't alphanumeric will be discarded!
 	 * 
-	 * @param fileType The file type for which to get the tags. Only file types returned by getSupportedFileTypes() will
-	 *            be queried
+	 * @param fileType The file type for which to get the tags. Only file types returned by getSupportedFileTypes() will be queried
 	 * @return the list of tag names for which getTags can be called with
 	 * @see #getTags(String tagName)
 	 */
@@ -163,9 +151,8 @@ public interface FileImportPlugin extends PluginBase {
 	public List<FileType> getSupportedFileTypes();
 
 	/**
-	 * Some web sites don't allow more then x/requests per second. If the value returned by this method is > 0, pms will
-	 * ensure that two successive calls to a import file method of the same plugin have a time span of at least
-	 * minPollingInterval in milliseconds
+	 * Some web sites don't allow more then x/requests per second. If the value returned by this method is > 0, pms will ensure that two successive calls to a import file method of
+	 * the same plugin have a time span of at least minPollingInterval in milliseconds
 	 * 
 	 * @return minimum polling interval in milliseconds
 	 */

@@ -27,6 +27,7 @@ public class WebFolderPlugin implements DlnaTreeFolderPlugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/webfolderplugin.properties", WebFolderPlugin.class);

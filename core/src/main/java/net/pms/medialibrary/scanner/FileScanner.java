@@ -269,15 +269,15 @@ public class FileScanner implements Runnable {
 
 			// Scan the file
 			switch (scanFile(importFile)) {
-			case Imported:
-				nbFilesAdded++;
-				break;
-			case Updated:
-				nbFilesUpdated++;
-				break;
-			default:
-				log.warn(String.format("Failed to scan file '%s'", importFile.getPath()));
-				break;
+				case Imported:
+					nbFilesAdded++;
+					break;
+				case Updated:
+					nbFilesUpdated++;
+					break;
+				default:
+					log.warn(String.format("Failed to scan file '%s'", importFile.getPath()));
+					break;
 			}
 		}
 

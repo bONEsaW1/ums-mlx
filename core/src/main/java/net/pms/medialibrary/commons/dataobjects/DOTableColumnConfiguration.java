@@ -75,9 +75,7 @@ public class DOTableColumnConfiguration {
 
 	@Override
 	public String toString() {
-		return (getTagName() == "") ?
-				Messages.getString("ML.Condition.Header.Type." + conditionType.toString()) :
-				String.format("%s (%s)", getTagName(), Messages.getString("ML.Condition.Header.TagSuffix"));
+		return (getTagName() == "") ? Messages.getString("ML.Condition.Header.Type." + conditionType.toString()) : String.format("%s (%s)", getTagName(), Messages.getString("ML.Condition.Header.TagSuffix"));
 	}
 
 	@Override

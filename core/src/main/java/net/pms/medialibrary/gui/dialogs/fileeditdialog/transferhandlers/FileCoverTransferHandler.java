@@ -42,7 +42,7 @@ public class FileCoverTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1874409559271363041L;
 	private static final Logger log = LoggerFactory.getLogger(FileCoverTransferHandler.class);
 
-	private static final DataFlavor flavors[] = { DataFlavor.javaFileListFlavor /* , DataFlavor.imageFlavor */};
+	private static final DataFlavor flavors[] = { DataFlavor.javaFileListFlavor /* , DataFlavor.imageFlavor */ };
 	public static final String TMP_FILENAME = "tmp_cover.jpg";
 	protected List<String> supportedIconExtensions = Arrays.asList("png", "jpg", "jpeg", "bmp");
 	private boolean hasCoverChanged = false;

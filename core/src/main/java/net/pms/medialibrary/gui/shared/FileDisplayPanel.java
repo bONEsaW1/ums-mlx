@@ -96,17 +96,17 @@ public class FileDisplayPanel extends JPanel {
 		if (fileEntry instanceof DOFileEntryFile) {
 			FileDisplayMode fileDisplayMode = ((DOFileEntryFile) fileEntry).getFileDisplayMode();
 			switch (fileDisplayMode) {
-			case SINGLE:
-				rbSingleFile.setSelected(true);
-				break;
-			case MULTIPLE:
-				rbMultipleFiles.setSelected(true);
-				tfDisplaynameMask.setEnabled(false);
-				cbMaskHelp.setEnabled(false);
-				break;
-			default:
-				log.warn(String.format("Unhandled file display mode received (%s). This should never happen!", fileDisplayMode));
-				break;
+				case SINGLE:
+					rbSingleFile.setSelected(true);
+					break;
+				case MULTIPLE:
+					rbMultipleFiles.setSelected(true);
+					tfDisplaynameMask.setEnabled(false);
+					cbMaskHelp.setEnabled(false);
+					break;
+				default:
+					log.warn(String.format("Unhandled file display mode received (%s). This should never happen!", fileDisplayMode));
+					break;
 			}
 		}
 		refreshPanel();
@@ -539,20 +539,20 @@ public class FileDisplayPanel extends JPanel {
 				JComboBox cb = (JComboBox) e.getSource();
 				ScreenResolution res = ((ScreeResolutionCBItem) cb.getSelectedItem()).getScreenResolution();
 				switch (res) {
-				case HD:
-					tfMaxLineLength.setText("55");
-					break;
-				case NO_LIMIT:
-					tfMaxLineLength.setText("0");
-					break;
-				case SD_16_9:
-					tfMaxLineLength.setText("40");
-					break;
-				case SD_4_3:
-					tfMaxLineLength.setText("20");
-					break;
-				default:
-					break;
+					case HD:
+						tfMaxLineLength.setText("55");
+						break;
+					case NO_LIMIT:
+						tfMaxLineLength.setText("0");
+						break;
+					case SD_16_9:
+						tfMaxLineLength.setText("40");
+						break;
+					case SD_4_3:
+						tfMaxLineLength.setText("20");
+						break;
+					default:
+						break;
 				}
 			}
 		});
@@ -566,26 +566,26 @@ public class FileDisplayPanel extends JPanel {
 	private void updateMaxLineLength(int maxLineLength) {
 		tfMaxLineLength.setText(String.valueOf(maxLineLength));
 		switch (maxLineLength) {
-		case 55:
-			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.HD, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-					+ ScreenResolution.HD.toString())));
-			break;
-		case 40:
-			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_16_9, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-					+ ScreenResolution.SD_16_9.toString())));
-			break;
-		case 20:
-			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_4_3, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-					+ ScreenResolution.SD_4_3.toString())));
-			break;
-		case 0:
-			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.NO_LIMIT, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-					+ ScreenResolution.NO_LIMIT.toString())));
-			break;
-		default:
-			cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.CUSTOM, Messages.getString("ML.GeneralOptions.ScreenResolutions."
-					+ ScreenResolution.CUSTOM.toString())));
-			break;
+			case 55:
+				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.HD, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+						+ ScreenResolution.HD.toString())));
+				break;
+			case 40:
+				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_16_9, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+						+ ScreenResolution.SD_16_9.toString())));
+				break;
+			case 20:
+				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.SD_4_3, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+						+ ScreenResolution.SD_4_3.toString())));
+				break;
+			case 0:
+				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.NO_LIMIT, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+						+ ScreenResolution.NO_LIMIT.toString())));
+				break;
+			default:
+				cbScreeResolution.setSelectedItem(new ScreeResolutionCBItem(ScreenResolution.CUSTOM, Messages.getString("ML.GeneralOptions.ScreenResolutions."
+						+ ScreenResolution.CUSTOM.toString())));
+				break;
 		}
 	}
 }

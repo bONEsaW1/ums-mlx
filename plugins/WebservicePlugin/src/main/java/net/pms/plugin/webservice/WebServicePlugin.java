@@ -33,6 +33,7 @@ public class WebServicePlugin implements Plugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/webserviceplugin.properties", WebServicePlugin.class);
@@ -43,6 +44,7 @@ public class WebServicePlugin implements Plugin {
 
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
+
 	static {
 		globalConfig = new GlobalConfiguration();
 		try {

@@ -31,6 +31,7 @@ public class PlayCountWatcher implements StartStopListener {
 
 	/** Holds only the project version. It's used to always use the maven build number to display the version in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/playcountwatcherplugin.properties", PlayCountWatcher.class);
@@ -41,6 +42,7 @@ public class PlayCountWatcher implements StartStopListener {
 
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
+
 	static {
 		globalConfig = new GlobalConfiguration();
 		try {

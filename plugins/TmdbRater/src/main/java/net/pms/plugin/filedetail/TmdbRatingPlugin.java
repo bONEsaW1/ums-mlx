@@ -30,6 +30,7 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/tmdratingplugin.properties", TmdbRatingPlugin.class);
@@ -40,6 +41,7 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 
 	/** The global configuration is shared amongst all plugin instances. */
 	public static final GlobalConfiguration globalConfig;
+
 	static {
 		globalConfig = new GlobalConfiguration();
 		try {
@@ -48,6 +50,7 @@ public class TmdbRatingPlugin implements FileDetailPlugin {
 			log.error("Failed to load global configuration", e);
 		}
 	}
+
 	/** GUI */
 	private GlobalConfigurationPanel pGlobalConfiguration;
 

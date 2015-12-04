@@ -4,8 +4,7 @@ import net.pms.dlna.DLNAMediaInfo;
 import net.pms.dlna.DLNAResource;
 
 /**
- * Classes implementing this interface and packaged as pms plugins will be notified when a resources starts or stops
- * being played
+ * Classes implementing this interface and packaged as pms plugins will be notified when a resources starts or stops being played
  */
 public interface StartStopListener extends PluginBase {
 	/**

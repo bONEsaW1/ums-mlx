@@ -110,37 +110,37 @@ class DBFileFolder extends DBBase {
 				String pluginConfigFilePath = rs.getString(8);
 
 				switch (displayType) {
-				case FILE:
-					FileDisplayMode fileDisplayMode = FileDisplayMode.valueOf(FileDisplayMode.class, rs.getString(5));
-					DOFileEntryFile fef = new DOFileEntryFile(fileDisplayMode, id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
-					baseFolder.getChildren().add(fef);
-					break;
-				case INFO:
-					DOFileEntryInfo fei = new DOFileEntryInfo(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
-					baseFolder.getChildren().add(fei);
-					break;
-				case FOLDER:
-					DOFileEntryFolder feff = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
-					if (baseFolder == null) {
-						baseFolder = feff;
-						baseFolder = getFileFolder(templateId, baseFolder, conn, stmt);
-					} else {
-						feff = getFileFolder(templateId, feff, conn, stmt);
-						baseFolder.getChildren().add(feff);
-					}
-					break;
-				case PLUGIN:
-					try {
-						FileDetailPlugin plugin = PluginsFactory.getFileDetailPluginByName(pluginName);
-						DOFileEntryPlugin fep = new DOFileEntryPlugin(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength, plugin, pluginConfigFilePath);
-						baseFolder.getChildren().add(fep);
-					} catch (Exception ex) {
-						log.error(String.format("Failed to load plugin %s", pluginName), ex);
-					}
-					break;
-				default:
-					log.warn(String.format("Unhandled display type received (%s). This should never happen!", displayType));
-					break;
+					case FILE:
+						FileDisplayMode fileDisplayMode = FileDisplayMode.valueOf(FileDisplayMode.class, rs.getString(5));
+						DOFileEntryFile fef = new DOFileEntryFile(fileDisplayMode, id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
+						baseFolder.getChildren().add(fef);
+						break;
+					case INFO:
+						DOFileEntryInfo fei = new DOFileEntryInfo(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
+						baseFolder.getChildren().add(fei);
+						break;
+					case FOLDER:
+						DOFileEntryFolder feff = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength);
+						if (baseFolder == null) {
+							baseFolder = feff;
+							baseFolder = getFileFolder(templateId, baseFolder, conn, stmt);
+						} else {
+							feff = getFileFolder(templateId, feff, conn, stmt);
+							baseFolder.getChildren().add(feff);
+						}
+						break;
+					case PLUGIN:
+						try {
+							FileDetailPlugin plugin = PluginsFactory.getFileDetailPluginByName(pluginName);
+							DOFileEntryPlugin fep = new DOFileEntryPlugin(id, baseFolder, posInParent, displayNameMask, thumbnailPriorities, maxLineLength, plugin, pluginConfigFilePath);
+							baseFolder.getChildren().add(fep);
+						} catch (Exception ex) {
+							log.error(String.format("Failed to load plugin %s", pluginName), ex);
+						}
+						break;
+					default:
+						log.warn(String.format("Unhandled display type received (%s). This should never happen!", displayType));
+						break;
 				}
 			}
 		} finally {

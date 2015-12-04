@@ -63,8 +63,7 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * Adds notification support when a repaint is needed. This is required to redraw the dialog properly when changing
-	 * template
+	 * Adds notification support when a repaint is needed. This is required to redraw the dialog properly when changing template
 	 * 
 	 * @param repaintListener
 	 */
@@ -76,8 +75,7 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * returns the ID of the template having been set. If an error occurs the id=1 corresponding to the default template
-	 * is being returned
+	 * returns the ID of the template having been set. If an error occurs the id=1 corresponding to the default template is being returned
 	 * 
 	 * @return set template id
 	 */
@@ -95,8 +93,7 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * Sets the 'normal' gui state be enabling the delete template button, making the templates combo box non-editable
-	 * and selecting the saved template
+	 * Sets the 'normal' gui state be enabling the delete template button, making the templates combo box non-editable and selecting the saved template
 	 * 
 	 * @param template
 	 */
@@ -122,8 +119,7 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * Either return a new template if a new one has been created or return the already existing one. If a new template
-	 * is being returned, its ID will be 0
+	 * Either return a new template if a new one has been created or return the already existing one. If a new template is being returned, its ID will be 0
 	 * 
 	 * @return the configured template
 	 */
@@ -221,8 +217,7 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * Initializes all UI Components. Components being initialized are the combo box containing the templates, all file
-	 * properties with their list of engines and the buttons *
+	 * Initializes all UI Components. Components being initialized are the combo box containing the templates, all file properties with their list of engines and the buttons *
 	 * 
 	 * @param allowEdit
 	 */
@@ -303,8 +298,8 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * Places the visual components correctly in the grid. Components being shown are the combo box containing the
-	 * templates, all file properties with their list of engines and the buttons
+	 * Places the visual components correctly in the grid. Components being shown are the combo box containing the templates, all file properties with their list of engines and the
+	 * buttons
 	 */
 	private void placeComponents() {
 		FormLayout layout = new FormLayout("fill:p:grow, 5px, p, 5px, p, 5px, p",
@@ -343,8 +338,8 @@ public class FileImportTemplatePanel extends JPanel {
 	}
 
 	/**
-	 * Deletes the currently selected DOFileImportTemplate in the combo box. It's being deleted from the DB as well as
-	 * removed from the list of available DOFileImportTemplate in the combo box
+	 * Deletes the currently selected DOFileImportTemplate in the combo box. It's being deleted from the DB as well as removed from the list of available DOFileImportTemplate in
+	 * the combo box
 	 * 
 	 */
 	private void deleteSelectedTemplate() {

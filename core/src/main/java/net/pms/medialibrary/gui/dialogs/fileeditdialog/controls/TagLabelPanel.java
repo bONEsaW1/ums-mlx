@@ -132,8 +132,7 @@ public class TagLabelPanel extends JPanel {
 	}
 
 	/**
-	 * A TagLabelListener will be notified of all TagLabel events These are: Delete, BeginEdit, EndEdit, Layout and
-	 * NewTagValue
+	 * A TagLabelListener will be notified of all TagLabel events These are: Delete, BeginEdit, EndEdit, Layout and NewTagValue
 	 * 
 	 * @param l the listener to be notified
 	 */

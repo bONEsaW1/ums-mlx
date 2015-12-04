@@ -67,14 +67,11 @@ public class FileEditDialog extends JDialog {
 	private boolean requiresUpdate = false;
 
 	public enum EditMode {
-		Single,
-		Multiple,
-		Linked
+		Single, Multiple, Linked
 	}
 
 	/**
-	 * Listener used to be notified of file info changes in order to only save an updated configuration to DB if
-	 * something has changed
+	 * Listener used to be notified of file info changes in order to only save an updated configuration to DB if something has changed
 	 */
 	private ActionListener fileInfoChangedListener = new ActionListener() {
 		@Override
@@ -127,17 +124,17 @@ public class FileEditDialog extends JDialog {
 		// initialize tabbed pane
 		DOFileInfo fileToShow = null;
 		switch (editMode) {
-		case Single:
-			fileToShow = fileInfo;
-			fileToShow.addPropertyChangeListener(fileInfoChangedListener);
-			break;
-		case Multiple:
-			fileToShow = new DOVideoFileInfo();
-			break;
-		case Linked:
-			fileToShow = fileEditList.getSelected();
-			fileToShow.addPropertyChangeListener(fileInfoChangedListener);
-			break;
+			case Single:
+				fileToShow = fileInfo;
+				fileToShow.addPropertyChangeListener(fileInfoChangedListener);
+				break;
+			case Multiple:
+				fileToShow = new DOVideoFileInfo();
+				break;
+			case Linked:
+				fileToShow = fileEditList.getSelected();
+				fileToShow.addPropertyChangeListener(fileInfoChangedListener);
+				break;
 		}
 
 		if (fileToShow == null) {
@@ -279,12 +276,12 @@ public class FileEditDialog extends JDialog {
 
 	private DOFileInfo getEditingFileInfo() {
 		switch (editMode) {
-		case Linked:
-			return fileEditList.getSelected();
-		case Single:
-			return fileInfo;
-		default:
-			return null;
+			case Linked:
+				return fileEditList.getSelected();
+			case Single:
+				return fileInfo;
+			default:
+				return null;
 		}
 	}
 
@@ -308,20 +305,20 @@ public class FileEditDialog extends JDialog {
 		tpFileEdit.updateFileInfo(ff);
 
 		switch (editMode) {
-		case Linked:
-		case Single:
-			if (requiresUpdate) {
-				MediaLibraryStorage.getInstance().updateFileInfo(ff);
-				requiresUpdate = false;
-			}
-			break;
-		case Multiple:
-			List<ConditionType> propertiesToUpdate = tpFileEdit.getPropertiesToUpdate();
-			for (DOFileInfo fiUpdate : files) {
-				FileImportHelper.updateFileInfo(ff, fiUpdate, propertiesToUpdate);
-				MediaLibraryStorage.getInstance().updateFileInfo(fiUpdate);
-			}
-			break;
+			case Linked:
+			case Single:
+				if (requiresUpdate) {
+					MediaLibraryStorage.getInstance().updateFileInfo(ff);
+					requiresUpdate = false;
+				}
+				break;
+			case Multiple:
+				List<ConditionType> propertiesToUpdate = tpFileEdit.getPropertiesToUpdate();
+				for (DOFileInfo fiUpdate : files) {
+					FileImportHelper.updateFileInfo(ff, fiUpdate, propertiesToUpdate);
+					MediaLibraryStorage.getInstance().updateFileInfo(fiUpdate);
+				}
+				break;
 		}
 
 		return true;

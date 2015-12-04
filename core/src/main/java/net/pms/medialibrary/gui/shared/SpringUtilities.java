@@ -36,8 +36,8 @@ import javax.swing.SpringLayout;
 import java.awt.*;
 
 /**
- * A 1.4 file that provides utility methods for creating form- or grid-style layouts with SpringLayout. These utilities
- * are used by several programs, such as SpringBox and SpringCompactGrid.
+ * A 1.4 file that provides utility methods for creating form- or grid-style layouts with SpringLayout. These utilities are used by several programs, such as SpringBox and
+ * SpringCompactGrid.
  */
 public class SpringUtilities {
 	/**
@@ -50,9 +50,8 @@ public class SpringUtilities {
 	}
 
 	/**
-	 * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
-	 * component is as big as the maximum preferred width and height of the components. The parent is made just big
-	 * enough to fit them all.
+	 * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each component is as big as the maximum preferred width and height of the
+	 * components. The parent is made just big enough to fit them all.
 	 *
 	 * @param rows number of rows
 	 * @param cols number of columns
@@ -81,10 +80,8 @@ public class SpringUtilities {
 
 		// Calculate Springs that are the max of the width/height so that all
 		// cells have the same size.
-		Spring maxWidthSpring = layout.getConstraints(parent.getComponent(0)).
-				getWidth();
-		Spring maxHeightSpring = layout.getConstraints(parent.getComponent(0)).
-				getWidth();
+		Spring maxWidthSpring = layout.getConstraints(parent.getComponent(0)).getWidth();
+		Spring maxHeightSpring = layout.getConstraints(parent.getComponent(0)).getWidth();
 		for (int i = 1; i < max; i++) {
 			SpringLayout.Constraints cons = layout.getConstraints(
 					parent.getComponent(i));
@@ -150,9 +147,8 @@ public class SpringUtilities {
 	}
 
 	/**
-	 * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
-	 * component in a column is as wide as the maximum preferred width of the components in that column; height is
-	 * similarly determined for each row. The parent is made just big enough to fit them all.
+	 * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each component in a column is as wide as the maximum preferred width of
+	 * the components in that column; height is similarly determined for each row. The parent is made just big enough to fit them all.
 	 *
 	 * @param rows number of rows
 	 * @param cols number of columns
@@ -179,12 +175,10 @@ public class SpringUtilities {
 			Spring width = Spring.constant(0);
 			for (int r = 0; r < rows; r++) {
 				width = Spring.max(width,
-						getConstraintsForCell(r, c, parent, cols).
-								getWidth());
+						getConstraintsForCell(r, c, parent, cols).getWidth());
 			}
 			for (int r = 0; r < rows; r++) {
-				SpringLayout.Constraints constraints =
-						getConstraintsForCell(r, c, parent, cols);
+				SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
 				constraints.setX(x);
 				constraints.setWidth(width);
 			}
@@ -197,12 +191,10 @@ public class SpringUtilities {
 			Spring height = Spring.constant(0);
 			for (int c = 0; c < cols; c++) {
 				height = Spring.max(height,
-						getConstraintsForCell(r, c, parent, cols).
-								getHeight());
+						getConstraintsForCell(r, c, parent, cols).getHeight());
 			}
 			for (int c = 0; c < cols; c++) {
-				SpringLayout.Constraints constraints =
-						getConstraintsForCell(r, c, parent, cols);
+				SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
 				constraints.setY(y);
 				constraints.setHeight(height);
 			}

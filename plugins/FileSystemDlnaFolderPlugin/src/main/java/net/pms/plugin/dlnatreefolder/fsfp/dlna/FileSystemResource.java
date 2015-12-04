@@ -105,8 +105,7 @@ public class FileSystemResource extends VirtualFolder {
 	public void discoverChildren() {
 		if (discoverable == null) {
 			discoverable = new ArrayList<File>();
-		}
-		else {
+		} else {
 			return;
 		}
 
@@ -134,9 +133,8 @@ public class FileSystemResource extends VirtualFolder {
 	}
 
 	/**
-	 * Refresh children. For the first use, the shared files and folders found will be added to the list discoverable to
-	 * speed up the process and read the files later. When refreshing a {@link FileSystemResource}, files which have
-	 * been removed from the file system will disappear and added ones show up at the bottom of the list
+	 * Refresh children. For the first use, the shared files and folders found will be added to the list discoverable to speed up the process and read the files later. When
+	 * refreshing a {@link FileSystemResource}, files which have been removed from the file system will disappear and added ones show up at the bottom of the list
 	 *
 	 * @param isFirstUse true if it is the first use
 	 * @return true, if children have been refreshed

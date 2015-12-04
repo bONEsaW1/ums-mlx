@@ -385,9 +385,9 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				switch (JOptionPane.showConfirmDialog(bClearVideo.getTopLevelAncestor(), Messages.getString("ML.GeneralOptionsView.DeleteAllVideosMsg"))) {
-				case JOptionPane.YES_OPTION:
-					libraryManager.clearVideo();
-					break;
+					case JOptionPane.YES_OPTION:
+						libraryManager.clearVideo();
+						break;
 				}
 			}
 
@@ -451,9 +451,9 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				switch (JOptionPane.showConfirmDialog(bClearAudio.getTopLevelAncestor(), Messages.getString("ML.GeneralOptionsView.DeleteAllTracksMsg"))) {
-				case JOptionPane.YES_OPTION:
-					libraryManager.clearAudio();
-					break;
+					case JOptionPane.YES_OPTION:
+						libraryManager.clearAudio();
+						break;
 				}
 			}
 
@@ -485,9 +485,9 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				switch (JOptionPane.showConfirmDialog(bClearPictures.getTopLevelAncestor(), Messages.getString("ML.GeneralOptionsView.DeleteAllPicturesMsg"))) {
-				case JOptionPane.YES_OPTION:
-					libraryManager.clearPictures();
-					break;
+					case JOptionPane.YES_OPTION:
+						libraryManager.clearPictures();
+						break;
 				}
 			}
 
@@ -503,14 +503,14 @@ public class GeneralOptionsView extends JPanel {
 			@Override
 			public void onMessage(DBEvent obj) {
 				switch (obj.getType()) {
-				case VideoInserted:
-				case VideoUpdated:
-				case VideoDeleted:
-					refreshVideoFields();
-					break;
-				default:
-					// Do nothing
-					break;
+					case VideoInserted:
+					case VideoUpdated:
+					case VideoDeleted:
+						refreshVideoFields();
+						break;
+					default:
+						// Do nothing
+						break;
 				}
 			}
 		});

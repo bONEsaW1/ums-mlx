@@ -27,8 +27,8 @@ import javax.swing.table.*;
 import com.sun.jna.Platform;
 
 /**
- * A better-looking table than JTable. In particular, on Mac OS this looks more like a Cocoa table than the default Aqua
- * LAF manages. Source: http://elliotth.blogspot.com/2006/05/making-jtable-look-more-at-home-on-mac.html
+ * A better-looking table than JTable. In particular, on Mac OS this looks more like a Cocoa table than the default Aqua LAF manages. Source:
+ * http://elliotth.blogspot.com/2006/05/making-jtable-look-more-at-home-on-mac.html
  *
  * @author Elliott Hughes
  */
@@ -77,8 +77,8 @@ public class ETable extends JTable {
 	}
 
 	/**
-	 * Paints the backgrounds of the implied empty rows when the table model is insufficient to fill all the visible
-	 * area available to us. We don't involve cell renderers, because we have no data.
+	 * Paints the backgrounds of the implied empty rows when the table model is insufficient to fill all the visible area available to us. We don't involve cell renderers, because
+	 * we have no data.
 	 */
 	protected void paintEmptyRows(Graphics g) {
 		final int rowCount = getRowCount();
@@ -105,8 +105,8 @@ public class ETable extends JTable {
 	}
 
 	/**
-	 * Changes the behavior of a table in a JScrollPane to be more like the behavior of JList, which expands to fill the
-	 * available space. JTable normally restricts its size to just what's needed by its model.
+	 * Changes the behavior of a table in a JScrollPane to be more like the behavior of JList, which expands to fill the available space. JTable normally restricts its size to just
+	 * what's needed by its model.
 	 */
 	public boolean getScrollableTracksViewportHeight() {
 		if (getParent() instanceof JViewport) {
@@ -203,8 +203,8 @@ public class ETable extends JTable {
 	}
 
 	/**
-	 * Sets the component's tool tip if the component is being rendered smaller than its preferred size. This means that
-	 * all users automatically get tool tips on truncated text fields that show them the full value.
+	 * Sets the component's tool tip if the component is being rendered smaller than its preferred size. This means that all users automatically get tool tips on truncated text
+	 * fields that show them the full value.
 	 */
 	private void initToolTip(JComponent c, int row, int column) {
 		String toolTipText = null;
@@ -215,8 +215,8 @@ public class ETable extends JTable {
 	}
 
 	/**
-	 * Places tool tips over the cell they correspond to. MS Outlook does this, and it works rather well. Swing will
-	 * automatically override our suggested location if it would cause the tool tip to go off the display.
+	 * Places tool tips over the cell they correspond to. MS Outlook does this, and it works rather well. Swing will automatically override our suggested location if it would cause
+	 * the tool tip to go off the display.
 	 */
 	@Override
 	public Point getToolTipLocation(MouseEvent e) {

@@ -39,6 +39,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 
 	/** Holds only the project version. It's used to always use the maven build number in code */
 	private static final PmsProperties properties = new PmsProperties();
+
 	static {
 		try {
 			properties.loadFromResourceFile("/tmdbmovieimportplugin.properties", TmdbMovieImportPlugin.class);
@@ -49,10 +50,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 
 	// available tags
 	private enum Tag {
-		Actor,
-		Studio,
-		Author,
-		Producer
+		Actor, Studio, Author, Producer
 	}
 
 	// The TMDB API class
@@ -75,6 +73,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 
 	/** The global configuration is shared amongst all plugin instances. */
 	private static final GlobalConfiguration globalConfig;
+
 	static {
 		globalConfig = new GlobalConfiguration();
 		try {
@@ -273,63 +272,63 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 	public Object getFileProperty(FileProperty property) {
 		// return the proper object for every supported file property
 		switch (property) {
-		case VIDEO_CERTIFICATION:
-			return null; // movie == null ? null : movie.getCertification(); // Fixme: Unsure what this is & can't find
-							// a movie with a value that would make sense here.
-		case VIDEO_BUDGET:
-			return movie == null ? null : (int) movie.getBudget();
-		case VIDEO_COVERURL:
-			return movie == null ? null : "http://d3gtl9l2a4fn1j.cloudfront.net/t/p/original" + movie.getPosterPath();
-		case VIDEO_DIRECTOR:
-			String director = null;
-			if (movie != null && movie.getCrew() != null) {
-				for (int i = 0; i < movie.getCrew().size(); i++) {
-					if (movie.getCrew().get(i).getJob().equals("Director")) {
-						director = movie.getCrew().get(i).getName();
-						break;
+			case VIDEO_CERTIFICATION:
+				return null; // movie == null ? null : movie.getCertification(); // Fixme: Unsure what this is & can't find
+								// a movie with a value that would make sense here.
+			case VIDEO_BUDGET:
+				return movie == null ? null : (int) movie.getBudget();
+			case VIDEO_COVERURL:
+				return movie == null ? null : "http://d3gtl9l2a4fn1j.cloudfront.net/t/p/original" + movie.getPosterPath();
+			case VIDEO_DIRECTOR:
+				String director = null;
+				if (movie != null && movie.getCrew() != null) {
+					for (int i = 0; i < movie.getCrew().size(); i++) {
+						if (movie.getCrew().get(i).getJob().equals("Director")) {
+							director = movie.getCrew().get(i).getName();
+							break;
+						}
 					}
 				}
-			}
-			return director;
-		case VIDEO_GENRES:
-			List<String> genres = null;
-			if (movie != null && movie.getGenres() != null && !movie.getGenres().isEmpty()) {
-				genres = new ArrayList<String>();
-				for (int i = 0; i < movie.getGenres().size(); i++) {
-					genres.add(movie.getGenres().get(i).getName());
+				return director;
+			case VIDEO_GENRES:
+				List<String> genres = null;
+				if (movie != null && movie.getGenres() != null && !movie.getGenres().isEmpty()) {
+					genres = new ArrayList<String>();
+					for (int i = 0; i < movie.getGenres().size(); i++) {
+						genres.add(movie.getGenres().get(i).getName());
+					}
 				}
-			}
-			return genres;
-		case VIDEO_HOMEPAGEURL:
-			return movie == null || movie.getHomepage() == null ? null : movie.getHomepage().toString();
-		case VIDEO_IMDBID:
-			return movie == null ? null : movie.getImdbID();
-		case VIDEO_ORIGINALNAME:
-			return movie == null ? null : movie.getOriginalTitle();
-		case VIDEO_OVERVIEW:
-			return movie == null || movie.getOverview() == null || movie.getOverview().equals("null") ? null : movie.getOverview();
-		case VIDEO_RATINGPERCENT:
-			return movie == null ? null : (int) (movie.getVoteAverage() * 10);
-		case VIDEO_RATINGVOTERS:
-			return movie == null ? null : movie.getVoteCount();
-		case VIDEO_REVENUE:
-			return movie == null ? null : (int) movie.getRevenue();
-		case VIDEO_TAGLINE:
-			return movie == null ? null : movie.getTagline();
-		case VIDEO_TMDBID:
-			return movie == null ? null : movie.getId();
-		case VIDEO_NAME:
-			return movie == null ? null : movie.getTitle();
-		case VIDEO_SORTNAME:
-			return movie == null ? null : movie.getTitle();
-		case VIDEO_TRAILERURL:
-			return null; // movie == null || movie.getTrailers().get(0) == null ? null :
-							// movie.getTrailers().get(0).toString(); // Fixme: Needs to be parsed for video location.
-		case VIDEO_YEAR:
-			return movie == null || movie.getReleaseDate() == null ? null : Integer.parseInt(movie.getReleaseDate().substring(0, 4));
-		default:
-			logger.warn("Unsupportede FileProperty: %s", property);
-			break;
+				return genres;
+			case VIDEO_HOMEPAGEURL:
+				return movie == null || movie.getHomepage() == null ? null : movie.getHomepage().toString();
+			case VIDEO_IMDBID:
+				return movie == null ? null : movie.getImdbID();
+			case VIDEO_ORIGINALNAME:
+				return movie == null ? null : movie.getOriginalTitle();
+			case VIDEO_OVERVIEW:
+				return movie == null || movie.getOverview() == null || movie.getOverview().equals("null") ? null : movie.getOverview();
+			case VIDEO_RATINGPERCENT:
+				return movie == null ? null : (int) (movie.getVoteAverage() * 10);
+			case VIDEO_RATINGVOTERS:
+				return movie == null ? null : movie.getVoteCount();
+			case VIDEO_REVENUE:
+				return movie == null ? null : (int) movie.getRevenue();
+			case VIDEO_TAGLINE:
+				return movie == null ? null : movie.getTagline();
+			case VIDEO_TMDBID:
+				return movie == null ? null : movie.getId();
+			case VIDEO_NAME:
+				return movie == null ? null : movie.getTitle();
+			case VIDEO_SORTNAME:
+				return movie == null ? null : movie.getTitle();
+			case VIDEO_TRAILERURL:
+				return null; // movie == null || movie.getTrailers().get(0) == null ? null :
+								// movie.getTrailers().get(0).toString(); // Fixme: Needs to be parsed for video location.
+			case VIDEO_YEAR:
+				return movie == null || movie.getReleaseDate() == null ? null : Integer.parseInt(movie.getReleaseDate().substring(0, 4));
+			default:
+				logger.warn("Unsupportede FileProperty: %s", property);
+				break;
 		}
 		return null;
 	}

@@ -226,101 +226,101 @@ public class ImdbMovieImportPlugin implements FileImportPlugin {
 		// return the proper object for every supported file property
 		String queryString;
 		switch (property) {
-		case VIDEO_CERTIFICATION:
-			res = getValue("Rated");
-			// clean out some values
-			if (res != null && (res.toString().equals("Not Rated") || res.toString().equals("N/A")
-					|| res.toString().equals("o.AI.") || res.toString().equals("Unrated"))) {
-				res = null;
-			}
-			break;
-		case VIDEO_COVERURL:
-			String coverUrl = (String) getValue("Poster");
-			if (coverUrl == null || coverUrl.equals("")) {
-				res = null;
-			} else {
-				res = coverUrl.replaceAll("SX300", "SX" + globalConfig.getCoverWidth());
-			}
-			break;
-		case VIDEO_DIRECTOR:
-			res = getValue("Director");
-			break;
-		case VIDEO_GENRES:
-			Object val = getValue("Genre");
-			if (val != null) {
-				List<String> genres = new ArrayList<String>();
-				for (String genre : val.toString().split(",")) {
-					String g = genre.trim();
-					if (!genres.contains(g)) {
-						genres.add(g);
+			case VIDEO_CERTIFICATION:
+				res = getValue("Rated");
+				// clean out some values
+				if (res != null && (res.toString().equals("Not Rated") || res.toString().equals("N/A")
+						|| res.toString().equals("o.AI.") || res.toString().equals("Unrated"))) {
+					res = null;
+				}
+				break;
+			case VIDEO_COVERURL:
+				String coverUrl = (String) getValue("Poster");
+				if (coverUrl == null || coverUrl.equals("")) {
+					res = null;
+				} else {
+					res = coverUrl.replaceAll("SX300", "SX" + globalConfig.getCoverWidth());
+				}
+				break;
+			case VIDEO_DIRECTOR:
+				res = getValue("Director");
+				break;
+			case VIDEO_GENRES:
+				Object val = getValue("Genre");
+				if (val != null) {
+					List<String> genres = new ArrayList<String>();
+					for (String genre : val.toString().split(",")) {
+						String g = genre.trim();
+						if (!genres.contains(g)) {
+							genres.add(g);
+						}
+					}
+					res = genres;
+				}
+				break;
+			case VIDEO_IMDBID:
+				res = getValue("imdbID");
+				break;
+			case VIDEO_OVERVIEW:
+				res = getValue("Plot");
+				break;
+			case VIDEO_RATINGPERCENT:
+				if (globalConfig.isUseRottenTomatoes()) {
+					queryString = "tomatoMeter";
+				} else {
+					queryString = "imdbRating";
+				}
+				Object ratingObj = getValue(queryString);
+				if (ratingObj != null && !ratingObj.toString().equals("N/A")) {
+					try {
+						double r = Double.parseDouble(ratingObj.toString());
+						if (!globalConfig.isUseRottenTomatoes()) {
+							res = (int) (10 * r);
+						} else {
+							res = (int) r;
+						}
+					} catch (NumberFormatException ex) {
+						LOGGER.error(String.format("Failed to parse rating='%s' as a double", ratingObj.toString()), ex);
 					}
 				}
-				res = genres;
-			}
-			break;
-		case VIDEO_IMDBID:
-			res = getValue("imdbID");
-			break;
-		case VIDEO_OVERVIEW:
-			res = getValue("Plot");
-			break;
-		case VIDEO_RATINGPERCENT:
-			if (globalConfig.isUseRottenTomatoes()) {
-				queryString = "tomatoMeter";
-			} else {
-				queryString = "imdbRating";
-			}
-			Object ratingObj = getValue(queryString);
-			if (ratingObj != null && !ratingObj.toString().equals("N/A")) {
-				try {
-					double r = Double.parseDouble(ratingObj.toString());
-					if (!globalConfig.isUseRottenTomatoes()) {
-						res = (int) (10 * r);
-					} else {
-						res = (int) r;
+				break;
+			case VIDEO_RATINGVOTERS:
+				if (globalConfig.isUseRottenTomatoes()) {
+					queryString = "tomatoReviews";
+				} else {
+					queryString = "imdbVotes";
+				}
+				ratingObj = getValue(queryString);
+				if (ratingObj != null && !ratingObj.toString().equals("N/A")) {
+					try {
+						res = Integer.parseInt(ratingObj.toString().replace(",", ""));
+					} catch (NumberFormatException ex) {
+						LOGGER.error(String.format("Failed to parse rating='%s' as a integer", ratingObj.toString()), ex);
 					}
-				} catch (NumberFormatException ex) {
-					LOGGER.error(String.format("Failed to parse rating='%s' as a double", ratingObj.toString()), ex);
 				}
-			}
-			break;
-		case VIDEO_RATINGVOTERS:
-			if (globalConfig.isUseRottenTomatoes()) {
-				queryString = "tomatoReviews";
-			} else {
-				queryString = "imdbVotes";
-			}
-			ratingObj = getValue(queryString);
-			if (ratingObj != null && !ratingObj.toString().equals("N/A")) {
-				try {
-					res = Integer.parseInt(ratingObj.toString().replace(",", ""));
-				} catch (NumberFormatException ex) {
-					LOGGER.error(String.format("Failed to parse rating='%s' as a integer", ratingObj.toString()), ex);
-				}
-			}
-			break;
-		case VIDEO_NAME:
-			res = getValue("Title");
-			break;
-		case VIDEO_SORTNAME:
-			res = getValue("Title");
-			break;
-		case VIDEO_YEAR:
-			ratingObj = getValue("Released");
-			if (ratingObj != null) {
-				try {
-					String dStr = ratingObj.toString();
-					if (dStr.length() > 3) {
-						res = Integer.parseInt(dStr.substring(dStr.length() - 4, dStr.length()));
+				break;
+			case VIDEO_NAME:
+				res = getValue("Title");
+				break;
+			case VIDEO_SORTNAME:
+				res = getValue("Title");
+				break;
+			case VIDEO_YEAR:
+				ratingObj = getValue("Released");
+				if (ratingObj != null) {
+					try {
+						String dStr = ratingObj.toString();
+						if (dStr.length() > 3) {
+							res = Integer.parseInt(dStr.substring(dStr.length() - 4, dStr.length()));
+						}
+					} catch (NumberFormatException ex) {
+						LOGGER.error("Failed to parse release year='%s' as a double", ex);
 					}
-				} catch (NumberFormatException ex) {
-					LOGGER.error("Failed to parse release year='%s' as a double", ex);
 				}
-			}
-			break;
-		default:
-			LOGGER.warn("Unsupported FileProperty: %s", property);
-			break;
+				break;
+			default:
+				LOGGER.warn("Unsupported FileProperty: %s", property);
+				break;
 		}
 		return res;
 	}

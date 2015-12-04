@@ -64,12 +64,12 @@ public class TemplateTreeCellRenderer extends DefaultTreeCellRenderer {
 			} else if (userObject instanceof DOFileEntryFile) {
 				DOFileEntryFile fef = (DOFileEntryFile) userObject;
 				switch (fef.getFileDisplayMode()) {
-				case MULTIPLE:
-					icon = this.fileFolderFileMultipleIcon;
-					break;
-				default:
-					icon = this.fileFolderFileSingleIcon;
-					break;
+					case MULTIPLE:
+						icon = this.fileFolderFileMultipleIcon;
+						break;
+					default:
+						icon = this.fileFolderFileSingleIcon;
+						break;
 				}
 			} else if (userObject instanceof DOFileEntryPlugin) {
 				DOFileEntryPlugin entry = (DOFileEntryPlugin) userObject;

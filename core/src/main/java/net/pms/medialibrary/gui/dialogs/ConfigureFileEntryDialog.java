@@ -67,22 +67,22 @@ public class ConfigureFileEntryDialog extends JDialog {
 		fileEntryType = fileEntry.getFileEntryType();
 		this.parent = parent;
 		switch (fileEntryType) {
-		case INFO:
-			pFilterFile.setFileDisplayModeVisible(false);
-			break;
-		case FILE:
-			// do nothing
-			break;
-		case FOLDER:
-			pFilterFile.setFileDisplayModeVisible(false);
-			pFilterFile.setThumbnailPrioVisible(false);
-			break;
-		case UNKNOWN:
-			// do nothing
-			break;
-		default:
-			log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
-			break;
+			case INFO:
+				pFilterFile.setFileDisplayModeVisible(false);
+				break;
+			case FILE:
+				// do nothing
+				break;
+			case FOLDER:
+				pFilterFile.setFileDisplayModeVisible(false);
+				pFilterFile.setThumbnailPrioVisible(false);
+				break;
+			case UNKNOWN:
+				// do nothing
+				break;
+			default:
+				log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
+				break;
 		}
 		setTitle(Messages.getString("ML.ConfigureFileEntryDialog.Title." + fileEntryType));
 
@@ -120,20 +120,20 @@ public class ConfigureFileEntryDialog extends JDialog {
 	private void fireFilterFileDialogEvent(DialogActionType actionType) {
 		DOFileEntryBase fileEntry = null;
 		switch (fileEntryType) {
-		case FILE:
-			fileEntry = new DOFileEntryFile(pFilterFile.getFileDisplayMode(), -1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(),
-					pFilterFile.getMaxLineLength());
-			break;
-		case INFO:
-			fileEntry = new DOFileEntryInfo(-1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
-			break;
-		case FOLDER:
-			fileEntry = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), -1, parent, 0, pFilterFile.getDisplaynameMask(),
-					pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
-			break;
-		default:
-			log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
-			break;
+			case FILE:
+				fileEntry = new DOFileEntryFile(pFilterFile.getFileDisplayMode(), -1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(),
+						pFilterFile.getMaxLineLength());
+				break;
+			case INFO:
+				fileEntry = new DOFileEntryInfo(-1, parent, 0, pFilterFile.getDisplaynameMask(), pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
+				break;
+			case FOLDER:
+				fileEntry = new DOFileEntryFolder(new ArrayList<DOFileEntryBase>(), -1, parent, 0, pFilterFile.getDisplaynameMask(),
+						pFilterFile.getThumbnailPriorities(), pFilterFile.getMaxLineLength());
+				break;
+			default:
+				log.warn(String.format("Unhandled file entry type received (%s). This should never happen!", fileEntryType));
+				break;
 		}
 
 		for (ConfigureFileDialogListener l : filterFileDialogListeners) {

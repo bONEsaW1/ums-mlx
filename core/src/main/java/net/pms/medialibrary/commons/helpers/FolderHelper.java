@@ -212,132 +212,132 @@ public class FolderHelper {
 
 	public String getDisplayNameMaskSubstitute(ConditionType conditionType) {
 		switch (conditionType) {
-		case AUDIO_ALBUM:
-			return "%album";
-		case AUDIO_ARTIST:
-			return "%artist";
-		case AUDIO_BITSPERSAMPLE:
-			return "%bits_per_sample";
-		case AUDIO_CODECA:
-			return "%audio_codec";
-		case AUDIO_COVERPATH:
-			return "%cover_path";
-		case AUDIO_DELAYMS:
-			return "%delay_ms";
-		case AUDIO_DURATION_SEC:
-			return "%duration_sec";
-		case AUDIO_GENRE:
-			return "%genre";
-		case AUDIO_LANG:
-			return "%lang";
-		case AUDIO_NRAUDIOCHANNELS:
-			return "%nr_audio_channels";
-		case AUDIO_SAMPLEFREQ:
-			return "%sample_freq";
-		case AUDIO_SONGNAME:
-			return "%song_name";
-		case AUDIO_TRACK:
-			return "%track_nr";
-		case AUDIO_YEAR:
-			return "%year";
-		case FILE_CONTAINS_TAG:
-			return "%tag_<tag_name>";
-		case FILE_DATEINSERTEDDB:
-			return "%date_inserted_db";
-		case FILE_DATELASTUPDATEDDB:
-			return "%date_last_updated_db";
-		case FILE_DATEMODIFIEDOS:
-			return "%date_last_modified_os";
-		case FILE_FILENAME:
-			return "%file_name";
-		case FILE_FOLDERPATH:
-			return "%folder_path";
-		case FILE_PLAYCOUNT:
-			return "%play_count";
-		case FILE_SIZEBYTE:
-			return "%file_size";
-		case FILE_TYPE:
-			return "%type";
-		case FILEPLAYS_DATEPLAYEND:
-			return "%date_last_played";
-		case FILE_THUMBNAILPATH:
-			return "%cover_path";
-		case IMAGE_HEIGHT:
-			return "%height";
-		case IMAGE_WIDTH:
-			return "%width";
-		case UNKNOWN:
-			return "%unknown";
-		case VIDEO_ORIGINALNAME:
-			return "%original_name";
-		case VIDEO_TMDBID:
-			return "%tmdb_id";
-		case VIDEO_IMDBID:
-			return "%imdb_id";
-		case VIDEO_BUDGET:
-			return "%budget";
-		case VIDEO_REVENUE:
-			return "%revenue";
-		case VIDEO_HOMEPAGEURL:
-			return "%homepage_url";
-		case VIDEO_TRAILERURL:
-			return "%trailer_url";
-		case VIDEO_CERTIFICATION:
-			return "%certification";
-		case VIDEO_CERTIFICATIONREASON:
-			return "%certification_reason";
-		case VIDEO_ASPECTRATIO:
-			return "%aspect_ratio";
-		case VIDEO_BITRATE:
-			return "%bitrate";
-		case VIDEO_BITSPERPIXEL:
-			return "%bits_per_pixel";
-		case VIDEO_CODECV:
-			return "%video_codec";
-		case VIDEO_CONTAINER:
-			return "%container";
-		case VIDEO_CONTAINS_GENRE:
-			return "%genres";
-		case VIDEO_CONTAINS_SUBTITLES:
-			return "%subtitle_languages";
-		case VIDEO_CONTAINS_VIDEOAUDIO:
-			return "%audio_languages";
-		case VIDEO_DIRECTOR:
-			return "%director";
-		case VIDEO_DURATIONSEC:
-			return "%duration";
-		case VIDEO_DVDTRACK:
-			return "%dvd_track";
-		case VIDEO_FRAMERATE:
-			return "%frame_rate";
-		case VIDEO_HEIGHT:
-			return "%height";
-		case VIDEO_MIMETYPE:
-			return "%mime_type";
-		case VIDEO_MODEL:
-			return "%model";
-		case VIDEO_MUXABLE:
-			return "%muxable";
-		case VIDEO_OVERVIEW:
-			return "%plot";
-		case VIDEO_RATINGPERCENT:
-			return "%rating_percent";
-		case VIDEO_RATINGVOTERS:
-			return "%rating_voters";
-		case VIDEO_TAGLINE:
-			return "%tagline";
-		case VIDEO_NAME:
-			return "%name";
-		case VIDEO_SORTNAME:
-			return "%sort_name";
-		case VIDEO_WIDTH:
-			return "%width";
-		case VIDEO_YEAR:
-			return "%year";
-		case VIDEO_MUXINGMODE:
-			return "%muxing_mode";
-		default:
-			return "";
+			case AUDIO_ALBUM:
+				return "%album";
+			case AUDIO_ARTIST:
+				return "%artist";
+			case AUDIO_BITSPERSAMPLE:
+				return "%bits_per_sample";
+			case AUDIO_CODECA:
+				return "%audio_codec";
+			case AUDIO_COVERPATH:
+				return "%cover_path";
+			case AUDIO_DELAYMS:
+				return "%delay_ms";
+			case AUDIO_DURATION_SEC:
+				return "%duration_sec";
+			case AUDIO_GENRE:
+				return "%genre";
+			case AUDIO_LANG:
+				return "%lang";
+			case AUDIO_NRAUDIOCHANNELS:
+				return "%nr_audio_channels";
+			case AUDIO_SAMPLEFREQ:
+				return "%sample_freq";
+			case AUDIO_SONGNAME:
+				return "%song_name";
+			case AUDIO_TRACK:
+				return "%track_nr";
+			case AUDIO_YEAR:
+				return "%year";
+			case FILE_CONTAINS_TAG:
+				return "%tag_<tag_name>";
+			case FILE_DATEINSERTEDDB:
+				return "%date_inserted_db";
+			case FILE_DATELASTUPDATEDDB:
+				return "%date_last_updated_db";
+			case FILE_DATEMODIFIEDOS:
+				return "%date_last_modified_os";
+			case FILE_FILENAME:
+				return "%file_name";
+			case FILE_FOLDERPATH:
+				return "%folder_path";
+			case FILE_PLAYCOUNT:
+				return "%play_count";
+			case FILE_SIZEBYTE:
+				return "%file_size";
+			case FILE_TYPE:
+				return "%type";
+			case FILEPLAYS_DATEPLAYEND:
+				return "%date_last_played";
+			case FILE_THUMBNAILPATH:
+				return "%cover_path";
+			case IMAGE_HEIGHT:
+				return "%height";
+			case IMAGE_WIDTH:
+				return "%width";
+			case UNKNOWN:
+				return "%unknown";
+			case VIDEO_ORIGINALNAME:
+				return "%original_name";
+			case VIDEO_TMDBID:
+				return "%tmdb_id";
+			case VIDEO_IMDBID:
+				return "%imdb_id";
+			case VIDEO_BUDGET:
+				return "%budget";
+			case VIDEO_REVENUE:
+				return "%revenue";
+			case VIDEO_HOMEPAGEURL:
+				return "%homepage_url";
+			case VIDEO_TRAILERURL:
+				return "%trailer_url";
+			case VIDEO_CERTIFICATION:
+				return "%certification";
+			case VIDEO_CERTIFICATIONREASON:
+				return "%certification_reason";
+			case VIDEO_ASPECTRATIO:
+				return "%aspect_ratio";
+			case VIDEO_BITRATE:
+				return "%bitrate";
+			case VIDEO_BITSPERPIXEL:
+				return "%bits_per_pixel";
+			case VIDEO_CODECV:
+				return "%video_codec";
+			case VIDEO_CONTAINER:
+				return "%container";
+			case VIDEO_CONTAINS_GENRE:
+				return "%genres";
+			case VIDEO_CONTAINS_SUBTITLES:
+				return "%subtitle_languages";
+			case VIDEO_CONTAINS_VIDEOAUDIO:
+				return "%audio_languages";
+			case VIDEO_DIRECTOR:
+				return "%director";
+			case VIDEO_DURATIONSEC:
+				return "%duration";
+			case VIDEO_DVDTRACK:
+				return "%dvd_track";
+			case VIDEO_FRAMERATE:
+				return "%frame_rate";
+			case VIDEO_HEIGHT:
+				return "%height";
+			case VIDEO_MIMETYPE:
+				return "%mime_type";
+			case VIDEO_MODEL:
+				return "%model";
+			case VIDEO_MUXABLE:
+				return "%muxable";
+			case VIDEO_OVERVIEW:
+				return "%plot";
+			case VIDEO_RATINGPERCENT:
+				return "%rating_percent";
+			case VIDEO_RATINGVOTERS:
+				return "%rating_voters";
+			case VIDEO_TAGLINE:
+				return "%tagline";
+			case VIDEO_NAME:
+				return "%name";
+			case VIDEO_SORTNAME:
+				return "%sort_name";
+			case VIDEO_WIDTH:
+				return "%width";
+			case VIDEO_YEAR:
+				return "%year";
+			case VIDEO_MUXINGMODE:
+				return "%muxing_mode";
+			default:
+				return "";
 		}
 	}
 
@@ -347,96 +347,96 @@ public class FolderHelper {
 		for (FileType ft : fileTypes) {
 			if (!handledTypes.contains(ft)) {
 				switch (ft) {
-				case VIDEO:
-					items.add(getMaskCBItem(ConditionType.FILE_FILENAME));
-					items.add(getMaskCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getMaskCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getMaskCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getMaskCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getMaskCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getMaskCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getMaskCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getMaskCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getMaskCBItem(ConditionType.VIDEO_ORIGINALNAME));
-					items.add(getMaskCBItem(ConditionType.VIDEO_NAME));
-					items.add(getMaskCBItem(ConditionType.VIDEO_SORTNAME));
-					items.add(getMaskCBItem(ConditionType.VIDEO_TMDBID));
-					items.add(getMaskCBItem(ConditionType.VIDEO_IMDBID));
-					items.add(getMaskCBItem(ConditionType.VIDEO_TAGLINE));
-					items.add(getMaskCBItem(ConditionType.VIDEO_OVERVIEW));
-					items.add(getMaskCBItem(ConditionType.VIDEO_BUDGET));
-					items.add(getMaskCBItem(ConditionType.VIDEO_REVENUE));
-					items.add(getMaskCBItem(ConditionType.VIDEO_DIRECTOR));
-					items.add(getMaskCBItem(ConditionType.VIDEO_YEAR));
-					items.add(getMaskCBItem(ConditionType.VIDEO_DURATIONSEC));
-					items.add(getMaskCBItem(ConditionType.VIDEO_WIDTH));
-					items.add(getMaskCBItem(ConditionType.VIDEO_HEIGHT));
-					items.add(getMaskCBItem(ConditionType.VIDEO_HOMEPAGEURL));
-					items.add(getMaskCBItem(ConditionType.VIDEO_TRAILERURL));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CERTIFICATION));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CERTIFICATIONREASON));
-					items.add(getMaskCBItem(ConditionType.VIDEO_RATINGPERCENT));
-					items.add(getMaskCBItem(ConditionType.VIDEO_RATINGVOTERS));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CODECV));
-					items.add(getMaskCBItem(ConditionType.VIDEO_MIMETYPE));
-					items.add(getMaskCBItem(ConditionType.VIDEO_ASPECTRATIO));
-					items.add(getMaskCBItem(ConditionType.VIDEO_DVDTRACK));
-					items.add(getMaskCBItem(ConditionType.VIDEO_FRAMERATE));
-					items.add(getMaskCBItem(ConditionType.VIDEO_BITRATE));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINER));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINS_GENRE));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO));
-					items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINS_SUBTITLES));
-					items.add(getMaskCBItem(ConditionType.VIDEO_MUXINGMODE));
-					break;
-				case AUDIO:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_ALBUM));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_ARTIST));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_CODECA));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_DURATION_SEC));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_GENRE));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_NRAUDIOCHANNELS));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_SAMPLEFREQ));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_SONGNAME));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_TRACK));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_YEAR));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_MUXINGMODE));
-					break;
-				case PICTURES:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.IMAGE_HEIGHT));
-					items.add(getConditionTypeCBItem(ConditionType.IMAGE_WIDTH));
-					break;
-				case FILE:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					break;
-				default:
-					break;
+					case VIDEO:
+						items.add(getMaskCBItem(ConditionType.FILE_FILENAME));
+						items.add(getMaskCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getMaskCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getMaskCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getMaskCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getMaskCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getMaskCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getMaskCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getMaskCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getMaskCBItem(ConditionType.VIDEO_ORIGINALNAME));
+						items.add(getMaskCBItem(ConditionType.VIDEO_NAME));
+						items.add(getMaskCBItem(ConditionType.VIDEO_SORTNAME));
+						items.add(getMaskCBItem(ConditionType.VIDEO_TMDBID));
+						items.add(getMaskCBItem(ConditionType.VIDEO_IMDBID));
+						items.add(getMaskCBItem(ConditionType.VIDEO_TAGLINE));
+						items.add(getMaskCBItem(ConditionType.VIDEO_OVERVIEW));
+						items.add(getMaskCBItem(ConditionType.VIDEO_BUDGET));
+						items.add(getMaskCBItem(ConditionType.VIDEO_REVENUE));
+						items.add(getMaskCBItem(ConditionType.VIDEO_DIRECTOR));
+						items.add(getMaskCBItem(ConditionType.VIDEO_YEAR));
+						items.add(getMaskCBItem(ConditionType.VIDEO_DURATIONSEC));
+						items.add(getMaskCBItem(ConditionType.VIDEO_WIDTH));
+						items.add(getMaskCBItem(ConditionType.VIDEO_HEIGHT));
+						items.add(getMaskCBItem(ConditionType.VIDEO_HOMEPAGEURL));
+						items.add(getMaskCBItem(ConditionType.VIDEO_TRAILERURL));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CERTIFICATION));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CERTIFICATIONREASON));
+						items.add(getMaskCBItem(ConditionType.VIDEO_RATINGPERCENT));
+						items.add(getMaskCBItem(ConditionType.VIDEO_RATINGVOTERS));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CODECV));
+						items.add(getMaskCBItem(ConditionType.VIDEO_MIMETYPE));
+						items.add(getMaskCBItem(ConditionType.VIDEO_ASPECTRATIO));
+						items.add(getMaskCBItem(ConditionType.VIDEO_DVDTRACK));
+						items.add(getMaskCBItem(ConditionType.VIDEO_FRAMERATE));
+						items.add(getMaskCBItem(ConditionType.VIDEO_BITRATE));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINER));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINS_GENRE));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO));
+						items.add(getMaskCBItem(ConditionType.VIDEO_CONTAINS_SUBTITLES));
+						items.add(getMaskCBItem(ConditionType.VIDEO_MUXINGMODE));
+						break;
+					case AUDIO:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_ALBUM));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_ARTIST));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_CODECA));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_DURATION_SEC));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_GENRE));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_NRAUDIOCHANNELS));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_SAMPLEFREQ));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_SONGNAME));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_TRACK));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_YEAR));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_MUXINGMODE));
+						break;
+					case PICTURES:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.IMAGE_HEIGHT));
+						items.add(getConditionTypeCBItem(ConditionType.IMAGE_WIDTH));
+						break;
+					case FILE:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						break;
+					default:
+						break;
 				}
 				handledTypes.add(ft);
 			}
@@ -451,92 +451,92 @@ public class FolderHelper {
 		for (FileType ft : fileTypes) {
 			if (!handledTypes.contains(ft)) {
 				switch (ft) {
-				case VIDEO:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_NAME));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_SORTNAME));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_ORIGINALNAME));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_BUDGET));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_REVENUE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_TAGLINE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_OVERVIEW));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_DIRECTOR));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_DURATIONSEC));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_YEAR));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_WIDTH));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_HEIGHT));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATION));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATIONREASON));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGPERCENT));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGVOTERS));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CODECV));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_MIMETYPE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_BITRATE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINER));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_MUXINGMODE));
-					// items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO));
-					// items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_SUBTITLES));
-					// items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_GENRE));
-					break;
-				case AUDIO:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_ALBUM));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_ARTIST));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_CODECA));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_DURATION_SEC));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_GENRE));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_NRAUDIOCHANNELS));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_SAMPLEFREQ));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_SONGNAME));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_TRACK));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_YEAR));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_MUXINGMODE));
-					break;
-				case PICTURES:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.IMAGE_HEIGHT));
-					items.add(getConditionTypeCBItem(ConditionType.IMAGE_WIDTH));
-					break;
-				case FILE:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_ISACTIF));
-					// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					break;
-				default:
-					break;
+					case VIDEO:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_NAME));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_SORTNAME));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_ORIGINALNAME));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_BUDGET));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_REVENUE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_TAGLINE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_OVERVIEW));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_DIRECTOR));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_DURATIONSEC));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_YEAR));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_WIDTH));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_HEIGHT));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATION));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATIONREASON));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGPERCENT));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGVOTERS));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CODECV));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_MIMETYPE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_BITRATE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINER));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_MUXINGMODE));
+						// items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO));
+						// items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_SUBTITLES));
+						// items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_GENRE));
+						break;
+					case AUDIO:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_ALBUM));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_ARTIST));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_CODECA));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_DURATION_SEC));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_GENRE));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_NRAUDIOCHANNELS));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_SAMPLEFREQ));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_SONGNAME));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_TRACK));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_YEAR));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_MUXINGMODE));
+						break;
+					case PICTURES:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.IMAGE_HEIGHT));
+						items.add(getConditionTypeCBItem(ConditionType.IMAGE_WIDTH));
+						break;
+					case FILE:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_ISACTIF));
+						// items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						break;
+					default:
+						break;
 				}
 				handledTypes.add(ft);
 			}
@@ -551,104 +551,104 @@ public class FolderHelper {
 		for (FileType ft : fileTypes) {
 			if (!handledTypes.contains(ft)) {
 				switch (ft) {
-				case VIDEO:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_ISACTIF));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_THUMBNAILPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_ORIGINALNAME));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_NAME));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_SORTNAME));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_TMDBID));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_IMDBID));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_TAGLINE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_OVERVIEW));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_BUDGET));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_REVENUE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_DIRECTOR));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_YEAR));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_DURATIONSEC));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_WIDTH));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_HEIGHT));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_HOMEPAGEURL));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_TRAILERURL));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATION));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATIONREASON));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGPERCENT));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGVOTERS));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CODECV));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_MIMETYPE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_ASPECTRATIO));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_BITRATE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINER));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_DVDTRACK));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_FRAMERATE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_MODEL));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_MUXABLE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_MUXINGMODE));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_SUBTITLES));
-					items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_GENRE));
-					break;
-				case AUDIO:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_THUMBNAILPATH));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_ALBUM));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_ARTIST));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_CODECA));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_DURATION_SEC));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_GENRE));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_NRAUDIOCHANNELS));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_SAMPLEFREQ));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_SONGNAME));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_TRACK));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_YEAR));
-					items.add(getConditionTypeCBItem(ConditionType.AUDIO_MUXINGMODE));
-					break;
-				case PICTURES:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_THUMBNAILPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					items.add(getConditionTypeCBItem(ConditionType.IMAGE_HEIGHT));
-					items.add(getConditionTypeCBItem(ConditionType.IMAGE_WIDTH));
-					break;
-				case FILE:
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
-					items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
-					items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
-					break;
-				default:
-					break;
+					case VIDEO:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_ISACTIF));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_THUMBNAILPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_ORIGINALNAME));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_NAME));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_SORTNAME));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_TMDBID));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_IMDBID));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_TAGLINE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_OVERVIEW));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_BUDGET));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_REVENUE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_DIRECTOR));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_YEAR));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_DURATIONSEC));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_WIDTH));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_HEIGHT));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_HOMEPAGEURL));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_TRAILERURL));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATION));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CERTIFICATIONREASON));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGPERCENT));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_RATINGVOTERS));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CODECV));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_MIMETYPE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_ASPECTRATIO));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_BITRATE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINER));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_DVDTRACK));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_FRAMERATE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_MODEL));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_MUXABLE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_MUXINGMODE));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_VIDEOAUDIO));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_SUBTITLES));
+						items.add(getConditionTypeCBItem(ConditionType.VIDEO_CONTAINS_GENRE));
+						break;
+					case AUDIO:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_THUMBNAILPATH));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_ALBUM));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_ARTIST));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_CODECA));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_DURATION_SEC));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_GENRE));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_NRAUDIOCHANNELS));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_SAMPLEFREQ));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_SONGNAME));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_TRACK));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_YEAR));
+						items.add(getConditionTypeCBItem(ConditionType.AUDIO_MUXINGMODE));
+						break;
+					case PICTURES:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_THUMBNAILPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						items.add(getConditionTypeCBItem(ConditionType.IMAGE_HEIGHT));
+						items.add(getConditionTypeCBItem(ConditionType.IMAGE_WIDTH));
+						break;
+					case FILE:
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FILENAME));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_FOLDERPATH));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_SIZEBYTE));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATELASTUPDATEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEINSERTEDDB));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_DATEMODIFIEDOS));
+						items.add(getConditionTypeCBItem(ConditionType.FILEPLAYS_DATEPLAYEND));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_CONTAINS_TAG));
+						items.add(getConditionTypeCBItem(ConditionType.FILE_PLAYCOUNT));
+						break;
+					default:
+						break;
 				}
 				handledTypes.add(ft);
 			}

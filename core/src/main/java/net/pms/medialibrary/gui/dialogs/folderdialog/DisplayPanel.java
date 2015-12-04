@@ -571,15 +571,15 @@ class DisplayPanel extends JPanel {
 		});
 
 		switch (folder.getDisplayProperties().getFileDisplayType()) {
-		case FILE:
-			rbDisplayItemAsFile.setSelected(true);
-			break;
-		case FOLDER:
-			rbDisplayIemAsFolder.setSelected(true);
-			break;
-		default:
-			log.warn(String.format("Unhandled file display type received (%s). This should never happen!", folder.getDisplayProperties().getFileDisplayType()));
-			break;
+			case FILE:
+				rbDisplayItemAsFile.setSelected(true);
+				break;
+			case FOLDER:
+				rbDisplayIemAsFolder.setSelected(true);
+				break;
+			default:
+				log.warn(String.format("Unhandled file display type received (%s). This should never happen!", folder.getDisplayProperties().getFileDisplayType()));
+				break;
 		}
 
 		if (folder.getDisplayProperties().isSortAscending()) {
@@ -815,14 +815,14 @@ class DisplayPanel extends JPanel {
 					@Override
 					public void configureFileDialogAction(FilterFileDialogDialogEventArgs e) {
 						switch (e.getActionType()) {
-						case OK:
-							DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getEntry());
-							DefaultMutableTreeNode nodeToDropOnto = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
-							treeModel.insertNodeInto(newNode, nodeToDropOnto, getNewNodeInsertPosition(e.getEntry(), nodeToDropOnto));
-							tree.expandPath(tree.getSelectionPath());
-							break;
-						default:
-							break;
+							case OK:
+								DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getEntry());
+								DefaultMutableTreeNode nodeToDropOnto = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
+								treeModel.insertNodeInto(newNode, nodeToDropOnto, getNewNodeInsertPosition(e.getEntry(), nodeToDropOnto));
+								tree.expandPath(tree.getSelectionPath());
+								break;
+							default:
+								break;
 						}
 						((ConfigureFileEntryDialog) e.getSource()).dispose();
 					}
@@ -893,11 +893,11 @@ class DisplayPanel extends JPanel {
 						if (tree.getSelectionPath() != null && tree.getSelectionPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
 							DefaultMutableTreeNode dtn = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
 							switch (e.getActionType()) {
-							case OK:
-								dtn.setUserObject(e.getEntry());
-								break;
-							default:
-								break;
+								case OK:
+									dtn.setUserObject(e.getEntry());
+									break;
+								default:
+									break;
 							}
 							((ConfigureFileEntryDialog) e.getSource()).dispose();
 						}

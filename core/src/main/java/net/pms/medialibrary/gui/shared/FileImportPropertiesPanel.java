@@ -81,8 +81,7 @@ public class FileImportPropertiesPanel extends JPanel {
 	}
 
 	/**
-	 * Adds notification support when a repaint is needed. This is required to redraw the dialog properly when changing
-	 * template
+	 * Adds notification support when a repaint is needed. This is required to redraw the dialog properly when changing template
 	 * 
 	 * @param repaintListener
 	 */
@@ -93,8 +92,7 @@ public class FileImportPropertiesPanel extends JPanel {
 	}
 
 	/**
-	 * Initializes all UI Components. Components being initialized are the combo box containing the templates, all file
-	 * properties with their list of engines and the buttons
+	 * Initializes all UI Components. Components being initialized are the combo box containing the templates, all file properties with their list of engines and the buttons
 	 */
 	private void prepareComponents(DOFileImportTemplate fileImportTemplate) {
 		fssps = getSelectorPanels(fileImportTemplate, fileType);
@@ -107,8 +105,8 @@ public class FileImportPropertiesPanel extends JPanel {
 	}
 
 	/**
-	 * Places the visual components correctly in the grid. Components being shown are the combo box containing the
-	 * templates, all file properties with their list of engines and the buttons
+	 * Places the visual components correctly in the grid. Components being shown are the combo box containing the templates, all file properties with their list of engines and the
+	 * buttons
 	 */
 	private void placeComponents() {
 		FormLayout layout = new FormLayout("3px, 120, 5px, fill:p:grow, 3px",
@@ -275,8 +273,7 @@ public class FileImportPropertiesPanel extends JPanel {
 							l.actionPerformed(new ActionEvent(this, newList.isSelectedIndex(i) ? 0 : 1, model.getElementAt(i).toString()));
 						}
 					}
-				}
-				finally {
+				} finally {
 					isHandlingPluginSelectionChange = false;
 				}
 			}

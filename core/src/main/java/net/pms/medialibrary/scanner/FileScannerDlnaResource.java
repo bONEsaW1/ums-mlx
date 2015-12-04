@@ -25,8 +25,8 @@ import net.pms.configuration.RendererConfiguration;
 import net.pms.dlna.DLNAResource;
 
 /**
- * This class is being used by the FileScanner. It sets the parent of the RealFile being used for parsing to an instance
- * of this class in order to make the usage of mediainfo or ffmpeg configurable through the mediainfo flag
+ * This class is being used by the FileScanner. It sets the parent of the RealFile being used for parsing to an instance of this class in order to make the usage of mediainfo or
+ * ffmpeg configurable through the mediainfo flag
  * 
  * @author pw
  * 

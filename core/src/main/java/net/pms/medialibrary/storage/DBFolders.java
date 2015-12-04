@@ -510,15 +510,15 @@ class DBFolders extends DBBase {
 				folder.setPositionInParent(rs.getInt(5));
 
 				switch (folder.getFolderType()) {
-				case MEDIALIBRARY:
-					folder = getMediaLibraryFolder(folder, stmt, conn);
-					break;
-				case SPECIAL:
-					folder = getSpecialFolder(folder, stmt, conn);
-					break;
-				default:
-					log.warn(String.format("Unhandled folder type received (%s). This should never happen!", folder.getFolderType()));
-					break;
+					case MEDIALIBRARY:
+						folder = getMediaLibraryFolder(folder, stmt, conn);
+						break;
+					case SPECIAL:
+						folder = getSpecialFolder(folder, stmt, conn);
+						break;
+					default:
+						log.warn(String.format("Unhandled folder type received (%s). This should never happen!", folder.getFolderType()));
+						break;
 				}
 			}
 

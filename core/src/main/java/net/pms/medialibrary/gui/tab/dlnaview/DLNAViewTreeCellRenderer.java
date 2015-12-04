@@ -63,21 +63,21 @@ public class DLNAViewTreeCellRenderer extends DefaultTreeCellRenderer {
 		try {
 			if (MediaLibraryConfiguration.getInstance().isMediaLibraryEnabled()) {
 				switch (folder.getFileType()) {
-				case AUDIO:
-					im = ImageIO.read(getClass().getResource(iconsFolder + "audiofolder-16.png"));
-					break;
-				case VIDEO:
-					im = ImageIO.read(getClass().getResource(iconsFolder + "videofolder-16.png"));
-					break;
-				case PICTURES:
-					im = ImageIO.read(getClass().getResource(iconsFolder + "picturesfolder-16.png"));
-					break;
-				case FILE:
-					im = ImageIO.read(getClass().getResource(iconsFolder + "nofilefilter_folder-16.png"));
-					break;
-				default:
-					log.warn(String.format("Unhandled file type received (%s). This should never happen!", folder.getFileType()));
-					break;
+					case AUDIO:
+						im = ImageIO.read(getClass().getResource(iconsFolder + "audiofolder-16.png"));
+						break;
+					case VIDEO:
+						im = ImageIO.read(getClass().getResource(iconsFolder + "videofolder-16.png"));
+						break;
+					case PICTURES:
+						im = ImageIO.read(getClass().getResource(iconsFolder + "picturesfolder-16.png"));
+						break;
+					case FILE:
+						im = ImageIO.read(getClass().getResource(iconsFolder + "nofilefilter_folder-16.png"));
+						break;
+					default:
+						log.warn(String.format("Unhandled file type received (%s). This should never happen!", folder.getFileType()));
+						break;
 				}
 
 				int w = 5;
@@ -159,12 +159,12 @@ public class DLNAViewTreeCellRenderer extends DefaultTreeCellRenderer {
 			} else if (userObject instanceof DOFileEntryFile) {
 				DOFileEntryFile fef = (DOFileEntryFile) userObject;
 				switch (fef.getFileDisplayMode()) {
-				case MULTIPLE:
-					icon = fileFolderFileMultipleIcon;
-					break;
-				default:
-					icon = fileFolderFileSingleIcon;
-					break;
+					case MULTIPLE:
+						icon = fileFolderFileMultipleIcon;
+						break;
+					default:
+						icon = fileFolderFileSingleIcon;
+						break;
 				}
 			} else if (userObject instanceof DOFileEntryPlugin && ((DOFileEntryPlugin) userObject).getPlugin() != null) {
 				icon = ((DOFileEntryPlugin) userObject).getPlugin().getTreeIcon();

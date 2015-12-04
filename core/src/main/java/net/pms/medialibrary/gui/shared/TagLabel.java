@@ -40,8 +40,8 @@ import javax.swing.JTextField;
 import net.pms.Messages;
 
 /**
- * A TagLabel can be used for editing a string. The set tag value is being shown in a label. When hovering over it, edit
- * and delete options appear. If editing, the label changes to a text box and can be edited
+ * A TagLabel can be used for editing a string. The set tag value is being shown in a label. When hovering over it, edit and delete options appear. If editing, the label changes to
+ * a text box and can be edited
  * 
  * @author pw
  *

@@ -35,12 +35,9 @@ public class MultiselectJlist extends JList {
 
 			@Override
 			public void setSelectionInterval(int start, int end) {
-				if (isSelectedIndex(start))
-				{
+				if (isSelectedIndex(start)) {
 					removeSelectionInterval(start, end);
-				}
-				else
-				{
+				} else {
 					addSelectionInterval(start, end);
 				}
 			}

@@ -752,9 +752,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetConfigurablePropertiesFrom(net.pms.medialibrary.commons
-	 * .dataobjects.DOFileInfo)
+	 * @see net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetConfigurablePropertiesFrom(net.pms.medialibrary.commons .dataobjects.DOFileInfo)
 	 */
 	@Override
 	public void copySetConfigurablePropertiesFrom(DOFileInfo fileInfo) {
@@ -829,9 +827,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetSystemPropertiesFrom(net.pms.medialibrary.commons.
-	 * dataobjects.DOFileInfo)
+	 * @see net.pms.medialibrary.commons.dataobjects.DOFileInfo#copySetSystemPropertiesFrom(net.pms.medialibrary.commons. dataobjects.DOFileInfo)
 	 */
 	@Override
 	public void copySetSystemPropertiesFrom(DOFileInfo fileInfo) {
