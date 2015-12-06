@@ -16,11 +16,16 @@
 		<version>1.0.6-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<!-- Used library versions -->
+		<thetvdbapi-version>1.8</thetvdbapi-version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.omertron</groupId>
 			<artifactId>thetvdbapi</artifactId>
-			<version>1.6</version>
+			<version>${thetvdbapi-version}</version>
 		</dependency>
 
 		<!-- required by TheTVDBAPI -->
@@ -57,7 +62,7 @@
 								<artifactItem>
 									<groupId>com.omertron</groupId>
 									<artifactId>thetvdbapi</artifactId>
-									<version>1.6</version>
+									<version>${thetvdbapi-version}</version>
 								</artifactItem>
 							</artifactItems>
 							<includeArtifactIds>thetvdbapi</includeArtifactIds>
