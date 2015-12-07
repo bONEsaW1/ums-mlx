@@ -3,7 +3,9 @@ package net.pms.plugin.fileimport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -19,6 +21,7 @@ import com.omertron.thetvdbapi.model.Banner;
 import com.omertron.thetvdbapi.model.BannerType;
 import com.omertron.thetvdbapi.model.Banners;
 import com.omertron.thetvdbapi.model.Episode;
+import com.omertron.thetvdbapi.model.Language;
 import com.omertron.thetvdbapi.model.Series;
 
 import net.pms.medialibrary.commons.enumarations.FileProperty;
@@ -38,8 +41,36 @@ import net.pms.util.PmsProperties;
  */
 public class TheTVDBImportPlugin implements FileImportPlugin {
 
-	private static final Logger logger = LoggerFactory.getLogger(TheTVDBImportPlugin.class);
-	private TheTVDBApi tvDB = new TheTVDBApi("D19EF2AFF971007D");
+	public static final ResourceBundle MESSAGES = ResourceBundle.getBundle("net.pms.plugin.fileimport.thetvdb.lang.messages");
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TheTVDBImportPlugin.class);
+	private static final ImageIcon pluginIcon = new ImageIcon(TheTVDBImportPlugin.class.getResource("/thetvdb-32.png"));
+
+	// Holds only the project version. It's used to always use the maven buildnumber in code
+	private static final PmsProperties PROPERTIES = new PmsProperties();
+
+	static {
+		try {
+			PROPERTIES.loadFromResourceFile("/thetvdbimportplugin.properties", TheTVDBImportPlugin.class);
+		} catch (IOException e) {
+			LOGGER.error("Could not load thetvdbimportplugin.properties", e);
+		}
+	}
+
+	// The global configuration is shared amongst all plugin instances.
+	private static final GlobalConfiguration GLOBAL_CONFIGURATION;
+
+	static {
+		GLOBAL_CONFIGURATION = new GlobalConfiguration();
+		try {
+			GLOBAL_CONFIGURATION.load();
+		} catch (IOException e) {
+			LOGGER.error("Failed to load global configuration", e);
+		}
+	}
+
+	private TheTVDBApi theTvDbApi = new TheTVDBApi("D19EF2AFF971007D");
+
 	/**
 	 * The found episode object
 	 */
@@ -47,32 +78,7 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 	private Series currentSeries;
 	private String cover;
 
-	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.fileimport.thetvdb.lang.messages");
-
-	// Holds only the project version. It's used to always use the maven buildnumber in code
-	private static final PmsProperties properties = new PmsProperties();
-
-	static {
-		try {
-			properties.loadFromResourceFile("/thetvdbimportplugin.properties", TheTVDBImportPlugin.class);
-		} catch (IOException e) {
-			logger.error("Could not load thetvdbimportplugin.properties", e);
-		}
-	}
-
 	private GlobalConfigurationPanel pGlobalConfiguration;
-
-	// The global configuration is shared amongst all plugin instances.
-	private static final GlobalConfiguration globalConfig;
-
-	static {
-		globalConfig = new GlobalConfiguration();
-		try {
-			globalConfig.load();
-		} catch (IOException e) {
-			logger.error("Failed to load global configuration", e);
-		}
-	}
 
 	/**
 	 * Available tags.
@@ -106,9 +112,9 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 			logDebug(String.format("Search TVDB for series '%s'", fileObg.getSeries()));
 			List<Series> series;
 			try {
-				series = tvDB.searchSeries(fileObg.getSeries(), globalConfig.getImportLanguage());
+				series = theTvDbApi.searchSeries(fileObg.getSeries(), GLOBAL_CONFIGURATION.getImportLanguage());
 			} catch (TvDbException e) {
-				logger.error(String.format("Failed to search for series '%s' for language=%s", fileObg.getSeries(), globalConfig.getImportLanguage()), e);
+				LOGGER.error(String.format("Failed to search for series '%s' for language=%s", fileObg.getSeries(), GLOBAL_CONFIGURATION.getImportLanguage()), e);
 				return;
 			}
 			if (series != null && series.size() > 0) {
@@ -117,18 +123,18 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 				// use the first one
 				String seriesId = series.get(0).getId();
 				try {
-					currentSeries = tvDB.getSeries(seriesId, globalConfig.getImportLanguage());
+					currentSeries = theTvDbApi.getSeries(seriesId, GLOBAL_CONFIGURATION.getImportLanguage());
 				} catch (TvDbException e) {
-					logger.error(String.format("Failed to get series with id=%s, language=%s", seriesId, globalConfig.getImportLanguage()), e);
+					LOGGER.error(String.format("Failed to get series with id=%s, language=%s", seriesId, GLOBAL_CONFIGURATION.getImportLanguage()), e);
 					return;
 				}
 
 				// log the results received
 				logInfo(String.format("Series matched for '%s' on TvDB has imdbDb='%s', name='%s'.", fileObg.getSeries(), currentSeries.getImdbId(), currentSeries.getSeriesName()));
 				try {
-					currentEpisode = tvDB.getEpisode(seriesId, fileObg.getSeason(), fileObg.getEpisode(), globalConfig.getImportLanguage());
+					currentEpisode = theTvDbApi.getEpisode(seriesId, fileObg.getSeason(), fileObg.getEpisode(), GLOBAL_CONFIGURATION.getImportLanguage());
 				} catch (TvDbException e) {
-					logger.warn(String.format("Failed to get episode for series with id=%s, season=%s, episode=%s, language=%s", seriesId, fileObg.getSeason(), fileObg.getEpisode(), globalConfig.getImportLanguage()), e);
+					LOGGER.warn(String.format("Failed to get episode for series with id=%s, season=%s, episode=%s, language=%s", seriesId, fileObg.getSeason(), fileObg.getEpisode(), GLOBAL_CONFIGURATION.getImportLanguage()), e);
 				}
 
 				if (currentEpisode != null) {
@@ -138,9 +144,9 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 
 				// Find the most suitable cover
 				try {
-					banners = tvDB.getBanners(seriesId);
+					banners = theTvDbApi.getBanners(seriesId);
 				} catch (TvDbException e) {
-					logger.warn(String.format("Failed to get banners for series with id=%s", seriesId), e);
+					LOGGER.warn(String.format("Failed to get banners for series with id=%s", seriesId), e);
 				}
 
 				if (banners != null) {
@@ -183,16 +189,16 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 		currentEpisode = null;
 
 		try {
-			currentEpisode = tvDB.getEpisodeById(id, globalConfig.getImportLanguage());
+			currentEpisode = theTvDbApi.getEpisodeById(id, GLOBAL_CONFIGURATION.getImportLanguage());
 		} catch (TvDbException e) {
-			logger.error(String.format("Failed to get episode by ID with id=%s, language=%s", id, globalConfig.getImportLanguage()), e);
+			LOGGER.error(String.format("Failed to get episode by ID with id=%s, language=%s", id, GLOBAL_CONFIGURATION.getImportLanguage()), e);
 			return;
 		}
 
 		try {
-			currentSeries = tvDB.getSeries(currentEpisode.getSeriesId(), globalConfig.getImportLanguage());
+			currentSeries = theTvDbApi.getSeries(currentEpisode.getSeriesId(), GLOBAL_CONFIGURATION.getImportLanguage());
 		} catch (TvDbException e) {
-			logger.error(String.format("Failed to get series with id=%s, language=%s", currentEpisode.getSeriesId(), globalConfig.getImportLanguage()), e);
+			LOGGER.error(String.format("Failed to get series with id=%s, language=%s", currentEpisode.getSeriesId(), GLOBAL_CONFIGURATION.getImportLanguage()), e);
 		}
 	}
 
@@ -259,7 +265,7 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 						double rating = Double.parseDouble(currentEpisode.getRating());
 						res = (int) (10 * rating);
 					} catch (Exception ex) {
-						logger.error("Failed to parse rating as a double. value=" + currentEpisode.getRating());
+						LOGGER.error("Failed to parse rating as a double. value=" + currentEpisode.getRating());
 					}
 				}
 				break;
@@ -274,12 +280,12 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 					try {
 						res = Integer.parseInt(currentEpisode.getFirstAired().substring(0, 4));
 					} catch (Exception ex) {
-						logger.error("Failed to parse the year in first air date. value=" + currentEpisode.getFirstAired());
+						LOGGER.error("Failed to parse the year in first air date. value=" + currentEpisode.getFirstAired());
 					}
 				}
 				break;
 			default:
-				logger.warn("Unexpected FileProperty received: " + property);
+				LOGGER.warn("Unexpected FileProperty received: " + property);
 				break;
 		}
 
@@ -337,22 +343,22 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 
 	@Override
 	public String getVersion() {
-		return properties.get("project.version");
+		return PROPERTIES.get("project.version");
 	}
 
 	@Override
 	public Icon getPluginIcon() {
-		return new ImageIcon(getClass().getResource("/thetvdb-32.png"));
+		return pluginIcon;
 	}
 
 	@Override
 	public String getShortDescription() {
-		return messages.getString("TheTVDBEpisodeImportPlugin.ShortDescription");
+		return MESSAGES.getString("TheTVDBEpisodeImportPlugin.ShortDescription");
 	}
 
 	@Override
 	public String getLongDescription() {
-		return messages.getString("TheTVDBEpisodeImportPlugin.LongDescription");
+		return MESSAGES.getString("TheTVDBEpisodeImportPlugin.LongDescription");
 	}
 
 	@Override
@@ -362,11 +368,21 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 
 	@Override
 	public String getWebSiteUrl() {
-		return null;
+		return "http://www.universalmediaserver.com/forum/viewtopic.php?f=6&t=3355";
 	}
 
 	@Override
 	public void initialize() {
+		// Set the supported languages in the global configuration
+		try {
+			Map<String, String> supportedLanguages = new HashMap<String, String>();
+			for (Language language : theTvDbApi.getLanguages()) {
+				supportedLanguages.put(language.getAbbreviation(), language.getName());
+			}
+			GLOBAL_CONFIGURATION.setSupportedLanguages(supportedLanguages);
+		} catch (TvDbException e) {
+			LOGGER.error("Failed to get the list of supported languages", e);
+		}
 	}
 
 	@Override
@@ -376,7 +392,7 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 	@Override
 	public JComponent getGlobalConfigurationPanel() {
 		if (pGlobalConfiguration == null) {
-			pGlobalConfiguration = new GlobalConfigurationPanel(globalConfig);
+			pGlobalConfiguration = new GlobalConfigurationPanel(GLOBAL_CONFIGURATION);
 		}
 		pGlobalConfiguration.applyConfig();
 
@@ -386,11 +402,11 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 	@Override
 	public void saveConfiguration() {
 		if (pGlobalConfiguration != null) {
-			pGlobalConfiguration.updateConfiguration(globalConfig);
+			pGlobalConfiguration.updateConfiguration(GLOBAL_CONFIGURATION);
 			try {
-				globalConfig.save();
+				GLOBAL_CONFIGURATION.save();
 			} catch (IOException e) {
-				logger.error("Failed to save global configuration", e);
+				LOGGER.error("Failed to save global configuration", e);
 			}
 		}
 	}
@@ -401,15 +417,15 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 	}
 
 	private void logDebug(String message) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(message);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(message);
 		}
 
 	}
 
 	private void logInfo(String message) {
-		if (logger.isInfoEnabled()) {
-			logger.info(message);
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info(message);
 		}
 	}
 }

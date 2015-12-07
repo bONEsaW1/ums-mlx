@@ -5,10 +5,8 @@
 package net.pms.plugin.fileimport.thetvdb.configuration;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-import net.pms.PMS;
 import net.pms.configuration.BaseConfiguration;
 
 /**
@@ -21,6 +19,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 
 	/** The properties file path. */
 	private String propertiesFilePath;
+	private Map<String, String> supportedLanguages;
 
 	/**
 	 * Instantiates a new global configuration.
@@ -53,11 +52,7 @@ public class GlobalConfiguration extends BaseConfiguration {
 	 * @return the language. e.g. en, de, fr
 	 */
 	public String getImportLanguage() {
-		String defaultLanguage = PMS.getConfiguration().getLanguage();
-		if (!getSupportedLanguages().contains(defaultLanguage)) {
-			defaultLanguage = "en";
-		}
-		return getValue(KEY_importLanguage, defaultLanguage);
+		return getValue(KEY_importLanguage, "en");
 	}
 
 	/**
@@ -68,12 +63,24 @@ public class GlobalConfiguration extends BaseConfiguration {
 	}
 
 	/**
-	 * Gets the list of supported languages for TheTVDB.com
-	 * 
-	 * @return the list of supported languages
+	 * Gets the supported languages.<br>
+	 * Key=language abbreviation<br>
+	 * Value=language to display
+	 *
+	 * @return the supported languages
 	 */
-	public static List<String> getSupportedLanguages() {
-		return Arrays.asList(new String[] { "en", "sv", "no", "da", "fi", "nl", "de", "it", "es", "fr", "pl", "hu",
-				"el", "tr", "ru", "he", "ja", "pt", "zh", "cs", "sl", "hr", "ko" });
+	public Map<String, String> getSupportedLanguages() {
+		return supportedLanguages;
+	}
+
+	/**
+	 * Sets the supported languages.<br>
+	 * Key=language abbreviation<br>
+	 * Value=language to display
+	 *
+	 * @param supportedlanguages the supported languages
+	 */
+	public void setSupportedLanguages(Map<String, String> supportedLanguages) {
+		this.supportedLanguages = supportedLanguages;
 	}
 }

@@ -1,7 +1,6 @@
 package net.pms.plugin.fileimport.thetvdb.gui;
 
 import java.awt.GridLayout;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -9,14 +8,13 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import net.pms.configuration.PmsConfiguration;
-import net.pms.plugin.fileimport.TheTVDBImportPlugin;
-import net.pms.plugin.fileimport.thetvdb.configuration.GlobalConfiguration;
-import net.pms.util.KeyedComboBoxModel;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import net.pms.plugin.fileimport.TheTVDBImportPlugin;
+import net.pms.plugin.fileimport.thetvdb.configuration.GlobalConfiguration;
+import net.pms.util.KeyedComboBoxModel;
 
 /**
  *
@@ -24,7 +22,7 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class GlobalConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = -2570813466143646366L;
-	private final GlobalConfiguration globalConfig;
+	private final GlobalConfiguration globalConfiguration;
 
 	private JComboBox cbImportLanguage;
 
@@ -33,9 +31,9 @@ public class GlobalConfigurationPanel extends JPanel {
 	 *
 	 * @param globalConfig the global configuration
 	 */
-	public GlobalConfigurationPanel(GlobalConfiguration globalConfig) {
+	public GlobalConfigurationPanel(GlobalConfiguration globalConfiguration) {
 		setLayout(new GridLayout());
-		this.globalConfig = globalConfig;
+		this.globalConfiguration = globalConfiguration;
 		init();
 		build();
 	}
@@ -44,17 +42,14 @@ public class GlobalConfigurationPanel extends JPanel {
 	 * Initializes the graphical components
 	 */
 	private void init() {
-		Map<String, String> languages = PmsConfiguration.getSupportedLanguages();
-		List<String> supportedLanguages = GlobalConfiguration.getSupportedLanguages();
+		Map<String, String> supportedLanguages = globalConfiguration.getSupportedLanguages();
 
 		final KeyedComboBoxModel kcbm = new KeyedComboBoxModel();
-		for (String languageId : languages.keySet()) {
-			if (supportedLanguages.contains(languageId)) {
-				String languageDisplayName = languages.get(languageId);
-				kcbm.add(languageId, languageDisplayName);
-			}
+		for (String languageId : supportedLanguages.keySet()) {
+			String languageDisplayName = supportedLanguages.get(languageId);
+			kcbm.add(languageId, languageDisplayName);
 		}
-		cbImportLanguage = new JComboBox(kcbm);
+		cbImportLanguage = new JComboBox<String>(kcbm);
 	}
 
 	/**
@@ -69,7 +64,7 @@ public class GlobalConfigurationPanel extends JPanel {
 
 		CellConstraints cc = new CellConstraints();
 
-		builder.addLabel(TheTVDBImportPlugin.messages.getString("GlobalConfigurationPanel.LanguageCombobox"), cc.xy(2, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+		builder.addLabel(TheTVDBImportPlugin.MESSAGES.getString("GlobalConfigurationPanel.LanguageCombobox"), cc.xy(2, 2, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 		builder.add(cbImportLanguage, cc.xy(4, 2));
 
 		JScrollPane sp = new JScrollPane(builder.getPanel());
@@ -83,7 +78,7 @@ public class GlobalConfigurationPanel extends JPanel {
 	 * This is being used to roll back changes after editing properties and canceling the dialog.
 	 */
 	public void applyConfig() {
-		String importLanguage = globalConfig.getImportLanguage();
+		String importLanguage = globalConfiguration.getImportLanguage();
 		if (importLanguage != null && !importLanguage.equals("")) {
 			((KeyedComboBoxModel) cbImportLanguage.getModel()).setSelectedKey(importLanguage);
 		}
