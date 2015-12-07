@@ -41,7 +41,7 @@ import net.pms.util.PmsProperties;
  */
 public class TheTVDBImportPlugin implements FileImportPlugin {
 
-	public static final ResourceBundle MESSAGES = ResourceBundle.getBundle("net.pms.plugin.fileimport.thetvdb.lang.messages");
+	public static final ResourceBundle MESSAGES = ResourceBundle.getBundle("thetvdbepisodeimportplugin-i18n.messages");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TheTVDBImportPlugin.class);
 	private static final ImageIcon pluginIcon = new ImageIcon(TheTVDBImportPlugin.class.getResource("/thetvdb-32.png"));
