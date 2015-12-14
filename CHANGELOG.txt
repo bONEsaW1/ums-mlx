@@ -1,6 +1,16 @@
-5.3.2-mlx-1.4 - 2015-11-25
+5.3.2 - 2015-12-??
 
 	General:
+		Improved support for subtitles in FFmpeg
+		Fixed support for 3D subtitles
+		Fixed the saving of window size
+	Renderers:
+		Added support for Sony Bravia NX800 TVs
+	External Components:
+		Updated FFmpeg
+		
+5.3.2-mlx-1.4 - 2015-11-25
+
 		Added the possibility to show or hide the transcode and live subtitles folders for every media library folder
 		Fixed refreshing of folders when content changed (full rewrite)
 		Update tools to use the same as UMS
@@ -14,8 +24,6 @@
 		Jumpy can now be installed with the installer in ums-mlx the same way as for UMS (thanks skeptical!)
 		IMDB import:
 			Fixed plugin by using http://www.omdbapi.com instead of the now obsolete http://www.imdbapi.com
-		
-		
 
 5.3.1 - 2015-11-23
 
