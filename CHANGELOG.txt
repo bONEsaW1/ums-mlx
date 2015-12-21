@@ -1,12 +1,17 @@
-5.3.2 - 2015-12-??
+5.4.0 - 2015-12-??
 
 	General:
+		Added splash screen, disabled by default
 		Improved support for subtitles in FFmpeg
 		Fixed support for 3D subtitles
 		Fixed the saving of window size
 	Renderers:
+		Added support for AnyCast
+		Added support for Miracast M806
 		Added support for Sony Bravia NX800 TVs
+		Improved playback support for several renderers
 	External Components:
+		Updated Cling to 2.1.0
 		Updated FFmpeg
 		
 5.3.2-mlx-1.4 - 2015-11-25
@@ -24,6 +29,23 @@
 		Jumpy can now be installed with the installer in ums-mlx the same way as for UMS (thanks skeptical!)
 		IMDB import:
 			Fixed plugin by using http://www.omdbapi.com instead of the now obsolete http://www.imdbapi.com
+
+6.0.0-a1 - 2015-11-23 - Changes since 5.3.1
+
+	General:
+		Added "Fully played action" setting to control what UMS does with media that has been fully played. The options are:
+			Do nothing
+			Add an overlay to the thumbnail (default)
+			Hide the file
+			Move the file to a different folder
+			Move the file to the recycle/trash bin
+		Added "Thumbnails" renderer config option, to specify whether the renderer can display thumbnails
+		The Status tab updates when media is fast-forwarded or rewound
+		Audio and image thumbnails are output at consistent dimensions
+	Renderers:
+		Improved Status tab display for Panasonic TVs
+	Languages:
+		Synchronized translations with Crowdin
 
 5.3.1 - 2015-11-23
 
