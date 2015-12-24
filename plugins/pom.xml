@@ -30,6 +30,7 @@
 		<module>WebservicePlugin</module>
 		<module>TheTVDBEpisodeImportPlugin</module>
 		<module>KodiNfoImportPlugin</module>
+		<module>AllocinéMovieImportPlugin</module>
 	</modules>
 
 	<properties>
