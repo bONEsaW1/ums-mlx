@@ -425,6 +425,12 @@
 			<artifactId>fest-util</artifactId>
 			<version>${fest-util-version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>${findbugs-annotations-version}</version>
+		</dependency>	
 	</dependencies>
 
 	<build>

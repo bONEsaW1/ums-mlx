@@ -176,9 +176,11 @@
 		<exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
 
 		<jdepend-maven-plugin-version>2.0-beta-2</jdepend-maven-plugin-version>
-		<findbugs-maven-plugin-version>3.0.1</findbugs-maven-plugin-version>
 		<cobertura-maven-plugin-version>2.6</cobertura-maven-plugin-version>
 		<l10n-maven-plugin-version>1.0-alpha-2</l10n-maven-plugin-version>
+		<!-- This version works only with JDK 7 and above-->
+		<findbugs-version>3.0.3</findbugs-version>
+		<findbugs-annotations-version>3.0.1u2</findbugs-annotations-version>
 		
 		<!-- Transcode tools are being used by core (when debugging) and for packaging  -->
 		<transcode-tools.download.url>http://downloads.sourceforge.net/project/ums-mlx/ums-tools</transcode-tools.download.url>
