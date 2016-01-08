@@ -34,16 +34,16 @@ public class AllocineImportPluginTests {
 		assertTrue(movieOriginalNameObject.getClass() == String.class);
 		assertTrue(((String) movieOriginalNameObject).length() > 0);
 
-		Object movieCeritificationObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_CERTIFICATION);
-		assertTrue(movieCeritificationObject.getClass() == String.class);
-		assertTrue(((String) movieCeritificationObject).length() > 0);
+		// Object movieCeritificationObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_CERTIFICATION);
+		// assertTrue(movieCeritificationObject.getClass() == String.class);
+		// assertTrue(((String) movieCeritificationObject).length() > 0);
 
 		Object movieDirectorObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_DIRECTOR);
 		assertTrue(movieDirectorObject.getClass() == String.class);
 		assertTrue(((String) movieDirectorObject).length() > 0);
 
 		Object movieGenresObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_GENRES);
-		assertTrue(movieGenresObject.getClass() == List.class);
+		assertTrue(movieGenresObject instanceof List);
 		assertTrue(((List<String>) movieGenresObject).size() > 0);
 
 		Object movieCoverurlObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_COVERURL);
@@ -51,8 +51,8 @@ public class AllocineImportPluginTests {
 		assertTrue(((String) movieCoverurlObject).startsWith("http"));
 
 		Object movieYearObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_YEAR);
-		assertTrue(movieYearObject.getClass() == int.class);
-		assertTrue((int) movieYearObject == 2015);
+		assertTrue(movieYearObject.getClass() == Integer.class);
+		assertTrue((int) movieYearObject == 2008);
 
 		Object movieOverviewObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_OVERVIEW);
 		assertTrue(movieOverviewObject.getClass() == String.class);
@@ -66,6 +66,18 @@ public class AllocineImportPluginTests {
 		assertTrue(movieTrailerUrlObject.getClass() == String.class);
 		assertTrue(((String) movieTrailerUrlObject).startsWith("http"));
 
+		Object movieRatingPercentObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_RATINGPERCENT);
+		assertTrue(movieRatingPercentObject.getClass() == Integer.class);
+		assertTrue((int) movieRatingPercentObject >= 0 && (int) movieRatingPercentObject <= 100);
+
+		Object movieRatingVotersObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_RATINGVOTERS);
+		assertTrue(movieRatingVotersObject.getClass() == Integer.class);
+		assertTrue((int) movieRatingVotersObject >= 0);
+
+		Object movieBudgetObject = allocinePlugin.getFileProperty(FileProperty.VIDEO_BUDGET);
+		assertTrue(movieBudgetObject.getClass() == Integer.class);
+		assertTrue((int) movieBudgetObject >= 0);
+
 		// Test tags
 		List<String> movieActors = allocinePlugin.getTags("Actor");
 		assertTrue(movieActors != null);
@@ -78,6 +90,10 @@ public class AllocineImportPluginTests {
 		List<String> movieProducers = allocinePlugin.getTags("Producer");
 		assertTrue(movieProducers != null);
 		assertTrue(movieProducers.size() > 0);
+
+		List<String> movieAwards = allocinePlugin.getTags("Award");
+		assertTrue(movieAwards != null);
+		assertTrue(movieAwards.size() > 0);
 	}
 
 	private AllocineImportPlugin getAllocinePlugin() {

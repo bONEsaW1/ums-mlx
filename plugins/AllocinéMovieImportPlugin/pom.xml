@@ -17,7 +17,8 @@
 
 	<properties>
 		<!-- Used library versions -->
-		<allocine-api-version>1.4</allocine-api-version>
+		<allocine-api-version>1.5</allocine-api-version>
+		<org-yamj-api-common-version>2.0</org-yamj-api-common-version>
 	</properties>
 
 	<dependencies>
@@ -25,6 +26,12 @@
 			<groupId>com.moviejukebox</groupId>
 			<artifactId>allocine-api</artifactId>
 			<version>${allocine-api-version}</version>
+		</dependency>
+		<!--COMMON HTTP TOOLS -->
+		<dependency>
+			<groupId>org.yamj</groupId>
+			<artifactId>api-common</artifactId>
+			<version>${org-yamj-api-common-version}</version>
 		</dependency>
 	</dependencies>
 
@@ -49,8 +56,13 @@
 									<artifactId>allocine-api</artifactId>
 									<version>${allocine-api-version}</version>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.yamj</groupId>
+									<artifactId>api-common</artifactId>
+									<version>${org-yamj-api-common-version}</version>
+								</artifactItem>
 							</artifactItems>
-							<includeArtifactIds>allocine-api</includeArtifactIds>
+							<includeArtifactIds>allocine-api,api-common</includeArtifactIds>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
