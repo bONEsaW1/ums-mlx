@@ -128,6 +128,8 @@ public class AllocineImportPlugin implements FileImportPlugin {
 
 	@Override
 	public void importFile(String title, String filePath) throws FileImportException {
+		movie = null;
+
 		try {
 			Search searchResult = allocineApi.searchMovies(title);
 			if (searchResult != null && searchResult.isValid() && searchResult.getMovies().size() > 0) {
@@ -141,6 +143,8 @@ public class AllocineImportPlugin implements FileImportPlugin {
 
 	@Override
 	public void importFileById(String id) throws FileImportException {
+		movie = null;
+
 		try {
 			MovieInfos movieInfos = allocineApi.getMovieInfos(id);
 			if (movieInfos != null) {
