@@ -39,7 +39,7 @@
 
 	<properties>
 		<!-- Used library versions -->
-		<jna-version>4.2.1</jna-version>
+		<jna-version>4.1.0</jna-version>
 		<cuelib-version>1.2.1-2008-06-13</cuelib-version>
 		<junrar-version>0.7</junrar-version>
 		<mediautil-version>1.0</mediautil-version>
@@ -378,6 +378,11 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
+			<version>${jna-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna-platform</artifactId>
 			<version>${jna-version}</version>
 		</dependency>
 
