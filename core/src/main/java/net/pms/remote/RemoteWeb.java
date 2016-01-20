@@ -42,7 +42,6 @@ public class RemoteWeb {
 	private RemoteUtil.ResourceManager resources;
 	private static final PmsConfiguration configuration = PMS.getConfiguration();
 	private static final int defaultPort = configuration.getWebPort();
-	
 
 	public RemoteWeb() {
 		this(defaultPort);
@@ -331,7 +330,7 @@ public class RemoteWeb {
 			hdr.add("Connection", "keep-alive");
 			t.sendResponseHeaders(200, in.available());
 			OutputStream os = t.getResponseBody();
-			LOGGER.debug("input is " + in + " out " + os);
+			LOGGER.trace("input is {} output is {}", in, os);
 			RemoteUtil.dump(in, os);
 		}
 	}
