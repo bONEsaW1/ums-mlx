@@ -1914,7 +1914,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	 * @return What to do with a file after it has been fully played
 	 */
 	public FullyPlayedAction getFullyPlayedAction() {
-		return FullyPlayedAction.toFullyPlayedAction(getInt(KEY_FULLY_PLAYED_ACTION, 1));
+		return FullyPlayedAction.toFullyPlayedAction(getInt(KEY_FULLY_PLAYED_ACTION, 0));
 	}
 
 	/**
@@ -2352,7 +2352,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isHideExtensions() {
-		return getBoolean(KEY_HIDE_EXTENSIONS, true);
+		return getBoolean(KEY_HIDE_EXTENSIONS, false);
 	}
 
 	public void setHideExtensions(boolean value) {
@@ -2671,7 +2671,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isUseMplayerForVideoThumbs() {
-		return getBoolean(KEY_USE_MPLAYER_FOR_THUMBS, false);
+		return getBoolean(KEY_USE_MPLAYER_FOR_THUMBS, true);
 	}
 
 	public String getIpFilter() {
@@ -2732,7 +2732,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isHideAdvancedOptions() {
-		return getBoolean(PmsConfiguration.KEY_HIDE_ADVANCED_OPTIONS, true);
+		return getBoolean(PmsConfiguration.KEY_HIDE_ADVANCED_OPTIONS, false);
 	}
 
 	public void setHideAdvancedOptions(final boolean value) {
@@ -2758,7 +2758,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	// TODO (breaking change): rename to e.g. isTranscodeFolderEnabled
 	// (and return true by default)
 	public boolean getHideTranscodeEnabled() {
-		return getBoolean(KEY_HIDE_TRANSCODE_FOLDER, false);
+		return getBoolean(KEY_HIDE_TRANSCODE_FOLDER, true);
 	}
 
 	// TODO (breaking change): rename to e.g. setTranscodeFolderEnabled
@@ -2864,7 +2864,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isHideNewMediaFolder() {
-		return getBoolean(KEY_HIDE_NEW_MEDIA_FOLDER, false);
+		return getBoolean(KEY_HIDE_NEW_MEDIA_FOLDER, true);
 	}
 
 	public void setHideNewMediaFolder(final boolean value) {
@@ -2872,7 +2872,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isHideRecentlyPlayedFolder() {
-		return getBoolean(PmsConfiguration.KEY_HIDE_RECENTLY_PLAYED_FOLDER, false);
+		return getBoolean(PmsConfiguration.KEY_HIDE_RECENTLY_PLAYED_FOLDER, true);
 	}
 
 	public void setHideRecentlyPlayedFolder(final boolean value) {
@@ -3448,7 +3448,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isHideWebFolder(ArrayList<String> tags) {
-		return tagLoopBool(tags, ".web", "dummy", false);
+		return tagLoopBool(tags, ".web", "dummy", true);
 	}
 
 	private String tagLoop(ArrayList<String> tags, String suff, String fallback) {
