@@ -4,6 +4,8 @@
 
 This modification of the [Universal Media Server](https://github.com/UniversalMediaServer/UniversalMediaServer) lets you configure what folders show up and what files they will contain. Thumbnails and their name can also be defined.
 
+![Tree view](http://i.imgur.com/S5sDIM1.png)
+
 ## Features
 * Original Universal Media Server features
 * Import video properties from imdb or tmdb (extensible through a plugin system)
