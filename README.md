@@ -14,6 +14,7 @@ This modification of the [Universal Media Server](https://github.com/UniversalMe
 * Configure how the name of the file will look and what icon will show up
 * Track the files you've played
 
+## Links
 [Download](https://sourceforge.net/projects/ums-mlx/) a windows installer from SourceForge.
 
 Universal Media Server [forum thread](http://www.universalmediaserver.com/forum/viewtopic.php?f=6&t=3355).
