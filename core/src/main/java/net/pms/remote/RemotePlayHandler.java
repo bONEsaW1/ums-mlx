@@ -96,9 +96,9 @@ public class RemotePlayHandler implements HttpHandler {
 			// for VVA we just call the enable fun directly
 			// waste of resource to play dummy video
 			if (((VirtualVideoAction) r).enable()) {
-				renderer.notify(renderer.OK, r.getName() + " done");
+				renderer.notify(renderer.INFO, r.getName() + " enabled");
 			} else {
-				renderer.notify(renderer.ERR, r.getName() + " failed");
+				renderer.notify(renderer.INFO, r.getName() + " disabled");
 			}
 			return returnPage();
 		}
@@ -189,7 +189,14 @@ public class RemotePlayHandler implements HttpHandler {
 			}
 			OutputParams p = new OutputParams(configuration);
 			p.sid = r.getMediaSubtitle();
-			Player.setAudioAndSubs(r.getName(), r.getMedia(), p);
+			if (p.aid == null) { //TODO this is a work around and it should be set during the parsing according the user preference setting
+				Player.setAudioOutputParameters(r.getMedia(), p);
+			}
+
+			if (p.sid == null) { //TODO this is a work around and it should be set during the parsing according the user preference setting
+				Player.setSubtitleOutputParameters(r.getName(), r.getMedia(), p);
+			}
+
 			if (p.sid != null && p.sid.getType().isText()) {
 				try {
 					File subFile = SubtitleUtils.getSubtitles(r, r.getMedia(), p, configuration, SubtitleType.WEBVTT);
