@@ -10,7 +10,6 @@ MediaInfo64.dll
 jnotify.dll
 jnotify_64bit.dll
 contrib/ffmpeg/build/
-database/
 debug.log
 libmediainfo.dylib
 libjnotify.jnilib
