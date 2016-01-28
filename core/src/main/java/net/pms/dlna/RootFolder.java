@@ -23,4 +23,12 @@ public class RootFolder extends net.pms.medialibrary.dlna.RootFolder {
 		super(tags);
 	}
 
+	public void stopScan() {
+		// Do nothing, this method exists to allow compatibility with UMS
+	}
+
+	public void scan() {
+		// Do nothing, this method exists to allow compatibility with UMS		
+	}
+
 }
