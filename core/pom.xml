@@ -74,6 +74,7 @@
 		<javassist-version>3.20.0-GA</javassist-version>
 		<icu4j-version>56.1</icu4j-version>
 		<fest-util-version>1.2.5</fest-util-version>
+		<coverartarchive-api-version>2.1.0</coverartarchive-api-version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -435,7 +436,13 @@
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>annotations</artifactId>
 			<version>${findbugs-annotations-version}</version>
-		</dependency>	
+		</dependency>
+		
+		<dependency>
+			<groupId>fm.last</groupId>
+			<artifactId>coverartarchive-api</artifactId>
+			<version>${coverartarchive-api-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
