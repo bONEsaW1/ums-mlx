@@ -1660,7 +1660,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		sb.append(PMS.get().getServer().getURL());
 		sb.append("/get/");
 		sb.append(getResourceId()); //id
-		sb.append("/");
+		sb.append('/');
 		sb.append(prefix);
 		sb.append(encode(useSystemName ? getSystemName() : getName()));
 		return sb.toString();
@@ -1675,7 +1675,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		sb.append(PMS.get().getServer().getURL());
 		sb.append("/get/");
 		sb.append(getResourceId()); //id
-		sb.append("/");
+		sb.append('/');
 		sb.append("subtitle0000");
 		sb.append(encode(subs.getExternalFile().getName()));
 		return sb.toString();
@@ -2368,7 +2368,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 				addAttribute(sb, "xmlns:dlna", "urn:schemas-dlna-org:metadata-1-0/");
 				String dlnaOrgPnFlags = getDlnaOrgPnFlags(mediaRenderer, c);
 				String tempString = "http-get:*:" + getRendererMimeType(mediaRenderer) + ":" + (dlnaOrgPnFlags != null ? (dlnaOrgPnFlags + ";") : "") + getDlnaOrgOpFlags(mediaRenderer);
-				wireshark.append(" ").append(tempString);
+				wireshark.append(' ').append(tempString);
 				addAttribute(sb, "protocolInfo", tempString);
 				if (subsAreValidForStreaming && mediaRenderer.offerSubtitlesByProtocolInfo() && !mediaRenderer.useClosedCaption()) {
 					addAttribute(sb, "pv:subtitleFileType", media_subtitle.getType().getExtension().toUpperCase());
@@ -2507,7 +2507,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 					}
 				}
 
-				wireshark.append(" ").append(getFileURL()).append(transcodedExtension);
+				wireshark.append(' ').append(getFileURL()).append(transcodedExtension);
 				sb.append(getFileURL()).append(transcodedExtension);
 				LOGGER.trace("Network debugger: " + wireshark.toString());
 				wireshark.setLength(0);
@@ -3253,7 +3253,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		result.append(format);
 		result.append(", discovered=");
 		result.append(isDiscovered());
-		result.append("]");
+		result.append(']');
 		return result.toString();
 	}
 
