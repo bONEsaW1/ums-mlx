@@ -17,6 +17,6 @@ This modification of the [Universal Media Server](https://github.com/UniversalMe
 * Track the files you've played
 
 ## Links
-[Download](https://sourceforge.net/projects/ums-mlx/) a windows installer from SourceForge.
+Download an [official windows installer](https://sourceforge.net/projects/ums-mlx/) from SourceForge or  a [snapshot windows installer](http://universalmediaserver-ci.hopto.org:9999/job/ums-mlx%20trunk/ws/packaging/target/) from continuous integration.
 
 Universal Media Server [forum thread](http://www.universalmediaserver.com/forum/viewtopic.php?f=6&t=3355).
