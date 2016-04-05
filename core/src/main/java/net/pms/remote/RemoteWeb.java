@@ -5,7 +5,6 @@ import com.sun.net.httpserver.*;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -40,8 +39,6 @@ public class RemoteWeb {
 	private TrustManagerFactory tmf;
 	private HttpServer server;
 	private SSLContext sslContext;
-	private HashMap<String, String> users;
-	private HashMap<String, String> tags;
 	private Map<String, RootFolder> roots;
 	private RemoteUtil.ResourceManager resources;
 	private static final PmsConfiguration configuration = PMS.getConfiguration();
@@ -56,9 +53,7 @@ public class RemoteWeb {
 			port = defaultPort;
 		}
 
-		users = new HashMap<>();
-		tags = new HashMap<>();
-		roots = new HashMap<String, RootFolder>();
+		roots = new HashMap<>();
 		// Add "classpaths" for resolving web resources
 		resources = AccessController.doPrivileged(new PrivilegedAction<RemoteUtil.ResourceManager>() {
 
@@ -71,7 +66,7 @@ public class RemoteWeb {
 			}
 		});
 
-		readCred();
+		//readCred();
 
 		// Setup the socket address
 		InetSocketAddress address = new InetSocketAddress(InetAddress.getByName("0.0.0.0"), port);
@@ -159,7 +154,8 @@ public class RemoteWeb {
 	}
 
 	public String getTag(String user) {
-		String tag = tags.get(user);
+		String tag = PMS.getCredTag("web", user);
+		//tags.get(user);
 		if (tag == null) {
 			return user;
 		}
@@ -250,48 +246,11 @@ public class RemoteWeb {
 				@Override
 				public boolean checkCredentials(String user, String pwd) {
 					LOGGER.debug("authenticate " + user);
-					return pwd.equals(users.get(user));
+					return PMS.verifyCred("web", PMS.getCredTag("web", user), user, pwd);
+					//return pwd.equals(users.get(user));
 					//return true;
 				}
 			});
-		}
-	}
-
-	private void readCred() throws IOException {
-		String cPath = (String) configuration.getCustomProperty("cred.path");
-		if (StringUtils.isEmpty(cPath)) {
-			return;
-		}
-		File f = new File(cPath);
-		if (!f.exists()) {
-			return;
-		}
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8))) {
-			String str;
-			while ((str = in.readLine()) != null) {
-				str = str.trim();
-				if (StringUtils.isEmpty(str) || str.startsWith("#")) {
-					continue;
-				}
-				String[] s = str.split("\\s*=\\s*", 2);
-				if (s.length < 2) {
-					continue;
-				}
-				if (!s[0].startsWith("web")) {
-					continue;
-				}
-				String[] s1 = s[0].split("\\.", 2);
-				String[] s2 = s[1].split(",", 2);
-				if (s2.length < 2) {
-					continue;
-				}
-				// s2[0] == usr s2[1] == pwd s1[1] == tag
-				users.put(s2[0], s2[1]);
-				if (s1.length > 1) {
-					// there is a tag here
-					tags.put(s2[0], s1[1]);
-				}
-			}
 		}
 	}
 
@@ -439,8 +398,7 @@ public class RemoteWeb {
 			}
 
 			HashMap<String, Object> vars = new HashMap<>();
-			vars.put("serverName", configuration.getServerName());
-			vars.put("profileName", configuration.getProfileName());
+			vars.put("serverName", configuration.getServerDisplayName());
 
 			String response = parent.getResources().getTemplate("start.html").execute(vars);
 			RemoteUtil.respond(t, response, 200, "text/html");

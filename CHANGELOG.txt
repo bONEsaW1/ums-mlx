@@ -1,7 +1,77 @@
-6.0.1 - 2016-02-??
+6.2.2 - 2016-04-??
 
 	General:
 		
+
+6.2.1 - 2016-03-28
+
+	General:
+		Added more tooltips
+		Fixed DTS-HD being detected as DTS
+		Fixed support for embedded ASS subtitles in FFmpeg
+		Fixed minor bugs
+	Renderers:
+		Improved support for Panasonic ST60 TVs
+		Improved support for Samsung J6200 TVs
+	Languages:
+		Synchronized translations with crowdin
+	External Components:
+		Updated chromecast-java-api-v2 to 0.9.1
+		Updated FFmpeg
+		Updated Google gson to 2.6.2
+		Updated jai-imageio-core to 1.3.1
+		Updated jmustache to 1.12
+		Updated JNA to 4.2.2
+		Updated logback to 1.1.6
+		Updated slf4j to 1.7.19
+
+6.2.0 - 2016-03-12
+
+	General:
+		Use image instead of text in thumbnail overlays
+		Improved the web interface
+		Added support for using Open Subtitles credentials
+		Improved filename prettifying
+		Fixed bump support on mobile devices
+	Renderers:
+		Improved Panasonic VT60 support
+		Improved Samsung J55xx support
+		Fixed duplicate subtitles on Samsung TVs
+	Languages:
+		Synchronized translations with crowdin
+	External Components:
+		Updated Apache Commons Collections to 3.2.2
+		Updated l10n Maven plugin to 1.4
+		Updated logback to 1.1.5
+		Updated Maven Project Info Reports plugin to 2.8.1
+		Updated MediaInfo to 0.7.83
+		Updated slf4j to 1.7.16
+
+6.1.0 - 2016-02-20
+
+	General:
+		Added a back link to the web interface
+		Improved logging
+		Squashed lots of bugs
+		Stopped systems from using installed versions of JNA
+		Thumbnails are unpadded by default
+		Improved speed of parsing subtitles
+		Improved filename prettifying speed and stability
+		Filename prettifying uses more information from Open Subtitles
+		Fixed FFmpeg not using custom fonts (thanks, Tiago!)
+		Fixed seeking with FFmpeg when embedded picture-based subtitles
+		Use FFmpeg by default to transcode embedded picture-based subtitles
+		Stop MediaInfo from using the network
+	Renderers:
+		Added ThumbnailPadding option
+		Improved Panasonic VT60 support
+		Improved Panasonic CX700 support
+		Improved Samsung PL51E490 support
+	Languages:
+		Synchronized translations with crowdin
+	External Components:
+		Updated FFmpeg
+		Updated MediaInfo to 0.7.82
 
 6.0.0 - 2016-01-30 - Changes since 5.5.0
 

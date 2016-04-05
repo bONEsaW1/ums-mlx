@@ -31,6 +31,7 @@ public class LibMediaInfoParser {
 		MI = new MediaInfo();
 
 		if (MI.isValid()) {
+			MI.Option("Internet", "No"); // avoid MediaInfoLib to try to connect to an Internet server for availability of newer software, anonymous statistics and retrieving information about a file
 			MI.Option("Complete", "1");
 			MI.Option("Language", "raw");
 			MI.Option("File_TestContinuousFileNames", "0");
@@ -226,7 +227,7 @@ public class LibMediaInfoParser {
 				if (subTracks > 0) {
 					for (int i = 0; i < subTracks; i++) {
 						currentSubTrack = new DLNAMediaSubtitle();
-						currentSubTrack.setSubCharacterSet(MI.Get(text, i, "Format"));
+						currentSubTrack.setType(SubtitleType.valueOfLibMediaInfoCodec(MI.Get(text, i, "Format")));
 						currentSubTrack.setType(SubtitleType.valueOfLibMediaInfoCodec(MI.Get(text, i, "CodecID")));
 						currentSubTrack.setLang(getLang(MI.Get(text, i, "Language/String")));
 						currentSubTrack.setSubtitlesTrackTitleFromMetadata((MI.Get(text, i, "Title")).trim());
@@ -497,7 +498,17 @@ public class LibMediaInfoParser {
 			format = FormatConfiguration.WAV;
 		} else if (value.equals("shorten")) {
 			format = FormatConfiguration.SHORTEN;
-		} else if (value.equals("dts") || value.equals("a_dts") || value.equals("8")) {
+		} else if (
+			(
+				value.equals("dts") ||
+				value.equals("a_dts") ||
+				value.equals("8")
+			) &&
+			(
+				audio.getCodecA() == null ||
+				!audio.getCodecA().equals(FormatConfiguration.DTSHD)
+			)
+		) {
 			format = FormatConfiguration.DTS;
 		} else if (value.equals("mpeg audio")) {
 			format = FormatConfiguration.MPA;

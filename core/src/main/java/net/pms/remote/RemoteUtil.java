@@ -180,8 +180,21 @@ public class RemoteUtil {
 	}
 
 	public static boolean directmime(String mime) {
-		return mime != null && (mime.equals(MIME_MP4) || mime.equals(MIME_WEBM) || mime.equals(MIME_OGG) ||
-			mime.equals(MIME_MP3) || mime.equals(MIME_PNG) || mime.equals(MIME_JPG)/*|| mime.equals(MIME_WAV)*/);
+		if (
+			mime != null &&
+			(
+				mime.equals(MIME_MP4) ||
+				mime.equals(MIME_WEBM) ||
+				mime.equals(MIME_OGG) ||
+				mime.equals(MIME_MP3) ||
+				mime.equals(MIME_PNG) ||
+				mime.equals(MIME_JPG)
+			)
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static String userName(HttpExchange t) {
@@ -217,7 +230,7 @@ public class RemoteUtil {
 
 	public static String getCookie(String name, HttpExchange t) {
 		String cstr = t.getRequestHeaders().getFirst("Cookie");
-		if (! StringUtils.isEmpty(cstr)) {
+		if (!StringUtils.isEmpty(cstr)) {
 			name += "=";
 			for (String str : cstr.trim().split("\\s*;\\s*")) {
 				if (str.startsWith(name)) {
@@ -328,7 +341,7 @@ public class RemoteUtil {
 	}
 
 	public static String getMsgString(String key, HttpExchange t) {
-		if(PMS.getConfiguration().useWebLang()) {
+		if (PMS.getConfiguration().useWebLang()) {
 			String lang = getFirstSupportedLanguage(t);
 			if (!lang.isEmpty()) {
 				return Messages.getString(key, Locale.forLanguageTag(lang));

@@ -26,8 +26,6 @@ import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.*;
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +50,7 @@ import net.pms.newgui.GuiUtil;
 import net.pms.util.CodecUtil;
 import net.pms.util.PlayerUtil;
 import net.pms.util.ProcessUtil;
-import static net.pms.util.StringUtil.*;
+import net.pms.util.StringUtil;
 import net.pms.util.SubtitleUtils;
 import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -178,12 +176,13 @@ public class FFMpegVideo extends Player {
 		}
 
 		if (!isDisableSubtitles(params) && override) {
-			boolean isSubsASS = params.sid.getType() == SubtitleType.ASS;
+			boolean isSubsManualTiming = true;
 			StringBuilder subsFilter = new StringBuilder();
 			if (params.sid != null && params.sid.getType().isText()) {
+				boolean isSubsASS = params.sid.getType() == SubtitleType.ASS;
 				String originalSubsFilename = null;
-				String subsFilename;
-				// assume when subs are in the ASS format and video is 3D then subs not need conversion to 3D
+
+				// Assume when subs are in the ASS format and video is 3D then subs not need conversion to 3D
 				if (is3D && !isSubsASS) {
 					originalSubsFilename = SubtitleUtils.getSubtitles(dlna, media, params, configuration, SubtitleType.ASS).getAbsolutePath();
 				} else if (params.sid.isExternal()) {
@@ -193,42 +192,17 @@ public class FFMpegVideo extends Player {
 				}
 
 				if (originalSubsFilename != null) {
-					StringBuilder s = new StringBuilder();
-					CharacterIterator it = new StringCharacterIterator(originalSubsFilename);
-					for (char ch = it.first(); ch != CharacterIterator.DONE; ch = it.next()) {
-						switch (ch) {
-							case '\'':
-								s.append("\\\\\\'");
-								break;
-							case ':':
-								s.append("\\\\:");
-								break;
-							case '\\':
-								s.append("/");
-								break;
-							case ']':
-							case '[':
-								s.append("\\");
-							default:
-								s.append(ch);
-								break;
-						}
-					}
-
-					subsFilename = s.toString();
-					subsFilename = subsFilename.replace(",", "\\,");
-					subsFilter.append("subtitles=").append(subsFilename);
+					subsFilter.append("subtitles=").append(StringUtil.ffmpegEscape(originalSubsFilename));
 					if (params.sid.isEmbedded()) {
 						subsFilter.append(":si=").append(params.sid.getId());
 					}
 
 					// Set the input subtitles character encoding if not UTF-8
 					if (!params.sid.isSubsUtf8()) {
-						String encoding = isNotBlank(configuration.getSubtitlesCodepage()) ?
-						configuration.getSubtitlesCodepage() : params.sid.getSubCharacterSet() != null ?
-						params.sid.getSubCharacterSet() : null;
-						if (encoding != null) {
-							subsFilter.append(":charenc=").append(encoding);
+						if (isNotBlank(configuration.getSubtitlesCodepage())) {
+							subsFilter.append(":charenc=").append(configuration.getSubtitlesCodepage());
+						} else if (params.sid.getSubCharacterSet() != null) {
+							subsFilter.append(":charenc=").append(params.sid.getSubCharacterSet());
 						}
 					}
 
@@ -236,8 +210,16 @@ public class FFMpegVideo extends Player {
 					if (configuration.isFFmpegFontConfig() && !is3D && !isSubsASS) { // Do not force style for 3D videos and ASS subtitles
 						subsFilter.append(":force_style=");
 						subsFilter.append("'");
+						String fontName = configuration.getFont();
+						if (isNotBlank(fontName)) {
+							String font = CodecUtil.isFontRegisteredInOS(fontName);
+							if (font != null) {
+								subsFilter.append("Fontname=").append(font);
+							}
+						}
+
 						// XXX (valib) If the font size is not acceptable it could be calculated better taking in to account the original video size. Unfortunately I don't know how to do that.
-						subsFilter.append("Fontsize=").append((int) 15 * Double.parseDouble(configuration.getAssScale()));
+						subsFilter.append(",Fontsize=").append((int) 15 * Double.parseDouble(configuration.getAssScale()));
 						subsFilter.append(",PrimaryColour=").append(SubtitleUtils.convertColourToASSColourString(configuration.getSubsColor()));
 						subsFilter.append(",Outline=").append(configuration.getAssOutline());
 						subsFilter.append(",Shadow=").append(configuration.getAssShadow());
@@ -249,6 +231,7 @@ public class FFMpegVideo extends Player {
 				if (params.sid.getId() < 100) {
 					// Embedded
 					subsFilter.append("[0:v][0:s:").append(media.getSubtitleTracksList().indexOf(params.sid)).append("]overlay");
+					isSubsManualTiming = false;
 				} else {
 					// External
 					videoFilterOptions.add("-i");
@@ -257,12 +240,12 @@ public class FFMpegVideo extends Player {
 				}
 			}
 			if (isNotBlank(subsFilter)) {
-				if (params.timeseek > 0) {
+				if (params.timeseek > 0 && isSubsManualTiming) {
 					filterChain.add("setpts=PTS+" + params.timeseek + "/TB"); // based on https://trac.ffmpeg.org/ticket/2067
 				}
 
 				filterChain.add(subsFilter.toString());
-				if (params.timeseek > 0) {
+				if (params.timeseek > 0 && isSubsManualTiming) {
 					filterChain.add("setpts=PTS-STARTPTS"); // based on https://trac.ffmpeg.org/ticket/2067
 				}
 			}
@@ -614,6 +597,9 @@ public class FFMpegVideo extends Player {
 		audioBitrateOptions.add("-q:a");
 		audioBitrateOptions.add(DEFAULT_QSCALE);
 
+		audioBitrateOptions.add("-ar");
+		audioBitrateOptions.add("" + params.mediaRenderer.getTranscodedVideoAudioSampleRate());
+
 		return audioBitrateOptions;
 	}
 
@@ -850,7 +836,7 @@ public class FFMpegVideo extends Player {
 			)
 		) {
 			boolean deferToMencoder = false;
-			if (configuration.isFFmpegDeferToMEncoderForProblematicSubtitles() && params.sid.isEmbedded()) {
+			if (configuration.isFFmpegDeferToMEncoderForProblematicSubtitles() && params.sid.isEmbedded() && params.sid.getType().isText()) {
 				deferToMencoder = true;
 				LOGGER.trace(prependTraceReason + "the user setting is enabled.");
 			} else if (media.isEmbeddedFontExists()) {
@@ -1006,6 +992,11 @@ public class FFMpegVideo extends Player {
 					} else {
 						cmdList.add(String.valueOf(CodecUtil.getAC3Bitrate(configuration, params.aid)) + "k");
 					}
+				}
+
+				if (!customFFmpegOptions.contains("-ar ")) {
+					cmdList.add("-ar");
+					cmdList.add("" + params.mediaRenderer.getTranscodedVideoAudioSampleRate());
 				}
 			}
 
@@ -1398,7 +1389,7 @@ public class FFMpegVideo extends Player {
 						if (reDuration.reset(line).find()) {
 							String d = reDuration.group(1);
 							LOGGER.trace("[{}] setting duration: {}", ID, d);
-							dlna.getMedia().setDuration(convertStringToTime(d));
+							dlna.getMedia().setDuration(StringUtil.convertStringToTime(d));
 							return false; // done, stop filtering
 						}
 						return true; // keep filtering

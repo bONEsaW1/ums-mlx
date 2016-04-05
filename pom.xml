@@ -27,7 +27,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>github.com.taconaut</groupId>
 	<artifactId>ums</artifactId>
-	<version>6.0.0-mlx-1.5-SNAPSHOT</version>
+	<version>6.2.2-mlx-1.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>UMS</name>
 	<url>http://www.universalmediaserver.org/</url>
@@ -164,7 +164,7 @@
 		<maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
 		<maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
 		<maven-site-plugin-version>3.3</maven-site-plugin-version>
-		<maven-project-info-reports-plugin-version>2.7</maven-project-info-reports-plugin-version>
+		<maven-project-info-reports-plugin-version>2.8.1</maven-project-info-reports-plugin-version>
 		<maven-javadoc-plugin-version>2.10.3</maven-javadoc-plugin-version>
 		<maven-pmd-plugin-version>3.4</maven-pmd-plugin-version>
 		<maven-dependency-plugin-version>2.8</maven-dependency-plugin-version>
@@ -177,7 +177,7 @@
 
 		<jdepend-maven-plugin-version>2.0-beta-2</jdepend-maven-plugin-version>
 		<cobertura-maven-plugin-version>2.6</cobertura-maven-plugin-version>
-		<l10n-maven-plugin-version>1.0-alpha-2</l10n-maven-plugin-version>
+		<l10n-maven-plugin-version>1.4</l10n-maven-plugin-version>
 		<!-- This version works only with JDK 7 and above-->
 		<findbugs-version>3.0.3</findbugs-version>
 		<findbugs-annotations-version>3.0.1u2</findbugs-annotations-version>

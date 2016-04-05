@@ -41,13 +41,13 @@ import net.pms.configuration.PmsConfiguration;
 import net.pms.configuration.RendererConfiguration;
 import net.pms.dlna.*;
 import net.pms.formats.Format;
-import static net.pms.util.AudioUtils.getLPCMChannelMappingForMencoder;
 import net.pms.formats.v2.SubtitleType;
 import net.pms.io.*;
 import net.pms.network.HTTPResource;
 import net.pms.newgui.GuiUtil;
 import net.pms.newgui.components.CustomJButton;
 import net.pms.util.*;
+import static net.pms.util.AudioUtils.getLPCMChannelMappingForMencoder;
 import static net.pms.util.StringUtil.quoteArg;
 import org.apache.commons.configuration.event.ConfigurationEvent;
 import org.apache.commons.configuration.event.ConfigurationListener;
@@ -1414,24 +1414,25 @@ public class MEncoderVideo extends Player {
 					sb.append("-ass-color ").append(assSubColor).append(" -ass-border-color 00000000 -ass-font-scale ").append(configuration.getAssScale());
 
 					// Set subtitles font
-					if (configuration.getFont() != null && configuration.getFont().length() > 0) {
+					if (isNotBlank(configuration.getFont())) {
 						/* Set font with -font option, workaround for the bug:
 						 * https://github.com/Happy-Neko/ps3mediaserver/commit/52e62203ea12c40628de1869882994ce1065446a#commitcomment-990156
 						 */
 						sb.append(" -font ").append(quoteArg(configuration.getFont())).append(" ");
-						sb.append(" -ass-force-style FontName=").append(quoteArg(configuration.getFont())).append(",");
+						String font = CodecUtil.isFontRegisteredInOS(configuration.getFont());
+						if (font != null) {
+							sb.append(" -ass-force-style FontName=").append(quoteArg(font)).append(",");
+						}
+						
 					} else {
 						String font = CodecUtil.getDefaultFontPath();
 						if (isNotBlank(font)) {
-							/*
-							 * Variable "font" contains a font path instead of a font name.
-							 * Does "-ass-force-style" support font paths? In tests on OS X
-							 * the font path is ignored (Outline, Shadow and MarginV are
-							 * used, though) and the "-font" definition is used instead.
-							 * See: https://github.com/ps3mediaserver/ps3mediaserver/pull/14
-							 */
 							sb.append(" -font ").append(quoteArg(font)).append(" ");
-							sb.append(" -ass-force-style FontName=").append(quoteArg(font)).append(",");
+							String fontName = CodecUtil.isFontRegisteredInOS(font);
+							if (fontName != null) {
+								sb.append(" -ass-force-style FontName=").append(quoteArg(fontName)).append(",");
+							}
+							
 						} else {
 							sb.append(" -font Arial ");
 							sb.append(" -ass-force-style FontName=Arial,");

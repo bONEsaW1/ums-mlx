@@ -24,8 +24,8 @@ import com.sun.jna.Platform;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.io.BufferedWriter;
 import java.awt.Frame;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,9 +45,9 @@ import net.pms.dlna.CodeEnter;
 import net.pms.formats.Format;
 import net.pms.io.SystemUtils;
 import net.pms.util.CoverSupplier;
+import net.pms.util.FilePermissions;
 import net.pms.util.FileUtil;
 import net.pms.util.FileUtil.FileLocation;
-import net.pms.util.FilePermissions;
 import net.pms.util.FullyPlayedAction;
 import net.pms.util.Languages;
 import net.pms.util.PropertiesUtil;
@@ -178,6 +178,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	protected static final String KEY_HTTP_ENGINE_V2 = "http_engine_v2";
 	protected static final String KEY_IGNORE_THE_WORD_THE = "ignore_the_word_the";
 	protected static final String KEY_IMAGE_THUMBNAILS_ENABLED = "image_thumbnails";
+	protected static final String KEY_INFO_DB_RETRY = "infodb_retry";
 	protected static final String KEY_IP_FILTER = "ip_filter";
 	protected static final String KEY_ITUNES_LIBRARY_PATH = "itunes_library_path";
 	protected static final String KEY_LANGUAGE = "language";
@@ -830,6 +831,13 @@ public class PmsConfiguration extends RendererConfiguration {
 		configuration.setProperty(KEY_SERVER_HOSTNAME, value);
 	}
 
+	public String getServerDisplayName() {
+		if (isAppendProfileName()) {
+			return String.format("%s [%s]", getString(KEY_SERVER_NAME, PMS.NAME), getProfileName());
+		} else {
+			return getString(KEY_SERVER_NAME, PMS.NAME);
+		}
+	}
 	/**
 	 * The name of the server.
 	 *
@@ -3892,13 +3900,17 @@ public class PmsConfiguration extends RendererConfiguration {
 			languages.put("es", "Spanish");
 			languages.put("sv", "Swedish");
 			languages.put("tr", "Turkish");
-
+			
 			LanguageNameComparator bvc = new LanguageNameComparator(languages);
 			supportedLanguages = new TreeMap<String, String>(bvc);
 			supportedLanguages.putAll(languages);
 		}
 
 		return supportedLanguages;
+	}
+
+	public boolean isInfoDbRetry() {
+		return getBoolean(KEY_INFO_DB_RETRY, false);
 	}
 	
 	/**

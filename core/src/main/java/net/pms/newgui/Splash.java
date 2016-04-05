@@ -24,16 +24,16 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JWindow;
+import net.pms.Messages;
+import net.pms.configuration.PmsConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.pms.Messages;
-import net.pms.configuration.PmsConfiguration;
 
-public class Splash extends JWindow implements MouseListener {
+public class Splash extends JFrame implements MouseListener {
 	private static final long serialVersionUID = 2357524127613134620L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Splash.class);
 	private JLabel imglabel;
@@ -57,6 +57,7 @@ public class Splash extends JWindow implements MouseListener {
 		imglabel = new JLabel(img);
 		imglabel.setBounds(0, 0, img.getIconWidth(), img.getIconHeight());
 		setSize(imglabel.getWidth(), imglabel.getHeight());
+		setUndecorated(true);
 		setBackground(new Color(1.0f,1.0f,1.0f,0.0f));
 		setLocationRelativeTo(null);
 		setLayout(null);

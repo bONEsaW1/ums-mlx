@@ -189,6 +189,7 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 	protected static final String THUMBNAIL_AS_RESOURCE = "ThumbnailAsResource";
 	protected static final String THUMBNAIL_HEIGHT = "ThumbnailHeight";
 	protected static final String THUMBNAIL_WIDTH = "ThumbnailWidth";
+	protected static final String THUMBNAIL_PADDING = "ThumbnailPadding";
 	protected static final String THUMBNAILS = "Thumbnails";
 	protected static final String TRANSCODE_AUDIO = "TranscodeAudio";
 	protected static final String TRANSCODE_AUDIO_441KHZ = "TranscodeAudioTo441kHz";
@@ -258,8 +259,8 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 						String rendererName = r.getConfName();
 						allRenderersNames.add(rendererName);
 						String renderersGroup = null;
-						if (rendererName.indexOf(" ") > 0) {
-							renderersGroup = rendererName.substring(0, rendererName.indexOf(" "));
+						if (rendererName.indexOf(' ') > 0) {
+							renderersGroup = rendererName.substring(0, rendererName.indexOf(' '));
 						}
 
 						if (selectedRenderers.contains(rendererName) || selectedRenderers.contains(renderersGroup) || selectedRenderers.contains(pmsConf.ALL_RENDERERS)) {
@@ -326,15 +327,15 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 	}
 
 	public void setStringList(String key, List<String> value) {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (String element : value) {
-			if (!result.isEmpty()) {
-				result += ", ";
+			if (!result.toString().equals("")) {
+				result.append(", ");
 			}
-			result += element;
+			result.append(element);
 		}
-		if (result.isEmpty()) {
-			result = "None";
+		if (result.toString().equals("")) {
+			result.append("None");
 		}
 		configuration.setProperty(key, result);
 	}
@@ -2055,7 +2056,10 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 	/**
 	 * Some devices (e.g. Samsung) recognize a custom HTTP header for retrieving
 	 * the contents of a subtitles file. This method will return the name of that
-	 * custom HTTP header, or "" if no such header exists. Default value is "".
+	 * custom HTTP header, or "" if no such header exists. The supported external
+	 * subtitles must be set by {@link #SupportedExternalSubtitlesFormats()}. 
+	 * 
+	 * Default value is "".
 	 *
 	 * @return The name of the custom HTTP header.
 	 */
@@ -2311,10 +2315,21 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 		}
 	}
 
+	/**
+	 * List of the renderer supported external subtitles formats
+	 * for streaming together with streaming (not transcoded) video.
+	 * 
+	 * @return A comma-separated list of supported text-based external subtitles formats.
+	 */
 	public String getSupportedExternalSubtitles() {
 		return getString(SUPPORTED_EXTERNAL_SUBTITLES_FORMATS, "");
 	}
 
+	/**
+	 * List of the renderer supported embedded subtitles formats.
+	 * 
+	 * @return A comma-separated list of supported embedded subtitles formats.
+	 */
 	public String getSupportedEmbeddedSubtitles() {
 		return getString(SUPPORTED_INTERNAL_SUBTITLES_FORMATS, "");
 	}
@@ -2635,7 +2650,7 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 						alert();
 						try {
 							Thread.sleep(1000);
-						} catch (Exception e) {
+						} catch (InterruptedException e) {
 						}
 					}
 					// Reset only if another item hasn't already begun playing
@@ -2763,6 +2778,16 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 	 */
 	public boolean isThumbnails() {
 		return getBoolean(THUMBNAILS, true);
+	}
+
+	/**
+	 * Whether we should add black padding to thumbnails so they are always
+	 * at the same resolution, or just scale to within the limits.
+	 *
+	 * @return whether to add padding to thumbnails
+	 */
+	public boolean isThumbnailPadding() {
+		return getBoolean(THUMBNAIL_PADDING, false);
 	}
 
 	/**

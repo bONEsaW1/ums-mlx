@@ -19,6 +19,7 @@
  */
 package net.pms.dlna;
 
+import com.ibm.icu.text.CharsetMatch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ibm.icu.text.CharsetMatch;
 
 /**
  * This class keeps track of the subtitle information for media.
@@ -185,12 +185,15 @@ public class DLNAMediaSubtitle extends DLNAMediaLang implements Cloneable {
 				if (match != null) {
 					subsCharacterSet = match.getName().toUpperCase(PMS.getLocale());
 					lang = match.getLanguage();
+					LOGGER.debug("Set detected charset \"{}\" and language \"{}\" for {}", match.getName(), lang, externalFile.getAbsolutePath());
 				} else {
 					subsCharacterSet = null;
+					LOGGER.debug("No charset detected for {}", externalFile.getAbsolutePath());
 				}
+
 			} catch (IOException ex) {
 				subsCharacterSet = null;
-				LOGGER.warn("Exception during external file charset detection.", ex);
+				LOGGER.warn("Exception during external file charset detection: ", ex.getMessage());
 			}
 		}
 	}
@@ -201,7 +204,7 @@ public class DLNAMediaSubtitle extends DLNAMediaLang implements Cloneable {
 	public void setExternalFileCharacterSet(String charSet) {
 		setSubCharacterSet(charSet);
 	}
-	
+
 	public void setSubCharacterSet(String charSet) {
 		subsCharacterSet = charSet;
 	}
