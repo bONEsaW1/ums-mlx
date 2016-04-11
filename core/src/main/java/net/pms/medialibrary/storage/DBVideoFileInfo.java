@@ -379,7 +379,8 @@ class DBVideoFileInfo extends DBFileInfo {
 						DLNAMediaSubtitle subtitleTrack = new DLNAMediaSubtitle();
 						File subTitleFile;
 						if (subtitleFilePath != null && !subtitleFilePath.equals("") && (subTitleFile = new File(subtitleFilePath)).exists()) {
-							subtitleTrack.setExternalFile(subTitleFile);
+							// TODO: Determin if we can specify the forced language
+							subtitleTrack.setExternalFile(subTitleFile, null);
 						}
 						subtitleTrack.setLang(rs.getString(pos++));
 						subtitleTrack.setType(SubtitleType.values()[rs.getInt(pos++)]);

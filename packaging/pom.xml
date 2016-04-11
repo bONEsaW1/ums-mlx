@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>github.com.taconaut</groupId>
 		<artifactId>ums</artifactId>
-		<version>6.2.2-mlx-1.5-SNAPSHOT</version>
+		<version>6.2.3-mlx-1.5-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>github.com.taconaut</groupId>
 			<artifactId>ums-core</artifactId>
-			<version>6.2.2-mlx-1.5-SNAPSHOT</version>
+			<version>6.2.3-mlx-1.5-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
