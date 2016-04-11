@@ -816,7 +816,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 					Player.setAudioAndSubs(getSystemName(), media, params); // set proper subtitles in accordance with user setting
 					if (params.sid != null) {
 						if (params.sid.isExternal()) {
-							if (renderer != null && renderer.isExternalSubtitlesFormatSupported(params.sid)) {
+							if (renderer != null && renderer.isExternalSubtitlesFormatSupported(params.sid, media)) {
 								media_subtitle = params.sid;
 								media_subtitle.setSubsStreamable(true);
 								LOGGER.trace("This video has external subtitles that should be streamed");
@@ -1945,7 +1945,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 										matchedSub = params.sid;
 										String file = OpenSubtitle.fetchSubs(matchedSub.getLiveSubURL(), matchedSub.getLiveSubFile());
 										if (!StringUtils.isEmpty(file)) {
-											matchedSub.setExternalFile(new File(file));
+											matchedSub.setExternalFile(new File(file), null);
 											params.sid = matchedSub;
 											media_subtitle = params.sid;
 											finishedMatchingPreferences = true;

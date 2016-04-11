@@ -672,7 +672,6 @@ public class PmsConfiguration extends RendererConfiguration {
 	 * </p>
 	 */
 	public synchronized String getDefaultLogFileFolder() {
-
 		if (defaultLogFileDir == null) {
 			if (Platform.isLinux()) {
 				if (LOGGER.isTraceEnabled()) {
