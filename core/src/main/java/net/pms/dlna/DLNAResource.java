@@ -881,10 +881,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			// 1) transcoding is forced by configuration, or
 			// 2) transcoding is preferred and not prevented by configuration
 			if (forceTranscode || (preferTranscode && !isSkipTranscode())) {
-				if (media_subtitle != null) {
-					media_subtitle.setSubsStreamable(false); // prevent to stream subtitles when video is transcoded.
-				}
-
 				if (parserV2) {
 					LOGGER.trace("Final verdict: \"{}\" will be transcoded with player \"{}\" with mime type \"{}\"", getName(), player.toString(), renderer != null ? renderer.getMimeType(mimeType(player), media) : media.getMimeType());
 				} else {
@@ -1514,7 +1510,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		String subtitleFormat;
 		String subtitleLanguage;
 		boolean isNamedNoEncoding = false;
-		boolean subsAreValidForStreaming = media_subtitle != null && media_subtitle.isStreamable() && player == null;
+		boolean subsAreValidForStreaming = media_subtitle != null && media_subtitle.isStreamable() && mediaRenderer != null && mediaRenderer.streamSubsForTranscodedVideo();
 		if (this instanceof RealFile && !isFolder()) {
 			RealFile rf = (RealFile) this;
 			if (configuration.isPrettifyFilenames() && getFormat() != null && getFormat().isVideo()) {
@@ -2054,6 +2050,9 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 										if (configuration.isDisableSubtitles() || (matchedSub.getLang() != null && matchedSub.getLang().equals("off"))) {
 											LOGGER.trace("Disabled the subtitles: " + matchedSub);
 										} else {
+											if (mediaRenderer.isExternalSubtitlesFormatSupported(matchedSub, media)) {
+												matchedSub.setSubsStreamable(true);	
+											}
 											params.sid = matchedSub;
 											media_subtitle = params.sid;
 										}
@@ -2087,6 +2086,10 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 															if (sub.getExternalFile() != null) {
 																LOGGER.trace("Found external forced file: " + sub.getExternalFile().getAbsolutePath());
 															}
+															
+															if (mediaRenderer.isExternalSubtitlesFormatSupported(sub, media)) {
+																sub.setSubsStreamable(true);	
+															}
 															params.sid = sub;
 															media_subtitle = params.sid;
 															forcedSubsFound = true;
@@ -2101,6 +2104,9 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 													LOGGER.trace("Found subtitles track: " + sub);
 													if (sub.getExternalFile() != null) {
 														LOGGER.trace("Found external file: " + sub.getExternalFile().getAbsolutePath());
+														if (mediaRenderer.isExternalSubtitlesFormatSupported(sub, media)) {
+															sub.setSubsStreamable(true);	
+														}
 														params.sid = sub;
 														media_subtitle = params.sid;
 														break;
@@ -2131,6 +2137,9 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 															sub.getExternalFile() != null
 														)
 													) {
+														if (mediaRenderer.isExternalSubtitlesFormatSupported(sub, media)) {
+															sub.setSubsStreamable(true);	
+														}
 														params.sid = sub;
 														LOGGER.trace("Matched subtitles track: " + params.sid);
 														break;
@@ -2266,7 +2275,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			if (format != null && format.isVideo()) {
 				if (
 					!configuration.isDisableSubtitles() &&
-					player == null &&
+					(player != null && mediaRenderer.streamSubsForTranscodedVideo() || player == null) &&
 					media_subtitle != null &&
 					media_subtitle.isStreamable()
 				) {

@@ -192,7 +192,12 @@ public class FFMpegVideo extends Player {
 						originalSubsFilename = params.sid.getExternalFile().getAbsolutePath();
 					}
 				} else if (params.sid.isExternal()) {
-					originalSubsFilename = params.sid.getExternalFile().getAbsolutePath();
+					if (params.sid.isStreamable() && renderer.streamSubsForTranscodedVideo()) { // when subs are streamable do not transcode them
+						originalSubsFilename = null; 
+					} else {
+						originalSubsFilename = params.sid.getExternalFile().getAbsolutePath();
+					}
+					
 				} else if (params.sid.isEmbedded()) {
 					originalSubsFilename = dlna.getSystemName();
 				}
@@ -842,7 +847,14 @@ public class FFMpegVideo extends Player {
 			)
 		) {
 			boolean deferToMencoder = false;
-			if (configuration.isFFmpegDeferToMEncoderForProblematicSubtitles() && params.sid.isEmbedded() && params.sid.getType().isText()) {
+			if (
+				configuration.isFFmpegDeferToMEncoderForProblematicSubtitles() &&
+				params.sid.isEmbedded() &&
+				(
+					params.sid.getType().isText() ||
+					params.sid.getType() == SubtitleType.VOBSUB
+				)
+			) {
 				deferToMencoder = true;
 				LOGGER.trace(prependTraceReason + "the user setting is enabled.");
 			} else if (media.isEmbeddedFontExists()) {
