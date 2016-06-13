@@ -163,6 +163,26 @@ public class DLNAMediaInfo implements Cloneable {
 
 	private List<DLNAMediaAudio> audioTracks = new ArrayList<>();
 	private List<DLNAMediaSubtitle> subtitleTracks = new ArrayList<>();
+	
+	private boolean externalSubsExist = false;
+	
+	public void setExternalSubsExist(boolean exist) {
+		this.externalSubsExist = exist;
+	}
+
+	public boolean isExternalSubsExist() {
+		return externalSubsExist;
+	}
+
+	private boolean externalSubsParsed = false;
+
+	public void setExternalSubsParsed(boolean parsed) {
+		this.externalSubsParsed = parsed;
+	}
+
+	public boolean isExternalSubsParsed() {
+		return externalSubsParsed;
+	}
 
 	/**
 	 * @deprecated Use standard getter and setter to access this variable.
@@ -1410,6 +1430,8 @@ public class DLNAMediaInfo implements Cloneable {
 					mimeType = HTTPResource.PNG_TYPEMIME;
 				} else if ("gif".equals(codecV) || "gif".equals(container)) {
 					mimeType = HTTPResource.GIF_TYPEMIME;
+				} else if ("tiff".equals(codecV) || "tiff".equals(container)) {
+					mimeType = HTTPResource.TIFF_TYPEMIME;
 				} else if (codecV.startsWith("h264") || codecV.equals("h263") || codecV.toLowerCase().equals("mpeg4") || codecV.toLowerCase().equals("mp4")) {
 					mimeType = HTTPResource.MP4_TYPEMIME;
 				} else if (codecV.contains("mpeg") || codecV.contains("mpg")) {
@@ -1426,7 +1448,7 @@ public class DLNAMediaInfo implements Cloneable {
 					mimeType = HTTPResource.AUDIO_OGG_TYPEMIME;
 				} else if (codecA.contains("asf") || codecA.startsWith("wm")) {
 					mimeType = HTTPResource.AUDIO_WMA_TYPEMIME;
-				} else if (codecA.startsWith("pcm") || codecA.contains("wav")) {
+				} else if (codecA.contains("pcm") || codecA.contains("wav")) {
 					mimeType = HTTPResource.AUDIO_WAV_TYPEMIME;
 				}
 			}

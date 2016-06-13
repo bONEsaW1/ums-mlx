@@ -332,19 +332,26 @@ public class UPNPHelper extends UPNPControl {
 	 */
 	private static void sendMessage(DatagramSocket socket, String nt, String message) throws IOException {
 		String msg = buildMsg(nt, message);
-		Random rand = new Random();
-//		LOGGER.trace( "Sending the SSDP packet: " + CRLF + StringUtils.replace(msg, CRLF, "<CRLF>"));
+		//Random rand = new Random();
+
+		// LOGGER.trace( "Sending this SSDP packet: " + CRLF + StringUtils.replace(msg, CRLF, "<CRLF>")));
+
 		InetAddress upnpAddress = getUPNPAddress();
 		DatagramPacket ssdpPacket = new DatagramPacket(msg.getBytes(), msg.length(), upnpAddress, UPNP_PORT);
 		socket.send(ssdpPacket);
-		sleep(rand.nextInt(delay / 100 / 2));
-		// Send the SSDP packet twice in accordance with the DLNA specification
-		socket.send(ssdpPacket);
-//		LOGGER.trace( "Repeating the SSDP packet: " + CRLF + StringUtils.replace(msg, CRLF, "<CRLF>"));
+
+		// XXX Why is it necessary to sleep for this random time? What would happen when random equals 0?
+		//sleep(rand.nextInt(1800 / 2));
+
+		// XXX Why send the same packet twice?
+		//socket.send(ssdpPacket);
+
+		// XXX Why is it necessary to sleep for this random time (again)?
+		//sleep(rand.nextInt(1800 / 2));
 	}
 
-	private static int delay = 10000;
-	
+	private static int ALIVE_delay = 10000;
+
 	/**
 	 * Starts up two threads: one to broadcast UPnP ALIVE messages and another
 	 * to listen for responses.
@@ -356,14 +363,33 @@ public class UPNPHelper extends UPNPControl {
 			@Override
 			public void run() {
 				while (true) {
-					sleep(delay);
+					sleep(ALIVE_delay);
 					sendAlive();
 
-					// If a renderer is connected, broadcast every 30 seconds, otherwise every 10.
-					if (PMS.get().getFoundRenderers().size() > 0) {
-						delay = 30000;
-					} else {
-						delay = 10000;
+					/**
+					 * The first delay for sending an ALIVE message is 10 seconds,
+					 * the second delay is for 20 seconds. From then on, all other
+					 * delays are standard for 180 seconds. It can be customized
+					 * with the ALIVE_delay user configuration setting.
+					 */
+					switch (ALIVE_delay) {
+						case 10000:
+							ALIVE_delay = 20000;
+							break;
+						case 20000:
+							// If getAliveDelay is 0, there is no custom alive delay
+							if (configuration.getAliveDelay() == 0) {
+								if (PMS.get().getFoundRenderers().size() > 0) {
+									ALIVE_delay = 30000;
+								} else {
+									ALIVE_delay = 10000;
+								}
+							} else {
+								ALIVE_delay = configuration.getAliveDelay();
+							}
+							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -540,17 +566,19 @@ public class UPNPHelper extends UPNPControl {
 		sb.append(CRLF);
 
 		if (message.equals(ALIVE)) {
-			sb.append("CACHE-CONTROL: max-age=300").append(CRLF);
+			sb.append("CACHE-CONTROL: max-age=").append(ALIVE_delay / 100).append(CRLF);
 			sb.append("SERVER: ").append(PMS.get().getServerName()).append(CRLF);
 		}
 
+		// Sony devices like PS3 and PS4 need this extra linebreak
+		sb.append(CRLF);
 		return sb.toString();
 	}
 
 	/**
-	 * Gets the uPNP address.
+	 * Gets the UPnP address.
 	 *
-	 * @return the uPNP address
+	 * @return the UPnP address
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	private static InetAddress getUPNPAddress() throws IOException {

@@ -92,6 +92,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	protected static boolean avsHackLogged = false;
 
 	protected static final String KEY_3D_SUBTITLES_DEPTH = "3d_subtitles_depth";
+	protected static final String KEY_ALIVE_DELAY = "ALIVE_delay";
 	protected static final String KEY_ALTERNATE_SUBTITLES_FOLDER = "alternate_subtitles_folder";
 	protected static final String KEY_ALTERNATE_THUMB_FOLDER = "alternate_thumb_folder";
 	protected static final String KEY_APPEND_PROFILE_NAME = "append_profile_name";
@@ -2701,7 +2702,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isPreventsSleep() {
-		return getBoolean(KEY_PREVENTS_SLEEP, false);
+		return getBoolean(KEY_PREVENTS_SLEEP, true);
 	}
 
 	public void setHTTPEngineV2(boolean value) {
@@ -3911,6 +3912,10 @@ public class PmsConfiguration extends RendererConfiguration {
 
 	public boolean isInfoDbRetry() {
 		return getBoolean(KEY_INFO_DB_RETRY, false);
+	}
+
+	public int getAliveDelay() {
+		return getInt(KEY_ALIVE_DELAY, 0);
 	}
 	
 	/**
