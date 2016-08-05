@@ -46,12 +46,12 @@
 				1) Go to http://www.java.com/en/download/manual.jsp
 				2) Check the download links for win32, win64 and osx and use BundleId+1 for the download URl
 		-->
-		<private-jre.windows.x86.filename>jre-8u66-windows-i586.tar.gz</private-jre.windows.x86.filename>
-		<private-jre.windows.x86.archive-directory-name>jre1.8.0_66</private-jre.windows.x86.archive-directory-name>
-		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=113218</private-jre.windows.x86.download-url>
-		<private-jre.windows.x64.filename>jre-8u66-windows-x64.tar.gz</private-jre.windows.x64.filename>
-		<private-jre.windows.x64.archive-directory-name>jre1.8.0_66</private-jre.windows.x64.archive-directory-name>
-		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=113220</private-jre.windows.x64.download-url>
+		<private-jre.windows.x86.filename>jre-8u101-windows-i586.tar.gz</private-jre.windows.x86.filename>
+		<private-jre.windows.x86.archive-directory-name>jre1.8.0_101</private-jre.windows.x86.archive-directory-name>
+		<private-jre.windows.x86.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=211998</private-jre.windows.x86.download-url>
+		<private-jre.windows.x64.filename>jre-8u101-windows-x64.tar.gz</private-jre.windows.x64.filename>
+		<private-jre.windows.x64.archive-directory-name>jre1.8.0_101</private-jre.windows.x64.archive-directory-name>
+		<private-jre.windows.x64.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=212000</private-jre.windows.x64.download-url>
 		<private-jre.macosx.filename>jre-7u67-macosx-x64.gz</private-jre.macosx.filename>
 		<private-jre.macosx.archive-directory-name>jre1.8.0_40</private-jre.macosx.archive-directory-name>
 		<private-jre.macosx.download-url>http://javadl.sun.com/webapps/download/AutoDL?BundleId=105220</private-jre.macosx.download-url>
