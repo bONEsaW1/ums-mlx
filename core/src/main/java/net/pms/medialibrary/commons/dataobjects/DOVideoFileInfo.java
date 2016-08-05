@@ -72,7 +72,6 @@ public class DOVideoFileInfo extends DOFileInfo {
 	private String avcLevel;
 	private String stereoscopy;
 	private String matrixCoefficients;
-	private boolean embeddedFontExists;
 
 	public DOVideoFileInfo() {
 		setType(FileType.VIDEO);
@@ -741,14 +740,6 @@ public class DOVideoFileInfo extends DOFileInfo {
 		this.matrixCoefficients = matrixCoefficients;
 	}
 
-	public boolean isEmbeddedFontExists() {
-		return embeddedFontExists;
-	}
-
-	public void setEmbeddedFontExists(boolean embeddedFontExists) {
-		this.embeddedFontExists = embeddedFontExists;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -917,7 +908,6 @@ public class DOVideoFileInfo extends DOFileInfo {
 		}
 
 		setMuxable(videoFileInfo.isMuxable());
-		setEmbeddedFontExists(videoFileInfo.isEmbeddedFontExists());
 	}
 
 	@Override
@@ -968,7 +958,6 @@ public class DOVideoFileInfo extends DOFileInfo {
 		hashCode *= 24 + getAspectRatioVideoTrack().hashCode();
 		hashCode *= 24 + getStereoscopy().hashCode();
 		hashCode *= 24 + getMatrixCoefficients().hashCode();
-		hashCode *= 24 + (isEmbeddedFontExists() ? 3 : 4);
 
 		return hashCode;
 	}
@@ -1023,8 +1012,7 @@ public class DOVideoFileInfo extends DOFileInfo {
 				&& getAspectRatioContainer().equals(compObj.getAspectRatioContainer())
 				&& getAspectRatioVideoTrack().equals(compObj.getAspectRatioVideoTrack())
 				&& getStereoscopy().equals(compObj.getStereoscopy())
-				&& getMatrixCoefficients().equals(compObj.getMatrixCoefficients())
-				&& isEmbeddedFontExists() == compObj.isEmbeddedFontExists()) {
+				&& getMatrixCoefficients().equals(compObj.getMatrixCoefficients())) {
 
 			if (!getAudioCodes().equals(compObj.getAudioCodes())) {
 				return false;

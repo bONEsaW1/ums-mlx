@@ -251,7 +251,7 @@ class DBVideoFileInfo extends DBFileInfo {
 					+ ", VIDEO.AGERATINGLEVEL, VIDEO.AGERATINGREASON, VIDEO.RATINGPERCENT, VIDEO.RATINGVOTERS, VIDEO.DIRECTOR, VIDEO.TAGLINE"
 					+ ", VIDEO.ASPECTRATIO, VIDEO.BITRATE, VIDEO.BITSPERPIXEL, VIDEO.CODECV, VIDEO.DURATIONSEC, VIDEO.CONTAINER, VIDEO.DVDTRACK, VIDEO.FRAMERATE"
 					+ ", VIDEO.HEIGHT, VIDEO.MIMETYPE, VIDEO.MODEL, VIDEO.MUXABLE, VIDEO.WIDTH, VIDEO.YEAR, VIDEO.MUXINGMODE, VIDEO.FRAMERATEMODE"
-					+ ", VIDEO.ASPECTRATIOCONTAINER, VIDEO.ASPECTRATIOVIDEOTRACK, VIDEO.REFRAMES, VIDEO.AVCLEVEL, VIDEO.STEREOSCOPY, VIDEO.MATRIXCOEFFICIENTS, VIDEO.EMBEDDEDFONTEXISTS"// VIDEO
+					+ ", VIDEO.ASPECTRATIOCONTAINER, VIDEO.ASPECTRATIOVIDEOTRACK, VIDEO.REFRAMES, VIDEO.AVCLEVEL, VIDEO.STEREOSCOPY, VIDEO.MATRIXCOEFFICIENTS"// VIDEO
 					+ ", FILEPLAYS.DATEPLAYEND" // last play
 					+ ", VIDEOAUDIO.LANG, VIDEOAUDIO.NRAUDIOCHANNELS, VIDEOAUDIO.SAMPLEFREQ, VIDEOAUDIO.CODECA, VIDEOAUDIO.BITSPERSAMPLE, VIDEOAUDIO.DELAYMS, VIDEOAUDIO.MUXINGMODE, VIDEOAUDIO.BITRATE" // VIDEOAUDIO
 					+ ", SUBTITLES.FILEPATH, SUBTITLES.LANG, SUBTITLES.TYPE" // SUBTITLES
@@ -323,12 +323,11 @@ class DBVideoFileInfo extends DBFileInfo {
 						videoFile.setAvcLevel(rs.getString(pos++));
 						videoFile.setStereoscopy(rs.getString(pos++));
 						videoFile.setMatrixCoefficients(rs.getString(pos++));
-						videoFile.setEmbeddedFontExists(rs.getBoolean(pos++));
 
 						videos.put(videoFile.getId(), videoFile);
 					} else {
 						// skip the already imported fields if the video with this id is already contained in the list
-						pos = 52;
+						pos = 51;
 
 						videoFile = videos.get(videoFile.getId());
 					}
@@ -642,7 +641,7 @@ class DBVideoFileInfo extends DBFileInfo {
 			stmt = conn.prepareStatement("INSERT INTO VIDEO (FILEID, AGERATINGLEVEL, AGERATINGREASON, RATINGPERCENT, RATINGVOTERS"
 					+ ", DIRECTOR, TAGLINE, ASPECTRATIO, BITRATE, BITSPERPIXEL, CODECV, DURATIONSEC, CONTAINER, DVDTRACK, FRAMERATE, MIMETYPE, MODEL, MUXABLE"
 					+ ", WIDTH, YEAR, HEIGHT, ORIGINALNAME, NAME, TMDBID, IMDBID, OVERVIEW, BUDGET, REVENUE, HOMEPAGEURL, TRAILERURL, SORTNAME, MUXINGMODE"
-					+ ", ASPECTRATIOCONTAINER, ASPECTRATIOVIDEOTRACK, REFRAMES, AVCLEVEL, STEREOSCOPY, MATRIXCOEFFICIENTS, EMBEDDEDFONTEXISTS)"
+					+ ", ASPECTRATIOCONTAINER, ASPECTRATIOVIDEOTRACK, REFRAMES, AVCLEVEL, STEREOSCOPY, MATRIXCOEFFICIENTS)"
 					+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.clearParameters();
 			stmt.setInt(1, fileInfo.getId());
@@ -684,7 +683,6 @@ class DBVideoFileInfo extends DBFileInfo {
 			stmt.setString(36, fileInfo.getAvcLevel());
 			stmt.setString(37, fileInfo.getStereoscopy());
 			stmt.setString(38, fileInfo.getMatrixCoefficients());
-			stmt.setBoolean(39, fileInfo.isEmbeddedFontExists());
 			stmt.executeUpdate();
 
 			insertOrUpdateVideoPropertyLists(fileInfo, stmt, conn);
@@ -725,7 +723,7 @@ class DBVideoFileInfo extends DBFileInfo {
 			stmt = conn.prepareStatement("UPDATE VIDEO SET AGERATINGLEVEL = ?, AGERATINGREASON = ?, RATINGPERCENT = ?, RATINGVOTERS = ?"
 					+ ", DIRECTOR = ?, TAGLINE = ?, ASPECTRATIO = ?, BITRATE = ?, BITSPERPIXEL = ?, CODECV = ?, DURATIONSEC = ?, CONTAINER = ?, DVDTRACK = ?, FRAMERATE = ?, MIMETYPE = ?, MODEL = ?, MUXABLE = ?"
 					+ ", WIDTH = ?, YEAR = ?, HEIGHT = ?, ORIGINALNAME = ?, NAME = ?, TMDBID = ?, IMDBID = ?, OVERVIEW = ?, BUDGET = ?, REVENUE = ?, HOMEPAGEURL = ?, TRAILERURL = ?, SORTNAME = ?, MUXINGMODE = ?"
-					+ ", ASPECTRATIOCONTAINER = ?, ASPECTRATIOVIDEOTRACK = ?, REFRAMES = ?, AVCLEVEL = ?, STEREOSCOPY = ?, MATRIXCOEFFICIENTS = ?, EMBEDDEDFONTEXISTS = ?"
+					+ ", ASPECTRATIOCONTAINER = ?, ASPECTRATIOVIDEOTRACK = ?, REFRAMES = ?, AVCLEVEL = ?, STEREOSCOPY = ?, MATRIXCOEFFICIENTS = ?"
 					+ " WHERE FILEID = ?");
 			stmt.clearParameters();
 			stmt.setString(1, fileInfo.getAgeRating().getLevel());
@@ -766,8 +764,7 @@ class DBVideoFileInfo extends DBFileInfo {
 			stmt.setString(35, fileInfo.getAvcLevel());
 			stmt.setString(36, fileInfo.getStereoscopy());
 			stmt.setString(37, fileInfo.getMatrixCoefficients());
-			stmt.setBoolean(38, fileInfo.isEmbeddedFontExists());
-			stmt.setInt(39, fileInfo.getId());
+			stmt.setInt(38, fileInfo.getId());
 			stmt.executeUpdate();
 
 			insertOrUpdateVideoPropertyLists(fileInfo, stmt, conn);

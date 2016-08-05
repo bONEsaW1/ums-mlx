@@ -186,7 +186,6 @@ public class FullDataCollector {
 				fi.setAvcLevel(mi.getAvcLevel());
 				fi.setStereoscopy(mi.getStereoscopy());
 				fi.setMatrixCoefficients(mi.getMatrixCoefficients());
-				fi.setEmbeddedFontExists(mi.isEmbeddedFontExists());
 				if (mi.getSubtitleTracksList() != null)
 					fi.setSubtitlesCodes(mi.getSubtitleTracksList());
 				if (mi.getAudioTracksList() != null)

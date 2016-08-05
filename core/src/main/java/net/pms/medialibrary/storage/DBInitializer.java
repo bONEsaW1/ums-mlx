@@ -354,7 +354,6 @@ class DBInitializer extends DBBase {
 			sb.append(", AVCLEVEL          VARCHAR2(3)");
 			sb.append(", STEREOSCOPY       VARCHAR2(255)");
 			sb.append(", MATRIXCOEFFICIENTS VARCHAR2(16)");
-			sb.append(", EMBEDDEDFONTEXISTS BIT NOT NULL");
 			sb.append(", CONSTRAINT PK_VIDEO PRIMARY KEY (ID))");
 			stmt.executeUpdate(sb.toString());
 			stmt.executeUpdate("CREATE INDEX IDX_VIDEO_RATINGPERCENT ON VIDEO (RATINGPERCENT asc);");
@@ -818,6 +817,10 @@ class DBInitializer extends DBBase {
 		if (realStorageVersion.equals("1.5")) {
 			updateDb15_16();
 			realStorageVersion = "1.6";
+		}
+		if (realStorageVersion.equals("1.6")) {
+			updateDb16_17();
+			realStorageVersion = "1.7";
 		}
 	}
 
@@ -1307,6 +1310,28 @@ class DBInitializer extends DBBase {
 				log.info("Updated DB from version 1.5 to 1.6");
 		} catch (SQLException se) {
 			log.error("Failed to update DB from version 1.5 to 1.6", se);
+		} finally {
+			close(conn, stmt);
+		}
+	}
+
+	private void updateDb16_17() {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+
+		try {
+			conn = cp.getConnection();
+
+			// do updates
+			stmt = conn.prepareStatement("ALTER TABLE VIDEO DROP COLUMN EMBEDDEDFONTEXISTS");
+			stmt.executeUpdate();
+
+			// update db version
+			storage.setMetaDataValue(MetaDataKeys.VERSION.toString(), "1.7");
+			if (log.isInfoEnabled())
+				log.info("Updated DB from version 1.6 to 1.7");
+		} catch (SQLException se) {
+			log.error("Failed to update DB from version 1.6 to 1.7", se);
 		} finally {
 			close(conn, stmt);
 		}

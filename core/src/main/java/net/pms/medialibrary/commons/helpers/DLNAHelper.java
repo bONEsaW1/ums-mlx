@@ -72,7 +72,6 @@ public class DLNAHelper {
 
 		dbMedia.setStereoscopy(video.getStereoscopy());
 		dbMedia.setMatrixCoefficients(video.getMatrixCoefficients());
-		dbMedia.setEmbeddedFontExists(video.isEmbeddedFontExists());
 
 		dbMedia.setMediaparsed(true);
 
