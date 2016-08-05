@@ -88,10 +88,6 @@ public class LibMediaInfoParser {
 				if (!value.isEmpty()) {
 					media.setFileTitleFromMetadata(value);
 				}
-				value = MI.Get(general, 0, "Attachements");
-				if (!value.isEmpty()) {
-					media.setEmbeddedFontExists(true);
-				}
 
 				// set Video
 				media.setVideoTrackCount(MI.Count_Get(video));
