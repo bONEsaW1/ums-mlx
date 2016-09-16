@@ -61,7 +61,7 @@
 		<rome-version>1.0.0</rome-version>
 		<thumbnailator-version>[0.4, 0.5)</thumbnailator-version>
 		<jai-imageio-core-version>1.3.1</jai-imageio-core-version>
-		<jaudiotagger-version>2.0.3</jaudiotagger-version>
+		<jaudiotagger-version>2.2.5</jaudiotagger-version>
 		<org.assertj-version>2.2.0</org.assertj-version>
 		<jmte-version>3.0</jmte-version>
 		<jnotify-version>0.94</jnotify-version>
@@ -137,6 +137,12 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</repository>
+	
+		<!-- jaudiotagger -->
+		<repository>
+			<id>jaudiotagger-repository</id>
+			<url>https://dl.bintray.com/ijabz/maven</url>
 		</repository>
 	</repositories>
 
@@ -301,7 +307,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org</groupId>
+			<groupId>net.jthink</groupId>
 			<artifactId>jaudiotagger</artifactId>
 			<version>${jaudiotagger-version}</version>
 		</dependency>
@@ -617,8 +623,8 @@
 							<groupId>jwbroek.cuelib</groupId>
 							<artifactId>cuelib</artifactId>
 							<version>${cuelib-version}</version>
-							<downloadUrl>http://cuelib.googlecode.com/files/cuelib-${cuelib-version}.jar</downloadUrl>
-							<checksum>d03b6b960b3b83a2a419e8b5f07b6ba4bd18387b</checksum>
+							<downloadUrl>http://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/cuelib/cuelib-${cuelib-version}.jar</downloadUrl>
+  							<checksum>d03b6b960b3b83a2a419e8b5f07b6ba4bd18387b</checksum>
 						</artifactItem>
 
 						<artifactItem>
