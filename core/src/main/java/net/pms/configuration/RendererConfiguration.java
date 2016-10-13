@@ -170,6 +170,7 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 	protected static final String OVERRIDE_FFMPEG_VF = "OverrideFFmpegVideoFilter";
 	protected static final String PREPEND_TRACK_NUMBERS = "PrependTrackNumbers";
 	protected static final String PUSH_METADATA = "PushMetadata";
+	protected static final String REMOVE_TAGS_FROM_SRT_SUBS = "RemoveTagsFromSRTSubtitles";
 	protected static final String RENDERER_ICON = "RendererIcon";
 	protected static final String RENDERER_NAME = "RendererName";
 	protected static final String RESCALE_BY_RENDERER = "RescaleByRenderer";
@@ -1325,7 +1326,7 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 							} else {
 								matchedMimeType += ";rate=48000;channels=2";
 							}
-						} else if (media != null) {
+						} else if (media != null && media.getFirstAudioTrack() != null) {
 							AudioProperties audio = media.getFirstAudioTrack().getAudioProperties();
 							if (audio.getSampleFrequency() > 0) {
 								matchedMimeType += ";rate=" + Integer.toString(audio.getSampleFrequency());
@@ -2921,5 +2922,9 @@ public class RendererConfiguration extends UPNPHelper.Renderer {
 		}
 
 		return false;
+	}
+
+	public boolean isRemoveTagsFromSRTsubs() {
+		return getBoolean(REMOVE_TAGS_FROM_SRT_SUBS, true);
 	}
 }
