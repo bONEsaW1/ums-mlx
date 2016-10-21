@@ -524,7 +524,13 @@ public class LooksFrame extends JFrame implements IFrame, Observer {
 
 	@Override
 	public void append(final String msg) {
-		tt.append(msg);
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				tt.append(msg);
+			}
+		});
 	}
 
 	@Override
