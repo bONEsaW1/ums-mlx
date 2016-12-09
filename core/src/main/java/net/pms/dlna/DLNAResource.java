@@ -823,7 +823,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 			}
 		}
 
-		if (configurationSpecificToRenderer.getDisableTranscoding()) {
+		if (configurationSpecificToRenderer.isDisableTranscoding()) {
 			LOGGER.trace("Final verdict: \"{}\" will be streamed since transcoding is disabled", getName());
 			return null;
 		}
@@ -1584,7 +1584,6 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 		}
 
 		if (
-			!configurationSpecificToRenderer.getDisableTranscoding() &&
 			hasExternalSubtitles() &&
 			!isNamedNoEncoding &&
 			media_audio == null &&
