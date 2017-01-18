@@ -159,14 +159,14 @@
 		<!-- Version numbers for plugins shared by multiple modules  -->
 		<com.universalmediaserver-plugin-version>0.1</com.universalmediaserver-plugin-version>
 		<maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
-		<maven-compiler-plugin-version>3.3</maven-compiler-plugin-version>
-		<maven-surefire-plugin-version>2.18.1</maven-surefire-plugin-version>
+		<maven-compiler-plugin-version>3.6.0</maven-compiler-plugin-version>
+		<maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
 		<maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
 		<maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
-		<maven-site-plugin-version>3.3</maven-site-plugin-version>
+		<maven-site-plugin-version>3.6</maven-site-plugin-version>
 		<maven-project-info-reports-plugin-version>2.8.1</maven-project-info-reports-plugin-version>
 		<maven-javadoc-plugin-version>2.10.3</maven-javadoc-plugin-version>
-		<maven-pmd-plugin-version>3.4</maven-pmd-plugin-version>
+		<maven-pmd-plugin-version>3.7</maven-pmd-plugin-version>
 		<maven-dependency-plugin-version>2.8</maven-dependency-plugin-version>
 		<maven-assembly-plugin-version>2.5.4</maven-assembly-plugin-version>
 
@@ -179,7 +179,7 @@
 		<cobertura-maven-plugin-version>2.6</cobertura-maven-plugin-version>
 		<l10n-maven-plugin-version>1.4</l10n-maven-plugin-version>
 		<!-- This version works only with JDK 7 and above-->
-		<findbugs-version>3.0.3</findbugs-version>
+		<findbugs-version>3.0.4</findbugs-version>
 		<findbugs-annotations-version>3.0.1u2</findbugs-annotations-version>
 		
 		<!-- Transcode tools are being used by core (when debugging) and for packaging  -->
