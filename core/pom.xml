@@ -668,7 +668,7 @@
 							<groupId>org.freixas</groupId>
 							<artifactId>jcalendar</artifactId>
 							<version>${jcalendar-version}</version>
-							<downloadUrl>http://sourceforge.net/projects/flib/files/flib/FLib%201.1.1/jcalendar.jar</downloadUrl>
+							<downloadUrl>http://downloads.sourceforge.net/project/flib/flib/FLib%201.1.1/jcalendar.jar</downloadUrl>
 							<checksum>83eb4b1a4823daf3b5bea61958cf6097930f74fb</checksum>
 						</artifactItem>
 
@@ -676,7 +676,7 @@
 							<groupId>jnotify</groupId>
 							<artifactId>jnotify</artifactId>
 							<version>${jnotify-version}</version>
-							<downloadUrl>http://sourceforge.net/projects/jnotify/files/jnotify/jnotify-${jnotify-version}/jnotify-lib-${jnotify-version}.zip</downloadUrl>
+							<downloadUrl>http://downloads.sourceforge.net/project/jnotify/jnotify/jnotify-${jnotify-version}/jnotify-lib-${jnotify-version}.zip</downloadUrl>
 							<checksum>7f81f3429b2fe061f75ed870ca749109</checksum>
 							<extractFile>jnotify-${jnotify-version}.jar</extractFile>
 						</artifactItem>
