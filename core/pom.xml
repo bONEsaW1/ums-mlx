@@ -45,14 +45,14 @@
 		<mediautil-version>1.0</mediautil-version>
 		<jcalendar-version>1.1.1</jcalendar-version>
 		<slf4j-version>1.7.21</slf4j-version>
-		<logback-version>1.1.7</logback-version>
+		<logback-version>1.1.8</logback-version>
 		<bsh-core-version>2.0b4</bsh-core-version>
 		<commons-codec-version>1.10</commons-codec-version>
 		<commons-collections-version>3.2.2</commons-collections-version>
 		<commons-configuration-version>1.10</commons-configuration-version>
 		<commons-httpclient-version>3.1</commons-httpclient-version>
 		<commons-io-version>2.5</commons-io-version>
-		<commons-lang3-version>3.4</commons-lang3-version>
+		<commons-lang3-version>3.5</commons-lang3-version>
 		<h2-version>1.4.192</h2-version>
 		<maven-artifact-version>3.1.0</maven-artifact-version>
 		<commons-imaging-version>1.0-SNAPSHOT</commons-imaging-version>
@@ -85,16 +85,6 @@
 	</properties>
 
 	<repositories>
-		<!-- Sonatype -->
-		<repository>
-			<id>sonatype.org</id>
-			<name>Sonatype Repository</name>
-			<url>https://oss.sonatype.org/content/groups/public</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
 		<!-- netty -->
 		<repository>
 			<id>jboss</id>
@@ -273,18 +263,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-imaging</artifactId>
 			<version>${commons-imaging-version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j-version}</version>
 		</dependency>
 
 		<dependency>
@@ -723,6 +701,9 @@
 					<source>${targetJdk}</source>
 					<target>${targetJdk}</target>
 					<fork>false</fork>
+					<testSource>${targetJdk}</testSource>
+					<testTarget>${targetJdk}</testTarget>
+					<compilerArgument>${compilerArgument}</compilerArgument>
 				</configuration>
 			</plugin>
 
