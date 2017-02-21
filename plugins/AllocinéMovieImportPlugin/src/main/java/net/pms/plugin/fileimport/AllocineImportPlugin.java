@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +30,7 @@ import net.pms.medialibrary.commons.exceptions.FileImportException;
 import net.pms.plugins.FileImportPlugin;
 import net.pms.util.PmsProperties;
 
+@SuppressWarnings("deprecation")
 public class AllocineImportPlugin implements FileImportPlugin {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AllocineImportPlugin.class);
 
@@ -101,8 +102,8 @@ public class AllocineImportPlugin implements FileImportPlugin {
 
 	@Override
 	public void initialize() {
-		try {
-			allocineApi = new AllocineApi(ALLOCINE_PARTNER, ALLOCINE_SECRET, HttpClientBuilder.create().build());
+		try {			
+			allocineApi = new AllocineApi(ALLOCINE_PARTNER, ALLOCINE_SECRET, new DefaultHttpClient());
 		} catch (AllocineException e) {
 			LOGGER.error("Failed to instanciate AllocineApi", e);
 		}

@@ -10,6 +10,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ import net.pms.util.PmsProperties;
  * @author pw
  *
  */
+@SuppressWarnings("deprecation")
 public class TmdbMovieImportPlugin implements FileImportPlugin {
 	private static final Logger logger = LoggerFactory.getLogger(TmdbMovieImportPlugin.class);
 	public static final ResourceBundle messages = ResourceBundle.getBundle("net.pms.plugin.fileimport.tmdb.lang.messages");
@@ -417,7 +419,7 @@ public class TmdbMovieImportPlugin implements FileImportPlugin {
 	@Override
 	public void initialize() {
 		try {
-			api = new TheMovieDbApi("4cdddc892213dd24e5011fd710f8abf0");
+			api = new TheMovieDbApi("4cdddc892213dd24e5011fd710f8abf0", new DefaultHttpClient());
 		} catch (MovieDbException ex) {
 		}
 	}

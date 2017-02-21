@@ -12,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ import net.pms.util.PmsProperties;
  *
  * @author Corey
  */
+@SuppressWarnings("deprecation")
 public class TheTVDBImportPlugin implements FileImportPlugin {
 
 	public static final ResourceBundle MESSAGES = ResourceBundle.getBundle("thetvdbepisodeimportplugin-i18n.messages");
@@ -69,7 +71,7 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 		}
 	}
 
-	private TheTVDBApi theTvDbApi = new TheTVDBApi("D19EF2AFF971007D");
+	private TheTVDBApi theTvDbApi;
 
 	/**
 	 * The found episode object
@@ -370,6 +372,8 @@ public class TheTVDBImportPlugin implements FileImportPlugin {
 
 	@Override
 	public void initialize() {
+		theTvDbApi = new TheTVDBApi("D19EF2AFF971007D", new DefaultHttpClient());
+		
 		// Set the supported languages in the global configuration
 		try {
 			Map<String, String> supportedLanguages = new HashMap<String, String>();
