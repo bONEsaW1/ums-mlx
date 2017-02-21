@@ -69,7 +69,7 @@
 		<sevenzip-version>4.65-1.04-RC</sevenzip-version>
 		<cling-version>2.1.0</cling-version>
 		<jmdns-version>3.4.1</jmdns-version>
-		<chromcast-api-v2-version>0.9.1</chromcast-api-v2-version>
+		<chromcast-api-v2-version>0.10.0</chromcast-api-v2-version>
 		<jmustache-version>1.12</jmustache-version>
 		<javassist-version>3.20.0-GA</javassist-version>
 		<icu4j-version>58.2</icu4j-version>
