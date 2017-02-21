@@ -46,3 +46,4 @@ packaging/src/main/external-resources/transcode-tools/win32/*
 /plugins/WebservicePlugin/bin
 /plugins/iPhotoDlnaFolderPlugin/bin
 /plugins/iTunesDlnaFolderPlugin/bin
+/plugins/KodiNfoImportPlugin/bin
