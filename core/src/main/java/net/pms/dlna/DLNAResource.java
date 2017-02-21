@@ -389,7 +389,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @return true, if this contain can have a transcode folder
 	 */
 	public boolean isTranscodeFolderAvailable() {
-		return true;
+		return false;
 	}
 
 	/**
@@ -398,7 +398,7 @@ public abstract class DLNAResource extends HTTPResource implements Cloneable, Ru
 	 * @return true, if the live subtitle folder should be shown
 	 */
 	public boolean isLiveSubtitleFolderAvailable() {
-		return true;
+		return false;
 	}
 
 	/**

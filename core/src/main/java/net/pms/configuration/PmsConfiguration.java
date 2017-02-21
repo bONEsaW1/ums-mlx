@@ -2774,7 +2774,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	// TODO (breaking change): rename to e.g. isTranscodeFolderEnabled
 	// (and return true by default)
 	public boolean getHideTranscodeEnabled() {
-		return getBoolean(KEY_HIDE_TRANSCODE_FOLDER, true);
+		return getBoolean(KEY_HIDE_TRANSCODE_FOLDER, false);
 	}
 
 	// TODO (breaking change): rename to e.g. setTranscodeFolderEnabled
@@ -3261,7 +3261,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isHideLiveSubtitlesFolder() {
-		return getBoolean(KEY_HIDE_LIVE_SUBTITLES_FOLDER, true);
+		return getBoolean(KEY_HIDE_LIVE_SUBTITLES_FOLDER, false);
 	}
 
 	public void setHideLiveSubtitlesFolder(boolean value) {
