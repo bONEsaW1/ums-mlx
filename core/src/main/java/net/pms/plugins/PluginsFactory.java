@@ -345,14 +345,21 @@ public class PluginsFactory {
 	 * Initialize all registered plugins except for FinalizeTranscoderArgsListener.
 	 */
 	public static void initializePlugins() {
+		List<PluginBase> pluginsToRemove = new ArrayList<PluginBase>();
 		for (PluginBase p : plugins) {
 			try {
 				p.initialize();
 			} catch (Throwable t) {
 				// catch throwable for every external call to avoid plugins crashing pms
-				LOGGER.error("Failed to initialize a plugin", t);
+				LOGGER.error("Failed to initialize a plugin. It will be removed", t);
+				pluginsToRemove.add(p);
 			}
 		}
+		
+		for (PluginBase p : pluginsToRemove) {
+			plugins.remove(p);
+		}
+		
 		NotificationCenter.getInstance(PluginEvent.class).post(new PluginEvent(Event.PluginsLoaded));
 	}
 
