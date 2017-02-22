@@ -195,7 +195,8 @@ public class FileSystemResource extends VirtualFolder {
 		}
 
 		for (File f : allFiles) {
-			if (!f.isHidden() && (f.isDirectory() || FormatFactory.getAssociatedFormat(f.getName()) != null)) {
+			// Don't ass hidden folders except for root folders where f.getParent() == null
+			if ((!f.isHidden() || f.getParent() == null) && (f.isDirectory() || FormatFactory.getAssociatedFormat(f.getName()) != null)) {
 				addedFiles.add(f);
 			}
 		}
@@ -222,15 +223,12 @@ public class FileSystemResource extends VirtualFolder {
 				}
 			}
 		}
-
-		for (File f : addedFiles) {
-			manageFile(f);
-		}
+		
 		for (File f : addedFiles) {
 			if (isFirstUse) {
 				discoverable.add(f);
 			} else {
-				addChild(new RealFile(f));
+				manageFile(f);
 			}
 		}
 
