@@ -3423,7 +3423,7 @@ public class PmsConfiguration extends RendererConfiguration {
 	}
 
 	public boolean isResumeEnabled()  {
-		return getBoolean(KEY_RESUME, true);
+		return getBoolean(KEY_RESUME, false);
 	}
 
 	public void setResume(boolean value) {
