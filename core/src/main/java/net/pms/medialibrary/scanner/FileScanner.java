@@ -289,7 +289,7 @@ public class FileScanner implements Runnable {
 
 		net.pms.PMS.get().getFrame().setStatusLine(String.format(Messages.getString("ML.Messages.ScanFinished"), String.valueOf(nbFilesAdded), String.valueOf(nbFilesUpdated), String.valueOf(nbFilesUpToDate)));
 
-		log.info(String.format("Scanning finished. Result: %s added, %s updated", nbFilesAdded, nbFilesUpdated));
+		log.info(String.format("Scanning finished. Result: %s added, %s updated, %s were already up to date", nbFilesAdded, nbFilesUpdated, nbFilesUpToDate));
 		changeScanState(ScanState.IDLE);
 	}
 
