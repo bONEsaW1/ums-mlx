@@ -164,6 +164,8 @@ public class FileScanner implements Runnable {
 					log.debug("Couldn't read " + f);
 					fileImportResult = FileImportResult.Failed;
 				}
+			} else {
+				fileImportResult = FileImportResult.UpToDate;
 			}
 		}
 
@@ -238,6 +240,7 @@ public class FileScanner implements Runnable {
 		FileImportConfiguration importFile;
 		int nbFilesAdded = 0;
 		int nbFilesUpdated = 0;
+		int nbFilesUpToDate = 0;
 		// Calendar lastGetDate = Calendar.getInstance();
 		while ((importFile = dequeueImportFile()) != null) {
 			// check if we have to pause or stop the thread
@@ -275,13 +278,16 @@ public class FileScanner implements Runnable {
 				case Updated:
 					nbFilesUpdated++;
 					break;
+				case UpToDate:
+					nbFilesUpToDate++;
+					break;
 				default:
 					log.warn(String.format("Failed to scan file '%s'", importFile.getPath()));
 					break;
 			}
 		}
 
-		net.pms.PMS.get().getFrame().setStatusLine(String.format(Messages.getString("ML.Messages.ScanFinished"), String.valueOf(nbFilesAdded), String.valueOf(nbFilesUpdated)));
+		net.pms.PMS.get().getFrame().setStatusLine(String.format(Messages.getString("ML.Messages.ScanFinished"), String.valueOf(nbFilesAdded), String.valueOf(nbFilesUpdated), String.valueOf(nbFilesUpToDate)));
 
 		log.info(String.format("Scanning finished. Result: %s added, %s updated", nbFilesAdded, nbFilesUpdated));
 		changeScanState(ScanState.IDLE);
